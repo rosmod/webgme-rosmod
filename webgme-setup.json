@@ -1,0 +1,31 @@
+{
+  "components": {
+    "plugins": {
+      "SoftwareGenerator": {
+        "src": "src\\plugins\\SoftwareGenerator",
+        "test": "test\\plugins\\SoftwareGenerator"
+      },
+      "SoftwareCompiler": {
+        "src": "src\\plugins\\SoftwareCompiler",
+        "test": "test\\plugins\\SoftwareCompiler"
+      },
+      "DeploymentGenerator": {
+        "src": "src\\plugins\\DeploymentGenerator",
+        "test": "test\\plugins\\DeploymentGenerator"
+      },
+      "RunExperiment": {
+        "src": "src\\plugins\\RunExperiment",
+        "test": "test\\plugins\\RunExperiment"
+      }
+    },
+    "addons": {
+      "ExperimentMonitor": {
+        "src": "src\\addons\\ExperimentMonitor"
+      }
+    }
+  },
+  "dependencies": {
+    "plugins": {},
+    "addons": {}
+  }
+}
