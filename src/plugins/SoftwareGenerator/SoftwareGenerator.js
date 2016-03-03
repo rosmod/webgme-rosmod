@@ -7,10 +7,12 @@
 
 define([
     'plugin/PluginConfig',
-    'plugin/PluginBase'
+    'plugin/PluginBase',
+    'plugin/SoftwareGenerator/SoftwareGenerator/meta'
 ], function (
     PluginConfig,
-    PluginBase) {
+    PluginBase,
+    MetaTypes) {
     'use strict';
 
     /**
@@ -23,6 +25,7 @@ define([
     var SoftwareGenerator = function () {
         // Call base class' constructor.
         PluginBase.call(this);
+        this.metaTypes = MetaTypes;
     };
 
     // Prototypal inheritance from PluginBase.
@@ -62,20 +65,86 @@ define([
         var self = this,
             nodeObject;
 
+        self.updateMETA(self.metaTypes);
 
         // Using the logger.
         self.logger.debug('This is a debug message.');
         self.logger.info('This is an info message.');
         self.logger.warn('This is a warning message.');
         self.logger.error('This is an error message.');
-
         // Using the coreAPI to make changes.
-
         nodeObject = self.activeNode;
+
+        self.createMessage(self.activeNode, 'ROSMOD::Starting Software Code Generator','info');
+        var name = self.core.getAttribute(self.activeNode,'name');
+        self.createMessage(self.activeNode,'Name: +'+name);
+
+        var connections=[],
+            a=[];
+
+        self.core.loadChildren(self.activeNode, function(err, children) {
+            if (err) {
+                // handle errors here
+                return;
+            }
+            for (var i=0;i<children.length; i+= 1) {
+                if (self.core.isTypeOf(children[i], self.META.Link)) {
+                    self.createMessage(self.activeNode, 'got link #'+ i.toString());
+                    connections.push(children[i]);
+                    a.push(i);
+                }
+            }
+        });
+
+        for (var i=0;i<connections.length; i+=1) {
+            var sourcepath = self.core.getPointerPath(connections[i],'src'),
+                dstpath = self.core.getPointerPath(connections[i],'dst'),
+                src = null, dst = null;
+            self.core.loadByPath(self.rootNode, sourcepath.toString(), function (err, node) {
+                if (err) {
+                    // handle errors here
+                    return;
+                }
+                if (self.core.isTypeOf(node, self.META.Interface)) {
+                    src = node;
+                }
+            });
+            self.core.loadByPath(self.rootNode, dstpath.toString(), function (err, node) {
+                if (err) {
+                    // handle errors here
+                    return;
+                }
+                if (self.core.isTypeOf(node, self.META.Interface)) {
+                    dst = node;
+                }
+            });
+            var node1 = self.core.getParent(src),
+                node2 = self.core.getParent(dst),
+                name1 = self.core.getAttribute(src, 'name'),
+                name2 = self.core.getAttribute(dst, 'name'),
+                parent1 = self.core.getAttribute(node1, 'name'),
+                parent2 = self.core.getAttribute(node2, 'name');
+            self.createMessage(self.activeNode, parent1+'.'+name1+' connected to '+parent2+'.'+name2);
+        }
+
+        self.createMessage(self.activeNode, 'Finished');
+
+        var onFileSave = function(err) {
+            if (err) {
+                return callback(err);
+            }
+            self.blobClient.saveAllArtifacts(function(err, hashes) {
+                console.log('Artifacts are saved here:');
+                console.log(hashes);
+
+                for (var j=0;j<hashes.length; j+=1) {
+                    self.result.addArtifact(hashes[j]);
+                }
+            });
+        };
 
         self.core.setAttribute(nodeObject, 'name', 'My new obj');
         self.core.setRegistry(nodeObject, 'position', {x: 70, y: 70});
-
 
         // This will save the changes. If you don't want to save;
         // exclude self.save and call callback directly from this scope.
