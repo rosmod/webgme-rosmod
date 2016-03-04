@@ -22,10 +22,16 @@
       "ExperimentMonitor": {
         "src": "src\\addons\\ExperimentMonitor"
       }
+    },
+    "decorators": {
+      "CodeEditorDecorator": {
+        "src": "src\\decorators\\CodeEditorDecorator"
+      }
     }
   },
   "dependencies": {
     "plugins": {},
-    "addons": {}
+    "addons": {},
+    "decorators": {}
   }
 }

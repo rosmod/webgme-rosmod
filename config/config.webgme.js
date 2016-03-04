@@ -10,6 +10,7 @@ var config = require('webgme/config/config.default'),
 // The paths can be loaded from the webgme-setup.json
 config.plugin.basePaths.push('src/plugins');
 config.addOn.basePaths.push('src/addons');
+config.visualization.decoratorPaths.push('src/decorators');
 
 config.addOn.enable = true;
 // Visualizer descriptors
