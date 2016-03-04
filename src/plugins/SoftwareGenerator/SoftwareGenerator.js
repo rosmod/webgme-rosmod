@@ -79,21 +79,24 @@ define([
         var name = self.core.getAttribute(self.activeNode,'name');
         self.createMessage(self.activeNode,'Name: +'+name);
 
-        var connections=[],
-            a=[];
-
-        self.core.loadChildren(self.activeNode, function(err, children) {
+        var connections = [];
+        var model_tree = [];
+        var type = self.META.Package;
+        
+        self.core.loadSubTree(self.activeNode, function(err, nodes) {
             if (err) {
-                // handle errors here
                 return;
             }
-            for (var i=0;i<children.length; i+= 1) {
-                if (self.core.isTypeOf(children[i], self.META.Link)) {
-                    self.createMessage(self.activeNode, 'got link #'+ i.toString());
-                    connections.push(children[i]);
-                    a.push(i);
+            for (var i=0;i<nodes.length; i+= 1) {
+                var name = self.core.getAttribute(nodes[i], 'name');
+                var baseType = self.core.getBaseType(nodes[i]);
+                var baseName = self.core.getAttribute(baseType, 'name');
+                self.createMessage(self.activeNode, 'got object type: ' + baseName + ', name: ' + name);
+                if (self.core.isTypeOf(nodes[i], type)) {
+                    model_tree[name] = nodes[i];
                 }
             }
+            console.log(model_tree);
         });
 
         for (var i=0;i<connections.length; i+=1) {
@@ -143,8 +146,8 @@ define([
             });
         };
 
-        self.core.setAttribute(nodeObject, 'name', 'My new obj');
-        self.core.setRegistry(nodeObject, 'position', {x: 70, y: 70});
+        //self.core.setAttribute(nodeObject, 'name', 'My new obj');
+        //self.core.setRegistry(nodeObject, 'position', {x: 70, y: 70});
 
         // This will save the changes. If you don't want to save;
         // exclude self.save and call callback directly from this scope.
