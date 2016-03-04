@@ -1,173 +1,130 @@
 /*globals define, _, $*/
 /*jshint browser: true, camelcase: false*/
 
-/**
- * @author rkereskenyi / https://github.com/rkereskenyi
- */
-
 define([
+    'js/RegistryKeys',
     'js/Constants',
-    'js/NodePropertyNames',
-    'js/Widgets/DiagramDesigner/DiagramDesignerWidget.DecoratorBase',
-    'text!./CodeEditorDecorator.DiagramDesignerWidget.html',
-    'css!./CodeEditorDecorator.DiagramDesignerWidget.css'
-], function (CONSTANTS, nodePropertyNames, DiagramDesignerWidgetDecoratorBase, CodeEditorDecoratorTemplate) {
+    '../Libs/EpicEditor/js/epiceditor',
+    './DocumentEditorDialog',
+    'decorators/ModelDecorator/DiagramDesigner/ModelDecorator.DiagramDesignerWidget'
+  ], function (
+    REGISTRY_KEYS,
+    CONSTANTS,
+    marked,
+    DocumentEditorDialog,
+    ModelDecoratorDiagramDesignerWidget) {
 
     'use strict';
 
     var CodeEditorDecorator,
-        __parent__ = DiagramDesignerWidgetDecoratorBase,
-        __parent_proto__ = DiagramDesignerWidgetDecoratorBase.prototype,
-        DECORATOR_ID = 'CodeEditorDecorator';
+        DECORATOR_ID = 'CodeEditorDecorator',
+        EQN_EDIT_BTN_BASE = $('<i class="glyphicon glyphicon-edit text-meta"/>');
+        //JACOBIAN_EDIT_BTN_BASE = $('<i class="glyphicon glyphicon-unchecked text-meta"/>');
 
     CodeEditorDecorator = function (options) {
         var opts = _.extend({}, options);
 
-        __parent__.apply(this, [opts]);
+        ModelDecoratorDiagramDesignerWidget.apply(this, [opts]);
 
-        this.name = '';
+        this._skinParts = {};
+
+        // Use default marked options
+        marked.setOptions({
+            gfm: true,
+            tables: true,
+            breaks: false,
+            pedantic: false,
+            sanitize: true,
+            smartLists: true,
+            smartypants: false
+        });
 
         this.logger.debug('CodeEditorDecorator ctor');
     };
 
-    _.extend(CodeEditorDecorator.prototype, __parent_proto__);
+    CodeEditorDecorator.prototype = Object.create(ModelDecoratorDiagramDesignerWidget.prototype);
+    CodeEditorDecorator.prototype.constructor = CodeEditorDecorator;
     CodeEditorDecorator.prototype.DECORATORID = DECORATOR_ID;
 
-    /*********************** OVERRIDE DiagramDesignerWidgetDecoratorBase MEMBERS **************************/
-
-    CodeEditorDecorator.prototype.$DOMBase = $(CodeEditorDecoratorTemplate);
+    /*********************** OVERRIDE ModelDecoratorDiagramDesignerWidget MEMBERS **************************/
 
     CodeEditorDecorator.prototype.on_addTo = function () {
-        var self = this;
+        var self = this,
+            client = this._control._client,
+            nodeObj = client.getNode(this._metaInfo[CONSTANTS.GME_ID]);
 
-        this._renderName();
+        //let the parent decorator class do its job first
+        ModelDecoratorDiagramDesignerWidget.prototype.on_addTo.apply(this, arguments);
 
-        // set title editable on double-click
-        this.skinParts.$name.on('dblclick.editOnDblClick', null, function (event) {
-            if (self.hostDesignerItem.canvas.getIsReadOnlyMode() !== true) {
-                $(this).editInPlace({
-                    class: '',
-                    onChange: function (oldValue, newValue) {
-                        self._onNodeTitleChanged(oldValue, newValue);
-                    }
-                });
+        //render text-editor based META editing UI piece
+        this._skinParts.$EqnEditorBtn = EQN_EDIT_BTN_BASE.clone();
+        //this._skinParts.$JacobianEditorBtn = JACOBIAN_EDIT_BTN_BASE.clone();
+        this.$el.append('<br>');
+        this.$el.append(this._skinParts.$EqnEditorBtn);
+        //this.$el.append('  ');
+        //this.$el.append(this._skinParts.$JacobianEditorBtn);
+
+        // onClick listener for the eqn button
+        this._skinParts.$EqnEditorBtn.on('click', function () {
+            if (self.hostDesignerItem.canvas.getIsReadOnlyMode() !== true &&
+                nodeObj.getAttribute('Definition') !== undefined) {
+                self._showEditorDialog('Definition');
             }
             event.stopPropagation();
             event.preventDefault();
         });
 
-        //let the parent decorator class do its job first
-        __parent_proto__.on_addTo.apply(this, arguments);
+        /*
+        // onClick listener for the jacobian button
+        this._skinParts.$JacobianEditorBtn.on('click', function() {
+            if (self.hostDesignerItem.canvas.getIsReadOnlyMode() !== true &&
+                nodeObj.getAttribute('Definition') !== undefined) {
+                self._showEditorDialog('Definition');
+            }
+            event.stopPropagation();
+            event.preventDefault();
+        });
+         * 
+        */
     };
 
-    CodeEditorDecorator.prototype._renderName = function () {
-        var client = this._control._client,
-            nodeObj = client.getNode(this._metaInfo[CONSTANTS.GME_ID]);
+    CodeEditorDecorator.prototype._showEditorDialog = function (attrName) {
+        var self = this;
+        var client = this._control._client;
+        var nodeObj = client.getNode(this._metaInfo[CONSTANTS.GME_ID]);
+        var attrText = nodeObj.getAttribute(attrName);
 
-        //render GME-ID in the DOM, for debugging
-        this.$el.attr({'data-id': this._metaInfo[CONSTANTS.GME_ID]});
+        var editorDialog = new DocumentEditorDialog();
 
-        if (nodeObj) {
-            this.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name) || '';
-        }
+        // Initialize with Definition attribute and save callback function
+        editorDialog.initialize(attrText, function (text) {
+            try {
+                client.setAttributes(self._metaInfo[CONSTANTS.GME_ID], attrName, text);
+            } catch (e) {
+                self.logger.error('Saving META failed... Either not JSON object or something else went wrong...');
+            }
+        });
 
-        //find name placeholder
-        this.skinParts.$name = this.$el.find('.name');
-        this.skinParts.$name.text(this.name);
+        editorDialog.show();
+    };
+
+    CodeEditorDecorator.prototype.destroy = function () {
+        this._skinParts.$EqnEditorBtn.off('click');
+        ModelDecoratorDiagramDesignerWidget.prototype.destroy.apply(this, arguments);
     };
 
     CodeEditorDecorator.prototype.update = function () {
         var client = this._control._client,
             nodeObj = client.getNode(this._metaInfo[CONSTANTS.GME_ID]),
-            newName = '';
+            newDoc = '';
+
+        ModelDecoratorDiagramDesignerWidget.prototype.update.apply(this, arguments);
 
         if (nodeObj) {
-            newName = nodeObj.getAttribute(nodePropertyNames.Attributes.name) || '';
-
-            if (this.name !== newName) {
-                this.name = newName;
-                this.skinParts.$name.text(this.name);
-            }
+            newDoc = nodeObj.getAttribute('Definition') || '';
+            // Update text in the editor when attribute "OutputFunction" changes
+            // this.editorDialog.updateText(newDoc);
         }
-    };
-
-    CodeEditorDecorator.prototype.getConnectionAreas = function (id /*, isEnd, connectionMetaInfo*/) {
-        var result = [],
-            edge = 10,
-            LEN = 20;
-
-        //by default return the bounding box edge's midpoints
-
-        if (id === undefined || id === this.hostDesignerItem.id) {
-            //NORTH
-            result.push({
-                id: '0',
-                x1: edge,
-                y1: 0,
-                x2: this.hostDesignerItem.getWidth() - edge,
-                y2: 0,
-                angle1: 270,
-                angle2: 270,
-                len: LEN
-            });
-
-            //EAST
-            result.push({
-                id: '1',
-                x1: this.hostDesignerItem.getWidth(),
-                y1: edge,
-                x2: this.hostDesignerItem.getWidth(),
-                y2: this.hostDesignerItem.getHeight() - edge,
-                angle1: 0,
-                angle2: 0,
-                len: LEN
-            });
-
-            //SOUTH
-            result.push({
-                id: '2',
-                x1: edge,
-                y1: this.hostDesignerItem.getHeight(),
-                x2: this.hostDesignerItem.getWidth() - edge,
-                y2: this.hostDesignerItem.getHeight(),
-                angle1: 90,
-                angle2: 90,
-                len: LEN
-            });
-
-            //WEST
-            result.push({
-                id: '3',
-                x1: 0,
-                y1: edge,
-                x2: 0,
-                y2: this.hostDesignerItem.getHeight() - edge,
-                angle1: 180,
-                angle2: 180,
-                len: LEN
-            });
-        }
-
-        return result;
-    };
-
-    /**************** EDIT NODE TITLE ************************/
-
-    CodeEditorDecorator.prototype._onNodeTitleChanged = function (oldValue, newValue) {
-        var client = this._control._client;
-
-        client.setAttributes(this._metaInfo[CONSTANTS.GME_ID], nodePropertyNames.Attributes.name, newValue);
-    };
-
-    /**************** END OF - EDIT NODE TITLE ************************/
-
-    CodeEditorDecorator.prototype.doSearch = function (searchDesc) {
-        var searchText = searchDesc.toString();
-        if (this.name && this.name.toLowerCase().indexOf(searchText.toLowerCase()) !== -1) {
-            return true;
-        }
-
-        return false;
     };
 
     return CodeEditorDecorator;

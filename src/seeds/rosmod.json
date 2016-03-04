@@ -328,7 +328,7 @@
             "registry": {
                 "position": {
                     "x": 270,
-                    "y": 382
+                    "y": 387
                 }
             },
             "sets": {},
@@ -438,7 +438,7 @@
                     "y": 70
                 },
                 "usedAddOns": "ExperimentMonitor",
-                "validDecorators": "ModelDecorator CircleDecorator MetaDecorator SVGDecorator UMLStateMachineDecorator DefaultDecorator",
+                "validDecorators": "CircleDecorator CodeEditorDecorator DefaultDecorator MetaDecorator ModelDecorator SVGDecorator UMLStateMachineDecorator",
                 "validPlugins": "PluginGenerator",
                 "validVisualizers": "ModelEditor METAAspect"
             },
@@ -1084,8 +1084,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 168,
-                    "y": 435
+                    "x": 172,
+                    "y": 481
                 }
             },
             "sets": {},
@@ -1152,6 +1152,7 @@
         },
         "0ecb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
+                "Definition": "int32 test = false\r\nbool array",
                 "name": "samplePosition"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -1162,8 +1163,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 271,
-                    "y": 219
+                    "x": 270,
+                    "y": 154
                 }
             },
             "sets": {},
@@ -1199,10 +1200,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Deadline": {
+                    "Period": {
                         "type": "float"
                     },
-                    "Period": {
+                    "Deadline": {
                         "type": "float"
                     }
                 }
@@ -1270,8 +1271,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 274,
-                    "y": 432
+                    "x": 270,
+                    "y": 466
                 }
             },
             "sets": {},
@@ -1440,8 +1441,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 173,
-                    "y": 250
+                    "x": 169,
+                    "y": 213
                 }
             },
             "sets": {},
@@ -1459,8 +1460,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 274,
-                    "y": 592
+                    "x": 272,
+                    "y": 712
                 }
             },
             "sets": {},
@@ -1478,8 +1479,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 273,
-                    "y": 275
+                    "x": 271,
+                    "y": 227
                 }
             },
             "sets": {},
@@ -1616,6 +1617,7 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "decorator": "CodeEditorDecorator",
                 "position": {
                     "x": 39,
                     "y": 578
@@ -1658,8 +1660,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 168,
-                    "y": 375
+                    "x": 170,
+                    "y": 397
                 }
             },
             "sets": {},
@@ -1698,8 +1700,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 270,
-                    "y": 332
+                    "x": 269,
+                    "y": 315
                 }
             },
             "sets": {},
@@ -1906,8 +1908,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 274,
-                    "y": 542
+                    "x": 272,
+                    "y": 632
                 }
             },
             "sets": {},
@@ -1958,10 +1960,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Netmask": {
+                    "Subnet": {
                         "type": "string"
                     },
-                    "Subnet": {
+                    "Netmask": {
                         "type": "string"
                     }
                 }
@@ -2032,8 +2034,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 274,
-                    "y": 482
+                    "x": 272,
+                    "y": 552
                 }
             },
             "sets": {},
@@ -2070,8 +2072,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 168,
-                    "y": 312
+                    "x": 170,
+                    "y": 313
                 }
             },
             "sets": {},
@@ -3113,6 +3115,7 @@
         },
         "6a84f65c-0fbe-1fc6-79e8-2ff4bc2dcd1e": {
             "attributes": {
+                "Definition": "int32 testInt = 32 \r\nbool messageOn = false",
                 "name": "radialPos"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
@@ -3123,8 +3126,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 168,
-                    "y": 193
+                    "x": 171,
+                    "y": 134
                 }
             },
             "sets": {},
@@ -3384,12 +3387,12 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
+                    "CMDLine": {
+                        "type": "string"
+                    },
                     "Priority": {
                         "type": "integer",
                         "max": 99
-                    },
-                    "CMDLine": {
-                        "type": "string"
                     }
                 },
                 "children": {
@@ -4195,10 +4198,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Directory": {
+                    "Key": {
                         "type": "string"
                     },
-                    "Key": {
+                    "Directory": {
                         "type": "string"
                     }
                 }
@@ -4298,10 +4301,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "NetworkProfile": {
+                    "IP": {
                         "type": "string"
                     },
-                    "IP": {
+                    "NetworkProfile": {
                         "type": "string"
                     }
                 },
@@ -5386,6 +5389,7 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "decorator": "CodeEditorDecorator",
                 "position": {
                     "x": 33,
                     "y": 512
@@ -5505,12 +5509,12 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "NetworkProfile": {
-                        "type": "string"
-                    },
                     "Priority": {
                         "type": "integer",
                         "max": 99
+                    },
+                    "NetworkProfile": {
+                        "type": "string"
                     }
                 }
             },
