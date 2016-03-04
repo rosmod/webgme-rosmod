@@ -91,7 +91,13 @@ define([
                 var name = self.core.getAttribute(nodes[i], 'name');
                 var baseType = self.core.getBaseType(nodes[i]);
                 var baseName = self.core.getAttribute(baseType, 'name');
-                self.createMessage(self.activeNode, 'got object type: ' + baseName + ', name: ' + name);
+                self.createMessage(nodes[i], 'got object type: ' + baseName + ', name: ' + name);
+                var attrs = self.core.getAttributeNames(nodes[i]);
+                for (var j = 0; j < attrs.length; j += 1) {
+                    var attr = attrs[j];
+                    var value = self.core.getAttribute(nodes[i], attr);
+                    self.createMessage(nodes[i], 'object has property ' + attr + ', value: ' + value);
+                }
                 if (self.core.isTypeOf(nodes[i], type)) {
                     model_tree[name] = nodes[i];
                 }

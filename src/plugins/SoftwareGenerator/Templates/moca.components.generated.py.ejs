@@ -1,0 +1,150 @@
+#!/usr/bin/python
+from openmdao.api import Component
+import sys
+
+<%
+// Generate the code for all the components
+for (var i = 0; i < comps.length; i++) {
+-%>
+class <%= comps[i].name %>(Component):
+    def __init__(self):
+        super(<%= comps[i].name %>, self).__init__()
+<%
+    // Generate "add_param" statements
+    for (var j = 0; j < comps[i].parameters.length; j++) {
+        valueString = comps[i].parameters[j].value;
+        if (valueString.indexOf('.') === -1)
+            valueString += '.0';
+-%>
+        self.add_param('<%= comps[i].parameters[j].name %>', val=<%= comps[i].parameters[j].value %>)
+<%
+    }
+-%>
+<%
+    // Generate "add_output" and "add_state" statements
+    for (var j = 0; j < comps[i].unknowns.length; j++) {
+        var unknown_type;
+        if (comps[i].unknowns[j].type == 'Output') {
+            unknown_type = 'output';
+        } else {
+            unknown_type = 'state';
+        }
+        valueString = comps[i].unknowns[j].value;
+        if (valueString.indexOf('.') === -1)
+            valueString += '.0';
+-%>
+        self.add_<%= unknown_type %>('<%= comps[i].unknowns[j].name %>', val=<%= comps[i].unknowns[j].value %>)
+<%
+    }
+-%>
+<%
+    // Generate statement configuring force_fd
+    if (comps[i].force_fd === true) {
+-%>
+        self.fd_options['force_fd'] = True
+<%
+    }
+-%>
+
+    def solve_nonlinear(self, params, unknowns, resids):
+        # Assigning shorthand(s) to the parameter(s)
+<%
+    // Generate statements for dummy implementation of the method
+    for (var j = 0; j < comps[i].parameters.length; j++) {
+-%>
+        <%= comps[i].parameters[j].name %> = params['<%= comps[i].parameters[j].name %>']
+<%
+    }
+-%>
+
+<%
+    // Generate statements to give explicit equation between output(s) and input(s)
+    if (comps[i].outputFunction === '') {
+        // Print the dummy code snippet if the user hasn't given one
+        var dummyStatement = '';
+        for (var j = 0; j < comps[i].parameters.length; j++) {
+            dummyStatement += comps[i].parameters[j].name;
+            if (j != comps[i].parameters.length - 1)
+                dummyStatement += ' + ';
+        }
+        for (var j = 0; j < comps[i].unknowns.length; j++) {
+-%>
+        # Dummy function for the unknown <%= comps[i].unknowns[j].name %>
+        <%= comps[i].unknowns[j].name %> = <%= dummyStatement %>
+<%
+        }
+    } else {
+-%>
+        # This code snippet is defined by user using the embedded code editor in MOCA
+<%
+        // Print the user defined code snippet
+        var eqnLines = comps[i].outputFunction.split("\n");
+        for (var j = 0; j < eqnLines.length; j++) {
+            if (eqnLines[j] !== '') {
+-%>
+        <%- eqnLines[j] %>
+<%
+            }
+        }
+    }
+-%>
+
+        # Assign the value(s) to unknown(s)
+<%
+    for (var j = 0; j < comps[i].unknowns.length; j++) {
+-%>
+        unknowns['<%= comps[i].unknowns[j].name %>'] = <%= comps[i].unknowns[j].name %>
+<%
+    }
+-%>
+<%
+    // If the component is implicit, generate code for apply_nonlinear()
+    if (comps[i].type === 'Implicit') {
+        // TODO: Generate statements giving the values for residuals
+-%>
+
+    def apply_nonlinear(self, params, unknowns, resids):
+        print "Provide the values of the residuals in apply_nonlinear() for <%= comps[i].name %>"
+<%
+    }
+-%>
+<%
+    // If the force_fd is set to false, generate code for linearize()
+    if (comps[i].force_fd === false) {
+-%>
+
+    def linearize(self, params, unknowns, resids):
+        J = {}
+
+        # Assigning shorthand(s) to the parameter(s)
+<%
+        // Generate statements for dummy implementation of the method
+        for (var j = 0; j < comps[i].parameters.length; j++) {
+-%>
+        <%= comps[i].parameters[j].name %> = params['<%= comps[i].parameters[j].name %>']
+<%
+        }
+-%>
+
+        # This jecobian is defined by user using the embedded code editor in MOCA
+<%
+        // Print the user defined code snippet
+        var jecobianLines = comps[i].jacobian.split("\n");
+        for (var j = 0; j < jecobianLines.length; j++) {
+            if (jecobianLines[j] !== '') {
+-%>
+        <%- jecobianLines[j] %>
+<%
+            }
+        }
+-%>
+
+        # Return Jacobian (should not be empty)
+        return J
+<%
+    }
+-%>
+
+<%
+}
+-%>

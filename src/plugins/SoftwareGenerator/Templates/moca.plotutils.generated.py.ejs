@@ -1,0 +1,13 @@
+__author__ = 'Amogh'
+__doc__ = 'The utility class defined in this file gives the methods to plot' \
+          'the data points saved in the list on 2D and 3D plots.'
+
+import matplotlib.pyplot as plt
+
+class PlotUtils:
+    def plot2D (self, x_list, y_list, x_lims, y_lims, x_label, y_label):
+        plt.plot(x_list, y_list, 'ro')
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.axis([x_lims[0], x_lims[1], y_lims[0], y_lims[1]])
+        plt.show()

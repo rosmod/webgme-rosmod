@@ -1,0 +1,330 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "# <%= name %> Notebook\n",
+      "***",
+      "\n",
+      "## Execution\n",
+      "\n",
+      "Import the problem."
+   ]
+  }
+  ,{
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+      "from src.<%= name %> import <%= name %>"
+   ]
+  }
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "Instantiate the problem."
+   ]
+  }
+  ,{
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+      "top = <%= name %>()"
+   ]
+  }
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "Run the problem."
+   ]
+  }
+  ,{
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+      "top.run()"
+   ]
+  }
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "***",
+      "\n",
+      "## Analysis\n"
+<%
+if (driver === 'ScipyOptimizer') {
+-%>
+      ,"\n"
+      ,"_**Optimization analysis**_\n"
+      ,"\n"
+      ,"**Objectives**"
+<%
+}
+-%>
+   ]
+  }
+<%
+if (driver === 'ScipyOptimizer') {
+-%>
+  ,{
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+      "# Print objectives' values"
+      ,"\n"
+<%
+    for (var i = 0; i < objectives.length; i++) {
+-%>
+      ,"print(\"<%= objectives[i].connection[0].srcParent %>.<%= objectives[i].connection[0].src %> = %f \" % (top['<%= objectives[i].connection[0].srcParent %>.<%= objectives[i].connection[0].src %>']))"
+<%
+        if (i != objectives.length - 1) {
+-%>
+      ,"\n"
+<%
+        }
+    }
+-%>
+   ]
+  }
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "**Design Variables**"
+   ]
+  }
+  ,{
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+      "# Print design variables' values"
+      ,"\n"
+<%
+    for (var i = 0; i < desvars.length; i++) {
+-%>
+      ,"print(\"<%= desvars[i].connection[0].dstParent %>.<%= desvars[i].connection[0].dst %> = %f\" % (top['<%= desvars[i].connection[0].dstParent %>.<%= desvars[i].connection[0].dst %>']))"
+<%
+        if (i != desvars.length - 1) {
+-%>
+      ,"\n"
+<%
+        }
+    }
+-%>
+   ]
+  }
+<%
+} else if (driver === 'FullFactorialDOE' && recorder !== '(None)') {
+-%>
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "_**Design-of-experiment analysis**_\n"
+      ,"\n"
+      ,"*Recording*"
+   ]
+  }
+<%
+    if (recorder === 'Dump') {
+-%>
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "The recorder used is dump recorder, which creates the dumpfile in /out directory.\n"
+      ,"It contains all the values of parameters and unknowns in human readable format.\n"
+    ]
+  }
+<%
+    } else if (recorder === 'Specific') {
+-%>
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "First, import the parsing utility and initialize it.\n"
+    ]
+  }
+  ,{
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+      "from util.MOCAparseutils import SqliteParseUtils\n"
+      ,"parseutils = SqliteParseUtils(top)"
+    ]
+  }
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "Then, get the list(s) of values which you wanted to record using SqliteParseUtils i.e. -\n"
+      ,"\n"
+      ,"`getParamValues()`, `getUnknownValues()` or `getTimestampValues()`"
+    ]
+  }
+  ,{
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+<%
+        if (records.length > 0) {
+            // The following section creates problem if moved into for loop below,
+            // because of a extra preceding comma. However, this should only execute
+            // if there is at least 1 record in the model.
+-%>
+      "<%= records[0].connection[0].srcParent %>_<%= records[0].connection[0].src %>__values = "
+      ,"parseutils.get<%= records[0].type %>Values('<%= records[0].connection[0].srcParent %>.<%= records[0].connection[0].src %>')"
+      ,"\n"
+<%
+        }
+        for (var i = 1; i < records.length; i++) {
+-%>
+      ,"<%= records[i].connection[0].srcParent %>_<%= records[i].connection[0].src %>__values = "
+      ,"parseutils.get<%= records[i].type %>Values('<%= records[i].connection[0].srcParent %>.<%= records[i].connection[0].src %>')"
+      ,"\n"
+<%
+        }
+-%>
+      ,"timestamps = parseutils.getTimestampValues()"
+   ]
+  }
+<%
+        if (records.length > 1) {
+-%>
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "*Visualization*\n"
+      ,"\n"
+      ,"First, import the plotting utility and initialize it."
+    ]
+  }
+  ,{
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+      "%matplotlib inline\n"
+      ,"from util.MOCAplotutils import PlotUtils\n"
+      ,"plotutils = PlotUtils()"
+    ]
+  }
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+      "Then, configure the plot according to your need.\n"
+      ,"\n"
+      ,"The parameters which can be configured are - limits and labels of both the axes."
+    ]
+  }
+  ,{
+    "cell_type": "code",
+    "execution_count": null,
+    "metadata": {
+     "collapsed": true
+    },
+    "outputs": [],
+    "source": [
+      "x_axis_values = <%= records[0].connection[0].srcParent %>_<%= records[0].connection[0].src %>__values\n"
+      ,"y_axis_values = <%= records[1].connection[0].srcParent %>_<%= records[1].connection[0].src %>__values\n"
+      ,"x_axis_limits = [min(x_axis_values), max(x_axis_values)]\n"
+      ,"y_axis_limits = [min(y_axis_values), max(y_axis_values)]\n"
+      ,"x_axis_label = '<%= records[0].connection[0].srcParent %>.<%= records[0].connection[0].src %>'\n"
+      ,"y_axis_label = '<%= records[1].connection[0].srcParent %>.<%= records[1].connection[0].src %>'"
+    ]
+  }
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "After configuration, plot the graph."
+    ]
+  }
+  ,{
+    "cell_type": "code",
+    "execution_count": null,
+    "metadata": {
+     "collapsed": true
+    },
+    "outputs": [],
+    "source": [
+      "plotutils.plot2D(x_axis_values, y_axis_values, "
+      ,"x_axis_limits, y_axis_limits, "
+      ,"x_axis_label, y_axis_label)"
+    ]
+  }
+<%
+        } // if (records.length > 1) --- If the model has more than 1 record components in the model
+    } // if the model has "specific" recorder (sqlite)
+} else { // if the recorder is neither "dump" nor "specific"
+-%>
+  ,{
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "No recorder selected."
+   ]
+  }
+<%
+}
+-%>
+ ],
+  "metadata": {
+  "kernelspec": {
+   "display_name": "Python 2",
+   "language": "python",
+   "name": "python2"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}

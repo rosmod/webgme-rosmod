@@ -1,0 +1,35 @@
+__author__ = 'Amogh'
+__doc__ = 'The utility class defined in this file gives the methods to access the sqlite database file' \
+          'saved by OpenMDAO sqlite driver.'
+
+from sqlitedict import SqliteDict
+
+class SqliteParseUtils:
+    def __init__(self, top):
+        # Get the database filename.
+        self.filename = top.driver.recorders._recorders[0].out.filename
+
+        # Wait for analysis to finish.
+        top.cleanup()
+
+    def __getValues(self, vartype, name):
+        values = []
+        db = SqliteDict(self.filename, 'openmdao')
+        keylist = db.keys()
+        for key in keylist:
+            if key != 'metadata':
+                data = db[key]
+                if vartype != 'timestamp':
+                    values.append(data[vartype][name])
+                else:
+                    values.append(data[vartype])
+        return values
+
+    def getParamValues(self, paramname):
+        return self.__getValues('Parameters', paramname)
+
+    def getUnknownValues(self, unknownname):
+        return self.__getValues('Unknowns', unknownname)
+
+    def getTimestampValues(self):
+        return self.__getValues('timestamp', None)
