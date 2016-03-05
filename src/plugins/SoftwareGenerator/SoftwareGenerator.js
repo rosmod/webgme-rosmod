@@ -82,51 +82,32 @@ define([
     SoftwareGenerator.prototype.main = function (callback) {
         // Use self to access core, project, result, logger etc from PluginBase.
         // These are all instantiated at this point.
-        var self = this,
-            nodeObject;
+        var self = this;
         self.updateMETA(self.metaTypes);
-        nodeObject = self.activeNode;
 
         self.createMessage(self.activeNode, 'ROSMOD::Starting Software Code Generator','info');
-        var name = self.core.getAttribute(self.activeNode,'name');
-        self.createMessage(self.activeNode,'Name: +'+name);
 
-        var connections = [];
-        var model_tree = [];
-        var type = self.META.Package;
-        
-        self.core.loadSubTree(self.activeNode, function(err, nodes) {
-            if (err) {
-                return;
-            }
-            for (var i=0;i<nodes.length; i+= 1) {
-                var name = self.core.getAttribute(nodes[i], 'name');
-                var baseType = self.core.getBaseType(nodes[i]);
-                var baseName = self.core.getAttribute(baseType, 'name');
-                self.createMessage(nodes[i], 'got object type: ' + baseName + ', name: ' + name);
-                var attrs = self.core.getAttributeNames(nodes[i]);
-                for (var j = 0; j < attrs.length; j += 1) {
-                    var attr = attrs[j];
-                    var value = self.core.getAttribute(nodes[i], attr);
-                    self.createMessage(nodes[i], 'object has attr ' + attr + ', value: ' + value);
-                }
-                var ptrNames = self.core.getPointerNames(nodes[i]);
-                for (var j = 0; j < ptrNames.length; j += 1) {
-                    var ptrName = ptrNames[j];
-                    self.core.loadPointer(nodes[i], ptrName, function(err, node) {
-			var ptrNodeName = self.core.getAttribute(node, 'name');
-			self.createMessage(nodes[i], 'object has ptr ' + attr + ', to: ' + ptrNodeName);
-		    });
-                }
-                if (self.core.isTypeOf(nodes[i], type)) {
-                    model_tree[name] = nodes[i];
-                }
-            }
-            console.log(model_tree);
-        });
+	self.loadSoftwareModel(self.activeNode)
+	    .then(function (softwareModel) {
+		console.log(softwareModel);
+		self.createMessage(self.activeNode, 'Parsed model');
+		return self.generateArtifacts(softwareModel);
+	    })
+	    .then(function () {
+		self.createMessage(self.activeNode, 'Generated artifacts');
+		self.result.setSuccess(true);
+		self.createMessage(self.activeNode, 'Finished');
+		callback(null, self.result);
+	    })
+	    .catch(function (err) {
+		self.logger.error(err);
+		self.createMessage(self.activeNode, err.message, 'error');
+		self.result.setSuccess(false);
+		callback(err, self.result);
+	    })
+		.done();
 
-        self.createMessage(self.activeNode, 'Finished');
-
+	/*
         var onFileSave = function(err) {
             if (err) {
                 return callback(err);
@@ -151,7 +132,71 @@ define([
             self.result.setSuccess(true);
             callback(null, self.result);
         });
+	*/
+    };
 
+    SoftwareGenerator.prototype.loadSoftwareModel = function (rootNode) {
+	var self = this,
+	    dataModel = {
+		packages: {}
+	    };
+        
+        return self.core.loadSubTree(rootNode)
+	    .then(function (nodes) {
+		for (var i=0;i<nodes.length; i+= 1) {
+		    var node = nodes[i];
+		    var nodeName = self.core.getAttribute(node, 'name');
+		    var parent = self.core.getParent(node);
+		    var parentName = self.core.getAttribute(parent, 'name');
+		    /*
+		    if (self.core.isTypeOf(node, 'Package')) {
+			dataModel.packages[nodeName] = {
+			    name: nodeName,
+			    messages: {},
+			    services: {},
+			    components: {}
+			};
+		    }
+		    else if (self.core.isTypeOf(node, 'Message')) {
+			dataModel.packages[parentName].messages[nodeName] = {
+			    name: nodeName,
+			    definition: self.core.getAttribute(node, 'Definition')
+			};
+		    }
+		    else if (self.core.isTypeOf(node, 'Service')) {
+			dataModel.packages[parentName].services[nodeName] = {
+			    name: nodeName,
+			    definition: self.core.getAttribute(node, 'Definition')
+			};
+		    }
+		    else if (self.core.isTypeOf(node, 'Component')) {
+			dataModel.packages[parentName].components[nodeName] = {
+			    name: nodeName,
+			    timers: {},
+			    publishers: {},
+			    subscribers: {},
+			    clients: {},
+			    servers: {}
+			};
+		    }
+		    else if (self.core.isTypeOf(node, 'Timer')) {
+		    }
+		    else if (self.core.isTypeOf(node, 'Publisher')) {
+		    }
+		    else if (self.core.isTypeOf(node, 'Subscriber')) {
+		    }
+		    else if (self.core.isTypeOf(node, 'Client')) {
+		    }
+		    else if (self.core.isTypeOf(node, 'Server')) {
+		    }
+		    */
+		}
+		return dataModel;
+	    });
+    };
+
+    SoftwareGenerator.prototype.generateArtifacts = function (softwareModel) {
+	//console.log(softwareModel);
     };
 
     return SoftwareGenerator;
