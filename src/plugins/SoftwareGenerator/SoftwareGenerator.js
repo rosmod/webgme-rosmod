@@ -89,14 +89,12 @@ define([
 
 	self.loadSoftwareModel(self.activeNode)
 	    .then(function (softwareModel) {
-		console.log(softwareModel);
 		self.createMessage(self.activeNode, 'Parsed model');
 		return self.generateArtifacts(softwareModel);
 	    })
 	    .then(function () {
 		self.createMessage(self.activeNode, 'Generated artifacts');
 		self.result.setSuccess(true);
-		self.createMessage(self.activeNode, 'Finished');
 		callback(null, self.result);
 	    })
 	    .catch(function (err) {
@@ -146,10 +144,11 @@ define([
 		for (var i=0;i<nodes.length; i+= 1) {
 		    var node = nodes[i];
 		    var nodeName = self.core.getAttribute(node, 'name');
+		    var baseObject = self.core.getBaseType(node);
+		    var baseType = self.core.getAttribute(baseObject, 'name');
 		    var parent = self.core.getParent(node);
 		    var parentName = self.core.getAttribute(parent, 'name');
-		    /*
-		    if (self.core.isTypeOf(node, 'Package')) {
+		    if ( baseType == 'Package' ) { //self.core.isTypeOf(node, 'Package')) {
 			dataModel.packages[nodeName] = {
 			    name: nodeName,
 			    messages: {},
@@ -157,19 +156,19 @@ define([
 			    components: {}
 			};
 		    }
-		    else if (self.core.isTypeOf(node, 'Message')) {
+		    else if ( baseType == 'Message' ) { //self.core.isTypeOf(node, 'Message')) {
 			dataModel.packages[parentName].messages[nodeName] = {
 			    name: nodeName,
 			    definition: self.core.getAttribute(node, 'Definition')
 			};
 		    }
-		    else if (self.core.isTypeOf(node, 'Service')) {
+		    else if ( baseType == 'Service' ) { //self.core.isTypeOf(node, 'Service')) {
 			dataModel.packages[parentName].services[nodeName] = {
 			    name: nodeName,
 			    definition: self.core.getAttribute(node, 'Definition')
 			};
 		    }
-		    else if (self.core.isTypeOf(node, 'Component')) {
+		    else if ( baseType == 'Component' ) { //self.core.isTypeOf(node, 'Component')) {
 			dataModel.packages[parentName].components[nodeName] = {
 			    name: nodeName,
 			    timers: {},
@@ -179,24 +178,84 @@ define([
 			    servers: {}
 			};
 		    }
-		    else if (self.core.isTypeOf(node, 'Timer')) {
+		    else if ( baseType == 'Timer' ) { //self.core.isTypeOf(node, 'Timer')) {
+			var pkgName = self.core.getAttribute(
+			    self.core.getParent(parent), 'name');
+			dataModel.packages[pkgName]
+			    .components[parentName]
+			    .timers[nodeName] = {
+				name: nodeName,
+				period: self.core.getAttribute(node, 'Period'),
+				deadline: self.core.getAttribute(node, 'Deadline')
+			    };
 		    }
-		    else if (self.core.isTypeOf(node, 'Publisher')) {
+		    else if ( baseType == 'Publisher' ) { //self.core.isTypeOf(node, 'Publisher')) {
+			var pkgName = self.core.getAttribute(
+			    self.core.getParent(parent), 'name');
+			dataModel.packages[pkgName]
+			    .components[parentName]
+			    .publishers[nodeName] = {
+				name: nodeName,
+				priority: self.core.getAttribute(node, 'Priority'),
+				networkProfile: self.core.getAttribute(node, 'NetworkProfile')
+			    };
 		    }
-		    else if (self.core.isTypeOf(node, 'Subscriber')) {
+		    else if ( baseType == 'Subscriber' ) { //self.core.isTypeOf(node, 'Subscriber')) {
+			var pkgName = self.core.getAttribute(
+			    self.core.getParent(parent), 'name');
+			dataModel.packages[pkgName]
+			    .components[parentName]
+			    .subscribers[nodeName] = {
+				name: nodeName,
+				priority: self.core.getAttribute(node, 'Priority'),
+				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
+				deadline: self.core.getAttribute(node, 'Deadline')
+			    };
 		    }
-		    else if (self.core.isTypeOf(node, 'Client')) {
+		    else if ( baseType == 'Client' ) { //self.core.isTypeOf(node, 'Client')) {
+			var pkgName = self.core.getAttribute(
+			    self.core.getParent(parent), 'name');
+			dataModel.packages[pkgName]
+			    .components[parentName]
+			    .clients[nodeName] = {
+				name: nodeName,
+				priority: self.core.getAttribute(node, 'Priority'),
+				networkProfile: self.core.getAttribute(node, 'NetworkProfile')
+			    };
 		    }
-		    else if (self.core.isTypeOf(node, 'Server')) {
+		    else if ( baseType == 'Server' ) { //self.core.isTypeOf(node, 'Server')) {
+			var pkgName = self.core.getAttribute(
+			    self.core.getParent(parent), 'name');
+			dataModel.packages[pkgName]
+			    .components[parentName]
+			    .servers[nodeName] = {
+				name: nodeName,
+				priority: self.core.getAttribute(node, 'Priority'),
+				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
+				deadline: self.core.getAttribute(node, 'Deadline')
+			    };
 		    }
-		    */
 		}
 		return dataModel;
+	    })
+	    .then(function (dataModel) {
+		return self.resolveMessagePointers(dataModel);
+	    })
+	    .then(function (dataModel) {
+		return self.resolveServicePointers(dataModel);
 	    });
     };
 
+    SoftwareGenerator.prototype.resolveMessagePointers = function (softwareModel) {
+	return softwareModel;
+    };
+
+    SoftwareGenerator.prototype.resolveServicePointers = function (softwareModel) {
+	return softwareModel;
+    };
+
     SoftwareGenerator.prototype.generateArtifacts = function (softwareModel) {
-	//console.log(softwareModel);
+	console.log(softwareModel);
     };
 
     return SoftwareGenerator;
