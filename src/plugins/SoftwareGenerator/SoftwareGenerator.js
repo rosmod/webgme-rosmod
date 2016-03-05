@@ -8,11 +8,17 @@
 define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
-    'plugin/SoftwareGenerator/SoftwareGenerator/meta'
+    'common/util/ejs',
+    'plugin/SoftwareGenerator/SoftwareGenerator/Templates/Templates',
+    'plugin/SoftwareGenerator/SoftwareGenerator/meta',
+    'q'
 ], function (
     PluginConfig,
     PluginBase,
-    MetaTypes) {
+    ejs,
+    TEMPLATES,
+    MetaTypes,
+    Q) {
     'use strict';
 
     /**
@@ -26,6 +32,20 @@ define([
         // Call base class' constructor.
         PluginBase.call(this);
         this.metaTypes = MetaTypes;
+        this.FILES = [
+            {
+                name: 'component_cpp',
+                template: 'component.cpp.ejs'
+            },
+            {
+                name: 'component_hpp',
+                template: 'component.hpp.ejs'
+            },
+            {
+                name: 'cmakelists',
+                template: 'CMakeLists.txt.ejs',
+            }
+        ];
     };
 
     // Prototypal inheritance from PluginBase.
@@ -64,15 +84,7 @@ define([
         // These are all instantiated at this point.
         var self = this,
             nodeObject;
-
         self.updateMETA(self.metaTypes);
-
-        // Using the logger.
-        self.logger.debug('This is a debug message.');
-        self.logger.info('This is an info message.');
-        self.logger.warn('This is a warning message.');
-        self.logger.error('This is an error message.');
-        // Using the coreAPI to make changes.
         nodeObject = self.activeNode;
 
         self.createMessage(self.activeNode, 'ROSMOD::Starting Software Code Generator','info');
@@ -96,7 +108,15 @@ define([
                 for (var j = 0; j < attrs.length; j += 1) {
                     var attr = attrs[j];
                     var value = self.core.getAttribute(nodes[i], attr);
-                    self.createMessage(nodes[i], 'object has property ' + attr + ', value: ' + value);
+                    self.createMessage(nodes[i], 'object has attr ' + attr + ', value: ' + value);
+                }
+                var ptrNames = self.core.getPointerNames(nodes[i]);
+                for (var j = 0; j < ptrNames.length; j += 1) {
+                    var ptrName = ptrNames[j];
+                    self.core.loadPointer(nodes[i], ptrName, function(err, node) {
+			var ptrNodeName = self.core.getAttribute(node, 'name');
+			self.createMessage(nodes[i], 'object has ptr ' + attr + ', to: ' + ptrNodeName);
+		    });
                 }
                 if (self.core.isTypeOf(nodes[i], type)) {
                     model_tree[name] = nodes[i];
@@ -104,37 +124,6 @@ define([
             }
             console.log(model_tree);
         });
-
-        for (var i=0;i<connections.length; i+=1) {
-            var sourcepath = self.core.getPointerPath(connections[i],'src'),
-                dstpath = self.core.getPointerPath(connections[i],'dst'),
-                src = null, dst = null;
-            self.core.loadByPath(self.rootNode, sourcepath.toString(), function (err, node) {
-                if (err) {
-                    // handle errors here
-                    return;
-                }
-                if (self.core.isTypeOf(node, self.META.Interface)) {
-                    src = node;
-                }
-            });
-            self.core.loadByPath(self.rootNode, dstpath.toString(), function (err, node) {
-                if (err) {
-                    // handle errors here
-                    return;
-                }
-                if (self.core.isTypeOf(node, self.META.Interface)) {
-                    dst = node;
-                }
-            });
-            var node1 = self.core.getParent(src),
-                node2 = self.core.getParent(dst),
-                name1 = self.core.getAttribute(src, 'name'),
-                name2 = self.core.getAttribute(dst, 'name'),
-                parent1 = self.core.getAttribute(node1, 'name'),
-                parent2 = self.core.getAttribute(node2, 'name');
-            self.createMessage(self.activeNode, parent1+'.'+name1+' connected to '+parent2+'.'+name2);
-        }
 
         self.createMessage(self.activeNode, 'Finished');
 
@@ -151,9 +140,6 @@ define([
                 }
             });
         };
-
-        //self.core.setAttribute(nodeObject, 'name', 'My new obj');
-        //self.core.setRegistry(nodeObject, 'position', {x: 70, y: 70});
 
         // This will save the changes. If you don't want to save;
         // exclude self.save and call callback directly from this scope.
