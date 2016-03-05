@@ -224,12 +224,10 @@ define([
     };
 
     SoftwareGenerator.prototype.resolveMessagePointers = function (softwareModel) {
-	var self = this;
 	return softwareModel;
     };
 
     SoftwareGenerator.prototype.resolveServicePointers = function (softwareModel) {
-	var self = this;
 	return softwareModel;
     };
 
@@ -247,6 +245,14 @@ define([
 	    pluginVersion: self.getVersion()
 	}, null, 2);
 
+	for (var pkg in softwareModel.packages) {
+	    var pkgInfo = softwareModel.packages[pkg];
+	    for (var cmp in pkgInfo.components) {
+		var compInfo = pkgInfo.components[cmp];
+		self.generateComponentFiles(filesToAdd, pkgInfo, compInfo);
+	    }
+	}
+
 	artifact.addFiles(filesToAdd, function (err) {
 	    if (err) {
 		deferred.reject(new Error(err));
@@ -263,6 +269,13 @@ define([
 	});
 	
 	self.logger.debug(softwareModel);
+    };
+
+    SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, pkgInfo, compInfo) {
+	var inclFileName = pkgInfo.name + '/include/' + pkgInfo.name + '/' + compInfo.name + '.hpp',
+	    srcFileName = pkgInfo.name + '/src/' + pkgInfo.name + '/' + compInfo.name + '.cpp';
+	filesToAdd[inclFileName] = ejs.render(TEMPLATES['component.hpp.ejs'], compInfo);
+	filesToAdd[srcFileName] = ejs.render(TEMPLATES['component.cpp.ejs'], compInfo);
     };
 
     return SoftwareGenerator;
