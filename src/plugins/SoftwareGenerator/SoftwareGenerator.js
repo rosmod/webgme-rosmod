@@ -9,6 +9,7 @@ define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
     'common/util/ejs',
+    'common/util/xmljsonconverter',
     'plugin/SoftwareGenerator/SoftwareGenerator/Templates/Templates',
     'plugin/SoftwareGenerator/SoftwareGenerator/meta',
     'q'
@@ -16,6 +17,7 @@ define([
     PluginConfig,
     PluginBase,
     ejs,
+    Converter,
     TEMPLATES,
     MetaTypes,
     Q) {
@@ -90,6 +92,7 @@ define([
 	self.loadSoftwareModel(self.activeNode)
 	    .then(function (softwareModel) {
 		self.createMessage(self.activeNode, 'Parsed model');
+                self.logger.info(JSON.stringify(softwareModel, null, 4));
 		return self.generateArtifacts(softwareModel);
 	    })
 	    .then(function () {
@@ -104,38 +107,12 @@ define([
 		callback(err, self.result);
 	    })
 		.done();
-
-	/*
-        var onFileSave = function(err) {
-            if (err) {
-                return callback(err);
-            }
-            self.blobClient.saveAllArtifacts(function(err, hashes) {
-                console.log('Artifacts are saved here:');
-                console.log(hashes);
-
-                for (var j=0;j<hashes.length; j+=1) {
-                    self.result.addArtifact(hashes[j]);
-                }
-            });
-        };
-
-        // This will save the changes. If you don't want to save;
-        // exclude self.save and call callback directly from this scope.
-        self.save('SoftwareGenerator updated model.', function (err) {
-            if (err) {
-                callback(err, self.result);
-                return;
-            }
-            self.result.setSuccess(true);
-            callback(null, self.result);
-        });
-	*/
     };
 
     SoftwareGenerator.prototype.loadSoftwareModel = function (rootNode) {
 	var self = this,
 	    dataModel = {
+		name: self.core.getAttribute(rootNode, 'name'),
 		packages: {}
 	    };
         
@@ -247,15 +224,45 @@ define([
     };
 
     SoftwareGenerator.prototype.resolveMessagePointers = function (softwareModel) {
+	var self = this;
 	return softwareModel;
     };
 
     SoftwareGenerator.prototype.resolveServicePointers = function (softwareModel) {
+	var self = this;
 	return softwareModel;
     };
 
     SoftwareGenerator.prototype.generateArtifacts = function (softwareModel) {
-	console.log(softwareModel);
+	var self = this,
+	    filesToAdd = {},
+	    deferred = new Q.defer(),
+	    artifact = self.blobClient.createArtifact(softwareModel.name);
+	filesToAdd[softwareModel.name + '.json'] = JSON.stringify(softwareModel, null, 2);
+	filesToAdd[softwareModel.name + '_metadata.json'] = JSON.stringify({
+	    projectID: self.projectID,
+	    commitHash: self.commitHash,
+	    branchName: self.branchName,
+	    timeStamp: (new Date()).toISOString(),
+	    pluginVersion: self.getVersion()
+	}, null, 2);
+
+	artifact.addFiles(filesToAdd, function (err) {
+	    if (err) {
+		deferred.reject(new Error(err));
+		return;
+	    }
+	    self.blobClient.saveAllArtifacts(function (err, hashes) {
+		if (err) {
+		    deferred.reject(new Error(err));
+		    return;
+		}
+		self.result.addArtifact(hashes[0]);
+		deferred.resolve();
+	    });
+	});
+	
+	self.logger.debug(softwareModel);
     };
 
     return SoftwareGenerator;
