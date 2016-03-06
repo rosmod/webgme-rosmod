@@ -89,193 +89,188 @@ define([
 
         self.createMessage(self.activeNode, 'ROSMOD::Starting Software Code Generator','info');
 
-	self.loadSoftwareModel(self.activeNode)
-	    .then(function (softwareModel) {
-		self.createMessage(self.activeNode, 'Parsed model');
-                self.logger.info(JSON.stringify(softwareModel, null, 4));
-		return self.generateArtifacts(softwareModel);
-	    })
-	    .then(function () {
-		self.createMessage(self.activeNode, 'Generated artifacts');
-		self.result.setSuccess(true);
-		callback(null, self.result);
-	    })
-	    .catch(function (err) {
-		self.logger.error(err);
-		self.createMessage(self.activeNode, err.message, 'error');
-		self.result.setSuccess(false);
-		callback(err, self.result);
-	    })
-		.done();
+      	self.loadSoftwareModel(self.activeNode)
+  	    .then(function (softwareModel) {
+        		self.createMessage(self.activeNode, 'Parsed model');
+            self.logger.info(JSON.stringify(softwareModel, null, 4));
+        		return self.generateArtifacts(softwareModel);
+  	    })
+	      .then(function () {
+        		self.createMessage(self.activeNode, 'Generated artifacts');
+        		self.result.setSuccess(true);
+        		callback(null, self.result);
+	      })
+	      .catch(function (err) {
+        		self.logger.error(err);
+        		self.createMessage(self.activeNode, err.message, 'error');
+        		self.result.setSuccess(false);
+        		callback(err, self.result);
+	      })
+		    .done();
     };
 
     SoftwareGenerator.prototype.loadSoftwareModel = function (rootNode) {
-	var self = this,
-	    dataModel = {
-		name: self.core.getAttribute(rootNode, 'name'),
-		packages: {}
-	    };
-        
+        var self = this,
+	      dataModel = {
+		        name: self.core.getAttribute(rootNode, 'name'),
+		        packages: {}
+	      };
+
         return self.core.loadSubTree(rootNode)
-	    .then(function (nodes) {
-		for (var i=0;i<nodes.length; i+= 1) {
-		    var node = nodes[i];
-		    var nodeName = self.core.getAttribute(node, 'name');
-		    var baseObject = self.core.getBaseType(node);
-		    var baseType = self.core.getAttribute(baseObject, 'name');
-		    var parent = self.core.getParent(node);
-		    var parentName = self.core.getAttribute(parent, 'name');
-		    if ( baseType == 'Package' ) { //self.core.isTypeOf(node, 'Package')) {
-			dataModel.packages[nodeName] = {
-			    name: nodeName,
-			    messages: {},
-			    services: {},
-			    components: {}
-			};
-		    }
-		    else if ( baseType == 'Message' ) { //self.core.isTypeOf(node, 'Message')) {
-			dataModel.packages[parentName].messages[nodeName] = {
-			    name: nodeName,
-			    definition: self.core.getAttribute(node, 'Definition')
-			};
-		    }
-		    else if ( baseType == 'Service' ) { //self.core.isTypeOf(node, 'Service')) {
-			dataModel.packages[parentName].services[nodeName] = {
-			    name: nodeName,
-			    definition: self.core.getAttribute(node, 'Definition')
-			};
-		    }
-		    else if ( baseType == 'Component' ) { //self.core.isTypeOf(node, 'Component')) {
-			dataModel.packages[parentName].components[nodeName] = {
-			    name: nodeName,
-			    timers: {},
-			    publishers: {},
-			    subscribers: {},
-			    clients: {},
-			    servers: {}
-			};
-		    }
-		    else if ( baseType == 'Timer' ) { //self.core.isTypeOf(node, 'Timer')) {
-			var pkgName = self.core.getAttribute(
-			    self.core.getParent(parent), 'name');
-			dataModel.packages[pkgName]
-			    .components[parentName]
-			    .timers[nodeName] = {
-				name: nodeName,
-				period: self.core.getAttribute(node, 'Period'),
-				deadline: self.core.getAttribute(node, 'Deadline')
-			    };
-		    }
-		    else if ( baseType == 'Publisher' ) { //self.core.isTypeOf(node, 'Publisher')) {
-			var pkgName = self.core.getAttribute(
-			    self.core.getParent(parent), 'name');
-			dataModel.packages[pkgName]
-			    .components[parentName]
-			    .publishers[nodeName] = {
-				name: nodeName,
-				priority: self.core.getAttribute(node, 'Priority'),
-				networkProfile: self.core.getAttribute(node, 'NetworkProfile')
-			    };
-		    }
-		    else if ( baseType == 'Subscriber' ) { //self.core.isTypeOf(node, 'Subscriber')) {
-			var pkgName = self.core.getAttribute(
-			    self.core.getParent(parent), 'name');
-			dataModel.packages[pkgName]
-			    .components[parentName]
-			    .subscribers[nodeName] = {
-				name: nodeName,
-				priority: self.core.getAttribute(node, 'Priority'),
-				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
-				deadline: self.core.getAttribute(node, 'Deadline')
-			    };
-		    }
-		    else if ( baseType == 'Client' ) { //self.core.isTypeOf(node, 'Client')) {
-			var pkgName = self.core.getAttribute(
-			    self.core.getParent(parent), 'name');
-			dataModel.packages[pkgName]
-			    .components[parentName]
-			    .clients[nodeName] = {
-				name: nodeName,
-				priority: self.core.getAttribute(node, 'Priority'),
-				networkProfile: self.core.getAttribute(node, 'NetworkProfile')
-			    };
-		    }
-		    else if ( baseType == 'Server' ) { //self.core.isTypeOf(node, 'Server')) {
-			var pkgName = self.core.getAttribute(
-			    self.core.getParent(parent), 'name');
-			dataModel.packages[pkgName]
-			    .components[parentName]
-			    .servers[nodeName] = {
-				name: nodeName,
-				priority: self.core.getAttribute(node, 'Priority'),
-				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
-				deadline: self.core.getAttribute(node, 'Deadline')
-			    };
-		    }
-		}
-		return dataModel;
-	    })
-	    .then(function (dataModel) {
-		return self.resolveMessagePointers(dataModel);
-	    })
-	    .then(function (dataModel) {
-		return self.resolveServicePointers(dataModel);
-	    });
+        .then(function (nodes) {
+            for (var i=0;i<nodes.length; i+= 1) {
+        		    var node = nodes[i],
+                    nodeName = self.core.getAttribute(node, 'name'),
+                    baseObject = self.core.getBaseType(node),
+                    baseType = self.core.getAttribute(baseObject, 'name'),
+                    parent = self.core.getParent(node),
+                    parentName = self.core.getAttribute(parent, 'name');
+                if ( baseType == 'Package' ) { //self.core.isTypeOf(node, 'Package')) {
+                    dataModel.packages[nodeName] = {
+	                      name: nodeName,
+                        messages: {},
+                        services: {},
+	                      components: {}
+                    };
+                }
+                else if ( baseType == 'Message' ) { //self.core.isTypeOf(node, 'Message')) {
+                    dataModel.packages[parentName].messages[nodeName] = {
+	                      name: nodeName,
+	                      definition: self.core.getAttribute(node, 'Definition')
+                    };
+                }
+                else if ( baseType == 'Service' ) { //self.core.isTypeOf(node, 'Service')) {
+	                  dataModel.packages[parentName].services[nodeName] = {
+	                      name: nodeName,
+                        definition: self.core.getAttribute(node, 'Definition')
+                    };
+                }
+                else if ( baseType == 'Component' ) { //self.core.isTypeOf(node, 'Component')) {
+	                  dataModel.packages[parentName].components[nodeName] = {
+	                      name: nodeName,
+                        timers: {},
+	                      publishers: {},
+	                      subscribers: {},
+	                      clients: {},
+	                      servers: {}
+	                  };
+                }
+                else if ( baseType == 'Timer' ) { //self.core.isTypeOf(node, 'Timer')) {
+	                  var pkgName = self.core.getAttribute(self.core.getParent(parent), 'name');
+	                  dataModel.packages[pkgName]
+                    .components[parentName]
+                    .timers[nodeName] = {
+                        name: nodeName,
+                        period: self.core.getAttribute(node, 'Period'),
+                        deadline: self.core.getAttribute(node, 'Deadline')
+                    };
+                }
+                else if ( baseType == 'Publisher' ) { //self.core.isTypeOf(node, 'Publisher')) {
+	                  var pkgName = self.core.getAttribute(self.core.getParent(parent), 'name');
+	                  dataModel.packages[pkgName]
+                    .components[parentName]
+                    .publishers[nodeName] = {
+                        name: nodeName,
+                        priority: self.core.getAttribute(node, 'Priority'),
+                        networkProfile: self.core.getAttribute(node, 'NetworkProfile')
+                    };
+                }
+                else if ( baseType == 'Subscriber' ) { //self.core.isTypeOf(node, 'Subscriber')) {
+	                  var pkgName = self.core.getAttribute(self.core.getParent(parent), 'name');
+	                  dataModel.packages[pkgName]
+                    .components[parentName]
+                    .subscribers[nodeName] = {
+                        name: nodeName,
+                        priority: self.core.getAttribute(node, 'Priority'),
+                        networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
+                        deadline: self.core.getAttribute(node, 'Deadline')
+                    };
+                }
+                else if ( baseType == 'Client' ) { //self.core.isTypeOf(node, 'Client')) {
+	                  var pkgName = self.core.getAttribute(self.core.getParent(parent), 'name');
+	                  dataModel.packages[pkgName]
+                    .components[parentName]
+                    .clients[nodeName] = {
+                        name: nodeName,
+                        priority: self.core.getAttribute(node, 'Priority'),
+                        networkProfile: self.core.getAttribute(node, 'NetworkProfile')
+                    };
+                }
+                else if ( baseType == 'Server' ) { //self.core.isTypeOf(node, 'Server')) {
+	                  var pkgName = self.core.getAttribute(self.core.getParent(parent), 'name');
+	                  dataModel.packages[pkgName]
+                    .components[parentName]
+                    .servers[nodeName] = {
+                        name: nodeName,
+                        priority: self.core.getAttribute(node, 'Priority'),
+                        networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
+                        deadline: self.core.getAttribute(node, 'Deadline')
+                    };
+                }
+            }
+            return dataModel;
+        })
+	      .then(function (dataModel) {
+		        return self.resolveMessagePointers(dataModel);
+	      })
+	      .then(function (dataModel) {
+		        return self.resolveServicePointers(dataModel);
+	      });
     };
 
     SoftwareGenerator.prototype.resolveMessagePointers = function (softwareModel) {
-	return softwareModel;
+	      return softwareModel;
     };
 
     SoftwareGenerator.prototype.resolveServicePointers = function (softwareModel) {
-	return softwareModel;
+	      return softwareModel;
     };
 
     SoftwareGenerator.prototype.generateArtifacts = function (softwareModel) {
-	var self = this,
-	    filesToAdd = {},
-	    deferred = new Q.defer(),
-	    artifact = self.blobClient.createArtifact(softwareModel.name);
-	filesToAdd[softwareModel.name + '.json'] = JSON.stringify(softwareModel, null, 2);
-	filesToAdd[softwareModel.name + '_metadata.json'] = JSON.stringify({
-	    projectID: self.projectID,
-	    commitHash: self.commitHash,
-	    branchName: self.branchName,
-	    timeStamp: (new Date()).toISOString(),
-	    pluginVersion: self.getVersion()
-	}, null, 2);
+	      var self = this,
+	          filesToAdd = {},
+	          deferred = new Q.defer(),
+	          artifact = self.blobClient.createArtifact(softwareModel.name);
+	          filesToAdd[softwareModel.name + '.json'] = JSON.stringify(softwareModel, null, 2);
+            filesToAdd[softwareModel.name + '_metadata.json'] = JSON.stringify({
+    	          projectID: self.projectID,
+                commitHash: self.commitHash,
+                branchName: self.branchName,
+                timeStamp: (new Date()).toISOString(),
+                pluginVersion: self.getVersion()
+            }, null, 2);
 
-	for (var pkg in softwareModel.packages) {
-	    var pkgInfo = softwareModel.packages[pkg];
-	    for (var cmp in pkgInfo.components) {
-		var compInfo = pkgInfo.components[cmp];
-		self.generateComponentFiles(filesToAdd, pkgInfo, compInfo);
-	    }
-	}
+        for (var pkg in softwareModel.packages) {
+	          var pkgInfo = softwareModel.packages[pkg];
+	          for (var cmp in pkgInfo.components) {
+		            var compInfo = pkgInfo.components[cmp];
+		            self.generateComponentFiles(filesToAdd, pkgInfo, compInfo);
+	          }
+	      }
 
-	artifact.addFiles(filesToAdd, function (err) {
-	    if (err) {
-		deferred.reject(new Error(err));
-		return;
-	    }
-	    self.blobClient.saveAllArtifacts(function (err, hashes) {
-		if (err) {
-		    deferred.reject(new Error(err));
-		    return;
-		}
-		self.result.addArtifact(hashes[0]);
-		deferred.resolve();
-	    });
-	});
-	
-	self.logger.debug(softwareModel);
+        artifact.addFiles(filesToAdd, function (err) {
+            if (err) {
+		            deferred.reject(new Error(err));
+		            return;
+	          }
+	          self.blobClient.saveAllArtifacts(function (err, hashes) {
+                if (err) {
+                    deferred.reject(new Error(err));
+    		            return;
+		            }
+    		        self.result.addArtifact(hashes[0]);
+    		        deferred.resolve();
+	          });
+	      });
+
+        self.logger.debug(softwareModel);
     };
 
     SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, pkgInfo, compInfo) {
-	var inclFileName = pkgInfo.name + '/include/' + pkgInfo.name + '/' + compInfo.name + '.hpp',
-	    srcFileName = pkgInfo.name + '/src/' + pkgInfo.name + '/' + compInfo.name + '.cpp';
-	filesToAdd[inclFileName] = ejs.render(TEMPLATES['component.hpp.ejs'], compInfo);
-	filesToAdd[srcFileName] = ejs.render(TEMPLATES['component.cpp.ejs'], compInfo);
+	      var inclFileName = pkgInfo.name + '/include/' + pkgInfo.name + '/' + compInfo.name + '.hpp',
+	          srcFileName = pkgInfo.name + '/src/' + pkgInfo.name + '/' + compInfo.name + '.cpp',
+	          filesToAdd[inclFileName] = ejs.render(TEMPLATES['component.hpp.ejs'], compInfo),
+	          filesToAdd[srcFileName] = ejs.render(TEMPLATES['component.cpp.ejs'], compInfo);
     };
 
     return SoftwareGenerator;
