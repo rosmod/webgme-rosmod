@@ -148,11 +148,14 @@ define([
 		    else if ( baseType == 'Component' ) { //self.core.isTypeOf(node, 'Component')) {
 			dataModel.packages[parentName].components[nodeName] = {
 			    name: nodeName,
+			    packageName: parentName,
 			    timers: {},
 			    publishers: {},
 			    subscribers: {},
 			    clients: {},
-			    servers: {}
+			    servers: {},
+			    forwards: '',
+			    members: ''
 			};
 		    }
 		    else if ( baseType == 'Timer' ) { //self.core.isTypeOf(node, 'Timer')) {
@@ -163,7 +166,8 @@ define([
 			    .timers[nodeName] = {
 				name: nodeName,
 				period: self.core.getAttribute(node, 'Period'),
-				deadline: self.core.getAttribute(node, 'Deadline')
+				deadline: self.core.getAttribute(node, 'Deadline'),
+				operation: ''
 			    };
 		    }
 		    else if ( baseType == 'Publisher' ) { //self.core.isTypeOf(node, 'Publisher')) {
@@ -186,7 +190,8 @@ define([
 				name: nodeName,
 				priority: self.core.getAttribute(node, 'Priority'),
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
-				deadline: self.core.getAttribute(node, 'Deadline')
+				deadline: self.core.getAttribute(node, 'Deadline'),
+				operation: ''
 			    };
 		    }
 		    else if ( baseType == 'Client' ) { //self.core.isTypeOf(node, 'Client')) {
@@ -209,7 +214,8 @@ define([
 				name: nodeName,
 				priority: self.core.getAttribute(node, 'Priority'),
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
-				deadline: self.core.getAttribute(node, 'Deadline')
+				deadline: self.core.getAttribute(node, 'Deadline'),
+				operation: ''
 			    };
 		    }
 		}
@@ -274,8 +280,8 @@ define([
     SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, pkgInfo, compInfo) {
 	var inclFileName = pkgInfo.name + '/include/' + pkgInfo.name + '/' + compInfo.name + '.hpp',
 	    srcFileName = pkgInfo.name + '/src/' + pkgInfo.name + '/' + compInfo.name + '.cpp';
-	filesToAdd[inclFileName] = ejs.render(TEMPLATES['component.hpp.ejs'], compInfo);
-	filesToAdd[srcFileName] = ejs.render(TEMPLATES['component.cpp.ejs'], compInfo);
+	filesToAdd[inclFileName] = ejs.render(TEMPLATES['component.hpp.ejs'], {'compInfo':compInfo});
+	filesToAdd[srcFileName] = ejs.render(TEMPLATES['component.cpp.ejs'], {'compInfo':compInfo});
     };
 
     return SoftwareGenerator;
