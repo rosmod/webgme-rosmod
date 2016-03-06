@@ -130,7 +130,8 @@ define([
 			    name: nodeName,
 			    messages: {},
 			    services: {},
-			    components: {}
+			    components: {},
+			    libraries: {}
 			};
 		    }
 		    else if ( baseType == 'Message' ) { //self.core.isTypeOf(node, 'Message')) {
@@ -260,7 +261,9 @@ define([
             }, null, 2);
 
         for (var pkg in softwareModel.packages) {
-	          var pkgInfo = softwareModel.packages[pkg];
+	    var pkgInfo = softwareModel.packages[pkg];
+	    var cmakeFileName = pkgInfo.name + '/CMakeLists.txt';
+	    filesToAdd[cmakeFileName] = ejs.render(TEMPLATES['CMakeLists.txt.ejs'], {'pkgInfo':pkgInfo});
 	          for (var cmp in pkgInfo.components) {
 		            var compInfo = pkgInfo.components[cmp];
 		            self.generateComponentFiles(filesToAdd, pkgInfo, compInfo);

@@ -160,10 +160,10 @@ for (var srv in compInfo.servers) {
   callback_options.deadline.sec =<%= Math.floor(compInfo.servers[srv].deadline) %>;
   callback_options.deadline.nsec = <%= compInfo.servers[srv].deadline % 1 %>;
 #endif    
-  // Server - compInfo.servers[srv].name
+  // Server - <%= compInfo.servers[srv].name %>
   advertiseName = "<%= compInfo.servers[srv].service %>";
-  if (config.portGroupMap.find("compInfo.servers[srv].name") != config.portGroupMap.end())
-    advertiseName += "_" + config.portGroupMap["compInfo.servers[srv].name"];
+  if (config.portGroupMap.find("<%= compInfo.servers[srv].name %>") != config.portGroupMap.end())
+    advertiseName += "_" + config.portGroupMap["<%= compInfo.servers[srv].name %>"];
   NAMESPACE::AdvertiseServiceOptions <%= compInfo.servers[srv].name %>_server_options;
   <%= compInfo.servers[srv].name %>_server_options = NAMESPACE::AdvertiseServiceOptions::create<<%= compInfo.packageName %>::<%= compInfo.servers[srv].service %>>
       (advertiseName.c_str(),
@@ -254,18 +254,18 @@ for (var sub in compInfo.subscribers) {
      false); 
   this->init_timer = nh.createTimer(timer_options);
   this->init_timer.stop();
-#ifdef USE_ROSMOD   
-  callback_options.alias = "<%= compInfo.timers[tmr].name %>_operation";
-  callback_options.priority = <%= compInfo.timers[tmr].priority %>;
-  callback_options.deadline.sec = <%= Math.floor(compInfo.timers[tmr].deadline) %>;
-  callback_options.deadline.nsec = <%= compInfo.timers[tmr].priority % 1 %>;
-#endif
 
   // Timers
 <%
 for (var tmr in compInfo.timers){
 -%>
   // Component Timer - <%= compInfo.timers[tmr].name %>
+#ifdef USE_ROSMOD   
+  callback_options.alias = "<%= compInfo.timers[tmr].name %>_operation";
+  callback_options.priority = <%= compInfo.timers[tmr].priority %>;
+  callback_options.deadline.sec = <%= Math.floor(compInfo.timers[tmr].deadline) %>;
+  callback_options.deadline.nsec = <%= compInfo.timers[tmr].priority % 1 %>;
+#endif
   timer_options = 
     NAMESPACE::TimerOptions
     (ros::Duration(5.0),
@@ -277,6 +277,7 @@ for (var tmr in compInfo.timers){
      false,
      false);
   this-><%= compInfo.timers[tmr].name %> = nh.createTimer(timer_options);
+  this-><%= compInfo.timers[tmr].name %>.stop();
 <%
 }
 -%>

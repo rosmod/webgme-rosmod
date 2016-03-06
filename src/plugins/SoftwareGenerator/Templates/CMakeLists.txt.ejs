@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(<%= package.name %>)
+project(<%= pkgInfo.name %>)
 
 ## Start Global Marker
 
@@ -68,9 +68,9 @@ add_service_files(
   FILES
 <%
 // All of the services
-for (var i =0; i < package.services.length; i++) {
+for (var srv in pkgInfo.services) {
 -%>
- <%= package.services[i].name %>.srv
+ <%= pkgInfo.services[srv].name %>.srv
 <%
 }
 -%>
@@ -88,9 +88,9 @@ generate_messages(
   DEPENDENCIES
 <%
 // All of the messages
-for (var i =0; i < package.messages.length; i++) {
+for (var msg in pkgInfo.messages) {
 -%>
- <%= package.messages[i].name %>.msg
+ <%= pkgInfo.messages[msg].name %>.msg
 <%
 }
 -%>
@@ -125,75 +125,13 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 <%
 // All of the user include directories
-for (var i =0; i < package.libraries.length; i++) {
+for (var lib in pkgInfo.libraries) {
 -%>
- <%= package.libararies[i].include %>
+ <%= pkgInfo.libararies[lib].include %>
 <%
 }
 -%>
 )
-
-## Declare a cpp library
-# add_library(client_server_package
-#   src/${PROJECT_NAME}/client_server_package.cpp
-# )
-
-## Declare a cpp executable
-# add_executable(client_server_package_node src/client_server_package_node.cpp)
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(client_server_package_node client_server_package_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(client_server_package_node
-#   ${catkin_LIBRARIES}
-# )
-
-#
-## Install 
-#
-
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
-
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark executables and/or libraries for installation
-# install(TARGETS client_server_package client_server_package_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
-
-#
-## Testing 
-#
-
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_client_server_package.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
@@ -202,16 +140,16 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 <%
 // All of the component libraries
 // need to add component's dependent library info
-for (var i =0; i < package.components.length; i++) {
+for (var cmp in pkgInfo.components) {
 -%>
-add_library(<%= package.components[i].name %>
-            src/<%= package.name%>/<%= package.components[i].name %>.cpp
+add_library(<%= pkgInfo.components[cmp].name %>
+            src/<%= pkgInfo.name%>/<%= pkgInfo.components[cmp].name %>.cpp
             )
-target_link_libraries(<%= package.components[i].name %>
+target_link_libraries(<%= pkgInfo.components[cmp].name %>
                       ${catkin_LIBRARIES} 
                       )
-add_dependencies(<%= package.components[i].name %>
-                 <%= package.name %>_generate_messages_cpp
+add_dependencies(<%= pkgInfo.components[cmp].name %>
+                 <%= pkgInfo.name %>_generate_messages_cpp
 		 )
 <%
 }
