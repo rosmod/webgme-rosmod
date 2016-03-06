@@ -89,33 +89,33 @@ define([
 
         self.createMessage(self.activeNode, 'ROSMOD::Starting Software Code Generator','info');
 
-	self.loadSoftwareModel(self.activeNode)
-	    .then(function (softwareModel) {
-		self.createMessage(self.activeNode, 'Parsed model');
-                self.logger.info(JSON.stringify(softwareModel, null, 4));
-		return self.generateArtifacts(softwareModel);
-	    })
-	    .then(function () {
-		self.createMessage(self.activeNode, 'Generated artifacts');
-		self.result.setSuccess(true);
-		callback(null, self.result);
-	    })
-	    .catch(function (err) {
-		self.logger.error(err);
-		self.createMessage(self.activeNode, err.message, 'error');
-		self.result.setSuccess(false);
-		callback(err, self.result);
-	    })
-		.done();
+      	self.loadSoftwareModel(self.activeNode)
+  	    .then(function (softwareModel) {
+        		self.createMessage(self.activeNode, 'Parsed model');
+            self.logger.info(JSON.stringify(softwareModel, null, 4));
+        		return self.generateArtifacts(softwareModel);
+  	    })
+	      .then(function () {
+        		self.createMessage(self.activeNode, 'Generated artifacts');
+        		self.result.setSuccess(true);
+        		callback(null, self.result);
+	      })
+	      .catch(function (err) {
+        		self.logger.error(err);
+        		self.createMessage(self.activeNode, err.message, 'error');
+        		self.result.setSuccess(false);
+        		callback(err, self.result);
+	      })
+		    .done();
     };
 
     SoftwareGenerator.prototype.loadSoftwareModel = function (rootNode) {
-	var self = this,
-	    dataModel = {
-		name: self.core.getAttribute(rootNode, 'name'),
-		packages: {}
-	    };
-        
+        var self = this,
+	      dataModel = {
+		        name: self.core.getAttribute(rootNode, 'name'),
+		        packages: {}
+	      };
+
         return self.core.loadSubTree(rootNode)
 	    .then(function (nodes) {
 		for (var i=0;i<nodes.length; i+= 1) {
@@ -230,51 +230,51 @@ define([
     };
 
     SoftwareGenerator.prototype.resolveMessagePointers = function (softwareModel) {
-	return softwareModel;
+	      return softwareModel;
     };
 
     SoftwareGenerator.prototype.resolveServicePointers = function (softwareModel) {
-	return softwareModel;
+	      return softwareModel;
     };
 
     SoftwareGenerator.prototype.generateArtifacts = function (softwareModel) {
-	var self = this,
-	    filesToAdd = {},
-	    deferred = new Q.defer(),
-	    artifact = self.blobClient.createArtifact(softwareModel.name);
-	filesToAdd[softwareModel.name + '.json'] = JSON.stringify(softwareModel, null, 2);
-	filesToAdd[softwareModel.name + '_metadata.json'] = JSON.stringify({
-	    projectID: self.projectID,
-	    commitHash: self.commitHash,
-	    branchName: self.branchName,
-	    timeStamp: (new Date()).toISOString(),
-	    pluginVersion: self.getVersion()
-	}, null, 2);
+	      var self = this,
+	          filesToAdd = {},
+	          deferred = new Q.defer(),
+	          artifact = self.blobClient.createArtifact(softwareModel.name);
+	          filesToAdd[softwareModel.name + '.json'] = JSON.stringify(softwareModel, null, 2);
+            filesToAdd[softwareModel.name + '_metadata.json'] = JSON.stringify({
+    	          projectID: self.projectID,
+                commitHash: self.commitHash,
+                branchName: self.branchName,
+                timeStamp: (new Date()).toISOString(),
+                pluginVersion: self.getVersion()
+            }, null, 2);
 
-	for (var pkg in softwareModel.packages) {
-	    var pkgInfo = softwareModel.packages[pkg];
-	    for (var cmp in pkgInfo.components) {
-		var compInfo = pkgInfo.components[cmp];
-		self.generateComponentFiles(filesToAdd, pkgInfo, compInfo);
-	    }
-	}
+        for (var pkg in softwareModel.packages) {
+	          var pkgInfo = softwareModel.packages[pkg];
+	          for (var cmp in pkgInfo.components) {
+		            var compInfo = pkgInfo.components[cmp];
+		            self.generateComponentFiles(filesToAdd, pkgInfo, compInfo);
+	          }
+	      }
 
-	artifact.addFiles(filesToAdd, function (err) {
-	    if (err) {
-		deferred.reject(new Error(err));
-		return;
-	    }
-	    self.blobClient.saveAllArtifacts(function (err, hashes) {
-		if (err) {
-		    deferred.reject(new Error(err));
-		    return;
-		}
-		self.result.addArtifact(hashes[0]);
-		deferred.resolve();
-	    });
-	});
-	
-	self.logger.debug(softwareModel);
+        artifact.addFiles(filesToAdd, function (err) {
+            if (err) {
+		            deferred.reject(new Error(err));
+		            return;
+	          }
+	          self.blobClient.saveAllArtifacts(function (err, hashes) {
+                if (err) {
+                    deferred.reject(new Error(err));
+    		            return;
+		            }
+    		        self.result.addArtifact(hashes[0]);
+    		        deferred.resolve();
+	          });
+	      });
+
+        self.logger.debug(softwareModel);
     };
 
     SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, pkgInfo, compInfo) {
