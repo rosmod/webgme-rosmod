@@ -1,6 +1,14 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 #include "node/Component.hpp"
+
+// Messages required for this component
+<%
+-%>
+<%
+-%>
+
+// Services required for this component
 <%
 -%>
 <%
@@ -47,39 +55,31 @@ private:
 <%
 for (var tmr in compInfo.timers) {
 -%>
-  // <%= compInfo.timers[tmr].name %>
   NAMESPACE::Timer <%= compInfo.timers[tmr].name %>;
 <%
 }
 -%>
-
 <%
 for (var svr in compInfo.servers) {
 -%>
-  // <%= compInfo.servers[svr].name %>
   NAMESPACE::ServiceServer <%= compInfo.servers[svr].name %>;
 <%
 }
 -%>
-
 <%
 for (var clt in compInfo.clients) {
  -%>
-  // <%= compInfo.clients[clt].name %>
   NAMESPACE::ServiceClient <%= compInfo.clients[clt].name %>;
 <%
 }
 -%>
-
 <%
 for (var pub in compInfo.publishers) {
  -%>
-  // <%= compInfo.publishers[pub].name %>
   NAMESPACE::Publisher <%= compInfo.publishers[pub].name %>;
 <%
 }
 -%>
-
 <%
 for (var sub in compInfo.subscribers) {
  -%>

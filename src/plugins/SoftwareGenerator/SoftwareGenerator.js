@@ -155,6 +155,9 @@ define([
 			    clients: {},
 			    servers: {},
 			    forwards: '',
+			    userDefinitions: '',
+			    initialization: '',
+			    destruction: '',
 			    members: ''
 			};
 		    }
@@ -166,6 +169,7 @@ define([
 			    .timers[nodeName] = {
 				name: nodeName,
 				period: self.core.getAttribute(node, 'Period'),
+				priority: self.core.getAttribute(node, 'Priority'),
 				deadline: self.core.getAttribute(node, 'Deadline'),
 				operation: ''
 			    };
@@ -177,6 +181,7 @@ define([
 			    .components[parentName]
 			    .publishers[nodeName] = {
 				name: nodeName,
+				topic: 'TOPIC TYPE HERE',
 				priority: self.core.getAttribute(node, 'Priority'),
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile')
 			    };
@@ -188,6 +193,7 @@ define([
 			    .components[parentName]
 			    .subscribers[nodeName] = {
 				name: nodeName,
+				topic: 'TOPIC TYPE HERE',
 				priority: self.core.getAttribute(node, 'Priority'),
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
 				deadline: self.core.getAttribute(node, 'Deadline'),
@@ -201,6 +207,7 @@ define([
 			    .components[parentName]
 			    .clients[nodeName] = {
 				name: nodeName,
+				service: 'SERVICE TYPE HERE',
 				priority: self.core.getAttribute(node, 'Priority'),
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile')
 			    };
@@ -212,6 +219,7 @@ define([
 			    .components[parentName]
 			    .servers[nodeName] = {
 				name: nodeName,
+				service: 'SERVICE TYPE HERE',
 				priority: self.core.getAttribute(node, 'Priority'),
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
 				deadline: self.core.getAttribute(node, 'Deadline'),
