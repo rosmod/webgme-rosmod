@@ -189,48 +189,6 @@
                     }
                 }
             },
-            "731c3c11-a2ca-e3e3-85f9-0112ed485137": {
-                "362e1ab3-7bd9-88f0-109d-d980abdba83a": {
-                    "be60eb39-137d-837e-c951-167fe117564f": {
-                        "5072c238-746a-2504-86fb-956464805826": {
-                            "3bb328bd-49cb-d709-2cfb-8dc18e2312c7": {},
-                            "4091a708-b3b0-3415-bdb4-e0df6a7c873b": {}
-                        }
-                    },
-                    "f860146e-79cb-d8b1-c594-3ed47e77accd": {
-                        "465973da-27d0-b385-b8ab-36ed43a1d683": {
-                            "5f72ea3e-f42a-57fa-cd13-bf0d97977e7b": {}
-                        },
-                        "6a86bd60-e908-47b5-8fe2-e4b907a2162f": {
-                            "ac85effe-b89f-f818-1d15-39da24b8be22": {}
-                        }
-                    },
-                    "fc06016b-feff-16ef-cfb8-8031a4aa5318": {
-                        "151629c1-1963-5d02-5350-ca3e0d69a964": {
-                            "1a27909f-3ef2-0ed0-6c25-0f5fdd205395": {},
-                            "b3cd4b66-017d-84f0-5992-f94d2a7fc1f2": {}
-                        },
-                        "44bd689d-5f1d-f86e-62a4-7273cf5628f2": {
-                            "87ae0580-23dd-40da-7936-fc21fcac9ec5": {}
-                        },
-                        "b70d922c-1b07-87d0-7b6c-4d62a6d61b9a": {
-                            "8d944a88-0c9f-6f22-b131-77fad9048ada": {}
-                        }
-                    }
-                },
-                "6d477b41-223c-5b64-634b-d99f753dc4be": {},
-                "c0c8def4-9d5d-41f0-ef3d-eda2b5f75db6": {
-                    "35e0c52c-187b-dfef-3018-b413ba86a694": {
-                        "8d5bacda-b999-316e-9d04-4651d17add7e": {
-                            "4e48c1c7-c559-89da-8696-c803e2806b49": {}
-                        },
-                        "dcf0ed86-ffe7-9402-acf0-fe1c13455ce8": {
-                            "7a2b8f21-e7f9-4df0-a632-cd6f3453347e": {},
-                            "d3c154d8-d876-c7d0-9385-3b7dc30ca619": {}
-                        }
-                    }
-                }
-            },
             "7ec97e63-8e60-b0c0-8e25-eec82cec64be": {
                 "3abf1c09-fdc4-61e7-1e53-501eff8e76ee": {
                     "043de1ab-0b51-afeb-be5f-a5a167b3a363": {},
@@ -309,7 +267,8 @@
                         "f5b6be0c-b866-ac8f-c0e9-38e8c3cba2de": {}
                     }
                 }
-            }
+            },
+            "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {}
         },
         "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045": {}
     },
@@ -1195,15 +1154,21 @@
             "attributes": {
                 "Deadline": 0,
                 "Period": 0,
+                "Priority": 50,
                 "name": "Timer"
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Period": {
-                        "type": "float"
+                    "Priority": {
+                        "type": "integer",
+                        "min": 1,
+                        "max": 99
                     },
                     "Deadline": {
+                        "type": "float"
+                    },
+                    "Period": {
                         "type": "float"
                     }
                 }
@@ -1333,25 +1298,6 @@
             "sets": {},
             "constraints": {}
         },
-        "151629c1-1963-5d02-5350-ca3e0d69a964": {
-            "attributes": {
-                "name": "Positioning"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "fc06016b-feff-16ef-cfb8-8031a4aa5318",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 285,
-                    "y": 203
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "182d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
                 "name": "eth0"
@@ -1385,26 +1331,6 @@
                 "position": {
                     "x": 100,
                     "y": 100
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "1a27909f-3ef2-0ed0-6c25-0f5fdd205395": {
-            "attributes": {
-                "name": "vertical_controller-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "151629c1-1963-5d02-5350-ca3e0d69a964",
-            "pointers": {
-                "Component": "0a064327-011a-e497-672b-785e37ff448a",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 447,
-                    "y": 267
                 }
             },
             "sets": {},
@@ -1915,42 +1841,6 @@
             "sets": {},
             "constraints": {}
         },
-        "35e0c52c-187b-dfef-3018-b413ba86a694": {
-            "attributes": {},
-            "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643",
-            "meta": {},
-            "parent": "c0c8def4-9d5d-41f0-ef3d-eda2b5f75db6",
-            "pointers": {
-                "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643"
-            },
-            "registry": {
-                "position": {
-                    "x": 347,
-                    "y": 228
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "362e1ab3-7bd9-88f0-109d-d980abdba83a": {
-            "attributes": {
-                "name": "3 Host"
-            },
-            "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3",
-            "meta": {},
-            "parent": "731c3c11-a2ca-e3e3-85f9-0112ed485137",
-            "pointers": {
-                "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3"
-            },
-            "registry": {
-                "position": {
-                    "x": 242,
-                    "y": 138
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "36d534c1-207e-1c52-5336-c74ff256793f": {
             "attributes": {
                 "Netmask": "255.255.255.0",
@@ -2079,26 +1969,6 @@
             "sets": {},
             "constraints": {}
         },
-        "3bb328bd-49cb-d709-2cfb-8dc18e2312c7": {
-            "attributes": {
-                "name": "user_input_controller-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "5072c238-746a-2504-86fb-956464805826",
-            "pointers": {
-                "Component": "51321b06-2a7b-eebe-187b-a68c11e80b87",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 441,
-                    "y": 277
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "3f413882-9032-19b3-46d5-342f9f8538cf": {
             "attributes": {},
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
@@ -2176,26 +2046,6 @@
                 "position": {
                     "x": 430,
                     "y": 158
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "4091a708-b3b0-3415-bdb4-e0df6a7c873b": {
-            "attributes": {
-                "name": "user_display-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "5072c238-746a-2504-86fb-956464805826",
-            "pointers": {
-                "Component": "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 439,
-                    "y": 355
                 }
             },
             "sets": {},
@@ -2296,25 +2146,6 @@
             "sets": {},
             "constraints": {}
         },
-        "44bd689d-5f1d-f86e-62a4-7273cf5628f2": {
-            "attributes": {
-                "name": "Servos"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "fc06016b-feff-16ef-cfb8-8031a4aa5318",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 285,
-                    "y": 274
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "44fcafc0-e7f2-3dd7-27fb-da8fd5960950": {
             "attributes": {},
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
@@ -2348,25 +2179,6 @@
                 "position": {
                     "x": 310,
                     "y": 682
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "465973da-27d0-b385-b8ab-36ed43a1d683": {
-            "attributes": {
-                "name": "Arm"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "f860146e-79cb-d8b1-c594-3ed47e77accd",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 350,
-                    "y": 199
                 }
             },
             "sets": {},
@@ -2589,26 +2401,6 @@
             "sets": {},
             "constraints": {}
         },
-        "4e48c1c7-c559-89da-8696-c803e2806b49": {
-            "attributes": {
-                "name": "rotation_controller-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "8d5bacda-b999-316e-9d04-4651d17add7e",
-            "pointers": {
-                "Component": "b2e7d5ea-aee1-a65f-0c05-8ab227b5be8f",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 430,
-                    "y": 256
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "4f130061-8b9f-0389-c288-ad2d46eeab44": {
             "attributes": {},
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
@@ -2663,25 +2455,6 @@
                 "position": {
                     "x": 393,
                     "y": 261
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "5072c238-746a-2504-86fb-956464805826": {
-            "attributes": {
-                "name": "User"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "be60eb39-137d-837e-c951-167fe117564f",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 349,
-                    "y": 241
                 }
             },
             "sets": {},
@@ -2933,26 +2706,6 @@
             "sets": {},
             "constraints": {}
         },
-        "5f72ea3e-f42a-57fa-cd13-bf0d97977e7b": {
-            "attributes": {
-                "name": "arm_controller-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "465973da-27d0-b385-b8ab-36ed43a1d683",
-            "pointers": {
-                "Component": "8c0974bd-12e4-dc59-4d43-7982b534b262",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 411,
-                    "y": 304
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "5fa73dfc-a08d-9aa3-cb07-c7869fccd187": {
             "attributes": {
                 "name": "Package"
@@ -3115,7 +2868,7 @@
         },
         "6a84f65c-0fbe-1fc6-79e8-2ff4bc2dcd1e": {
             "attributes": {
-                "Definition": "int32 testInt = 32 \r\nbool messageOn = false",
+                "Definition": "int32 testInt = 32;\nbool messageOn = false;",
                 "name": "radialPos"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
@@ -3128,25 +2881,6 @@
                 "position": {
                     "x": 171,
                     "y": 134
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "6a86bd60-e908-47b5-8fe2-e4b907a2162f": {
-            "attributes": {
-                "name": "Detector"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "f860146e-79cb-d8b1-c594-3ed47e77accd",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 354,
-                    "y": 274
                 }
             },
             "sets": {},
@@ -3207,25 +2941,6 @@
                 "position": {
                     "x": 401,
                     "y": 674
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "6d477b41-223c-5b64-634b-d99f753dc4be": {
-            "attributes": {
-                "name": "32 Host"
-            },
-            "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3",
-            "meta": {},
-            "parent": "731c3c11-a2ca-e3e3-85f9-0112ed485137",
-            "pointers": {
-                "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3"
-            },
-            "registry": {
-                "position": {
-                    "x": 237,
-                    "y": 190
                 }
             },
             "sets": {},
@@ -3340,23 +3055,6 @@
                     }
                 ]
             },
-            "constraints": {}
-        },
-        "731c3c11-a2ca-e3e3-85f9-0112ed485137": {
-            "attributes": {},
-            "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9",
-            "meta": {},
-            "parent": "8bc323b4-a4eb-abcd-b7a2-f710630dce1c",
-            "pointers": {
-                "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9"
-            },
-            "registry": {
-                "position": {
-                    "x": 102,
-                    "y": 260
-                }
-            },
-            "sets": {},
             "constraints": {}
         },
         "752d14c8-aee9-dece-1155-2553a795b2ef": {
@@ -3517,26 +3215,6 @@
             "sets": {},
             "constraints": {}
         },
-        "7a2b8f21-e7f9-4df0-a632-cd6f3453347e": {
-            "attributes": {
-                "name": "radial_controller-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "dcf0ed86-ffe7-9402-acf0-fe1c13455ce8",
-            "pointers": {
-                "Component": "9ec1ad14-ca6f-6895-63a1-6c501f97a49a",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 451,
-                    "y": 346
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "7af22c4c-4adc-d2ff-0bc4-6fab8ebce68e": {
             "attributes": {
                 "name": "Motor Control"
@@ -3684,7 +3362,9 @@
             "constraints": {}
         },
         "7ec97e63-8e60-b0c0-8e25-eec82cec64be": {
-            "attributes": {},
+            "attributes": {
+                "name": "Software Workspace"
+            },
             "base": "2562febd-1839-d9fe-3b97-0a0548314d85",
             "meta": {},
             "parent": "8bc323b4-a4eb-abcd-b7a2-f710630dce1c",
@@ -3693,8 +3373,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 98,
-                    "y": 141
+                    "x": 101,
+                    "y": 133
                 }
             },
             "sets": {},
@@ -3831,26 +3511,6 @@
                 "position": {
                     "x": 402,
                     "y": 453
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "87ae0580-23dd-40da-7936-fc21fcac9ec5": {
-            "attributes": {
-                "name": "rotation_controller-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "44bd689d-5f1d-f86e-62a4-7273cf5628f2",
-            "pointers": {
-                "Component": "b2e7d5ea-aee1-a65f-0c05-8ab227b5be8f",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 430,
-                    "y": 256
                 }
             },
             "sets": {},
@@ -4003,45 +3663,6 @@
                 "position": {
                     "x": 225,
                     "y": 254
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "8d5bacda-b999-316e-9d04-4651d17add7e": {
-            "attributes": {
-                "name": "Servos"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "35e0c52c-187b-dfef-3018-b413ba86a694",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 285,
-                    "y": 274
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "8d944a88-0c9f-6f22-b131-77fad9048ada": {
-            "attributes": {
-                "name": "image_sensor-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "b70d922c-1b07-87d0-7b6c-4d62a6d61b9a",
-            "pointers": {
-                "Component": "7599b53d-653a-1ff6-0d2a-c6a49dec721c",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 454,
-                    "y": 362
                 }
             },
             "sets": {},
@@ -4584,26 +4205,6 @@
             "sets": {},
             "constraints": {}
         },
-        "ac85effe-b89f-f818-1d15-39da24b8be22": {
-            "attributes": {
-                "name": "image_processor-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "6a86bd60-e908-47b5-8fe2-e4b907a2162f",
-            "pointers": {
-                "Component": "b6a8c9f5-4472-8e3b-4035-f5e90fdac5bb",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 457,
-                    "y": 255
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "ad2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
                 "name": "eth0"
@@ -4833,26 +4434,6 @@
             },
             "constraints": {}
         },
-        "b3cd4b66-017d-84f0-5992-f94d2a7fc1f2": {
-            "attributes": {
-                "name": "radial_controller-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "151629c1-1963-5d02-5350-ca3e0d69a964",
-            "pointers": {
-                "Component": "9ec1ad14-ca6f-6895-63a1-6c501f97a49a",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 451,
-                    "y": 346
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "b4ad8902-a012-9b67-be2b-2af12cdefa37": {
             "attributes": {},
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
@@ -4886,25 +4467,6 @@
                 "position": {
                     "x": 644,
                     "y": 289
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "b70d922c-1b07-87d0-7b6c-4d62a6d61b9a": {
-            "attributes": {
-                "name": "Imager"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "fc06016b-feff-16ef-cfb8-8031a4aa5318",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 282,
-                    "y": 347
                 }
             },
             "sets": {},
@@ -5022,25 +4584,6 @@
             "sets": {},
             "constraints": {}
         },
-        "be60eb39-137d-837e-c951-167fe117564f": {
-            "attributes": {
-                "name": "Command"
-            },
-            "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643",
-            "meta": {},
-            "parent": "362e1ab3-7bd9-88f0-109d-d980abdba83a",
-            "pointers": {
-                "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643"
-            },
-            "registry": {
-                "position": {
-                    "x": 353,
-                    "y": 394
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "bf3c5759-8b0e-c5a7-7666-e3d42038bc48": {
             "attributes": {
                 "name": "payloadBayStateFromImage"
@@ -5113,25 +4656,6 @@
                 "position": {
                     "x": 441,
                     "y": 348
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "c0c8def4-9d5d-41f0-ef3d-eda2b5f75db6": {
-            "attributes": {
-                "name": "1 Host"
-            },
-            "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3",
-            "meta": {},
-            "parent": "731c3c11-a2ca-e3e3-85f9-0112ed485137",
-            "pointers": {
-                "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3"
-            },
-            "registry": {
-                "position": {
-                    "x": 236,
-                    "y": 237
                 }
             },
             "sets": {},
@@ -5417,26 +4941,6 @@
             "sets": {},
             "constraints": {}
         },
-        "d3c154d8-d876-c7d0-9385-3b7dc30ca619": {
-            "attributes": {
-                "name": "vertical_controller-Component"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "dcf0ed86-ffe7-9402-acf0-fe1c13455ce8",
-            "pointers": {
-                "Component": "0a064327-011a-e497-672b-785e37ff448a",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 447,
-                    "y": 267
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "d5357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
@@ -5571,25 +5075,6 @@
             "sets": {
                 "Users": []
             },
-            "constraints": {}
-        },
-        "dcf0ed86-ffe7-9402-acf0-fe1c13455ce8": {
-            "attributes": {
-                "name": "Positioning"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "35e0c52c-187b-dfef-3018-b413ba86a694",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 285,
-                    "y": 203
-                }
-            },
-            "sets": {},
             "constraints": {}
         },
         "de357525-43a6-9058-d9f6-607e9275fb5e": {
@@ -5761,6 +5246,23 @@
                 "position": {
                     "x": 362,
                     "y": 255
+                }
+            },
+            "sets": {},
+            "constraints": {}
+        },
+        "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {
+            "attributes": {},
+            "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9",
+            "meta": {},
+            "parent": "8bc323b4-a4eb-abcd-b7a2-f710630dce1c",
+            "pointers": {
+                "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9"
+            },
+            "registry": {
+                "position": {
+                    "x": 100,
+                    "y": 266
                 }
             },
             "sets": {},
@@ -5965,44 +5467,6 @@
             },
             "constraints": {}
         },
-        "f860146e-79cb-d8b1-c594-3ed47e77accd": {
-            "attributes": {
-                "name": "HPC"
-            },
-            "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643",
-            "meta": {},
-            "parent": "362e1ab3-7bd9-88f0-109d-d980abdba83a",
-            "pointers": {
-                "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643"
-            },
-            "registry": {
-                "position": {
-                    "x": 354,
-                    "y": 306
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "fc06016b-feff-16ef-cfb8-8031a4aa5318": {
-            "attributes": {
-                "name": "DeviceControl"
-            },
-            "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643",
-            "meta": {},
-            "parent": "362e1ab3-7bd9-88f0-109d-d980abdba83a",
-            "pointers": {
-                "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643"
-            },
-            "registry": {
-                "position": {
-                    "x": 347,
-                    "y": 228
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "fd357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "name": "Node2"
@@ -6088,10 +5552,8 @@
         "12a356d3-8ec8-dd52-0801-686fb2299ef2": "UT",
         "132d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "13476356-59e6-ee3c-2834-6fe453f1fd92": "r",
-        "151629c1-1963-5d02-5350-ca3e0d69a964": "E",
         "182d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "183b7c25-179d-e884-f133-0024a5db330e": "f",
-        "1a27909f-3ef2-0ed0-6c25-0f5fdd205395": "6",
         "1a2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "1b4dffef-842f-6b3c-0302-596cf56a5459": "K",
         "1f0e696a-b922-ec04-d0bf-b3eeb74660c9": "j",
@@ -6116,27 +5578,21 @@
         "32e6a6ea-9cd5-fb73-ff8f-803b2d3492e6": "Sw",
         "34b22029-292d-bf37-d953-d91dedab2436": "Z",
         "35cb9167-ab2a-9164-a638-972a058f218c": "c",
-        "35e0c52c-187b-dfef-3018-b413ba86a694": "S",
-        "362e1ab3-7bd9-88f0-109d-d980abdba83a": "Z",
         "36d534c1-207e-1c52-5336-c74ff256793f": "b",
         "392d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "3abf1c09-fdc4-61e7-1e53-501eff8e76ee": "f",
         "3b0e696a-b922-ec04-d0bf-b3eeb74660c9": "e",
         "3b2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "3b80f4eb-1dea-2d26-2dfd-1e735a3e739b": "i",
-        "3bb328bd-49cb-d709-2cfb-8dc18e2312c7": "g",
         "3f413882-9032-19b3-46d5-342f9f8538cf": "JG",
         "40634285-7f30-4d56-3e22-6047fe32f0d7": "q",
         "407b4c7e-9826-6855-d391-df7e96c3e73b": "C",
-        "4091a708-b3b0-3415-bdb4-e0df6a7c873b": "K",
         "41357525-43a6-9058-d9f6-607e9275fb5e": "k",
         "43357525-43a6-9058-d9f6-607e9275fb5e": "R",
         "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9": "W",
         "447d091e-edb3-cc67-88f8-2c4b643ee131": "c",
-        "44bd689d-5f1d-f86e-62a4-7273cf5628f2": "h",
         "44fcafc0-e7f2-3dd7-27fb-da8fd5960950": "K",
         "4585b7fc-307e-c80c-ada2-02a2845c404d": "W",
-        "465973da-27d0-b385-b8ab-36ed43a1d683": "v",
         "47725ce0-f096-ea93-a507-004673d77790": "u",
         "47ab116f-f11c-a37a-8b11-291b91578348": "O",
         "47fdb167-6041-cd46-fa83-f6fb651c652d": "3",
@@ -6146,11 +5602,9 @@
         "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643": "j",
         "4bc1deb3-abb3-9bf2-ee49-a072843d1eaf": "gh",
         "4d04c2a5-a077-dbc9-bb12-690bb10fffc9": "d6",
-        "4e48c1c7-c559-89da-8696-c803e2806b49": "X",
         "4f130061-8b9f-0389-c288-ad2d46eeab44": "3s",
         "4fc00747-714d-4832-998f-c520d0d3edfc": "n",
         "50177db4-7d87-86ab-98ae-472f9cfd788c": "w",
-        "5072c238-746a-2504-86fb-956464805826": "t",
         "51321b06-2a7b-eebe-187b-a68c11e80b87": "5",
         "5173ec58-cf6c-e536-1efc-d1cf17642062": "R",
         "5364e1ea-29d3-bc62-87fa-b5715ac58d86": "8",
@@ -6162,7 +5616,6 @@
         "5e036e97-58b4-2376-76c5-97ef45bd8c29": "d",
         "5e29f1d2-99a8-9559-faff-e924a9c5e677": "K",
         "5f2d14c8-aee9-dece-1155-2553a795b2ef": "3",
-        "5f72ea3e-f42a-57fa-cd13-bf0d97977e7b": "I",
         "5fa73dfc-a08d-9aa3-cb07-c7869fccd187": "5",
         "60357525-43a6-9058-d9f6-607e9275fb5e": "3",
         "62357525-43a6-9058-d9f6-607e9275fb5e": "6",
@@ -6171,15 +5624,12 @@
         "6815fb72-468f-ef04-95a9-117eb05569de": "o",
         "69357525-43a6-9058-d9f6-607e9275fb5e": "I",
         "6a84f65c-0fbe-1fc6-79e8-2ff4bc2dcd1e": "d",
-        "6a86bd60-e908-47b5-8fe2-e4b907a2162f": "O",
         "6b357525-43a6-9058-d9f6-607e9275fb5e": "E",
         "6c0c5975-cf58-cb4b-be6c-292744a30726": "IH",
         "6d32e61a-93a8-9056-b3db-be265442f959": "Q",
-        "6d477b41-223c-5b64-634b-d99f753dc4be": "S",
         "6e77078a-7ffc-3881-d2b3-469431fa7020": "F",
         "6eee186c-a14e-3be3-d7b1-7fa840843c05": "K",
         "6f725ce0-f096-ea93-a507-004673d77790": "X",
-        "731c3c11-a2ca-e3e3-85f9-0112ed485137": "0",
         "752d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "7575417a-f5cb-d71e-d261-752e90aee4c3": "L",
         "75973fe4-d007-56ab-2df2-483fac45138c": "w",
@@ -6187,7 +5637,6 @@
         "769c7992-7dd1-3447-3e3c-953fd7e158d4": "1",
         "772d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "78617d39-7d27-d9f9-b421-7b8621f0380c": "T",
-        "7a2b8f21-e7f9-4df0-a632-cd6f3453347e": "g",
         "7af22c4c-4adc-d2ff-0bc4-6fab8ebce68e": "c",
         "7c2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "7c408f55-a315-ae29-dd73-60bbbfc9fb8d": "n",
@@ -6203,7 +5652,6 @@
         "862a9375-04a6-d7d7-72c3-7fd13b4b4b3b": "n",
         "872d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "874020d4-54d8-0c9b-0bda-18052dae44db": "r",
-        "87ae0580-23dd-40da-7936-fc21fcac9ec5": "X",
         "87dd799d-18a6-52e6-4fea-8bbf6167a7ef": "r",
         "883f2275-89f3-3656-d28f-33178a9e6a8d": "O",
         "8b4a76cc-97a5-fa9a-5eea-273484f9d5ac": "Lm",
@@ -6212,8 +5660,6 @@
         "8c0974bd-12e4-dc59-4d43-7982b534b262": "V",
         "8c2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "8c5166ed-ded6-b1af-279f-ba01d0aff3fc": "G",
-        "8d5bacda-b999-316e-9d04-4651d17add7e": "h",
-        "8d944a88-0c9f-6f22-b131-77fad9048ada": "M",
         "8e2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "8ed56a84-1f2b-cf95-c812-e0a6f8646438": "M",
         "8ff74691-1535-f037-068b-52df355dd0bd": "U",
@@ -6237,7 +5683,6 @@
         "a755c03e-6812-2249-d918-920af2dea6b1": "h",
         "a83b8adb-232e-4f68-ca06-3ee2c728765b": "h",
         "a9958819-7856-4774-1ef4-934c974095af": "O",
-        "ac85effe-b89f-f818-1d15-39da24b8be22": "C",
         "ad2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "ad688a62-aeb6-e1e6-31a2-573db6aee77c": "v",
         "ad77ee64-9293-7b02-03c2-508ee3e4ed74": "s",
@@ -6248,21 +5693,17 @@
         "b1357525-43a6-9058-d9f6-607e9275fb5e": "z",
         "b2e7d5ea-aee1-a65f-0c05-8ab227b5be8f": "5",
         "b3357525-43a6-9058-d9f6-607e9275fb5e": "aH",
-        "b3cd4b66-017d-84f0-5992-f94d2a7fc1f2": "g",
         "b4ad8902-a012-9b67-be2b-2af12cdefa37": "G",
         "b6a8c9f5-4472-8e3b-4035-f5e90fdac5bb": "Y",
-        "b70d922c-1b07-87d0-7b6c-4d62a6d61b9a": "H",
         "b8357525-43a6-9058-d9f6-607e9275fb5e": "A",
         "ba0b9e89-2b1a-6163-aeac-8b1884e7638b": "B",
         "ba357525-43a6-9058-d9f6-607e9275fb5e": "QQ",
         "ba80db39-e4f4-0e84-a57a-02abf337529e": "9",
         "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1": "D",
-        "be60eb39-137d-837e-c951-167fe117564f": "X",
         "bf3c5759-8b0e-c5a7-7666-e3d42038bc48": "e",
         "c02d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "c0742d5e-657f-56c8-fa2f-38560878df39": "e",
         "c093774a-c2a4-bf78-3180-5f6f82ed8cf5": "8",
-        "c0c8def4-9d5d-41f0-ef3d-eda2b5f75db6": "r",
         "c120272d-4798-3401-9087-d53be13fa646": "U",
         "c13851f2-6d96-924e-ad80-da6c3c41050c": "oA",
         "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5": "c",
@@ -6275,14 +5716,12 @@
         "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045": "1",
         "cf2109f7-7027-451c-095f-c0bc64833ba9": "I",
         "d2401091-4e08-04c7-a9a2-d668fb6ea4df": "4",
-        "d3c154d8-d876-c7d0-9385-3b7dc30ca619": "6",
         "d5357525-43a6-9058-d9f6-607e9275fb5e": "c",
         "d7357525-43a6-9058-d9f6-607e9275fb5e": "g",
         "d99b77d9-0121-d873-f4c7-784bd7690980": "w",
         "da2ea5d7-26ee-0923-0025-38bfbceb5293": "z",
         "db6aa52c-19d4-c683-5f30-17b381f7e42f": "n2",
         "dc357525-43a6-9058-d9f6-607e9275fb5e": "N",
-        "dcf0ed86-ffe7-9402-acf0-fe1c13455ce8": "E",
         "de357525-43a6-9058-d9f6-607e9275fb5e": "M",
         "df437d49-a83e-6944-62ed-52fd3dcf806d": "U",
         "e12d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -6291,6 +5730,7 @@
         "e3cd1771-47f7-af5e-11bf-1016427c49fb": "B",
         "e400d5b7-c955-fc81-382e-2c414b44fc20": "x",
         "e82d14c8-aee9-dece-1155-2553a795b2ef": "3",
+        "e95e44ec-0245-5b7d-1650-bfb4f10b941c": "G",
         "ea2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "eb7ba3ff-ef69-3368-24b8-84ee1a9e4e93": "i",
         "ecde4aa3-106a-f888-fe6b-473f56ac2d21": "l",
@@ -6301,8 +5741,6 @@
         "f4357525-43a6-9058-d9f6-607e9275fb5e": "x",
         "f5b6be0c-b866-ac8f-c0e9-38e8c3cba2de": "A",
         "f6357525-43a6-9058-d9f6-607e9275fb5e": "0D",
-        "f860146e-79cb-d8b1-c594-3ed47e77accd": "I",
-        "fc06016b-feff-16ef-cfb8-8031a4aa5318": "u",
         "fd357525-43a6-9058-d9f6-607e9275fb5e": "a",
         "ff038fbb-6658-4ff3-0bce-d0b26e5a494b": "h",
         "ff357525-43a6-9058-d9f6-607e9275fb5e": "l"
