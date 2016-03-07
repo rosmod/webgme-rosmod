@@ -40,7 +40,7 @@ void <%= compInfo.name %>::<%= compInfo.timers[tmr].name %>_operation(const NAME
 for (var sub in compInfo.subscribers) {
 -%>
 // Subscriber Operation - <%= compInfo.subscribers[sub].name %>
-void <%= compInfo.name %>::<%= compInfo.subscribers[sub].name %>_operation(const <%= compInfo.subscribers[sub].topic %>::ConstPtr& received_data)
+void <%= compInfo.name %>::<%= compInfo.subscribers[sub].name %>_operation(const <%= compInfo.subscribers[sub].topic.packageName %>::<%= compInfo.subscribers[sub].topic.name %>::ConstPtr& received_data)
 {
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%= compInfo.name %>::<%= compInfo.subscribers[sub].name %>_operation");
@@ -58,7 +58,7 @@ void <%= compInfo.name %>::<%= compInfo.subscribers[sub].name %>_operation(const
 for (var srv in compInfo.servers) {
 -%>
 // Server Operation - <%= compInfo.servers[srv].name %>
-void <%= compInfo.name %>::<%= compInfo.servers[srv].name %>_operation(const <%= compInfo.servers[srv].service %>::Request &req, <%= compInfo.servers[srv].service %>::Response &res )
+void <%= compInfo.name %>::<%= compInfo.servers[srv].name %>_operation(const <%= compInfo.servers[srv].service.packageName %>::<%= compInfo.servers[srv].service.name %>::Request &req, <%= compInfo.servers[srv].service.packageName %>::<%= compInfo.servers[srv].service.name %>::Response &res )
 {
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%= compInfo.name %>::<%= compInfo.servers[srv].name %>_operation");
@@ -161,11 +161,11 @@ for (var srv in compInfo.servers) {
   callback_options.deadline.nsec = <%= compInfo.servers[srv].deadline % 1 %>;
 #endif    
   // Server - <%= compInfo.servers[srv].name %>
-  advertiseName = "<%= compInfo.servers[srv].service %>";
+  advertiseName = "<%= compInfo.servers[srv].service.name %>";
   if (config.portGroupMap.find("<%= compInfo.servers[srv].name %>") != config.portGroupMap.end())
     advertiseName += "_" + config.portGroupMap["<%= compInfo.servers[srv].name %>"];
   NAMESPACE::AdvertiseServiceOptions <%= compInfo.servers[srv].name %>_server_options;
-  <%= compInfo.servers[srv].name %>_server_options = NAMESPACE::AdvertiseServiceOptions::create<<%= compInfo.packageName %>::<%= compInfo.servers[srv].service %>>
+  <%= compInfo.servers[srv].name %>_server_options = NAMESPACE::AdvertiseServiceOptions::create<<%= compInfo.servers[srv].service.packageName %>::<%= compInfo.servers[srv].service.name %>>
       (advertiseName.c_str(),
        boost::bind(&Component_2::<%= compInfo.servers[srv].name %>_operation, this, _1, _2),
        NAMESPACE::VoidPtr(),
@@ -184,10 +184,10 @@ for (var srv in compInfo.servers) {
 for (var clt in compInfo.clients) {
 -%>
   // Client - <%= compInfo.clients[clt].name %>
-  advertiseName = <%= compInfo.clients[clt].service %>;
+  advertiseName = "<%= compInfo.clients[clt].service.name %>";
   if (config.portGroupMap.find("<%= compInfo.clients[clt].name %>") != config.portGroupMap.end())
     advertiseName += "_" + config.portGroupMap["<%= compInfo.clients[clt].name %>"];
-  this-><%= compInfo.clients[clt].name %> = nh.serviceClient<<%= compInfo.packageName %>::<%= compInfo.clients[clt].service %>>(advertiseName.c_str(), true); 
+  this-><%= compInfo.clients[clt].name %> = nh.serviceClient<<%= compInfo.clients[clt].service.packageName %>::<%= compInfo.clients[clt].service.name %>>(advertiseName.c_str(), true); 
 <%
 }
 -%>
@@ -196,10 +196,10 @@ for (var clt in compInfo.clients) {
 for (var pub in compInfo.publishers) {
 -%>
   // Publisher - <%= compInfo.publishers[pub].name %>
-  advertiseName = <%= compInfo.publishers[pub].topic %>;
+  advertiseName = <%= compInfo.publishers[pub].topic.name %>;
   if (config.portGroupMap.find("<%= compInfo.publishers[pub].name %>") != config.portGroupMap.end())
     advertiseName += "_" + config.portGroupMap["<%= compInfo.publishers[pub].name %>"];
-  this-><%= compInfo.publishers[pub].name %> = nh.advertise<<%= compInfo.packageName %>::<%= compInfo.publishers[pub].topic %>>(advertiseName.c_str(), true); 
+  this-><%= compInfo.publishers[pub].name %> = nh.advertise<<%= compInfo.publishers[pub].topic.packageName %>::<%= compInfo.publishers[pub].topic.name %>>(advertiseName.c_str(), true); 
 <%
 }
 -%>
@@ -214,11 +214,11 @@ for (var sub in compInfo.subscribers) {
   callback_options.deadline.sec = <%= Math.floor(compInfo.subscribers[sub].deadline) %>;
   callback_options.deadline.nsec = <%= compInfo.subscribers[sub].deadline % 1 %>;
 #endif  
-  advertiseName = "<%= compInfo.subscribers[sub].topic %>";
+  advertiseName = "<%= compInfo.subscribers[sub].topic.name %>";
   if (config.portGroupMap.find("<%= compInfo.subscribers[sub].name %>") != config.portGroupMap.end())
     advertiseName += "_" + config.portGroupMap["<%= compInfo.subscribers[sub].name %>"];
   NAMESPACE::SubscribeOptions <%= compInfo.subscribers[sub].name %>_options;
-  <%= compInfo.subscribers[sub].name %>_options = NAMESPACE::SubscribeOptions::create<<%= compInfo.packageName %>::<%= compInfo.subscribers[sub].topic %>>
+  <%= compInfo.subscribers[sub].name %>_options = NAMESPACE::SubscribeOptions::create<<%= compInfo.subscribers[sub].topic.packageName %>::<%= compInfo.subscribers[sub].topic.name %>>
       (advertiseName.c_str(),
        1000,
        boost::bind(&Component_1::<%= compInfo.subscribers[sub].name %>_operation, this, _1),
