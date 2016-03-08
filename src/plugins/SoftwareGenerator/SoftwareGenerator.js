@@ -213,7 +213,7 @@ define([
 			    .components[parentName]
 			    .clients[nodeName] = {
 				name: nodeName,
-				service: 'SERVICE TYPE HERE',
+				service: {},
 				priority: self.core.getAttribute(node, 'Priority'),
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile')
 			    };
@@ -225,7 +225,7 @@ define([
 			    .components[parentName]
 			    .servers[nodeName] = {
 				name: nodeName,
-				service: 'SERVICE TYPE HERE',
+				service: {},
 				priority: self.core.getAttribute(node, 'Priority'),
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
 				deadline: self.core.getAttribute(node, 'Deadline'),

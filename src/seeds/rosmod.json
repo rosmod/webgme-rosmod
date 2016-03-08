@@ -1185,6 +1185,7 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "decorator": "CodeEditorDecorator",
                 "position": {
                     "x": 129,
                     "y": 1039
@@ -2042,6 +2043,7 @@
                 "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293"
             },
             "registry": {
+                "decorator": "CodeEditorDecorator",
                 "isAbstract": false,
                 "position": {
                     "x": 180,
@@ -4788,6 +4790,7 @@
                 "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293"
             },
             "registry": {
+                "decorator": "CodeEditorDecorator",
                 "isAbstract": false,
                 "position": {
                     "x": 180,

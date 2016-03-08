@@ -53,6 +53,10 @@ define([
                 nodeObj.getAttribute('Definition') !== undefined) {
                 self._showEditorDialog('Definition');
             }
+	    else if (self.hostDesignerItem.canvas.getIsReadOnlyMode() !== true &&
+                nodeObj.getAttribute('Operation') !== undefined) {
+                self._showEditorDialog('Operation');
+            }
             event.stopPropagation();
             event.preventDefault();
         });
@@ -95,7 +99,8 @@ define([
         ModelDecoratorDiagramDesignerWidget.prototype.update.apply(this, arguments);
 
         if (nodeObj) {
-            newDoc = nodeObj.getAttribute('Definition') || '';
+	    var attrs = nodeObj.getAttributes();
+            newDoc = nodeObj.getAttribute('Definition') || nodeObj.getAttribute('Operation') ||'';
         }
     };
 
