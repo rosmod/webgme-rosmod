@@ -4,13 +4,14 @@
 
 define(['js/util',
 	'../Libs/cm/lib/codemirror', '../Libs/cm/mode/javascript/javascript',
-	//'../Libs/cm/keymap/emacs', '../Libs/cm/keymap/sublime', '../Libs/cm/keymap/vim',
+	'../Libs/cm/keymap/emacs', '../Libs/cm/keymap/sublime', '../Libs/cm/keymap/vim',
 	'text!./DocumentEditorDialog.html',
 	'css!./DocumentEditorDialog.css',
 	'css!../Libs/cm/lib/codemirror.css'],
     function(Util,
              CodeMirror,
 	     CodeMirrorModeJavascript,
+	     CodeMirrorEmacsKeymap, CodeMirrorSublimeKeymap, CodeMirrorVimKeymap,
              DocumentEditorDialogTemplate){
         'use strict';
 	
@@ -36,8 +37,7 @@ define(['js/util',
 	    var CodeMirrorEditorOptions = {
 		lineNumbers: true,
 		viewPortMargin: Infinity,
-		//keyMap: 'emacs',
-		gutters: ['CodeMirror-linenumbers'],
+		keyMap: "emacs",
 		path: 'decorators/DocumentEditorDialog/Libs/cm/lib/',
 		mode: {
 		    name: 'javascript',
