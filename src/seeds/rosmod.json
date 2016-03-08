@@ -1913,7 +1913,7 @@
         },
         "3abf1c09-fdc4-61e7-1e53-501eff8e76ee": {
             "attributes": {
-                "name": "imageProcessor"
+                "name": "image_processor"
             },
             "base": "5fa73dfc-a08d-9aa3-cb07-c7869fccd187",
             "meta": {},
@@ -3271,7 +3271,7 @@
         },
         "7af22c4c-4adc-d2ff-0bc4-6fab8ebce68e": {
             "attributes": {
-                "name": "motorController"
+                "name": "motor_controller"
             },
             "base": "5fa73dfc-a08d-9aa3-cb07-c7869fccd187",
             "meta": {},
@@ -3457,7 +3457,7 @@
         },
         "83f33549-7a85-a619-35b2-b18209fdda9d": {
             "attributes": {
-                "name": "highLevelController"
+                "name": "high_level_controller"
             },
             "base": "5fa73dfc-a08d-9aa3-cb07-c7869fccd187",
             "meta": {},
