@@ -3,14 +3,14 @@
  */
 
 define(['js/util',
-	'../Libs/cm/lib/codemirror', '../Libs/cm/mode/javascript/javascript',
+	'../Libs/cm/lib/codemirror', '../Libs/cm/mode/clike/clike',
 	'../Libs/cm/keymap/emacs', '../Libs/cm/keymap/sublime', '../Libs/cm/keymap/vim',
 	'text!./DocumentEditorDialog.html',
 	'css!./DocumentEditorDialog.css',
 	'css!../Libs/cm/lib/codemirror.css'],
     function(Util,
              CodeMirror,
-	     CodeMirrorModeJavascript,
+	     CodeMirrorModeClike,
 	     CodeMirrorEmacsKeymap, CodeMirrorSublimeKeymap, CodeMirrorVimKeymap,
              DocumentEditorDialogTemplate){
         'use strict';
@@ -40,8 +40,24 @@ define(['js/util',
 		keyMap: "emacs",
 		path: 'decorators/DocumentEditorDialog/Libs/cm/lib/',
 		mode: {
-		    name: 'javascript',
-		    matchBrackets: true
+		    name: 'clike',
+		    keywords: {
+			int8: 'int8',
+			int16: 'int16',
+			int32: 'int32',
+			int64: 'int64',
+			uint8: 'uint8',
+			uint16: 'uint16',
+			uint32: 'uint32',
+			uint64: 'uint64',
+			bool: 'bool',
+			float32: 'float32',
+			float64: 'float64',
+			string: 'string',
+			time: 'time',
+			duration: 'duration'
+		    },
+		    useCPP: true
 		}
 	    };
 	    this.editor = new CodeMirror.fromTextArea(
