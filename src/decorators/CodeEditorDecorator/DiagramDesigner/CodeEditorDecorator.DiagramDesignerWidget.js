@@ -63,13 +63,11 @@ define([
             client = this._control._client,
             nodeObj = client.getNode(this._metaInfo[CONSTANTS.GME_ID]),
             attrText = nodeObj.getAttribute(attrName),
-	    title = '<title>';
-
-        var editorDialog = new DocumentEditorDialog();
-	var baseObjectID = nodeObj.getParentId();
-	var baseObject = client.getNode(baseObjectID);
-	var baseType = baseObject.getAttribute('name');
-	title = 'Enter ' + baseType + ' ' + attrName;
+	    editorDialog = new DocumentEditorDialog(),
+	    baseObjectID = nodeObj.getParentId(),
+	    baseObject = client.getNode(baseObjectID),
+	    baseType = baseObject.getAttribute('name'),
+	    title = 'Enter ' + baseType + ' ' + attrName;
 
         // Initialize with Definition attribute and save callback function
         editorDialog.initialize(title, attrText, function (text) {
