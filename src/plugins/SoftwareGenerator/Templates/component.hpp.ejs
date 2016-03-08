@@ -2,16 +2,13 @@
 #define CLIENT_HPP
 #include "node/Component.hpp"
 
-// Messages required for this component
+// Messages and Services required for this component
 <%
+for (var i=0; i < compInfo.requiredTypes.length; i++) {
 -%>
+#include "<%= compInfo.requiredTypes[i].packageName %>/<%= compInfo.requiredTypes[i].name %>.hpp"
 <%
--%>
-
-// Services required for this component
-<%
--%>
-<%
+}
 -%>
 
 #ifdef USE_ROSMOD
@@ -35,11 +32,27 @@ public:
   // Initialization
   void init_timer_operation(const NAMESPACE::TimerEvent& event);
 
+  // Timers
 <%
 for (var tmr in compInfo.timers) {
 -%>
-  // Timer Operation - <%= compInfo.timers[tmr].name %>
   void <%= compInfo.timers[tmr].name %>_operation(const NAMESPACE::TimerEvent& event);
+<%
+}
+-%>
+  // Subscribers
+<%
+for (var sub in compInfo.subscribers) {
+-%>
+  void <%= compInfo.subscribers[sub].name %>_operation(const <%= compInfo.subscribers[sub].topic.packageName %>::<%= compInfo.subscribers[sub].topic.name %>::ConstPtr& received_data);
+<%
+}
+-%>
+  // Servers
+<%
+for (var srv in compInfo.servers) {
+-%>
+  void <%= compInfo.servers[srv].name %>_operation(const <%= compInfo.servers[srv].service.packageName %>::<%= compInfo.servers[srv].service.name %>::Request &req, <%= compInfo.servers[srv].service.packageName %>::<%= compInfo.servers[srv].service.name %>::Response &res);
 <%
 }
 -%>

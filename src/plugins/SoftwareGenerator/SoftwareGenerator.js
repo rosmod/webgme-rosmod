@@ -34,24 +34,12 @@ define([
         // Call base class' constructor.
         PluginBase.call(this);
         this.metaTypes = MetaTypes;
-        this.FILES = [
-            {
-                name: 'component_cpp',
-                template: 'component.cpp.ejs'
-            },
-            {
-                name: 'component_hpp',
-                template: 'component.hpp.ejs'
-            },
-            {
-                name: 'cmakelists',
-                template: 'CMakeLists.txt.ejs',
-            },
-            {
-                name: 'package_xml',
-                template: 'package_xml.ejs',
-            }
-        ];
+        this.FILES = {
+            'component_cpp': 'component.cpp.ejs',
+            'component_hpp': 'component.hpp.ejs',
+            'cmakelists': 'CMakeLists.txt.ejs',
+            'package_xml': 'package_xml.ejs'
+        };
     };
 
     // Prototypal inheritance from PluginBase.
@@ -159,6 +147,7 @@ define([
 			dataModel.packages[parentName].components[nodeName] = {
 			    name: nodeName,
 			    packageName: parentName,
+			    requiredTypes: [],
 			    timers: {},
 			    publishers: {},
 			    subscribers: {},
@@ -253,39 +242,65 @@ define([
 		for (var i=0; i < retData.length; i++) {
 		    var subarr = retData[i];
 		    for (var j=0; j < subarr.length; j++) {
-			var dataRef = subarr[j];
-			//self.createMessage(null, 'got retData: ' + JSON.stringify(dataRef, null, 2));
+			var dataRef = subarr[j],
+			    test = -1,
+			    type = -1;
 			if (dataRef.srcType == 'Publisher') {
+			    type = softwareModel
+				.dataModel.packages[dataRef.topicPackage]
+				.messages[dataRef.topic];
 			    softwareModel.dataModel.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.publishers[dataRef.src]
-				.topic = softwareModel
-				.dataModel.packages[dataRef.topicPackage]
-				.messages[dataRef.topic];
+				.topic = type;
+			    test = softwareModel.dataModel.packages[dataRef.srcPkg]
+				.components[dataRef.srcComp]
+				.requiredTypes
+				.indexOf(type);
 			}
 			else if (dataRef.srcType == 'Subscriber') {
+			    type = softwareModel
+				.dataModel.packages[dataRef.topicPackage]
+				.messages[dataRef.topic];
 			    softwareModel.dataModel.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.subscribers[dataRef.src]
-				.topic = softwareModel
-				.dataModel.packages[dataRef.topicPackage]
-				.messages[dataRef.topic];
+				.topic = type;
+			    test = softwareModel.dataModel.packages[dataRef.srcPkg]
+				.components[dataRef.srcComp]
+				.requiredTypes
+				.indexOf(type);
 			}
 			else if (dataRef.srcType == 'Client') {
+			    type = softwareModel
+				.dataModel.packages[dataRef.servicePackage]
+				.services[dataRef.service];
 			    softwareModel.dataModel.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.clients[dataRef.src]
-				.service = softwareModel
-				.dataModel.packages[dataRef.servicePackage]
-				.services[dataRef.service];
+				.service = type;
+			    test = softwareModel.dataModel.packages[dataRef.srcPkg]
+				.components[dataRef.srcComp]
+				.requiredTypes
+				.indexOf(type);
 			}
 			else if (dataRef.srcType == 'Server') {
+			    type = softwareModel
+				.dataModel.packages[dataRef.servicePackage]
+				.services[dataRef.service];
 			    softwareModel.dataModel.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.servers[dataRef.src]
-				.service = softwareModel
-				.dataModel.packages[dataRef.servicePackage]
-				.services[dataRef.service];
+				.service = type;
+			    test = softwareModel.dataModel.packages[dataRef.srcPkg]
+				.components[dataRef.srcComp]
+				.requiredTypes
+				.indexOf(type);
+			}
+			if (test == -1 && type != -1) {
+			    softwareModel.dataModel.packages[dataRef.srcPkg]
+				.components[dataRef.srcComp]
+				.requiredTypes.push(type);
 			}
 		    }
 		}
@@ -389,22 +404,26 @@ define([
         }, null, 2);
 
         for (var pkg in softwareModel.packages) {
-	    var pkgInfo = softwareModel.packages[pkg];
-	    var cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt';
-	    filesToAdd[cmakeFileName] = ejs.render(TEMPLATES['CMakeLists.txt.ejs'], {'pkgInfo':pkgInfo});
+	    var pkgInfo = softwareModel.packages[pkg],
+		cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt',
+		cmakeTemplate = TEMPLATES[self.FILES['cmakelists']];
+	    filesToAdd[cmakeFileName] = ejs.render(cmakeTemplate, {'pkgInfo':pkgInfo});
+
+	    var packageXMLFileName = prefix + pkgInfo.name + '/package.xml',
+		packageXMLTemplate = TEMPLATES[self.FILES['package_xml']];
+	    filesToAdd[packageXMLFileName] = ejs.render(packageXMLTemplate, {'pkgInfo':pkgInfo});
+
 	    for (var cmp in pkgInfo.components) {
 		var compInfo = pkgInfo.components[cmp];
 		self.generateComponentFiles(filesToAdd, prefix, pkgInfo, compInfo);
 	    }
-
-	    var package_xmlFileName = prefix + pkgInfo.name + '/package.xml';
-	    filesToAdd[package_xmlFileName] = ejs.render(TEMPLATES['package_xml.ejs'], {'pkgInfo':pkgInfo});
 
 	    for (var msg in pkgInfo.messages) {
 		var msgInfo = pkgInfo.messages[msg],
 		    msgFileName = prefix + pkgInfo.name + '/msg/' + msgInfo.name + '.msg';
 		filesToAdd[msgFileName] = msgInfo.definition;
 	    }
+
 	    for (var srv in pkgInfo.services) {
 		var srvInfo = pkgInfo.services[srv],
 		    srvFileName = prefix + pkgInfo.name + '/srv/' + srvInfo.name + '.srv';
@@ -430,9 +449,11 @@ define([
 
     SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, prefix, pkgInfo, compInfo) {
 	var inclFileName = prefix + pkgInfo.name + '/include/' + pkgInfo.name + '/' + compInfo.name + '.hpp',
-	    srcFileName = prefix + pkgInfo.name + '/src/' + pkgInfo.name + '/' + compInfo.name + '.cpp';
-	filesToAdd[inclFileName] = ejs.render(TEMPLATES['component.hpp.ejs'], {'compInfo':compInfo});
-	filesToAdd[srcFileName] = ejs.render(TEMPLATES['component.cpp.ejs'], {'compInfo':compInfo});
+	    srcFileName = prefix + pkgInfo.name + '/src/' + pkgInfo.name + '/' + compInfo.name + '.cpp',
+	    compCPPTemplate = TEMPLATES[this.FILES['component_cpp']],
+	    compHPPTemplate = TEMPLATES[this.FILES['component_hpp']];
+	filesToAdd[inclFileName] = ejs.render(compHPPTemplate, {'compInfo':compInfo});
+	filesToAdd[srcFileName] = ejs.render(compCPPTemplate, {'compInfo':compInfo});
     };
 
     return SoftwareGenerator;

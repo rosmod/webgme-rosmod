@@ -154,13 +154,13 @@ void <%= compInfo.name %>::startUp()
 <%
 for (var srv in compInfo.servers) {
 -%>
+  // Server - <%= compInfo.servers[srv].name %>
 #ifdef USE_ROSMOD  
   callback_options.alias = "<%= compInfo.servers[srv].name %>_operation";
   callback_options.priority = <%= compInfo.servers[srv].priority %>;
   callback_options.deadline.sec =<%= Math.floor(compInfo.servers[srv].deadline) %>;
   callback_options.deadline.nsec = <%= compInfo.servers[srv].deadline % 1 %>;
 #endif    
-  // Server - <%= compInfo.servers[srv].name %>
   advertiseName = "<%= compInfo.servers[srv].service.name %>";
   if (config.portGroupMap.find("<%= compInfo.servers[srv].name %>") != config.portGroupMap.end())
     advertiseName += "_" + config.portGroupMap["<%= compInfo.servers[srv].name %>"];
