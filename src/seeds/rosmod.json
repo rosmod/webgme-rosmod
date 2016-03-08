@@ -680,8 +680,8 @@
                         "guid": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
                         "registry": {
                             "position": {
-                                "x": 372,
-                                "y": 74
+                                "x": 370,
+                                "y": 69
                             }
                         }
                     }
@@ -692,8 +692,8 @@
                         "guid": "0066ce30-e372-bb27-23c3-219c7d934553",
                         "registry": {
                             "position": {
-                                "x": 35,
-                                "y": 729
+                                "x": 30,
+                                "y": 834
                             }
                         }
                     },
@@ -702,8 +702,8 @@
                         "guid": "0f474808-eadf-a345-7ee9-7279326aab1e",
                         "registry": {
                             "position": {
-                                "x": 391,
-                                "y": 580
+                                "x": 390,
+                                "y": 645
                             }
                         }
                     },
@@ -742,8 +742,8 @@
                         "guid": "40634285-7f30-4d56-3e22-6047fe32f0d7",
                         "registry": {
                             "position": {
-                                "x": 382,
-                                "y": 732
+                                "x": 380,
+                                "y": 834
                             }
                         }
                     },
@@ -782,8 +782,8 @@
                         "guid": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
                         "registry": {
                             "position": {
-                                "x": 269,
-                                "y": 731
+                                "x": 270,
+                                "y": 834
                             }
                         }
                     },
@@ -882,8 +882,8 @@
                         "guid": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
                         "registry": {
                             "position": {
-                                "x": 139,
-                                "y": 729
+                                "x": 140,
+                                "y": 834
                             }
                         }
                     },
@@ -902,8 +902,8 @@
                         "guid": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
                         "registry": {
                             "position": {
-                                "x": 242,
-                                "y": 584
+                                "x": 240,
+                                "y": 645
                             }
                         }
                     },
@@ -1153,6 +1153,7 @@
         "0f474808-eadf-a345-7ee9-7279326aab1e": {
             "attributes": {
                 "Deadline": 0,
+                "Operation": "",
                 "Period": 0,
                 "Priority": 50,
                 "name": "Timer"
@@ -1160,16 +1161,19 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Priority": {
-                        "type": "integer",
-                        "min": 1,
-                        "max": 99
+                    "Operation": {
+                        "type": "string"
+                    },
+                    "Period": {
+                        "type": "float"
                     },
                     "Deadline": {
                         "type": "float"
                     },
-                    "Period": {
-                        "type": "float"
+                    "Priority": {
+                        "type": "integer",
+                        "min": 1,
+                        "max": 99
                     }
                 }
             },
@@ -1991,11 +1995,15 @@
         "40634285-7f30-4d56-3e22-6047fe32f0d7": {
             "attributes": {
                 "Deadline": 0,
+                "Operation": "",
                 "name": "Server"
             },
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
+                    "Operation": {
+                        "type": "string"
+                    },
                     "Deadline": {
                         "type": "float"
                     }
@@ -2502,10 +2510,32 @@
         },
         "5364e1ea-29d3-bc62-87fa-b5715ac58d86": {
             "attributes": {
+                "Definitions": "",
+                "Destruction": "",
+                "Forwards": "",
+                "Initialization": "",
+                "Members": "",
                 "name": "Component"
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
+                "attributes": {
+                    "Members": {
+                        "type": "string"
+                    },
+                    "Initialization": {
+                        "type": "string"
+                    },
+                    "Forwards": {
+                        "type": "string"
+                    },
+                    "Destruction": {
+                        "type": "string"
+                    },
+                    "Definitions": {
+                        "type": "string"
+                    }
+                },
                 "children": {
                     "items": [
                         "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -2741,7 +2771,13 @@
                 }
             },
             "sets": {},
-            "constraints": {}
+            "constraints": {
+                "nameConstraint": {
+                    "script": "function(core, node, callback) {\n  callback(node,{hasViolation:true,message:'TEST: '});\n}",
+                    "priority": 1,
+                    "info": ""
+                }
+            }
         },
         "60357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -3604,7 +3640,7 @@
             },
             "registry": {
                 "position": {
-                    "x": 397,
+                    "x": 400,
                     "y": 149
                 }
             },
@@ -4178,7 +4214,7 @@
             },
             "registry": {
                 "position": {
-                    "x": 342,
+                    "x": 340,
                     "y": 161
                 }
             },
@@ -4702,11 +4738,15 @@
         "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5": {
             "attributes": {
                 "Deadline": 0,
+                "Operation": "",
                 "name": "Subscriber"
             },
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
+                    "Operation": {
+                        "type": "string"
+                    },
                     "Deadline": {
                         "type": "float"
                     }

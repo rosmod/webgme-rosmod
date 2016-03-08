@@ -160,11 +160,11 @@ define([
 			    subscribers: {},
 			    clients: {},
 			    servers: {},
-			    forwards: '',
-			    userDefinitions: '',
-			    initialization: '',
-			    destruction: '',
-			    members: ''
+			    forwards: self.core.getAttribute(node, 'Forwards'),
+			    definitions: self.core.getAttribute(node, 'Definitions'),
+			    initialization: self.core.getAttribute(node, 'Initialization'),
+			    destruction: self.core.getAttribute(node, 'Destruction'),
+			    members: self.core.getAttribute(node, 'Members')
 			};
 		    }
 		    else if ( baseType == 'Timer' ) { //self.core.isTypeOf(node, 'Timer')) {
@@ -177,7 +177,7 @@ define([
 				period: self.core.getAttribute(node, 'Period'),
 				priority: self.core.getAttribute(node, 'Priority'),
 				deadline: self.core.getAttribute(node, 'Deadline'),
-				operation: ''
+				operation: self.core.getAttribute(node, 'Operation')
 			    };
 		    }
 		    else if ( baseType == 'Publisher' ) { //self.core.isTypeOf(node, 'Publisher')) {
@@ -203,7 +203,7 @@ define([
 				priority: self.core.getAttribute(node, 'Priority'),
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
 				deadline: self.core.getAttribute(node, 'Deadline'),
-				operation: ''
+				operation: self.core.getAttribute(node, 'Operation')
 			    };
 		    }
 		    else if ( baseType == 'Client' ) { //self.core.isTypeOf(node, 'Client')) {
@@ -229,7 +229,7 @@ define([
 				priority: self.core.getAttribute(node, 'Priority'),
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
 				deadline: self.core.getAttribute(node, 'Deadline'),
-				operation: ''
+				operation: self.core.getAttribute(node, 'Operation')
 			    };
 		    }
 		}
