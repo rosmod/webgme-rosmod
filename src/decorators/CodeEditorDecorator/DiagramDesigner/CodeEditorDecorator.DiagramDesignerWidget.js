@@ -99,7 +99,6 @@ define([
         ModelDecoratorDiagramDesignerWidget.prototype.update.apply(this, arguments);
 
         if (nodeObj) {
-	    var attrs = nodeObj.getAttributes();
             newDoc = nodeObj.getAttribute('Definition') || nodeObj.getAttribute('Operation') ||'';
         }
     };
