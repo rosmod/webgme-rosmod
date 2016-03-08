@@ -69,6 +69,8 @@ define(['js/util',
             // Initialize Modal and append it to main DOM
             this._dialog.modal({ show: false});
 
+	    this._title.find('#title').text(title);
+
             // Event listener on click for SAVE button
             this._btnSave.on('click', function (event) {
                 // Invoke callback to deal with modified text, like save it in client.
