@@ -3,15 +3,16 @@
  */
 
 define(['js/util',
-    '../Libs/EpicEditor/js/epiceditor',
-    'text!./DocumentEditorDialog.html',
-    'css!./DocumentEditorDialog.css',
-    'css!../Libs/EpicEditor/themes/base/epiceditor.css'],
+	'../Libs/cm/lib/codemirror', '../Libs/cm/mode/javascript/javascript',
+	'text!./DocumentEditorDialog.html',
+	'css!./DocumentEditorDialog.css',
+	'css!../Libs/cm/lib/codemirror.css'],
     function(Util,
-        marked,
-        DocumentEditorDialogTemplate){
+             CodeMirror,
+	     CodeMirrorModeJavascript,
+             DocumentEditorDialogTemplate){
         'use strict';
-
+	
         var DocumentEditorDialog;
 
         /**
@@ -27,23 +28,24 @@ define(['js/util',
             // Get element nodes
             this._el = this._dialog.find('.modal-body').first();
             this._btnSave = this._dialog.find('.btn-save').first();
-            this._pMeta = this._el.find('#pMeta').first();
-            this._content = this._pMeta.find('div.controls').first();
 
-            /* Create Markdown Editor with options, but load() function should be
-             * invoked in callback function when container is rendered on DOM */
-            var editorOptions = {
-                container: this._content.get(0), // Get raw DOM element
-                basePath: 'decorators/DocumentDecorator/Libs/EpicEditor/',
-                autogrow: {
-                    minHeight: 300,
-                },
-                button: {
-                    fullscreen: true,
-                },
-                parser: marked,
-            };
-            this.editor = new EpicEditor(editorOptions);
+	    this._title = this._dialog.find('.modal-header').first();
+	    this._codearea = this._dialog.find('#codearea').first();
+
+	    var CodeMirrorEditorOptions = {
+		lineNumbers: true,
+		viewPortMargin: Infinity,
+		path: 'decorators/DocumentEditorDialog/Libs/cm/lib/',
+		mode: {
+		    name: 'javascript',
+		    matchBrackets: true
+		}
+	    };
+	    this.editor = new CodeMirror.fromTextArea(
+		this._codearea.get(0),
+		CodeMirrorEditorOptions
+	    );
+
             this.text = ''; // Keep track modified text in editor
         };
 
@@ -57,7 +59,7 @@ define(['js/util',
          * @param  {Function}   saveCallback   Callback function after click save button
          * @return {void}
          */
-        DocumentEditorDialog.prototype.initialize = function (text, saveCallback) {
+        DocumentEditorDialog.prototype.initialize = function (title, text, saveCallback) {
             var self = this;
             this.text = text; // Initial text from Attribute documentation
 
@@ -68,7 +70,7 @@ define(['js/util',
             this._btnSave.on('click', function (event) {
                 // Invoke callback to deal with modified text, like save it in client.
                 if (saveCallback) {
-                    saveCallback.call(null, self.editor.exportFile());
+                    saveCallback.call(null, self.editor.getValue());
                 }
 
                 // Close dialog
@@ -80,18 +82,14 @@ define(['js/util',
             // Listener on event when dialog is shown
             // Use callback to show editor after Modal window is shown.
             this._dialog.on('shown.bs.modal', function () {
-                // if (!self.editor.is('loaded')) { // Load editor only once
-                    self.editor.load();
-                // }
                 // Render text from params into Editor and store it in local storage
-                self.editor.importFile('epiceditor', self.text);
+                self.editor.setOption('value', self.text);
             });
 
             // Listener on event when dialog is hidden
             this._dialog.on('hidden.bs.modal', function () {
                 self._dialog.empty();
                 self._dialog.remove();
-                self.editor.remove();
             });
         };
 
