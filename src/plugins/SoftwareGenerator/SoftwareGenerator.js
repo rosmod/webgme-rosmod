@@ -8,9 +8,9 @@
 define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
-    'common/util/ejs',
-    'common/util/xmljsonconverter',
-    'plugin/SoftwareGenerator/SoftwareGenerator/Templates/Templates',
+    'common/util/ejs', // for ejs templates
+    'common/util/xmljsonconverter', // used to save model as json
+    'plugin/SoftwareGenerator/SoftwareGenerator/Templates/Templates', // 
     'plugin/SoftwareGenerator/SoftwareGenerator/meta',
     'q'
 ], function (
@@ -46,6 +46,10 @@ define([
             {
                 name: 'cmakelists',
                 template: 'CMakeLists.txt.ejs',
+            },
+            {
+                name: 'package_xml',
+                template: 'package_xml.ejs',
             }
         ];
     };
@@ -392,6 +396,10 @@ define([
 		var compInfo = pkgInfo.components[cmp];
 		self.generateComponentFiles(filesToAdd, prefix, pkgInfo, compInfo);
 	    }
+
+	    var package_xmlFileName = prefix + pkgInfo.name + '/package.xml';
+	    filesToAdd[package_xmlFileName] = ejs.render(TEMPLATES['package_xml.ejs'], {'pkgInfo':pkgInfo});
+
 	    for (var msg in pkgInfo.messages) {
 		var msgInfo = pkgInfo.messages[msg],
 		    msgFileName = prefix + pkgInfo.name + '/msg/' + msgInfo.name + '.msg';
