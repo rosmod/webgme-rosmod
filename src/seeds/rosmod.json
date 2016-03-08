@@ -975,7 +975,9 @@
             "constraints": {}
         },
         "04fdc95b-f567-260d-dc01-d41068d3367b": {
-            "attributes": {},
+            "attributes": {
+                "name": "Hardware"
+            },
             "base": "6eee186c-a14e-3be3-d7b1-7fa840843c05",
             "meta": {},
             "parent": "8bc323b4-a4eb-abcd-b7a2-f710630dce1c",
@@ -993,7 +995,7 @@
         },
         "05c1b20d-f9c0-c853-9172-7dd28e48e313": {
             "attributes": {
-                "name": "verticalPos-Service"
+                "name": "verticalPositionClient"
             },
             "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
             "meta": {},
@@ -1046,8 +1048,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 172,
-                    "y": 481
+                    "x": 185,
+                    "y": 512
                 }
             },
             "sets": {},
@@ -1055,7 +1057,7 @@
         },
         "0a064327-011a-e497-672b-785e37ff448a": {
             "attributes": {
-                "name": "vertical_controller"
+                "name": "verticalController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
             "meta": {},
@@ -1095,7 +1097,8 @@
         },
         "0dad946f-7b49-ccba-aff2-c85e58b60ea7": {
             "attributes": {
-                "name": "servo_timer"
+                "Period": 0,
+                "name": "servoTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
             "meta": {},
@@ -1105,8 +1108,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 405,
-                    "y": 452
+                    "x": 491,
+                    "y": 377
                 }
             },
             "sets": {},
@@ -1367,7 +1370,7 @@
         "1b4dffef-842f-6b3c-0302-596cf56a5459": {
             "attributes": {
                 "Definition": "int64 goal\nbool update\nbool setZeroPosition\n---\nint64 current\nbool lowerLimitReached\nbool upperLimitReached",
-                "name": "verticalPos"
+                "name": "verticalPosition"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
             "meta": {},
@@ -1377,8 +1380,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 169,
-                    "y": 213
+                    "x": 180,
+                    "y": 199
                 }
             },
             "sets": {},
@@ -1499,7 +1502,7 @@
         },
         "265e2d6f-1ce3-f1ce-af71-3934f174d63e": {
             "attributes": {
-                "name": "captureImage-Service"
+                "name": "captureImageClient"
             },
             "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
             "meta": {},
@@ -1519,7 +1522,7 @@
         },
         "271decd7-fb7c-8661-135c-400aa45350df": {
             "attributes": {
-                "name": "gripperPos-Service"
+                "name": "gripperPositionClient"
             },
             "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
             "meta": {},
@@ -1530,7 +1533,7 @@
             },
             "registry": {
                 "position": {
-                    "x": 399,
+                    "x": 403,
                     "y": 460
                 }
             },
@@ -1599,8 +1602,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 170,
-                    "y": 397
+                    "x": 182,
+                    "y": 399
                 }
             },
             "sets": {},
@@ -1670,7 +1673,7 @@
         },
         "2df2dde5-9823-c603-092a-f1fc1f28ca14": {
             "attributes": {
-                "name": "armState-Message"
+                "name": "armStateMessage"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -1712,8 +1715,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 159,
-                    "y": 233
+                    "x": 310,
+                    "y": 379
                 }
             },
             "sets": {},
@@ -1865,10 +1868,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Subnet": {
+                    "Netmask": {
                         "type": "string"
                     },
-                    "Netmask": {
+                    "Subnet": {
                         "type": "string"
                     }
                 }
@@ -1910,7 +1913,7 @@
         },
         "3abf1c09-fdc4-61e7-1e53-501eff8e76ee": {
             "attributes": {
-                "name": "Image Processing"
+                "name": "imageProcessor"
             },
             "base": "5fa73dfc-a08d-9aa3-cb07-c7869fccd187",
             "meta": {},
@@ -1920,8 +1923,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 299,
-                    "y": 241
+                    "x": 323,
+                    "y": 265
                 }
             },
             "sets": {},
@@ -1969,7 +1972,7 @@
         "3b80f4eb-1dea-2d26-2dfd-1e735a3e739b": {
             "attributes": {
                 "Definition": "int64 goal\nbool update\n---\nint64 current",
-                "name": "gripperPos"
+                "name": "gripperPosition"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
             "meta": {},
@@ -1979,8 +1982,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 170,
-                    "y": 313
+                    "x": 179,
+                    "y": 300
                 }
             },
             "sets": {},
@@ -2014,11 +2017,11 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "Operation": {
-                        "type": "string"
-                    },
                     "Deadline": {
                         "type": "float"
+                    },
+                    "Operation": {
+                        "type": "string"
                     }
                 },
                 "pointers": {
@@ -2055,7 +2058,7 @@
         },
         "407b4c7e-9826-6855-d391-df7e96c3e73b": {
             "attributes": {
-                "name": "captureImage-Service"
+                "name": "captureImageClient"
             },
             "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
             "meta": {},
@@ -2066,8 +2069,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 430,
-                    "y": 158
+                    "x": 667,
+                    "y": 480
                 }
             },
             "sets": {},
@@ -2150,7 +2153,7 @@
         },
         "447d091e-edb3-cc67-88f8-2c4b643ee131": {
             "attributes": {
-                "name": "sampleDetectionImages-Message"
+                "name": "sampleDetectionImagesPublisher"
             },
             "base": "0066ce30-e372-bb27-23c3-219c7d934553",
             "meta": {},
@@ -2161,7 +2164,7 @@
             },
             "registry": {
                 "position": {
-                    "x": 430,
+                    "x": 220,
                     "y": 375
                 }
             },
@@ -2260,7 +2263,7 @@
         },
         "47fdb167-6041-cd46-fa83-f6fb651c652d": {
             "attributes": {
-                "name": "verticalPos-Service"
+                "name": "verticalPositionServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
             "meta": {},
@@ -2405,7 +2408,7 @@
         },
         "4d04c2a5-a077-dbc9-bb12-690bb10fffc9": {
             "attributes": {
-                "name": "payloadBayState-Message"
+                "name": "payloadBayStateSusbcriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -2416,8 +2419,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 469,
-                    "y": 505
+                    "x": 813,
+                    "y": 188
                 }
             },
             "sets": {},
@@ -2444,7 +2447,7 @@
         },
         "4fc00747-714d-4832-998f-c520d0d3edfc": {
             "attributes": {
-                "name": "gripperPos-Service"
+                "name": "gripperPositionServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
             "meta": {},
@@ -2455,8 +2458,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 401,
-                    "y": 367
+                    "x": 308,
+                    "y": 249
                 }
             },
             "sets": {},
@@ -2464,7 +2467,7 @@
         },
         "50177db4-7d87-86ab-98ae-472f9cfd788c": {
             "attributes": {
-                "name": "controlInputs-Message"
+                "name": "controlInputsPublisher"
             },
             "base": "0066ce30-e372-bb27-23c3-219c7d934553",
             "meta": {},
@@ -2484,7 +2487,7 @@
         },
         "51321b06-2a7b-eebe-187b-a68c11e80b87": {
             "attributes": {
-                "name": "user_input_controller"
+                "name": "userInputController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
             "meta": {},
@@ -2534,19 +2537,19 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Members": {
-                        "type": "string"
-                    },
-                    "Initialization": {
-                        "type": "string"
-                    },
-                    "Forwards": {
+                    "Definitions": {
                         "type": "string"
                     },
                     "Destruction": {
                         "type": "string"
                     },
-                    "Definitions": {
+                    "Forwards": {
+                        "type": "string"
+                    },
+                    "Initialization": {
+                        "type": "string"
+                    },
+                    "Members": {
                         "type": "string"
                     }
                 },
@@ -2637,7 +2640,7 @@
         },
         "5a1725b5-953f-cbf1-d72d-4897c4d55c11": {
             "attributes": {
-                "name": "controlInputs-Message"
+                "name": "controlInputsSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -2648,8 +2651,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 429,
-                    "y": 520
+                    "x": 673,
+                    "y": 310
                 }
             },
             "sets": {},
@@ -2713,7 +2716,7 @@
         },
         "5e29f1d2-99a8-9559-faff-e924a9c5e677": {
             "attributes": {
-                "name": "payloadBayStateFromImage-Service"
+                "name": "payloadBayStateFromImageServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
             "meta": {},
@@ -2724,8 +2727,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 427,
-                    "y": 289
+                    "x": 669,
+                    "y": 218
                 }
             },
             "sets": {},
@@ -2877,7 +2880,7 @@
         },
         "6815fb72-468f-ef04-95a9-117eb05569de": {
             "attributes": {
-                "name": "gripperRotation-Service"
+                "name": "gripperRotationServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
             "meta": {},
@@ -2888,8 +2891,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 399,
-                    "y": 294
+                    "x": 627,
+                    "y": 241
                 }
             },
             "sets": {},
@@ -2919,7 +2922,7 @@
         "6a84f65c-0fbe-1fc6-79e8-2ff4bc2dcd1e": {
             "attributes": {
                 "Definition": "int64 goal\nbool update\nbool setZeroPosition\n---\nint64 current\nbool lowerLimitReached\nbool upperLimitReached",
-                "name": "radialPos"
+                "name": "radialPosition"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
             "meta": {},
@@ -2929,8 +2932,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 171,
-                    "y": 134
+                    "x": 176,
+                    "y": 86
                 }
             },
             "sets": {},
@@ -2978,7 +2981,7 @@
         },
         "6d32e61a-93a8-9056-b3db-be265442f959": {
             "attributes": {
-                "name": "armState-Message"
+                "name": "armStatePublisher"
             },
             "base": "0066ce30-e372-bb27-23c3-219c7d934553",
             "meta": {},
@@ -2989,8 +2992,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 401,
-                    "y": 674
+                    "x": 570,
+                    "y": 308
                 }
             },
             "sets": {},
@@ -3135,12 +3138,12 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "CMDLine": {
-                        "type": "string"
-                    },
                     "Priority": {
                         "type": "integer",
                         "max": 99
+                    },
+                    "CMDLine": {
+                        "type": "string"
                     }
                 },
                 "children": {
@@ -3181,8 +3184,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 441,
-                    "y": 316
+                    "x": 444,
+                    "y": 340
                 }
             },
             "sets": {},
@@ -3190,7 +3193,7 @@
         },
         "7599b53d-653a-1ff6-0d2a-c6a49dec721c": {
             "attributes": {
-                "name": "image_sensor"
+                "name": "imageSensor"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
             "meta": {},
@@ -3200,8 +3203,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 644,
-                    "y": 235
+                    "x": 641,
+                    "y": 220
                 }
             },
             "sets": {},
@@ -3209,7 +3212,7 @@
         },
         "769c7992-7dd1-3447-3e3c-953fd7e158d4": {
             "attributes": {
-                "name": "captureImage-Service"
+                "name": "captureImageServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
             "meta": {},
@@ -3248,7 +3251,7 @@
         },
         "78617d39-7d27-d9f9-b421-7b8621f0380c": {
             "attributes": {
-                "name": "controlInputs-Message"
+                "name": "controlInputsSusbcriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -3259,8 +3262,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 379,
-                    "y": 356
+                    "x": 382,
+                    "y": 359
                 }
             },
             "sets": {},
@@ -3268,7 +3271,7 @@
         },
         "7af22c4c-4adc-d2ff-0bc4-6fab8ebce68e": {
             "attributes": {
-                "name": "Motor Control"
+                "name": "motorController"
             },
             "base": "5fa73dfc-a08d-9aa3-cb07-c7869fccd187",
             "meta": {},
@@ -3278,8 +3281,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 300,
-                    "y": 118
+                    "x": 322,
+                    "y": 128
                 }
             },
             "sets": {},
@@ -3367,7 +3370,7 @@
             },
             "registry": {
                 "position": {
-                    "x": 444,
+                    "x": 441,
                     "y": 230
                 }
             },
@@ -3395,7 +3398,7 @@
         },
         "7ea9e1e6-46ee-3981-0169-da6fd2981659": {
             "attributes": {
-                "name": "gripperRotation-Service"
+                "name": "gripperRotationClient"
             },
             "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
             "meta": {},
@@ -3415,7 +3418,7 @@
         },
         "7ec97e63-8e60-b0c0-8e25-eec82cec64be": {
             "attributes": {
-                "name": "Software Workspace"
+                "name": "Software"
             },
             "base": "2562febd-1839-d9fe-3b97-0a0548314d85",
             "meta": {},
@@ -3434,7 +3437,7 @@
         },
         "7eea081c-beab-287a-1aed-46821198b17c": {
             "attributes": {
-                "name": "controlInputs-Message"
+                "name": "controlInputsSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -3445,8 +3448,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 403,
-                    "y": 374
+                    "x": 709,
+                    "y": 221
                 }
             },
             "sets": {},
@@ -3454,7 +3457,7 @@
         },
         "83f33549-7a85-a619-35b2-b18209fdda9d": {
             "attributes": {
-                "name": "High Level Control"
+                "name": "highLevelController"
             },
             "base": "5fa73dfc-a08d-9aa3-cb07-c7869fccd187",
             "meta": {},
@@ -3464,8 +3467,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 296,
-                    "y": 179
+                    "x": 322,
+                    "y": 186
                 }
             },
             "sets": {},
@@ -3473,7 +3476,7 @@
         },
         "84f4223f-5696-75ae-9190-d695085aea4d": {
             "attributes": {
-                "name": "payloadBayState-Message"
+                "name": "payloadBayStatePublisher"
             },
             "base": "0066ce30-e372-bb27-23c3-219c7d934553",
             "meta": {},
@@ -3484,8 +3487,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 400,
-                    "y": 615
+                    "x": 569,
+                    "y": 238
                 }
             },
             "sets": {},
@@ -3512,7 +3515,7 @@
         },
         "862a9375-04a6-d7d7-72c3-7fd13b4b4b3b": {
             "attributes": {
-                "name": "payloadBayDetectionImages-Message"
+                "name": "payloadBayDetectionImagesPublisher"
             },
             "base": "0066ce30-e372-bb27-23c3-219c7d934553",
             "meta": {},
@@ -3523,8 +3526,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 430,
-                    "y": 431
+                    "x": 668,
+                    "y": 411
                 }
             },
             "sets": {},
@@ -3551,7 +3554,7 @@
         },
         "874020d4-54d8-0c9b-0bda-18052dae44db": {
             "attributes": {
-                "name": "radialPosTimer"
+                "name": "radialPositionTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
             "meta": {},
@@ -3561,8 +3564,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 402,
-                    "y": 453
+                    "x": 538,
+                    "y": 216
                 }
             },
             "sets": {},
@@ -3646,7 +3649,7 @@
         },
         "8bc323b4-a4eb-abcd-b7a2-f710630dce1c": {
             "attributes": {
-                "name": "Example"
+                "name": "AGSE"
             },
             "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
             "meta": {},
@@ -3656,8 +3659,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 400,
-                    "y": 149
+                    "x": 504,
+                    "y": 388
                 }
             },
             "sets": {},
@@ -3665,7 +3668,7 @@
         },
         "8c0974bd-12e4-dc59-4d43-7982b534b262": {
             "attributes": {
-                "name": "arm_controller"
+                "name": "armController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
             "meta": {},
@@ -3675,8 +3678,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 511,
-                    "y": 237
+                    "x": 509,
+                    "y": 241
                 }
             },
             "sets": {},
@@ -3741,7 +3744,7 @@
         },
         "8ed56a84-1f2b-cf95-c812-e0a6f8646438": {
             "attributes": {
-                "name": "sampleState-Message"
+                "name": "sampleStatePublisher"
             },
             "base": "0066ce30-e372-bb27-23c3-219c7d934553",
             "meta": {},
@@ -3752,8 +3755,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 401,
-                    "y": 547
+                    "x": 571,
+                    "y": 168
                 }
             },
             "sets": {},
@@ -3761,7 +3764,7 @@
         },
         "8ff74691-1535-f037-068b-52df355dd0bd": {
             "attributes": {
-                "name": "sampleDetectionImages-Message"
+                "name": "sampleDetectionImagesSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -3825,7 +3828,7 @@
         },
         "93f48121-6fe3-48ed-0cdc-dc9db647b01a": {
             "attributes": {
-                "name": "sampleStateFromImage-Service"
+                "name": "sampleStateFromImageServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
             "meta": {},
@@ -3836,8 +3839,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 430,
-                    "y": 222
+                    "x": 216,
+                    "y": 263
                 }
             },
             "sets": {},
@@ -3855,8 +3858,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 473,
-                    "y": 578
+                    "x": 812,
+                    "y": 278
                 }
             },
             "sets": {},
@@ -3871,10 +3874,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Key": {
+                    "Directory": {
                         "type": "string"
                     },
-                    "Directory": {
+                    "Key": {
                         "type": "string"
                     }
                 }
@@ -3974,10 +3977,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "IP": {
+                    "NetworkProfile": {
                         "type": "string"
                     },
-                    "NetworkProfile": {
+                    "IP": {
                         "type": "string"
                     }
                 },
@@ -4028,7 +4031,7 @@
         },
         "9c9bbae3-dc41-51ba-4cf5-e29562b4b28a": {
             "attributes": {
-                "name": "armRotation-Service"
+                "name": "armRotationClient"
             },
             "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
             "meta": {},
@@ -4048,7 +4051,7 @@
         },
         "9ec1ad14-ca6f-6895-63a1-6c501f97a49a": {
             "attributes": {
-                "name": "radial_controller"
+                "name": "radialController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
             "meta": {},
@@ -4193,8 +4196,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 404,
-                    "y": 803
+                    "x": 765,
+                    "y": 384
                 }
             },
             "sets": {},
@@ -4239,7 +4242,7 @@
         },
         "a9958819-7856-4774-1ef4-934c974095af": {
             "attributes": {
-                "name": "armRotation-Service"
+                "name": "armRotationServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
             "meta": {},
@@ -4250,8 +4253,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 405,
-                    "y": 222
+                    "x": 402,
+                    "y": 124
                 }
             },
             "sets": {},
@@ -4316,7 +4319,7 @@
         },
         "ae2a7d70-952b-9245-153d-d935ddcca31f": {
             "attributes": {
-                "name": "payloadBayDetectionImages-Message"
+                "name": "payloadBayDetectionImagesPublisher"
             },
             "base": "0066ce30-e372-bb27-23c3-219c7d934553",
             "meta": {},
@@ -4327,8 +4330,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 467,
-                    "y": 348
+                    "x": 628,
+                    "y": 194
                 }
             },
             "sets": {},
@@ -4447,7 +4450,7 @@
         },
         "b2e7d5ea-aee1-a65f-0c05-8ab227b5be8f": {
             "attributes": {
-                "name": "rotation_controller"
+                "name": "rotationController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
             "meta": {},
@@ -4507,7 +4510,7 @@
         },
         "b6a8c9f5-4472-8e3b-4035-f5e90fdac5bb": {
             "attributes": {
-                "name": "image_processor"
+                "name": "imageProcessor"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
             "meta": {},
@@ -4619,7 +4622,7 @@
         },
         "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1": {
             "attributes": {
-                "name": "user_display"
+                "name": "userDisplay"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
             "meta": {},
@@ -4630,7 +4633,7 @@
             "registry": {
                 "position": {
                     "x": 641,
-                    "y": 413
+                    "y": 410
                 }
             },
             "sets": {},
@@ -4649,8 +4652,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 440,
-                    "y": 401
+                    "x": 444,
+                    "y": 446
                 }
             },
             "sets": {},
@@ -4696,7 +4699,7 @@
         },
         "c093774a-c2a4-bf78-3180-5f6f82ed8cf5": {
             "attributes": {
-                "name": "controlInputs-Message"
+                "name": "controlInputsSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -4707,8 +4710,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 441,
-                    "y": 348
+                    "x": 437,
+                    "y": 393
                 }
             },
             "sets": {},
@@ -4761,11 +4764,11 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "Operation": {
-                        "type": "string"
-                    },
                     "Deadline": {
                         "type": "float"
+                    },
+                    "Operation": {
+                        "type": "string"
                     }
                 },
                 "pointers": {
@@ -4841,7 +4844,7 @@
         },
         "c4d02e7c-c012-94dc-0e24-d04b2752434b": {
             "attributes": {
-                "name": "verticalPosTimer"
+                "name": "verticalPositionTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
             "meta": {},
@@ -4860,7 +4863,7 @@
         },
         "c8645e9e-668a-d508-45ff-0920ef6a39a8": {
             "attributes": {
-                "name": "radialPos-Service"
+                "name": "radialPositionServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
             "meta": {},
@@ -4871,8 +4874,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 399,
-                    "y": 295
+                    "x": 383,
+                    "y": 217
                 }
             },
             "sets": {},
@@ -4945,8 +4948,8 @@
                 "isAbstract": false,
                 "isPort": false,
                 "position": {
-                    "x": 148,
-                    "y": 133
+                    "x": 318,
+                    "y": 295
                 },
                 "validVisualizers": "ModelEditor METAAspect SetEditor Crosscut GraphViz"
             },
@@ -5072,12 +5075,12 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
+                    "NetworkProfile": {
+                        "type": "string"
+                    },
                     "Priority": {
                         "type": "integer",
                         "max": 99
-                    },
-                    "NetworkProfile": {
-                        "type": "string"
                     }
                 }
             },
@@ -5311,7 +5314,9 @@
             "constraints": {}
         },
         "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {
-            "attributes": {},
+            "attributes": {
+                "name": "Deployment"
+            },
             "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9",
             "meta": {},
             "parent": "8bc323b4-a4eb-abcd-b7a2-f710630dce1c",
@@ -5367,7 +5372,7 @@
         },
         "ecde4aa3-106a-f888-fe6b-473f56ac2d21": {
             "attributes": {
-                "name": "sampleState-Message"
+                "name": "sampleStateSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -5378,8 +5383,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 470,
-                    "y": 434
+                    "x": 631,
+                    "y": 262
                 }
             },
             "sets": {},
@@ -5425,7 +5430,7 @@
         },
         "f0c3e8b4-d847-1890-e883-b293be17add9": {
             "attributes": {
-                "name": "radialPos-Service"
+                "name": "radialPositionClient"
             },
             "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
             "meta": {},
@@ -5486,7 +5491,7 @@
         },
         "f5b6be0c-b866-ac8f-c0e9-38e8c3cba2de": {
             "attributes": {
-                "name": "controlInputs-Message"
+                "name": "controlInputsSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -5497,8 +5502,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 399,
-                    "y": 738
+                    "x": 569,
+                    "y": 383
                 }
             },
             "sets": {},
