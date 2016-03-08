@@ -276,6 +276,7 @@
     "nodes": {
         "000e696a-b922-ec04-d0bf-b3eeb74660c9": {
             "attributes": {
+                "Definition": "float64 r\nfloat64 theta\nfloat64 z",
                 "name": "payloadBayPosition"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -955,6 +956,7 @@
         },
         "043de1ab-0b51-afeb-be5f-a5a167b3a363": {
             "attributes": {
+                "Definition": "uint8[] rawImgVector\nuint8[] hsvThreshImgVector\nuint8[] gsThreshImgVector\nuint8[] bitwiseAndImgVector\nint16 width\nint16 height",
                 "name": "payloadBayDetectionImages"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -965,8 +967,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 252,
-                    "y": 292
+                    "x": 251,
+                    "y": 342
                 }
             },
             "sets": {},
@@ -1033,6 +1035,7 @@
         },
         "0880f4eb-1dea-2d26-2dfd-1e735a3e739b": {
             "attributes": {
+                "Definition": "int64 goal\nbool update\n---\nint64 current",
                 "name": "armRotation"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
@@ -1111,7 +1114,7 @@
         },
         "0ecb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
-                "Definition": "int32 test = false\r\nbool array",
+                "Definition": "float32 r\nfloat32 theta\nfloat32 z",
                 "name": "samplePosition"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -1230,6 +1233,7 @@
         },
         "11cb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
+                "Definition": "float64 theta\nfloat64 phi",
                 "name": "payloadBayOrientation"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -1361,6 +1365,7 @@
         },
         "1b4dffef-842f-6b3c-0302-596cf56a5459": {
             "attributes": {
+                "Definition": "int64 goal\nbool update\nbool setZeroPosition\n---\nint64 current\nbool lowerLimitReached\nbool upperLimitReached",
                 "name": "verticalPos"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
@@ -1380,6 +1385,7 @@
         },
         "1f0e696a-b922-ec04-d0bf-b3eeb74660c9": {
             "attributes": {
+                "Definition": "bool paused\nbool start\nbool stop\nbool manual\nbool halted",
                 "name": "controlInputs"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -1399,6 +1405,7 @@
         },
         "240e696a-b922-ec04-d0bf-b3eeb74660c9": {
             "attributes": {
+                "Definition": "float32 theta\nfloat32 phi",
                 "name": "sampleOrientation"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -1580,6 +1587,7 @@
         },
         "284dffef-842f-6b3c-0302-596cf56a5459": {
             "attributes": {
+                "Definition": "int64 goal\nbool update\n---\nint64 current",
                 "name": "gripperRotation"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
@@ -1620,6 +1628,7 @@
         },
         "2acb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
+                "Definition": "high_level_control/samplePosition pos\nhigh_level_control/sampleOrientation orientation",
                 "name": "sampleState"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -1828,6 +1837,7 @@
         },
         "35cb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
+                "Definition": "int64 state",
                 "name": "armState"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -1918,6 +1928,7 @@
         },
         "3b0e696a-b922-ec04-d0bf-b3eeb74660c9": {
             "attributes": {
+                "Definition": "high_level_control/payloadBayPosition pos\nhigh_level_control/payloadBayOrientation orientation",
                 "name": "payloadBayState"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -1956,6 +1967,7 @@
         },
         "3b80f4eb-1dea-2d26-2dfd-1e735a3e739b": {
             "attributes": {
+                "Definition": "int64 goal\nbool update\n---\nint64 current",
                 "name": "gripperPos"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
@@ -2904,7 +2916,7 @@
         },
         "6a84f65c-0fbe-1fc6-79e8-2ff4bc2dcd1e": {
             "attributes": {
-                "Definition": "int32 testInt = 32;\nbool messageOn = false;",
+                "Definition": "int64 goal\nbool update\nbool setZeroPosition\n---\nint64 current\nbool lowerLimitReached\nbool upperLimitReached",
                 "name": "radialPos"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
@@ -3156,6 +3168,7 @@
         },
         "75973fe4-d007-56ab-2df2-483fac45138c": {
             "attributes": {
+                "Definition": "---\nint8 status\nfloat32 x\nfloat32 y\nfloat32 angle",
                 "name": "sampleStateFromImage"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
@@ -3166,8 +3179,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 442,
-                    "y": 290
+                    "x": 441,
+                    "y": 316
                 }
             },
             "sets": {},
@@ -3341,6 +3354,7 @@
         },
         "7c974a97-a7c9-94b1-12e9-dfddb839d1fb": {
             "attributes": {
+                "Definition": "---\nuint8[] imgVector\nint16 width\nint16 height",
                 "name": "captureImage"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
@@ -4622,6 +4636,7 @@
         },
         "bf3c5759-8b0e-c5a7-7666-e3d42038bc48": {
             "attributes": {
+                "Definition": "---\nint8 status\nfloat32 x\nfloat32 y\nfloat32 angle",
                 "name": "payloadBayStateFromImage"
             },
             "base": "27271a90-b612-119a-4451-26b58c0a84b2",
@@ -4632,8 +4647,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 442,
-                    "y": 350
+                    "x": 440,
+                    "y": 401
                 }
             },
             "sets": {},
@@ -4964,6 +4979,7 @@
         },
         "d2401091-4e08-04c7-a9a2-d668fb6ea4df": {
             "attributes": {
+                "Definition": "uint8[] rawImgVector\nuint8[] hsvThreshImgVector\nuint8[] gsThreshImgVector\nuint8[] bitwiseAndImgVector\nint16 width\nint16 height",
                 "name": "sampleDetectionImages"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",

@@ -372,6 +372,7 @@ define([
     SoftwareGenerator.prototype.generateArtifacts = function (softwareModel) {
 	var self = this,
 	    filesToAdd = {},
+	    prefix = 'src/',
 	    deferred = new Q.defer(),
 	    artifact = self.blobClient.createArtifact(softwareModel.name);
 	filesToAdd[softwareModel.name + '.json'] = JSON.stringify(softwareModel, null, 2);
@@ -385,11 +386,21 @@ define([
 
         for (var pkg in softwareModel.packages) {
 	    var pkgInfo = softwareModel.packages[pkg];
-	    var cmakeFileName = pkgInfo.name + '/CMakeLists.txt';
+	    var cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt';
 	    filesToAdd[cmakeFileName] = ejs.render(TEMPLATES['CMakeLists.txt.ejs'], {'pkgInfo':pkgInfo});
 	    for (var cmp in pkgInfo.components) {
 		var compInfo = pkgInfo.components[cmp];
-		self.generateComponentFiles(filesToAdd, pkgInfo, compInfo);
+		self.generateComponentFiles(filesToAdd, prefix, pkgInfo, compInfo);
+	    }
+	    for (var msg in pkgInfo.messages) {
+		var msgInfo = pkgInfo.messages[msg],
+		    msgFileName = prefix + pkgInfo.name + '/msg/' + msgInfo.name + '.msg';
+		filesToAdd[msgFileName] = msgInfo.definition;
+	    }
+	    for (var srv in pkgInfo.services) {
+		var srvInfo = pkgInfo.services[srv],
+		    srvFileName = prefix + pkgInfo.name + '/srv/' + srvInfo.name + '.srv';
+		filesToAdd[srvFileName] = srvInfo.definition;
 	    }
 	}
 
@@ -409,9 +420,9 @@ define([
 	});
     };
 
-    SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, pkgInfo, compInfo) {
-	var inclFileName = pkgInfo.name + '/include/' + pkgInfo.name + '/' + compInfo.name + '.hpp',
-	    srcFileName = pkgInfo.name + '/src/' + pkgInfo.name + '/' + compInfo.name + '.cpp';
+    SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, prefix, pkgInfo, compInfo) {
+	var inclFileName = prefix + pkgInfo.name + '/include/' + pkgInfo.name + '/' + compInfo.name + '.hpp',
+	    srcFileName = prefix + pkgInfo.name + '/src/' + pkgInfo.name + '/' + compInfo.name + '.cpp';
 	filesToAdd[inclFileName] = ejs.render(TEMPLATES['component.hpp.ejs'], {'compInfo':compInfo});
 	filesToAdd[srcFileName] = ejs.render(TEMPLATES['component.cpp.ejs'], {'compInfo':compInfo});
     };
