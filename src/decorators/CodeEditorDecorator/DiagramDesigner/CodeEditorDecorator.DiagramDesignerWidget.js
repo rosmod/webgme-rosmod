@@ -42,6 +42,12 @@ define([
         //let the parent decorator class do its job first
         ModelDecoratorDiagramDesignerWidget.prototype.on_addTo.apply(this, arguments);
 
+	var baseObject = client.getNode(nodeObj.getBaseId()),
+	    baseType = undefined || baseObject.getAttribute('name'),
+	    isInteractionType = baseType == 'Message' || baseType == 'Service',
+	    isComponent = baseType == 'Component',
+	    isPort = baseType == 'Subscriber' || baseType == 'Server' || baseType == 'Timer';
+
         //render text-editor based META editing UI piece
         this._skinParts.$EqnEditorBtn = EQN_EDIT_BTN_BASE.clone();
         this.$el.append('<br>');
@@ -69,7 +75,6 @@ define([
 	    nodeName = nodeObj.getAttribute('name'),
             attrText = nodeObj.getAttribute(attrName),
 	    editorDialog = new DocumentEditorDialog(),
-	    metaNodes = client.getAllMetaNodes(),
 	    baseObject = client.getNode(nodeObj.getBaseId()),
 	    baseType = undefined || baseObject.getAttribute('name'),
 	    title = 'Enter ' + baseType + ':' + nodeName + ' ' + attrName;

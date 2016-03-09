@@ -112,13 +112,11 @@ define([
 		var messages = [],
 		    services = [];
 		for (var i=0;i<nodes.length; i+= 1) {
-		    var node = nodes[i];
-		    var nodeName = self.core.getAttribute(node, 'name');
-		    var baseObject = self.core.getBaseType(node);
-		    var baseType = self.core.getAttribute(baseObject, 'name');
-		    var parent = self.core.getParent(node);
-		    var parentName = self.core.getAttribute(parent, 'name');
-		    if ( baseType == 'Package' ) { //self.core.isTypeOf(node, 'Package')) {
+		    var node = nodes[i],
+			nodeName = self.core.getAttribute(node, 'name'),
+			parent = self.core.getParent(node),
+			parentName = self.core.getAttribute(parent, 'name');
+		    if ( self.core.isTypeOf(node, self.META.Package) ) {
 			dataModel.packages[nodeName] = {
 			    name: nodeName,
 			    messages: {},
@@ -127,7 +125,7 @@ define([
 			    libraries: {}
 			};
 		    }
-		    else if ( baseType == 'Message' ) { //self.core.isTypeOf(node, 'Message')) {
+		    else if ( self.core.isTypeOf(node, self.META.Message) ) {
 			dataModel.packages[parentName].messages[nodeName] = {
 			    name: nodeName,
 			    packageName: parentName,
@@ -135,7 +133,7 @@ define([
 			};
 			messages.push(node);
 		    }
-		    else if ( baseType == 'Service' ) { //self.core.isTypeOf(node, 'Service')) {
+		    else if ( self.core.isTypeOf(node, self.META.Service) ) {
 			dataModel.packages[parentName].services[nodeName] = {
 			    name: nodeName,
 			    packageName: parentName,
@@ -143,7 +141,7 @@ define([
 			};
 			services.push(node);
 		    }
-		    else if ( baseType == 'Component' ) { //self.core.isTypeOf(node, 'Component')) {
+		    else if ( self.core.isTypeOf(node, self.META.Component) ) {
 			dataModel.packages[parentName].components[nodeName] = {
 			    name: nodeName,
 			    packageName: parentName,
@@ -160,7 +158,7 @@ define([
 			    members: self.core.getAttribute(node, 'Members')
 			};
 		    }
-		    else if ( baseType == 'Timer' ) { //self.core.isTypeOf(node, 'Timer')) {
+		    else if ( self.core.isTypeOf(node, self.META.Timer) ) {
 			var pkgName = self.core.getAttribute(
 			    self.core.getParent(parent), 'name');
 			dataModel.packages[pkgName]
@@ -173,7 +171,7 @@ define([
 				operation: self.core.getAttribute(node, 'Operation')
 			    };
 		    }
-		    else if ( baseType == 'Publisher' ) { //self.core.isTypeOf(node, 'Publisher')) {
+		    else if ( self.core.isTypeOf(node, self.META.Publisher) ) {
 			var pkgName = self.core.getAttribute(
 			    self.core.getParent(parent), 'name');
 			dataModel.packages[pkgName]
@@ -185,7 +183,7 @@ define([
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile')
 			    };
 		    }
-		    else if ( baseType == 'Subscriber' ) { //self.core.isTypeOf(node, 'Subscriber')) {
+		    else if ( self.core.isTypeOf(node, self.META.Subscriber) ) {
 			var pkgName = self.core.getAttribute(
 			    self.core.getParent(parent), 'name');
 			dataModel.packages[pkgName]
@@ -199,7 +197,7 @@ define([
 				operation: self.core.getAttribute(node, 'Operation')
 			    };
 		    }
-		    else if ( baseType == 'Client' ) { //self.core.isTypeOf(node, 'Client')) {
+		    else if ( self.core.isTypeOf(node, self.META.Client) ) {
 			var pkgName = self.core.getAttribute(
 			    self.core.getParent(parent), 'name');
 			dataModel.packages[pkgName]
@@ -211,7 +209,7 @@ define([
 				networkProfile: self.core.getAttribute(node, 'NetworkProfile')
 			    };
 		    }
-		    else if ( baseType == 'Server' ) { //self.core.isTypeOf(node, 'Server')) {
+		    else if ( self.core.isTypeOf(node, self.META.Server) ) {
 			var pkgName = self.core.getAttribute(
 			    self.core.getParent(parent), 'name');
 			dataModel.packages[pkgName]
