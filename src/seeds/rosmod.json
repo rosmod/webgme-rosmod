@@ -249,6 +249,7 @@
                     "2acb9167-ab2a-9164-a638-972a058f218c": {},
                     "35cb9167-ab2a-9164-a638-972a058f218c": {},
                     "3b0e696a-b922-ec04-d0bf-b3eeb74660c9": {},
+                    "507809b1-dbb0-945d-b31d-5343160629ca": {},
                     "51321b06-2a7b-eebe-187b-a68c11e80b87": {
                         "2df2dde5-9823-c603-092a-f1fc1f28ca14": {},
                         "50177db4-7d87-86ab-98ae-472f9cfd788c": {},
@@ -1158,6 +1159,7 @@
         },
         "0f474808-eadf-a345-7ee9-7279326aab1e": {
             "attributes": {
+                "ABL": "",
                 "Deadline": 0,
                 "Operation": "",
                 "Period": 0,
@@ -1167,19 +1169,22 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Operation": {
+                    "ABL": {
                         "type": "string"
-                    },
-                    "Period": {
-                        "type": "float"
-                    },
-                    "Deadline": {
-                        "type": "float"
                     },
                     "Priority": {
                         "type": "integer",
                         "min": 1,
                         "max": 99
+                    },
+                    "Deadline": {
+                        "type": "float"
+                    },
+                    "Period": {
+                        "type": "float"
+                    },
+                    "Operation": {
+                        "type": "string"
                     }
                 }
             },
@@ -1632,7 +1637,7 @@
         },
         "2acb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
-                "Definition": "high_level_control/samplePosition pos\nhigh_level_control/sampleOrientation orientation",
+                "Definition": "high_level_controller/samplePosition pos\nhigh_level_controller/sampleOrientation orientation",
                 "name": "sampleState"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -1932,7 +1937,7 @@
         },
         "3b0e696a-b922-ec04-d0bf-b3eeb74660c9": {
             "attributes": {
-                "Definition": "high_level_control/payloadBayPosition pos\nhigh_level_control/payloadBayOrientation orientation",
+                "Definition": "high_level_controller/payloadBayPosition pos\nhigh_level_controller/payloadBayOrientation orientation",
                 "name": "payloadBayState"
             },
             "base": "cf2109f7-7027-451c-095f-c0bc64833ba9",
@@ -2010,6 +2015,7 @@
         },
         "40634285-7f30-4d56-3e22-6047fe32f0d7": {
             "attributes": {
+                "ABL": "",
                 "Deadline": 0,
                 "Operation": "",
                 "name": "Server"
@@ -2017,11 +2023,14 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "Deadline": {
-                        "type": "float"
+                    "ABL": {
+                        "type": "string"
                     },
                     "Operation": {
                         "type": "string"
+                    },
+                    "Deadline": {
+                        "type": "float"
                     }
                 },
                 "pointers": {
@@ -2480,6 +2489,23 @@
                 "position": {
                     "x": 393,
                     "y": 261
+                }
+            },
+            "sets": {},
+            "constraints": {}
+        },
+        "507809b1-dbb0-945d-b31d-5343160629ca": {
+            "attributes": {},
+            "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
+            "meta": {},
+            "parent": "83f33549-7a85-a619-35b2-b18209fdda9d",
+            "pointers": {
+                "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86"
+            },
+            "registry": {
+                "position": {
+                    "x": 835,
+                    "y": 220
                 }
             },
             "sets": {},
@@ -3428,8 +3454,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 101,
-                    "y": 133
+                    "x": 99,
+                    "y": 130
                 }
             },
             "sets": {},
@@ -3467,8 +3493,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 322,
-                    "y": 186
+                    "x": 320,
+                    "y": 191
                 }
             },
             "sets": {},
@@ -3659,8 +3685,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 504,
-                    "y": 388
+                    "x": 501,
+                    "y": 390
                 }
             },
             "sets": {},
@@ -4757,6 +4783,7 @@
         },
         "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5": {
             "attributes": {
+                "ABL": "",
                 "Deadline": 0,
                 "Operation": "",
                 "name": "Subscriber"
@@ -4764,11 +4791,14 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "Deadline": {
-                        "type": "float"
+                    "ABL": {
+                        "type": "string"
                     },
                     "Operation": {
                         "type": "string"
+                    },
+                    "Deadline": {
+                        "type": "float"
                     }
                 },
                 "pointers": {
@@ -5669,6 +5699,7 @@
         "4f130061-8b9f-0389-c288-ad2d46eeab44": "3s",
         "4fc00747-714d-4832-998f-c520d0d3edfc": "n",
         "50177db4-7d87-86ab-98ae-472f9cfd788c": "w",
+        "507809b1-dbb0-945d-b31d-5343160629ca": "r",
         "51321b06-2a7b-eebe-187b-a68c11e80b87": "5",
         "5173ec58-cf6c-e536-1efc-d1cf17642062": "R",
         "5364e1ea-29d3-bc62-87fa-b5715ac58d86": "8",
