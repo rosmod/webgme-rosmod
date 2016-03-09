@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8.3)
 project(<%= pkgInfo.name %>)
 
 ## Start Global Marker
-
 ## End Global Marker
 
 ## Check C++11 / C++0x
@@ -61,13 +60,13 @@ ENDIF()
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-# Generate messages in the 'msg' folder
-
+<%
+if (pkgInfo.services.length > 0) {
+-%>
 # Generate services in the 'srv' folder
 add_service_files(
   FILES
 <%
-// All of the services
 for (var srv in pkgInfo.services) {
 -%>
  <%= pkgInfo.services[srv].name %>.srv
@@ -75,11 +74,17 @@ for (var srv in pkgInfo.services) {
 }
 -%>
 )
+<%
+}
+-%>
 
+<%
+if (pkgInfo.messages.length > 0) {
+-%>
+# Generate messages in the 'msg' folder
 add_message_files(
   FILES
 <%
-// All of the messages
 for (var msg in pkgInfo.messages) {
 -%>
  <%= pkgInfo.messages[msg].name %>.msg
@@ -87,6 +92,9 @@ for (var msg in pkgInfo.messages) {
 }
 -%>
 )
+<%
+}
+-%>
 
 
 ## Generate actions in the 'action' folder
@@ -144,8 +152,7 @@ for (var lib in pkgInfo.libraries) {
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 <%
-// All of the component libraries
-// need to add component's dependent library info
+// need to add components dependent library info
 for (var cmp in pkgInfo.components) {
 -%>
 add_library(<%= pkgInfo.components[cmp].name %>
