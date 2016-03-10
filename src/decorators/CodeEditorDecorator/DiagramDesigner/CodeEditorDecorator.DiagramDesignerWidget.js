@@ -24,6 +24,21 @@ define([
         ModelDecoratorDiagramDesignerWidget.apply(this, [opts]);
 
         this._skinParts = {};
+	this.buttonDict = {
+	    'Interaction': {
+		'Definition':'Definition'
+	    },
+	    'Component': {
+		'Forwards':'Forwards',
+		'Members':'Members',
+		'Definitions':'Definitions',
+		'Initialization':'Initialization',
+		'Destruction':'Destruction',
+	    },
+	    'Port': {
+		'Operation':'Operation'
+	    }
+	};
 
         this.logger.debug('CodeEditorDecorator ctor');
     };
@@ -44,28 +59,37 @@ define([
 
 	var baseObject = client.getNode(nodeObj.getBaseId()),
 	    baseType = undefined || baseObject.getAttribute('name'),
-	    isInteractionType = baseType == 'Message' || baseType == 'Service',
+	    isInteraction = baseType == 'Message' || baseType == 'Service',
 	    isComponent = baseType == 'Component',
 	    isPort = baseType == 'Subscriber' || baseType == 'Server' || baseType == 'Timer';
 
-        //render text-editor based META editing UI piece
-        this._skinParts.$EqnEditorBtn = EQN_EDIT_BTN_BASE.clone();
-        this.$el.append('<br>');
-        this.$el.append(this._skinParts.$EqnEditorBtn);
+	var objType = '';
+	if (isInteraction)
+	    objType = 'Interaction';
+	else if (isComponent)
+	    objType = 'Component';
+	else if (isPort)
+	    objType = 'Port';
 
-        // onClick listener for the eqn button
-        this._skinParts.$EqnEditorBtn.on('click', function () {
-            if (self.hostDesignerItem.canvas.getIsReadOnlyMode() !== true &&
-                nodeObj.getAttribute('Definition') !== undefined) {
-                self._showEditorDialog('Definition');
-            }
-	    else if (self.hostDesignerItem.canvas.getIsReadOnlyMode() !== true &&
-                nodeObj.getAttribute('Operation') !== undefined) {
-                self._showEditorDialog('Operation');
-            }
-            event.stopPropagation();
-            event.preventDefault();
-        });
+	for (var code in self.buttonDict[objType]) {
+            this._skinParts[code] = EQN_EDIT_BTN_BASE.clone();
+	    this.$el.append('<br><body>'+code+'  </body>');
+	    this.$el.append(this._skinParts[code]);
+	    var codeClick = self._on_click.bind(self, code);
+	    this._skinParts[code].on('click', codeClick);
+	}
+    };
+
+    CodeEditorDecorator.prototype._on_click = function(attr) {
+	var self = this,
+            client = this._control._client,
+            nodeObj = client.getNode(this._metaInfo[CONSTANTS.GME_ID]);
+	if (self.hostDesignerItem.canvas.getIsReadOnlyMode() !== true &&
+	    nodeObj.getAttribute(attr) !== undefined) {
+	    self._showEditorDialog(attr);
+	}
+	event.stopPropagation();
+	event.preventDefault();
     };
 
     CodeEditorDecorator.prototype._showEditorDialog = function (attrName) {
@@ -92,7 +116,10 @@ define([
     };
 
     CodeEditorDecorator.prototype.destroy = function () {
-        this._skinParts.$EqnEditorBtn.off('click');
+	for (var btn in this._skinParts) {
+            //this._skinParts.$EqnEditorBtn.off('click');
+            this._skinParts[btn].off('click');
+	}
         ModelDecoratorDiagramDesignerWidget.prototype.destroy.apply(this, arguments);
     };
 
@@ -104,7 +131,7 @@ define([
         ModelDecoratorDiagramDesignerWidget.prototype.update.apply(this, arguments);
 
         if (nodeObj) {
-            newDoc = nodeObj.getAttribute('Definition') || nodeObj.getAttribute('Operation') ||'';
+            //newDoc = nodeObj.getAttribute('Definition') || nodeObj.getAttribute('Operation') ||'';
         }
     };
 
