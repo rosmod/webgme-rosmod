@@ -209,9 +209,9 @@
                     "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1": {
                         "265e2d6f-1ce3-f1ce-af71-3934f174d63e": {},
                         "4d04c2a5-a077-dbc9-bb12-690bb10fffc9": {},
+                        "5a606d01-44cd-486e-3400-45b5dc693198": {},
                         "8ff74691-1535-f037-068b-52df355dd0bd": {},
                         "94dc4ba7-0a9c-f078-310f-cf1f2bf7bbe7": {},
-                        "ae2a7d70-952b-9245-153d-d935ddcca31f": {},
                         "ecde4aa3-106a-f888-fe6b-473f56ac2d21": {}
                     },
                     "bf3c5759-8b0e-c5a7-7666-e3d42038bc48": {},
@@ -249,10 +249,11 @@
                     "2acb9167-ab2a-9164-a638-972a058f218c": {},
                     "35cb9167-ab2a-9164-a638-972a058f218c": {},
                     "3b0e696a-b922-ec04-d0bf-b3eeb74660c9": {},
-                    "507809b1-dbb0-945d-b31d-5343160629ca": {},
                     "51321b06-2a7b-eebe-187b-a68c11e80b87": {
+                        "11aa8166-89d9-0008-646c-9c5fc6816600": {},
                         "2df2dde5-9823-c603-092a-f1fc1f28ca14": {},
                         "50177db4-7d87-86ab-98ae-472f9cfd788c": {},
+                        "692c4cbd-629c-8265-5d80-9b1dd5103c39": {},
                         "c0742d5e-657f-56c8-fa2f-38560878df39": {}
                     },
                     "8c0974bd-12e4-dc59-4d43-7982b534b262": {
@@ -1058,6 +1059,9 @@
         },
         "0a064327-011a-e497-672b-785e37ff448a": {
             "attributes": {
+                "Forwards": "#include <stdlib.h>\n#include \"agse_package/gpio.h\"\n#include \"agse_package/eqep.h\"",
+                "Initialization": "  paused = true;\n  lowerLimitReached = false;\n\n  // THESE NEED TO BE UPDATED\n  epsilon = 100;\n  motorForwardPin = 89; //86;  // connected to GPIO2_22, pin P8_27\n  motorBackwardPin = 88; //87; // connected to GPIO2_23, pin P8_29\n  lowerLimitSwitchPin = 65;       // connected to GPIO2_01, pin P8_18\n  \n  adcPin = 1;  // connected to ADC1, pin P9_40\n\n  // set up the pins to control the h-bridge\n  gpio_export(motorForwardPin);\n  gpio_export(motorBackwardPin);\n  gpio_export(lowerLimitSwitchPin);\n  gpio_set_dir(motorForwardPin,OUTPUT_PIN);\n  gpio_set_dir(motorBackwardPin,OUTPUT_PIN);\n  gpio_set_dir(lowerLimitSwitchPin,INPUT_PIN);\n  // set up the encoder module\n  vm_eqep_period = 1000000000L;\n  verticalMotoreQEP.initialize(\"/sys/devices/ocp.3/48302000.epwmss/48302180.eqep\", eQEP::eQEP_Mode_Absolute);\n  verticalMotoreQEP.set_period(vm_eqep_period);\n\n  // Command line args for radial goal\n  for (int i = 0; i < node_argc; i++)\n    {\n      if (!strcmp(node_argv[i], \"-unpaused\"))\n\t{\n\t  paused = false;\n\t}\n      if (!strcmp(node_argv[i], \"-v\"))\n\t{\n\t  verticalGoal = atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-e\"))\n\t{\n\t  epsilon = atoi(node_argv[i+1]);\n\t}\n    }\n\n  ROS_INFO(\"VERTICAL GOAL SET TO : %d\",verticalGoal);",
+                "Members": "  bool paused;\n  // epsion value for minimum actionable difference between goal and current\n  int epsilon;\n  // goal position for the vertical linear actuator\n  int verticalGoal;\n  // current position of the vertical linear actuator\n  int verticalCurrent;\n  // pin that motor forward is connected to\n  unsigned int motorForwardPin;\n  // pin that motor backward is connected to\n  unsigned int motorBackwardPin;\n  // pin that lower limit switch is connected to\n  unsigned int lowerLimitSwitchPin;\n  // state variable to keep track of whether we've reached the limit or not\n  bool lowerLimitReached;\n  // ADC the motor potentiometer is connected to (for the prototype)\n  int adcPin;\n  // enhanced Quadrature Encoder Pulse eQEP module for the vertical actuator\n  eQEP verticalMotoreQEP;\n  long vm_eqep_period;",
                 "name": "verticalController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
@@ -1098,6 +1102,7 @@
         },
         "0dad946f-7b49-ccba-aff2-c85e58b60ea7": {
             "attributes": {
+                "Operation": "  if (!paused) \n    {\n\n      int pos; // temp value to store position from servo\n    \n      // ARM SERVO \n      dynamixel.setPosition(&serialPort, armServoID, Dynamixel::angleToPos_28T(armRotationGoal));\n      pos = dynamixel.getPosition(&serialPort, armServoID);\n      //      ROS_INFO(\"Arm base servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      armRotationCurrent = Dynamixel::posToAngle_28T(pos);\n\n      // GRIPPER ROTATION SERVO\n      dynamixel.setPosition(&serialPort, gripperRotationID, Dynamixel::angleToPos(gripperRotationGoal));\n      pos = dynamixel.getPosition(&serialPort, gripperRotationID);\n      //      ROS_INFO(\"Gripper rotation servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      gripperRotationCurrent = Dynamixel::posToAngle(pos);\n    \n      // GRIPPER POSITION SERVO\n      dynamixel.setPosition(&serialPort, gripperPositionID, Dynamixel::angleToPos(gripperPosGoal));\n      pos = dynamixel.getPosition(&serialPort, gripperPositionID);\n      //      ROS_INFO(\"Gripper position servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      gripperPosCurrent = Dynamixel::posToAngle(pos);\n    }\n  else \n    {\n      int pos; // temp value to store position from servo\n    \n      // ARM SERVO \n      pos = dynamixel.getPosition(&serialPort, armServoID);\n      //      ROS_INFO(\"Arm base servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      armRotationCurrent = Dynamixel::posToAngle_28T(pos);\n\n      // GRIPPER ROTATION SERVO\n      pos = dynamixel.getPosition(&serialPort, gripperRotationID);\n      //      ROS_INFO(\"Gripper rotation servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      gripperRotationCurrent = Dynamixel::posToAngle(pos);\n    \n      // GRIPPER POSITION SERVO\n      pos = dynamixel.getPosition(&serialPort, gripperPositionID);\n      //      ROS_INFO(\"Gripper position servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      gripperPosCurrent = Dynamixel::posToAngle(pos);\n    }",
                 "Period": 0,
                 "name": "servoTimer"
             },
@@ -1216,6 +1221,27 @@
                 "position": {
                     "x": 362,
                     "y": 255
+                }
+            },
+            "sets": {},
+            "constraints": {}
+        },
+        "11aa8166-89d9-0008-646c-9c5fc6816600": {
+            "attributes": {
+                "Operation": "  payloadBay.pos = received_data->pos;\n  payloadBay.orientation = received_data->orientation;",
+                "name": "payloadBayState-Message"
+            },
+            "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
+            "meta": {},
+            "parent": "51321b06-2a7b-eebe-187b-a68c11e80b87",
+            "pointers": {
+                "Message": "3b0e696a-b922-ec04-d0bf-b3eeb74660c9",
+                "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5"
+            },
+            "registry": {
+                "position": {
+                    "x": 792,
+                    "y": 264
                 }
             },
             "sets": {},
@@ -1678,6 +1704,7 @@
         },
         "2df2dde5-9823-c603-092a-f1fc1f28ca14": {
             "attributes": {
+                "Operation": "arm.state = received_data->state;",
                 "name": "armStateMessage"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
@@ -2272,6 +2299,7 @@
         },
         "47fdb167-6041-cd46-fa83-f6fb651c652d": {
             "attributes": {
+                "Operation": "  if (req.update == true)\n    {\n      //      ROS_INFO(\"GOT NEW HEIGHT GOAL: %d\",(int)req.goal);\n      //      ROS_INFO(\"CURRENT HEIGHT: %d\",verticalCurrent);\n      verticalGoal = req.goal;\n    }\n  if (req.setZeroPosition == true)\n    {\n      ROS_INFO(\"ZEROED VERTICAL ENCODER\");\n      verticalMotoreQEP.set_position(0);\n    }\n  res.lowerLimitReached = lowerLimitReached;\n  res.upperLimitReached = false;\n  res.current = verticalCurrent;\n  return true;\n",
                 "name": "verticalPositionServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -2456,6 +2484,7 @@
         },
         "4fc00747-714d-4832-998f-c520d0d3edfc": {
             "attributes": {
+                "Operation": "  if (req.update == true)\n    {\n      gripperPosGoal = req.goal;\n    }\n  res.current = gripperPosCurrent;\n  return true;",
                 "name": "gripperPositionServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -2494,25 +2523,11 @@
             "sets": {},
             "constraints": {}
         },
-        "507809b1-dbb0-945d-b31d-5343160629ca": {
-            "attributes": {},
-            "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
-            "meta": {},
-            "parent": "83f33549-7a85-a619-35b2-b18209fdda9d",
-            "pointers": {
-                "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86"
-            },
-            "registry": {
-                "position": {
-                    "x": 835,
-                    "y": 220
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "51321b06-2a7b-eebe-187b-a68c11e80b87": {
             "attributes": {
+                "Forwards": "#include \"agse_package/gpio.h\"\n//#include \"agse_package/uip.h\"\n#include \"opencv/cv.h\"\n#include \"opencv/highgui.h\"\nusing namespace cv;",
+                "Initialization": "  paused = false;\n  halted = false;\n  manual = false;\n  \n  noGPIO = false;\n\n  // Command line args for radial goal\n  for (int i = 0; i < node_argc; i++)\n    {\n      if (!strcmp(node_argv[i], \"-noGPIO\"))\n\t{\n\t  noGPIO = true;\n\t}\n    }\n\n  if (noGPIO == false) {\n\n    //////////////////////////////////////////////\n    // UIP SWITCHES\n    //////////////////////////////////////////////\n\n    // PAUSE Switch - Amber\n    pauseSwitchPin = 27; // P8_17\n    gpio_export(pauseSwitchPin);\n    gpio_set_dir(pauseSwitchPin,INPUT_PIN);\n\n    // MANUAL Switch - Blue\n    manualSwitchPin = 22; // P8_19\n    gpio_export(manualSwitchPin);\n    gpio_set_dir(manualSwitchPin,INPUT_PIN);\n\n    // HALT Switch - Red\n    haltSwitchPin = 65; // P8_18\n    gpio_export(haltSwitchPin);\n    gpio_set_dir(haltSwitchPin,INPUT_PIN);\n\n    //////////////////////////////////////////////\n    // UIP LEDS\n    //////////////////////////////////////////////\n\n    // PAUSE MAIN LED \n    pauseLED = 37; // P8_22 - Amber\n    gpio_export(pauseLED);\n    gpio_set_dir(pauseLED, OUTPUT_PIN);\n    pauseLEDBlinkDelay = 5;\n\n    // ALARM MAIN LED\n    alarmLED = 66; // P8_07 - Red\n    gpio_export(alarmLED);\n    gpio_set_dir(alarmLED, OUTPUT_PIN);  \n\n    // INIT MAIN LED\n    initLED[0] = 45; // P8_11 - Blue\n    initLED[1] = 44; // P8_12 - Green\n    initLED[2] = 23; // P8_13 - Red\n    gpio_export(initLED[0]);\n    gpio_set_dir(initLED[0], OUTPUT_PIN);  \n    gpio_export(initLED[1]);\n    gpio_set_dir(initLED[1], OUTPUT_PIN);  \n    gpio_export(initLED[2]);\n    gpio_set_dir(initLED[2], OUTPUT_PIN);  \n\n    gpio_set_value(initLED[0], HIGH);\n\n    // SAMPLE MAIN LED\n    sampleLED[0] = 26; // P8_14 - Blue\n    sampleLED[1] = 47; // P8_15 - Green\n    sampleLED[2] = 46; // P8_16 - Red\n    gpio_export(sampleLED[0]);\n    gpio_set_dir(sampleLED[0], OUTPUT_PIN);  \n    gpio_export(sampleLED[1]);\n    gpio_set_dir(sampleLED[1], OUTPUT_PIN);  \n    gpio_export(sampleLED[2]);\n    gpio_set_dir(sampleLED[2], OUTPUT_PIN);  \n    sampleLEDBlinkDelay = 5;\n\n    // BAY MAIN LED\n    bayLED[0] = 67; // P8_08 - Blue\n    bayLED[1] = 69; // P8_09 - Green\n    bayLED[2] = 68; // P8_10 - Red\n    gpio_export(bayLED[0]);\n    gpio_set_dir(bayLED[0], OUTPUT_PIN);  \n    gpio_export(bayLED[1]);\n    gpio_set_dir(bayLED[1], OUTPUT_PIN);  \n    gpio_export(bayLED[2]);\n    gpio_set_dir(bayLED[2], OUTPUT_PIN);  \n    bayLEDBlinkDelay = 5;\n  }\n",
+                "Members": "  bool paused;\n  bool halted;\n  bool manual;\n\n  bool noGPIO;\n\n  // used to keep track of AGSE state\n  agse_package::armState arm;\n  agse_package::sampleState sample;\n  agse_package::payloadBayState payloadBay;\n\n  // Pins for Pause (AMBER) Missile Switch\n  unsigned int pauseSwitchPin; \n  // Pins for Manual Override (RED) Missile Switch\n  unsigned int manualSwitchPin;\n  // Pins for halt (BLUE) Missile Switch\n  unsigned int haltSwitchPin; \n\n  // variable to keep track of switch states\n  unsigned int pauseSwitchState;\n  unsigned int haltSwitchState;\n  unsigned int manualSwitchState;\n\n  // Pin for Pause LED\n  unsigned int pauseLED;\n  unsigned int pauseLEDBlinkDelay;\n  // Pin for Alarm LED\n  unsigned int alarmLED;\n  // Pin for Sample LED\n  unsigned int sampleLED[3];\n  unsigned int sampleLEDBlinkDelay;\n  // Pin for Bay LED\n  unsigned int bayLED[3];\n  unsigned int bayLEDBlinkDelay;\n  // Pin for Init LED\n  unsigned int initLED[3];\n",
                 "name": "userInputController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
@@ -2523,8 +2538,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 515,
-                    "y": 462
+                    "x": 509,
+                    "y": 556
                 }
             },
             "sets": {},
@@ -2667,6 +2682,7 @@
         },
         "5a1725b5-953f-cbf1-d72d-4897c4d55c11": {
             "attributes": {
+                "Operation": "    paused = received_data->paused;\n    ROS_INFO( paused ? \"Image Processor paused!\" : \"Image Processor Unpaused\" );",
                 "name": "controlInputsSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
@@ -2680,6 +2696,27 @@
                 "position": {
                     "x": 673,
                     "y": 310
+                }
+            },
+            "sets": {},
+            "constraints": {}
+        },
+        "5a606d01-44cd-486e-3400-45b5dc693198": {
+            "attributes": {
+                "Operation": "  pb_rawImage = Mat(received_data->height, \n\t\t    received_data->width, \n\t\t    CV_8UC3, \n\t\t    const_cast<unsigned char*>(received_data->rawImgVector.data()));\n\n  pb_hsvImage = Mat(received_data->height, \n\t\t    received_data->width, \n\t\t    CV_8UC3, \n\t\t    const_cast<unsigned char*>(received_data->hsvThreshImgVector.data()));\n\n  pb_gsImage = Mat(received_data->height, \n\t\t   received_data->width, \n\t\t   CV_8UC3, \n\t\t   const_cast<unsigned char*>(received_data->gsThreshImgVector.data()));\n  \n  pb_bitwise = Mat(received_data->height, \n\t\t   received_data->width, \n\t\t   CV_8UC3, \n\t\t   const_cast<unsigned char*>(received_data->bitwiseAndImgVector.data()));\n\n  bottom_left = cvCreateImage(cvSize(pb_rawImage.cols, pb_rawImage.rows), 8, 3);\n  IplImage ipltemp = pb_rawImage;\n  cvCopy(&ipltemp, bottom_left);",
+                "name": "payloadBayDetectionImages-Message"
+            },
+            "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
+            "meta": {},
+            "parent": "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1",
+            "pointers": {
+                "Message": "043de1ab-0b51-afeb-be5f-a5a167b3a363",
+                "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5"
+            },
+            "registry": {
+                "position": {
+                    "x": 640,
+                    "y": 182
                 }
             },
             "sets": {},
@@ -2743,6 +2780,7 @@
         },
         "5e29f1d2-99a8-9559-faff-e924a9c5e677": {
             "attributes": {
+                "Operation": "  if (!paused)\n    {\n      agse_package::captureImage arg;\n      if (this->captureImage_client.call(arg)) {\n\t//\tROS_INFO(\"Image width: %d, height: %d, size: %d\", \n\t//\t arg.response.width,\n\t//\t arg.response.height,\n\t//\t arg.response.imgVector.size());\n\tMat image = Mat( arg.response.height, \n\t\t\t arg.response.width, \n\t\t\t CV_8UC3, \n\t\t\t arg.response.imgVector.data());\n\tMat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n\t// NEED TO GET RETURN VALUES ABOUT DETECTED PAYLOAD BAY HERE\n\tDetectedObject payloadBay =\n\t  payloadBayDetector.run(image,detectedObjectsMask,\"autonomous_PB\"); \n\tROS_INFO(\"PayloadBay: %d, (%f,%f), %f\",payloadBay.state, payloadBay.x, payloadBay.y, payloadBay.angle);\n\tcv::imwrite(\"PayloadBay-01-Raw.png\", image+detectedObjectsMask);\n\tif ( payloadBay.x >= 0 && payloadBay.x <= arg.response.width &&\n\t     payloadBay.y >= 0 && payloadBay.y <= arg.response.height )\n\t  {\n\t    res.status = payloadBay.state;\n\t    res.x = payloadBay.x - arg.response.width / 2;   // convert [0,w] -> [-w/2,w/2]\n\t    res.y = payloadBay.y - arg.response.height / 2;  // convert [0,h] -> [-h/2,h/2]\n\t    res.angle = payloadBay.angle;\n\t  }\n\telse\n\t  res.status = HIDDEN;\n\treturn true;\n      }\n      else {\n\tROS_INFO(\"ERROR: Client call failed; couldn't get image.\");\n      }\n    }\n  return false;\n",
                 "name": "payloadBayStateFromImageServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -2907,6 +2945,7 @@
         },
         "6815fb72-468f-ef04-95a9-117eb05569de": {
             "attributes": {
+                "Operation": "  if (req.update == true)\n    {\n      gripperRotationGoal = req.goal;\n    }\n  res.current = gripperRotationCurrent;\n  return true",
                 "name": "gripperRotationServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -2920,6 +2959,27 @@
                 "position": {
                     "x": 627,
                     "y": 241
+                }
+            },
+            "sets": {},
+            "constraints": {}
+        },
+        "692c4cbd-629c-8265-5d80-9b1dd5103c39": {
+            "attributes": {
+                "Operation": "  sample.pos = received_data->pos;\n  sample.orientation = received_data->orientation;",
+                "name": "sampleState-Message"
+            },
+            "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
+            "meta": {},
+            "parent": "51321b06-2a7b-eebe-187b-a68c11e80b87",
+            "pointers": {
+                "Message": "2acb9167-ab2a-9164-a638-972a058f218c",
+                "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5"
+            },
+            "registry": {
+                "position": {
+                    "x": 790,
+                    "y": 378
                 }
             },
             "sets": {},
@@ -3220,6 +3280,10 @@
         },
         "7599b53d-653a-1ff6-0d2a-c6a49dec721c": {
             "attributes": {
+                "Definitions": "struct buffer      *buffers;\nstruct v4l2_buffer  buf;\nint                 n_buffers;\n\nstatic void xioctl(int fh, int request, void *arg)\n{\n  int r;\n  do {\n    r = v4l2_ioctl(fh, request, arg);\n  } while (r == -1 && ((errno == EINTR) || (errno == EAGAIN)));\n  if (r == -1) {\n    fprintf(stderr, \"error %d, %s\\n\", errno, strerror(errno));\n    exit(EXIT_FAILURE);\n  }\n}\n",
+                "Forwards": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <fcntl.h>\n#include <errno.h>\n#include <signal.h>\n#include <sys/ioctl.h>\n#include <sys/types.h>\n#include <sys/time.h>\n#include <sys/mman.h>\n#include <sys/wait.h>\n#include <unistd.h>\n#include <jpeglib.h>\n#include <time.h>\n\n#include <linux/videodev2.h>\n#include <libv4l2.h>\n\n#define CLEAR(x) memset(&(x), 0, sizeof(x))\n\nstruct buffer {\n        void   *start;\n        size_t length;\n};\n",
+                "Initialization": "  paused = true;\n  sprintf(videoDevice,\"/dev/video0\");\n  width = 1920;\n  height = 1080;\n\n  struct v4l2_format              fmt;\n  struct v4l2_requestbuffers      reqBufs;\n\n  videoFD = v4l2_open(videoDevice, O_RDWR | O_NONBLOCK, 0);\n  if (videoFD < 0) {\n    perror(\"Cannot open device\");\n    exit(EXIT_FAILURE);\n  }\n\n  CLEAR(fmt);\n  fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n  fmt.fmt.pix.width       = width;\n  fmt.fmt.pix.height      = height;\n  fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_BGR24;\n  fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;\n  xioctl(videoFD, VIDIOC_S_FMT, &fmt);\n  if (fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_BGR24) {\n    printf(\"Libv4l didn't accept BGR24 format. Can't proceed.\\n\");\n    exit(EXIT_FAILURE);\n  }\n  if ((fmt.fmt.pix.width != width) || (fmt.fmt.pix.height != height))\n    printf(\"Warning: driver is sending image at %dx%d\\n\",\n\t   fmt.fmt.pix.width, fmt.fmt.pix.height);\n\n  CLEAR(reqBufs);\n  reqBufs.count = 2;\n  reqBufs.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n  reqBufs.memory = V4L2_MEMORY_MMAP;\n  xioctl(videoFD, VIDIOC_REQBUFS, &reqBufs);\n\n  buffers = (buffer *)calloc(reqBufs.count, sizeof(*buffers));\n  for (n_buffers = 0; n_buffers < reqBufs.count; ++n_buffers) {\n    CLEAR(buf);\n\n    buf.type        = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n    buf.memory      = V4L2_MEMORY_MMAP;\n    buf.index       = n_buffers;\n\n    xioctl(videoFD, VIDIOC_QUERYBUF, &buf);\n\n    buffers[n_buffers].length = buf.length;\n    buffers[n_buffers].start = v4l2_mmap(NULL, buf.length,\n\t\t\t\t\t PROT_READ | PROT_WRITE, MAP_SHARED,\n\t\t\t\t\t videoFD, buf.m.offset);\n\n    if (MAP_FAILED == buffers[n_buffers].start) {\n      perror(\"mmap\");\n      exit(EXIT_FAILURE);\n    }\n  }\n\n  // Command line args for servo control\n  for (int i = 0; i < node_argc; i++) \n    {\n      if (!strcmp(node_argv[i], \"-unpaused\"))\n\tpaused = false;\n    }\n",
+                "Members": "        bool paused;\n        char videoDevice[50];\n        int videoFD;\n        int width;\n        int height;\n        int numFrames;",
                 "name": "imageSensor"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
@@ -3230,8 +3294,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 641,
-                    "y": 220
+                    "x": 642,
+                    "y": 115
                 }
             },
             "sets": {},
@@ -3239,6 +3303,7 @@
         },
         "769c7992-7dd1-3447-3e3c-953fd7e158d4": {
             "attributes": {
+                "Operation": "    if (!paused)\n    {\n      // Business Logic for captureImage_server Server providing captureImage Service\n      fd_set                          fds;\n      struct timeval                  tv;\n      enum v4l2_buf_type              type;\n      int                             r;\n\n      for (int i = 0; i < n_buffers; ++i) {\n\tCLEAR(buf);\n\tbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n\tbuf.memory = V4L2_MEMORY_MMAP;\n\tbuf.index = i;\n\txioctl(videoFD, VIDIOC_QBUF, &buf);\n      }\n      type = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n\n      xioctl(videoFD, VIDIOC_STREAMON, &type);\n      do {\n\tFD_ZERO(&fds);\n\tFD_SET(videoFD, &fds);\n\n\t/* Timeout. */\n\ttv.tv_sec = 2;\n\ttv.tv_usec = 0;\n\n\tr = select(videoFD + 1, &fds, NULL, NULL, &tv);\n      } while ((r == -1 && (errno = EINTR)));\n      if (r == -1) {\n\tperror(\"select\");\n\treturn false;\n      }\n\n      CLEAR(buf);\n      buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n      buf.memory = V4L2_MEMORY_MMAP;\n      xioctl(videoFD, VIDIOC_DQBUF, &buf);\n\n      //fwrite(buffers[buf.index].start, buf.bytesused, 1, fout);\n\n      type = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n      xioctl(videoFD, VIDIOC_STREAMOFF, &type);\n\n      res.imgVector.reserve(buf.bytesused);\n      std::copy(&((unsigned char *)buffers[buf.index].start)[0],\n\t\t&((unsigned char *)buffers[buf.index].start)[0] + buf.bytesused,\n\t\tback_inserter(res.imgVector));\n      res.width = width;\n      res.height = height;\n\t\t\n      return true;\n    }\n  return false;\n",
                 "name": "captureImageServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -3278,6 +3343,7 @@
         },
         "78617d39-7d27-d9f9-b421-7b8621f0380c": {
             "attributes": {
+                "Operation": "paused = received_data->paused;",
                 "name": "controlInputsSusbcriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
@@ -3464,6 +3530,7 @@
         },
         "7eea081c-beab-287a-1aed-46821198b17c": {
             "attributes": {
+                "Operation": "paused = received_data->paused;",
                 "name": "controlInputsSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
@@ -3581,6 +3648,7 @@
         },
         "874020d4-54d8-0c9b-0bda-18052dae44db": {
             "attributes": {
+                "Operation": "  if (!paused)\n    {\n      // read current value for radial position (encoder)\n      radialCurrent = radialMotoreQEP.get_position();\n      //ROS_INFO(\"Raidal Actuator Encoder Reading: %d\",radialCurrent);\n\n      unsigned int limitSwitchState = 0;\n      unsigned int backwardPinState = 0;\n      gpio_get_value(lowerLimitSwitchPin,&limitSwitchState);\n      gpio_get_value(motorBackwardPin,&backwardPinState);\n      if (backwardPinState && !limitSwitchState)\n\t{\n\t  lowerLimitReached = true;\n\t}\n      // update motor based on current value\n      if ( abs(radialGoal-radialCurrent) > epsilon ) // if there's significant reason to move\n\t{\n\t  if (radialGoal > radialCurrent) \n\t    {\n\t      lowerLimitReached = false;\n\t      gpio_set_value(motorBackwardPin,LOW);\n\t      gpio_set_value(motorForwardPin,HIGH);\n\t    }\n\t  else\n\t    {\n\t      gpio_set_value(motorForwardPin,LOW);\n\t      gpio_set_value(motorBackwardPin,HIGH);\n\t    }\n\t}\n      else\n\t{\n\t  gpio_set_value(motorForwardPin,LOW);\n\t  gpio_set_value(motorBackwardPin,LOW);\n\t}\n    }\n  else \n    {\n      gpio_set_value(motorForwardPin,LOW);\n      gpio_set_value(motorBackwardPin,LOW);      \n    }\n\n",
                 "name": "radialPositionTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -3695,6 +3763,8 @@
         },
         "8c0974bd-12e4-dc59-4d43-7982b534b262": {
             "attributes": {
+                "Forwards": "#include \"agse_package/detected_object.hpp\"\n#include \"agse_package/SerialPort.h\"",
+                "Members": "  bool paused;\n  bool usingSerialPort;\n  bool payloadBayOpened;\n  bool stateChanged;\n  enum ArmState\n    {\n      INIT = 0,\n      OPENING_PB = 1,\n      FINDING_SAMPLE = 2,\n      FINDING_PB = 3,\n      GRABBING_SAMPLE = 4,\n      CARRYING_SAMPLE = 5,\n      INSERTING_SAMPLE = 6,\n      CLOSING_PB = 7,\n      MOVING_AWAY = 8\n    };\n\n  void PrintCurrentState();\n  void UpdateSensorData();\n  void UpdateArmPosition();\n  bool CheckGoals();\n\n  ArmState currentState;\n  agse_package::armState arm;\n  agse_package::sampleState sample;\n  agse_package::payloadBayState payloadBay;\n\n  void Init_StateFunc();\n  void Finding_PB_StateFunc();\n  void Opening_PB_StateFunc();\n  void Finding_Sample_StateFunc();\n  void Grabbing_Sample_StateFunc();\n  void Carrying_Sample_StateFunc();\n  void Inserting_Sample_StateFunc();\n  void Closing_PB_StateFunc();\n  void Moving_Away_StateFunc();\n  \n  int maxRadialPos;\n  int maxVerticalPos;\n  float maxArmRotation;\n  float maxGripperRotation;\n  float maxGripperPos;\n\n  int minRadialPos;\n  int minVerticalPos;\n  float minArmRotation;\n  float minGripperRotation;\n  float minGripperPos;\n\n  float gripperRotationSafe;\n\n  float gripperPosOpened;\n  float gripperPosClosed;\n  \n  int currentRadialPos;\n  int currentVerticalPos;\n  float currentArmRotation;\n  float currentGripperRotation;\n  float currentGripperPos;\n\n  int goalRadialPos;\n  int goalVerticalPos;\n  float goalArmRotation;\n  float goalGripperRotation;\n  float goalGripperPos;\n\n  int radialEpsilon;\n  int verticalEpsilon;\n  float armRotationEpsilon;\n  float gripperRotationEpsilon;\n  float gripperPosEpsilon;\n\n  int radialOffset;   // should be 0\n  int verticalOffset; // should be 0\n  float armRotationOffset; // difference between our 0 angle (arm frame) and servo's 0 angle\n  float gripperRotationOffset; // difference between our 0 angle (plane of radius) and servo's 0 angle\n  float gripperPosOffset; // difference between our 0 angle (open) and the servo's 0 angle\n\n  float sampleOrientationOffset;  // difference between angle gotten from image and gripper angle\n\n  // offsets measured between center of camera image and the center underneath the gripper (r,theta)\n  int arcLengthBetweenGripperAndCamera;\n  int radiusBetweenGripperAndCamera;\n\n  // presets for the z-plane on which the sample and payload bay will lie (will be different)\n  int sampleVerticalPos;\n  int payloadBayVerticalPos;\n\n  // serial port we use on the Jetson TK1 for reading from / writing to the payload bay\n  SerialPort serialPort;\n  char portName[50];\n",
                 "name": "armController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
@@ -3791,6 +3861,7 @@
         },
         "8ff74691-1535-f037-068b-52df355dd0bd": {
             "attributes": {
+                "Operation": "  sample_rawImage = Mat(received_data->height, \n\t\t\treceived_data->width, \n\t\t\tCV_8UC3, \n\t\t\tconst_cast<unsigned char*>(received_data->rawImgVector.data()));\n\n  sample_hsvImage = Mat(received_data->height, \n\t\t\treceived_data->width, \n\t\t\tCV_8UC3, \n\t\t\tconst_cast<unsigned char*>(received_data->hsvThreshImgVector.data()));\n\n  sample_gsImage = Mat(received_data->height, \n\t\t       received_data->width, \n\t\t       CV_8UC3, \n\t\t       const_cast<unsigned char*>(received_data->gsThreshImgVector.data()));\n  \n  sample_bitwise = Mat(received_data->height, \n\t\t       received_data->width, \n\t\t       CV_8UC3, \n\t\t       const_cast<unsigned char*>(received_data->bitwiseAndImgVector.data()));\n\n  top_left = cvCreateImage(cvSize(sample_rawImage.cols, sample_rawImage.rows), 8, 3);\n  IplImage ipltemp = sample_rawImage;\n  cvCopy(&ipltemp, top_left);",
                 "name": "sampleDetectionImagesSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
@@ -3802,8 +3873,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 468,
-                    "y": 274
+                    "x": 641,
+                    "y": 268
                 }
             },
             "sets": {},
@@ -3855,6 +3926,7 @@
         },
         "93f48121-6fe3-48ed-0cdc-dc9db647b01a": {
             "attributes": {
+                "Operation": "  if (!paused)\n    {\n      agse_package::captureImage arg;\n      if (this->captureImage_client.call(arg)) {\n\t//\tROS_INFO(\"Image width: %d, height: %d, size: %d\", \n\t//\t\t arg.response.width,\n\t//\t\t arg.response.height,\n\t//\t\t arg.response.imgVector.size());\n\tMat image = Mat( arg.response.height, \n\t\t\t arg.response.width, \n\t\t\t CV_8UC3, \n\t\t\t arg.response.imgVector.data());\n\tMat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n\t// NEED TO GET RETURN VALUES ABOUT DETECTED SAMPLE HERE\n\tDetectedObject sample =\n\t  sampleDetector.run(image,detectedObjectsMask,\"autonomous_S\"); \n\t//\tROS_INFO(\"Sample: %d, (%f,%f), %f\",sample.state, sample.x, sample.y, sample.angle);\n\tcv::imwrite(\"Sample-01-Raw.png\", image+detectedObjectsMask);\n\tcv::Mat sample_detected_image = image + detectedObjectsMask; \n\tif ( sample.x >= 0 && sample.x <= arg.response.width &&\n\t     sample.y >= 0 && sample.y <= arg.response.height )\n\t  {\n\t    res.status = sample.state;\n\t    res.x = sample.x - arg.response.width / 2;   // convert [0,w] -> [-w/2,w/2]\n\t    res.y = sample.y - arg.response.height / 2;  // convert [0,h] -> [-h/2,h/2]\n\t    res.angle = sample.angle;\n\t  }\n\telse\n\t  res.status = HIDDEN;\n\treturn true;\n      }\n      else {\n\tROS_INFO(\"ERROR: Client call failed; couldn't get image.\");\n      }\n    }\n  return false;\n",
                 "name": "sampleStateFromImageServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -3875,6 +3947,7 @@
         },
         "94dc4ba7-0a9c-f078-310f-cf1f2bf7bbe7": {
             "attributes": {
+                "Operation": "  agse_package::captureImage arg;\n  Mat camera_feed;\n\n  if (this->captureImage_client.call(arg)) {\n\n    ROS_INFO(\"Capture Image Client Call Successful; Height: %d, Width: %d \", arg.response.height, arg.response.width);\n    \n    camera_feed = Mat(arg.response.height, \n\t\t      arg.response.width, \n\t\t      CV_8UC3, \n\t\t      arg.response.imgVector.data());\n\n    // Mat to IplImage *\n    IplImage ipltemp = camera_feed;\n    cvCopy(&ipltemp, processed_image);\n    cvResize(processed_image, Mode_1);\n    cvShowImage( \"UIP\", Mode_1);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n  }\n\n  key = 0;\n  key = cvWaitKey(1);\n\n  // RAW CAMERA FEED\n  if (key == 65361) {\n    ROS_INFO(\"Mode 1 Activated\");\n    cvShowImage( \"UIP\", Mode_1);\n  }\n  /*\n  // SAMPLE PROCESSED IMAGE\n  else if (key == 65363) {\n    ROS_INFO(\"Mode 2 Activated\");\n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(sample_rawImage.cols, sample_rawImage.rows), 8, 3);\n    IplImage ipltemp = sample_rawImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_2);\n    cvShowImage( \"UIP\", Mode_2);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n\n  }\n\n  else if (key == 65362) {\n\n    ROS_INFO(\"Mode 3 Activated\");\n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(pb_rawImage.cols, pb_rawImage.rows), 8, 3);\n    IplImage ipltemp = pb_rawImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_3);\n    cvShowImage( \"UIP\", Mode_3);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n  }\n\n  else if (key == 65364) {\n\n    ROS_INFO(\"Mode 4 Activated\"); \n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(pb_gsImage.cols, pb_gsImage.rows), 8, 3);\n    IplImage ipltemp = pb_gsImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_4);\n    cvShowImage( \"UIP\", Mode_4);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n  }\n\n  else if (key == 13) {\n      \n    ROS_INFO(\"Mode 5 Activated\");\n    cvShowManyImages(\"UIP\", 4, top_left, top_right, bottom_left, bottom_right);\n    key = 0;\n  }\n  */\n  else {\n    ROS_INFO(\"No Mode Activated\");\n    cvShowImage( \"UIP\", Mode_1);\n  }\n",
                 "name": "userDisplayTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -4078,9 +4151,11 @@
         },
         "9ec1ad14-ca6f-6895-63a1-6c501f97a49a": {
             "attributes": {
-                "Definitions": "test2",
+                "Definitions": "#include <stdlib.h>",
                 "Destruction": "float test;\nfor (int i=0; i<10; i++) {\n  float32 test;\n}",
-                "Forwards": "#include <test.hpp>\n",
+                "Forwards": "#include <stdlib.h>\n#include \"agse_package/gpio.h\"\n#include \"agse_package/eqep.h\"",
+                "Initialization": "  paused = true;\n  lowerLimitReached = false;\n\n  // THESE NEED TO BE UPDATED\n  epsilon = 100;\n  motorForwardPin = 87; //88;     // connected to GPIO2_24, pin P8_28\n  motorBackwardPin = 86; //89;    // connected to GPIO2_25, pin P8_30\n  lowerLimitSwitchPin = 27;       // connected to GPIO0_27, pin P8_17\n  \n  adcPin = 0;  // connected to ADC0, pin P9_39\n\n  // set up the pins to control the h-bridge\n  gpio_export(motorForwardPin);\n  gpio_export(motorBackwardPin);\n  gpio_export(lowerLimitSwitchPin);\n  gpio_set_dir(motorForwardPin,OUTPUT_PIN);\n  gpio_set_dir(motorBackwardPin,OUTPUT_PIN);\n  gpio_set_dir(lowerLimitSwitchPin,INPUT_PIN);\n  // set up the encoder module\n  rm_eqep_period = 1000000000L;\n  radialMotoreQEP.initialize(\"/sys/devices/ocp.3/48304000.epwmss/48304180.eqep\", eQEP::eQEP_Mode_Absolute);\n  radialMotoreQEP.set_period(rm_eqep_period);\n\n  // Command line args for radial goal\n  for (int i = 0; i < node_argc; i++)\n    {\n      if (!strcmp(node_argv[i], \"-unpaused\"))\n\t{\n\t  paused = false;\n\t}\n      if (!strcmp(node_argv[i], \"-r\"))\n\t{\n\t  radialGoal = atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-e\"))\n\t{\n\t  epsilon = atoi(node_argv[i+1]);\n\t}\n    }\n\n  ROS_INFO(\"RADIAL GOAL SET TO : %d\",radialGoal);\n\n",
+                "Members": "  // paused variable which is controlled by the pause switch\n  bool paused;\n  // epsion value for minimum actionable difference between goal and current\n  int epsilon;\n  // goal position for the radial linear actuator\n  int radialGoal;\n  // current position of the radial linear actuator\n  int radialCurrent;\n  // pin that motor forward is connected to\n  unsigned int motorForwardPin;\n  // pin that motor backward is connected to\n  unsigned int motorBackwardPin;\n  // pin that lowerLimitSwitch is connected to\n  unsigned int lowerLimitSwitchPin;\n  // state variable to keep track of whether we've reached the limit or not\n  bool lowerLimitReached;\n  // ADC the motor potentiometer is connected to (for the prototype)\n  int adcPin;\n  // enhanced quadrature encoder pulse module for the radial actuator\n  eQEP radialMotoreQEP;\n  long rm_eqep_period;",
                 "name": "radialController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
@@ -4091,8 +4166,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 491,
-                    "y": 60
+                    "x": 488,
+                    "y": 59
                 }
             },
             "sets": {},
@@ -4272,6 +4347,7 @@
         },
         "a9958819-7856-4774-1ef4-934c974095af": {
             "attributes": {
+                "Operation": "  if (req.update == true)\n    {\n      armRotationGoal = req.goal;\n    }\n  res.current = armRotationCurrent;\n  return true;",
                 "name": "armRotationServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -4342,26 +4418,6 @@
                 "position": {
                     "x": 242,
                     "y": 269
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
-        "ae2a7d70-952b-9245-153d-d935ddcca31f": {
-            "attributes": {
-                "name": "payloadBayDetectionImagesPublisher"
-            },
-            "base": "0066ce30-e372-bb27-23c3-219c7d934553",
-            "meta": {},
-            "parent": "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1",
-            "pointers": {
-                "Message": "043de1ab-0b51-afeb-be5f-a5a167b3a363",
-                "base": "0066ce30-e372-bb27-23c3-219c7d934553"
-            },
-            "registry": {
-                "position": {
-                    "x": 628,
-                    "y": 194
                 }
             },
             "sets": {},
@@ -4480,6 +4536,9 @@
         },
         "b2e7d5ea-aee1-a65f-0c05-8ab227b5be8f": {
             "attributes": {
+                "Forwards": "#include <stdlib.h>\n#include \"agse_package/Dynamixel.h\"\n#include \"agse_package/SerialPort.h\"",
+                "Initialization": "  paused = true;\n  sprintf(portName,\"//dev//ttyO5\");\n  armServoID = 10;\n  gripperRotationID = 11;\n  gripperPositionID = 1;\n\n  armServoSpeed = 20; // half speed; full speed is either 0 or 1023\n  gripperRotationSpeed = 0;\n  gripperPositionSpeed = 0;\n\n  complianceMargin = 90;\n  complianceSlope = 5;\n\n  int iGain = 8;\n\n  if (serialPort.connect(portName,9600)!=0)\n    {\n      int pos;\n      // ARM SERVO \n      pos = dynamixel.getPosition(&serialPort, armServoID);\n      //      ROS_INFO(\"Arm base servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      armRotationGoal = Dynamixel::posToAngle_28T(pos);\n\n      // GRIPPER ROTATION SERVO\n      pos = dynamixel.getPosition(&serialPort, gripperRotationID);\n      //      ROS_INFO(\"Gripper rotation servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      gripperRotationGoal = Dynamixel::posToAngle(pos);\n    \n      // GRIPPER POSITION SERVO\n      pos = dynamixel.getPosition(&serialPort, gripperPositionID);\n      //      ROS_INFO(\"Gripper position servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      gripperPosGoal = Dynamixel::posToAngle(pos);\n\n      // Command line args for servo control\n      for (int i = 0; i < node_argc; i++) \n\t{\n\t  if (!strcmp(node_argv[i], \"-unpaused\"))\n\t    paused = false;\n\t  else if (!strcmp(node_argv[i], \"-theta\"))\n\t    armRotationGoal = atof(node_argv[i+1]);\n\t  else if (!strcmp(node_argv[i], \"-gRot\"))\n\t    gripperRotationGoal = atof(node_argv[i+1]);\n\t  else if (!strcmp(node_argv[i], \"-gPos\"))\n\t    gripperPosGoal = atof(node_argv[i+1]);\n\t  else if (!strcmp(node_argv[i], \"-armSpeed\"))\n\t    armServoSpeed = atoi(node_argv[i+1]);\n\t  else if (!strcmp(node_argv[i], \"-margin\"))\n\t    complianceMargin  = atoi(node_argv[i+1]);\n\t  else if (!strcmp(node_argv[i], \"-slope\"))\n\t    complianceSlope = atoi(node_argv[i+1]);\n\t  else if (!strcmp(node_argv[i], \"-gRotSpeed\"))\n\t    gripperRotationSpeed = atoi(node_argv[i+1]);\n\t  else if (!strcmp(node_argv[i], \"-gPosSpeed\"))\n\t    gripperPositionSpeed = atoi(node_argv[i+1]);\n\t  else if (!strcmp(node_argv[i], \"-iGain\"))\n\t    iGain = atoi(node_argv[i+1]);\n\t}\n\n      //dynamixel.setSpeed(&serialPort, armServoID, armServoSpeed);\n      //dynamixel.setSpeed(&serialPort, gripperRotationID, gripperRotationSpeed);\n      //dynamixel.setSpeed(&serialPort, gripperPositionID, gripperPositionSpeed);\n\n      // Setting a compliance margin\n      // Min: 0; Max: 254\n      // for MX28T the CWComplianceMargin is the D gain\n      dynamixel.setCWComplianceMargin(&serialPort, armServoID, complianceMargin);\n      dynamixel.setCCWComplianceMargin(&serialPort, armServoID, iGain);\n      dynamixel.setCWAngleLimit(&serialPort, armServoID, 1);\n      dynamixel.setCCWAngleLimit(&serialPort, armServoID, 4095);\n      //dynamixel.setCCWComplianceMargin(&serialPort, armServoID, complianceMargin);\n      //dynamixel.setCWComplianceMargin(&serialPort, gripperRotationID, complianceMargin);\n      //dynamixel.setCCWComplianceMargin(&serialPort, gripperRotationID, complianceMargin);\n      //dynamixel.setCWComplianceMargin(&serialPort, gripperPositionID, complianceMargin);\n      //dynamixel.setCCWComplianceMargin(&serialPort, gripperPositionID, complianceMargin);\n\n      //dynamixel.setCWComplianceSlope(&serialPort, armServoID, complianceSlope);\n      //dynamixel.setCCWComplianceSlope(&serialPort, armServoID, complianceSlope);\n    }\n  else\n    {\n      ROS_INFO (\"Can't open serial port %s\", portName);\n    } ",
+                "Members": "  bool paused;\n\n  // serial port we use on the BBB\n  SerialPort serialPort;\n  char portName[50];\n  // object for reading/writing to AX-12A servos\n  Dynamixel dynamixel;\n\n  // IDs for the servo motors\n  int armServoID;\n  int gripperRotationID;\n  int gripperPositionID;\n\n  // speeds for the servo motors\n  int armServoSpeed;\n  int gripperRotationSpeed;\n  int gripperPositionSpeed;\n\n  // compliance margin\n  int complianceMargin;\n  // compliance slope\n  int complianceSlope;\n\n  // goal Position for the arm servo\n  float armRotationGoal;\n  // current position of the arm servo\n  float armRotationCurrent;\n\n  // goal Position for the gripperRotation servo\n  float gripperRotationGoal;\n  // current position of the gripperRotation servo\n  float gripperRotationCurrent;\n\n  // goal Position for the gripperPos servo\n  float gripperPosGoal;\n  // current position of the gripperPos servo\n  float gripperPosCurrent;",
                 "name": "rotationController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
@@ -4540,6 +4599,9 @@
         },
         "b6a8c9f5-4472-8e3b-4035-f5e90fdac5bb": {
             "attributes": {
+                "Forwards": "#include \"agse_package/sample_detector.hpp\"\n#include \"agse_package/payloadbay_detector.hpp\"",
+                "Initialization": "  paused = true;\n  // initialize both the sample detector code\n  // and the payload bay (marker) detector code\n    sampleDetector.init();\n    payloadBayDetector.init( 0.75f, \"/home/ubuntu/camera.yml\");\n\n    // Command line args for image processor\n    for (int i = 0; i < node_argc; i++)\n      {\n\tif (!strcmp(node_argv[i], \"-unpaused\"))\n\t  {\n\t    paused = false;\n\t  }\n\tif (!strcmp(node_argv[i], \"-detect\"))\n\t  {\n\t    agse_package::captureImage arg;\n\t    if (this->captureImage_client.call(arg)) {\n\t      //\t      ROS_INFO(\"Image width: %d, height: %d, size: %d\", \n\t      //\t\t       arg.response.width,\n\t      //\t       arg.response.height,\n\t      //       arg.response.imgVector.size());\n\t      Mat image = Mat( arg.response.height, \n\t\t\t       arg.response.width, \n\t\t\t       CV_8UC3, \n\t\t\t       arg.response.imgVector.data());\n\t      Mat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n\t      DetectedObject sample = \n\t\tsampleDetector.run( image,\n\t\t\t\t    detectedObjectsMask); \n\t      DetectedObject payloadBay =\n\t\tpayloadBayDetector.run( image,\n\t\t\t\t\tdetectedObjectsMask); \n\t      cv::imwrite(\"Sample-01-Raw.png\", image+detectedObjectsMask);\n\t      ROS_INFO(\"Sample: %d, (%f,%f), %f\",sample.state, sample.x, sample.y, sample.angle);\n\t      ROS_INFO(\"PayloadBay: %d, (%f,%f), %f\",payloadBay.state, payloadBay.x, payloadBay.y, payloadBay.angle);\n\t    }\n\t  }\n      }\n",
+                "Members": "  bool paused;\n  Sample_Detector sampleDetector;\n  PayloadBay_Detector payloadBayDetector;",
                 "name": "imageProcessor"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
@@ -4652,6 +4714,9 @@
         },
         "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1": {
             "attributes": {
+                "Forwards": "#include <opencv/cv.h>\n#include <opencv/highgui.h>\nusing namespace cv;",
+                "Initialization": "  ROS_INFO(\"Initializing User Input Imager\");\n\n  //////////////////////////////////////////////\n  // UIP LCD SETUP\n  //////////////////////////////////////////////\n  \n  // The Four Images to show in UIP\n  //  top_right = cvLoadImage(\"/home/debian/Repositories/agse2015/code/UIP/input/white.png\");\n  //  bottom_right = cvLoadImage(\"/home/debian/Repositories/agse2015/code/UIP/input/white.png\");\n\n  key = 0;\n\n  Mode_1 = cvCreateImage( cvSize(800, 480), 8, 3);\n  Mode_2 = cvCreateImage( cvSize(800, 480), 8, 3);\n  Mode_3 = cvCreateImage( cvSize(800, 480), 8, 3);\n  Mode_4 = cvCreateImage( cvSize(800, 480), 8, 3);\n  processed_image = cvCreateImage(cvSize(1920, 1080), 8, 3);",
+                "Members": "  // Received Images\n  Mat pb_rawImage;\n  Mat pb_hsvImage;\n  Mat pb_gsImage;\n  Mat pb_bitwise;\n\n  Mat sample_rawImage;\n  Mat sample_hsvImage;\n  Mat sample_gsImage;\n  Mat sample_bitwise;\n\n  // Four Images to show in UIP\n  IplImage * top_left;\n  IplImage * top_right;\n  IplImage * bottom_left;\n  IplImage * bottom_right;\n\n  // Fullscreen single images\n  IplImage * camera_feed;\n  IplImage * processed_image;\n\n  // Keyboard interrupt\n  int key;",
                 "name": "userDisplay"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
@@ -4662,8 +4727,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 641,
-                    "y": 410
+                    "x": 640,
+                    "y": 497
                 }
             },
             "sets": {},
@@ -4710,6 +4775,7 @@
         },
         "c0742d5e-657f-56c8-fa2f-38560878df39": {
             "attributes": {
+                "Operation": "  if (noGPIO == false) {\n\n    // Business Logic for userInputTimer\n    // HANDLE MISSILE SWITCHES HERE\n    unsigned int previousSwitchState = pauseSwitchState;\n    gpio_get_value(pauseSwitchPin, &pauseSwitchState);\n    //  ROS_INFO(\"Pause Switch State: %d\", pauseSwitchState);\n\n    agse_package::controlInputs control;\n  \n    if ( previousSwitchState != pauseSwitchState )\n      {\n\tpaused = (pauseSwitchState == HIGH) ? true : false;\n\tif (paused) {\n\t  ROS_INFO(\"Pausing the system!\");\n\t}\n\telse {\n\t  ROS_INFO(\"Unpausing the system!\");\n\t}\n      }\n    previousSwitchState = haltSwitchState;\n    gpio_get_value(haltSwitchPin, &haltSwitchState);\n    if ( previousSwitchState != haltSwitchState )\n      {\n\thalted = (haltSwitchState == HIGH) ? true : false;\n\tif (halted) {\n\t  ROS_INFO(\"Halting the system!\");\n\t}\n\telse {\n\t  ROS_INFO(\"Un-halting the system!\");\n\t}\n      }\n    previousSwitchState = manualSwitchState;\n    gpio_get_value(manualSwitchPin, &manualSwitchState);\n    if ( previousSwitchState != manualSwitchState )\n      {\n\tmanual= (manualSwitchState == HIGH) ? true : false;\n\tif (manual) {\n\t  ROS_INFO(\"Switching the system to manual!\");\n\t}\n\telse {\n\t  ROS_INFO(\"Switching the system to automatic!\");\n\t}\n      }\n    control.paused = paused;\n    control.stop = halted;\n    control.manual = manual;\n    controlInputs_pub.publish(control);\n\n    // HANDLE LED OUTPUTS HERE\n    static int currentPauseLEDBlinkDelay = 0;\n    static int currentSampleLEDBlinkDelay = 0;\n    static int currentBayLEDBlinkDelay = 0;\n\n    if (paused)\n      {\n\tgpio_set_value(pauseLED, HIGH);\n      }\n    else\n      {\n\tif (currentPauseLEDBlinkDelay++ < pauseLEDBlinkDelay)\n\t  gpio_set_value(pauseLED,LOW);\n\telse\n\t  {\n\t    gpio_set_value(pauseLED,HIGH);\n\t    currentPauseLEDBlinkDelay = 0;\n\t  }\n      }\n\n    if (halted) {\n      gpio_set_value(alarmLED, HIGH);\n    }\n    else {\n      gpio_set_value(alarmLED, LOW);\n    }\n\n    switch (arm.state) {\n    case 0:\n      // INIT\n      gpio_set_value(initLED[0], HIGH);\n      break;\n    case 1:\n      // OPENING_PB\n      gpio_set_value(initLED[0], LOW); // Switch OFF Blue\n      gpio_set_value(initLED[1], HIGH); // Switch ON Green\n      gpio_set_value(bayLED[0], LOW); // Switch OFF Blue\n      //    gpio_set_value(bayLED[1], HIGH); // Switch ON Green    \n      break;\n    case 2:\n      // FINDING_SAMPLE\n      gpio_set_value(sampleLED[0], HIGH); // Switch ON Blue\n      break;\n    case 3:\n      // FINDING_PB\n      gpio_set_value(bayLED[0], HIGH); // Blue\n\n      // Blink Sample LED Green\n      gpio_set_value(sampleLED[0], LOW); // Switch ON Blue\n      if (currentSampleLEDBlinkDelay++ < sampleLEDBlinkDelay)\n\tgpio_set_value(sampleLED[1], LOW);\n      else\n\t{\n\t  gpio_set_value(sampleLED[1], HIGH);\n\t  currentSampleLEDBlinkDelay = 0;\n\t}\n      break;\n    case 4:\n      // GRABBING_SAMPLE\n      gpio_set_value(sampleLED[0], LOW); // Switch OFF Blue\n      gpio_set_value(sampleLED[1], HIGH); // Switch ON Green    \n\n      // Blink Payload Bay LED Gree\n      gpio_set_value(bayLED[0], LOW); // Switch OFF Blue\n      if (currentBayLEDBlinkDelay++ < bayLEDBlinkDelay)\n\tgpio_set_value(bayLED[1], LOW);\n      else\n\t{\n\t  gpio_set_value(bayLED[1], HIGH);\n\t  currentBayLEDBlinkDelay = 0;\n\t}\n      break;\n    case 5:\n      gpio_set_value(bayLED[1], HIGH);\n      gpio_set_value(sampleLED[1], HIGH);\n      break;\n    default:\n      break;\n    }\n  }\n",
                 "name": "userInputTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -4729,6 +4795,7 @@
         },
         "c093774a-c2a4-bf78-3180-5f6f82ed8cf5": {
             "attributes": {
+                "Operation": "  paused = received_data->paused;\n  ROS_INFO( paused ? \"Image Sensor paused!\" : \"Image Sensor Unpaused!\" );",
                 "name": "controlInputsSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
@@ -4878,6 +4945,7 @@
         },
         "c4d02e7c-c012-94dc-0e24-d04b2752434b": {
             "attributes": {
+                "Operation": "  if (!paused)\n    {\n      // read current value for vertical position (encoder)\n      verticalCurrent = verticalMotoreQEP.get_position();\n      //ROS_INFO(\"Vertical Actuator Encoder Reading: %d\",verticalCurrent);\n\n      unsigned int limitSwitchState = 0;\n      unsigned int backwardPinState = 0;\n      gpio_get_value(lowerLimitSwitchPin,&limitSwitchState);\n      gpio_get_value(motorBackwardPin,&backwardPinState);\n      if (backwardPinState && !limitSwitchState)\n\t{\n\t  lowerLimitReached = true;\n\t}\n      // update motor based on current value\n      if ( abs(verticalGoal-verticalCurrent) > epsilon ) // if there's significant reason to move\n\t{\n\t  if (verticalGoal > verticalCurrent) \n\t    {\n\t      lowerLimitReached = false;\n\t      gpio_set_value(motorBackwardPin,LOW);\n\t      gpio_set_value(motorForwardPin,HIGH);\n\t    }\n\t  else\n\t    {\n\t      gpio_set_value(motorForwardPin,LOW);\n\t      gpio_set_value(motorBackwardPin,HIGH);\n\t    }\n\t}\n      else\n\t{\n\t  gpio_set_value(motorForwardPin,LOW);\n\t  gpio_set_value(motorBackwardPin,LOW);\n\t}\n    }\n  else \n    {\n      gpio_set_value(motorForwardPin,LOW);\n      gpio_set_value(motorBackwardPin,LOW);      \n    }\n",
                 "name": "verticalPositionTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -4897,6 +4965,7 @@
         },
         "c8645e9e-668a-d508-45ff-0920ef6a39a8": {
             "attributes": {
+                "Operation": "    if (req.update == true)\n    {\n      //      ROS_INFO(\"GOT NEW RADIAL GOAL: %d\",(int)req.goal);\n      //      ROS_INFO(\"CURRENT RADIUS: %d\",radialCurrent);\n      radialGoal = req.goal;\n    }\n  if (req.setZeroPosition == true)\n    {\n      ROS_INFO(\"ZEROED RADIAL ENCODER\");\n      radialMotoreQEP.set_position(0);\n    }\n  res.lowerLimitReached = lowerLimitReached;\n  res.upperLimitReached = false;\n  res.current = radialCurrent;\n  return true;",
                 "name": "radialPositionServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -5417,8 +5486,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 631,
-                    "y": 262
+                    "x": 814,
+                    "y": 108
                 }
             },
             "sets": {},
@@ -5645,6 +5714,7 @@
         "0f357525-43a6-9058-d9f6-607e9275fb5e": "8",
         "0f474808-eadf-a345-7ee9-7279326aab1e": "l",
         "112d14c8-aee9-dece-1155-2553a795b2ef": "3",
+        "11aa8166-89d9-0008-646c-9c5fc6816600": "T",
         "11ba8891-12a8-41c0-9380-f19a41e8dc53": "GY",
         "11cb9167-ab2a-9164-a638-972a058f218c": "A",
         "12a356d3-8ec8-dd52-0801-686fb2299ef2": "UT",
@@ -5703,7 +5773,6 @@
         "4f130061-8b9f-0389-c288-ad2d46eeab44": "3s",
         "4fc00747-714d-4832-998f-c520d0d3edfc": "n",
         "50177db4-7d87-86ab-98ae-472f9cfd788c": "w",
-        "507809b1-dbb0-945d-b31d-5343160629ca": "r",
         "51321b06-2a7b-eebe-187b-a68c11e80b87": "5",
         "5173ec58-cf6c-e536-1efc-d1cf17642062": "R",
         "5364e1ea-29d3-bc62-87fa-b5715ac58d86": "8",
@@ -5711,6 +5780,7 @@
         "55125e5b-e6b2-0557-d0ca-e9e678b4581a": "j",
         "562d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "5a1725b5-953f-cbf1-d72d-4897c4d55c11": "A",
+        "5a606d01-44cd-486e-3400-45b5dc693198": "e",
         "5d2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "5e036e97-58b4-2376-76c5-97ef45bd8c29": "d",
         "5e29f1d2-99a8-9559-faff-e924a9c5e677": "K",
@@ -5721,6 +5791,7 @@
         "65d2144b-00c4-571f-ac50-4cfaa9bec92d": "Q",
         "679e634b-48de-6844-8479-229fb51dfaf8": "n3",
         "6815fb72-468f-ef04-95a9-117eb05569de": "o",
+        "692c4cbd-629c-8265-5d80-9b1dd5103c39": "x",
         "69357525-43a6-9058-d9f6-607e9275fb5e": "I",
         "6a84f65c-0fbe-1fc6-79e8-2ff4bc2dcd1e": "d",
         "6b357525-43a6-9058-d9f6-607e9275fb5e": "E",
@@ -5785,7 +5856,6 @@
         "ad2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "ad688a62-aeb6-e1e6-31a2-573db6aee77c": "v",
         "ad77ee64-9293-7b02-03c2-508ee3e4ed74": "s",
-        "ae2a7d70-952b-9245-153d-d935ddcca31f": "C",
         "ae4baea9-4feb-5630-81f3-085218530d89": "m",
         "af2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "b0326662-28a6-3f54-d802-de46fa7dd357": "C",
