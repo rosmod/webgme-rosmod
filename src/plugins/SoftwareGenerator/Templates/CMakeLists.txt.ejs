@@ -60,9 +60,7 @@ ENDIF()
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-<%
-if (pkgInfo.services.length > 0) {
--%>
+<% if (Object.keys(pkgInfo.services).length > 0) { %>
 # Generate services in the 'srv' folder
 add_service_files(
   FILES
@@ -78,9 +76,7 @@ for (var srv in pkgInfo.services) {
 }
 -%>
 
-<%
-if (pkgInfo.messages.length > 0) {
--%>
+<% if (Object.keys(pkgInfo.messages).length > 0) { %>
 # Generate messages in the 'msg' folder
 add_message_files(
   FILES
