@@ -270,8 +270,7 @@
                         "f0c3e8b4-d847-1890-e883-b293be17add9": {},
                         "f5b6be0c-b866-ac8f-c0e9-38e8c3cba2de": {}
                     }
-                },
-                "e4962cbd-7c94-1858-2858-dd5150750d00": {}
+                }
             },
             "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {}
         },
@@ -5502,26 +5501,6 @@
             "sets": {},
             "constraints": {}
         },
-        "e4962cbd-7c94-1858-2858-dd5150750d00": {
-            "attributes": {
-                "URL": "https://github.com/rosmod/rosmod-node",
-                "name": "node"
-            },
-            "base": "c2c96bb1-7afb-202f-aab6-2a75a33ffd0a",
-            "meta": {},
-            "parent": "7ec97e63-8e60-b0c0-8e25-eec82cec64be",
-            "pointers": {
-                "base": "c2c96bb1-7afb-202f-aab6-2a75a33ffd0a"
-            },
-            "registry": {
-                "position": {
-                    "x": 322,
-                    "y": 325
-                }
-            },
-            "sets": {},
-            "constraints": {}
-        },
         "e82d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
                 "name": "eth0"
@@ -6026,7 +6005,6 @@
         "e32d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "e3cd1771-47f7-af5e-11bf-1016427c49fb": "B",
         "e400d5b7-c955-fc81-382e-2c414b44fc20": "x",
-        "e4962cbd-7c94-1858-2858-dd5150750d00": "7",
         "e82d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "e95e44ec-0245-5b7d-1650-bfb4f10b941c": "G",
         "ea2d14c8-aee9-dece-1155-2553a795b2ef": "3",
