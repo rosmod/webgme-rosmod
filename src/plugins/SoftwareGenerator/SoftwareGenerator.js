@@ -424,6 +424,7 @@ define([
 	var request = require('request');
 	var http = require('http');
 	var url = require('url');
+	var filendir = require('filendir');
 
 	var file_url = 'http://github.com/rosmod/lib-bbbgpio/archive/master.zip';
 
@@ -492,21 +493,14 @@ define([
 	for (var f in filesToAdd){
 	    var fname = './tmp/' + f,
 		data = filesToAdd[f];
-	    fs.open(fname, 'w', function(err, fd) {
-		if (err) {
+
+	    filendir.writeFile(fname, data, function(err) {
+		if(err) {
 		    deferred.reject(new Error(err));
-		    self.logger.error("Couldn't open file " + fname + ': ' + err);
+		    self.logger.error(err);
 		    return;
 		}
-		fs.writeFile(fd, data, function(err) {
-		    if (err) {
-			deferred.reject(new Error(err));
-			self.logger.error("Couldn't write file " + fname + ': ' + err);
-			return;
-		    }
-		    self.logger.info('writing out: ' + fname);
-    		    deferred.resolve();
-		});
+		deferred.resolve();
 	    });
 	}
     };
@@ -519,6 +513,24 @@ define([
 	filesToAdd[inclFileName] = ejs.render(compHPPTemplate, {'compInfo':compInfo});
 	filesToAdd[srcFileName] = ejs.render(compCPPTemplate, {'compInfo':compInfo});
     };
+
+    function ensureDirectoryExistence(filePath) {
+	var dirname = path.dirname(filePath);
+	if (directoryExists(dirname)) {
+	    return true;
+	}
+	ensureDirectoryExistence(dirname);
+	fs.mkdirSync(dirname);
+    }
+
+    function directoryExists(path) {
+	try {
+	    return fs.statSync(path).isDirectory();
+	}
+	catch (err) {
+	    return false;
+	}
+    }
 
     return SoftwareGenerator;
 });
