@@ -77,6 +77,24 @@ define([
         // Use self to access core, project, result, logger etc from PluginBase.
         // These are all instantiated at this point.
         var self = this;
+        var exec, fs, path, temp, cmd, sim;
+
+        // Default fails
+        self.result.success = false;
+
+	var currentConfig = self.getCurrentConfig();
+        self.logger.error('Current configuration ' + JSON.stringify(currentConfig, null, 4));
+
+        if (typeof WebGMEGlobal !== 'undefined') {
+            callback(new Error('Client-side execution is not supported'), self.result);
+            return;
+        }
+	
+        exec = require('child_process').exec;
+        fs = require('fs');
+        path = require('path');
+        temp = require('temp');
+
         self.updateMETA(self.metaTypes);
 
         self.createMessage(self.activeNode, 'ROSMOD::Starting Software Code Generator','info');
@@ -400,6 +418,46 @@ define([
             timeStamp: (new Date()).toISOString(),
             pluginVersion: self.getVersion()
         }, null, 2);
+
+	/*
+	var request = require('request');
+	var http = require('http');
+	var url = require('url');
+
+	var file_url = 'http://github.com/rosmod/lib-bbbgpio/archive/master.zip';
+
+	var options = {
+	    host: url.parse(file_url).host,
+	    port: 80,
+	    path: url.parse(file_url).pathname
+	};
+
+	http.get(options, function(res) {
+	    var data = [], dataLen = 0; 
+
+	    res.on('data', function(chunk) {
+
+		data.push(chunk);
+		dataLen += chunk.length;
+
+            }).on('end', function() {
+		console.error('GOT ALL THE ZIP');
+		var buf = new Buffer(dataLen);
+
+		for (var i=0, len = data.length, pos = 0; i < len; i++) { 
+                    data[i].copy(buf, pos); 
+                    pos += data[i].length; 
+		} 
+
+		var zip = new AdmZip(buf);
+		var zipEntries = zip.getEntries();
+		console.log(zipEntries.length)
+
+		for (var i = 0; i < zipEntries.length; i++)
+                    console.log(zip.readAsText(zipEntries[i])); 
+            });
+	});
+	*/
 
         for (var pkg in softwareModel.packages) {
 	    var pkgInfo = softwareModel.packages[pkg],
