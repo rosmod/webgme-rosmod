@@ -77,26 +77,18 @@ define([
         // Use self to access core, project, result, logger etc from PluginBase.
         // These are all instantiated at this point.
         var self = this;
-        //var exec, fs, path, temp, cmd, sim;
 
         // Default fails
         self.result.success = false;
 
 	var currentConfig = self.getCurrentConfig();
-        self.logger.error('Current configuration ' + JSON.stringify(currentConfig, null, 4));
+        self.logger.info('Current configuration ' + JSON.stringify(currentConfig, null, 4));
 
         if (typeof WebGMEGlobal !== 'undefined') {
             callback(new Error('Client-side execution is not supported'), self.result);
             return;
         }
 	
-	/*
-        exec = require('child_process').exec;
-        fs = require('fs');
-        path = require('path');
-        temp = require('temp');
-	*/
-
         self.updateMETA(self.metaTypes);
 
         self.createMessage(self.activeNode, 'ROSMOD::Starting Software Code Generator','info');
@@ -106,8 +98,16 @@ define([
         	self.createMessage(self.activeNode, 'Parsed model');
         	return self.generateArtifacts(softwareModel);
   	    })
-	    .then(function () {
+	    .then(function (softwareModel) {
         	self.createMessage(self.activeNode, 'Generated artifacts');
+		return self.downloadLibraries(softwareModel);
+	    })
+	    .then(function (softwareModel) {
+        	self.createMessage(self.activeNode, 'Downloaded libraries');
+		return self.compileBinaries(softwareModel);
+	    })
+	    .then(function (softwareModel) {
+        	self.createMessage(self.activeNode, 'Compiled binaries');
         	self.result.setSuccess(true);
         	callback(null, self.result);
 	    })
@@ -420,47 +420,7 @@ define([
             pluginVersion: self.getVersion()
         }, null, 2);
 
-	var fs = require('fs');
-	var request = require('request');
-	var http = require('http');
-	var url = require('url');
 	var filendir = require('filendir');
-
-	var file_url = 'http://github.com/rosmod/lib-bbbgpio/archive/master.zip';
-
-	var options = {
-	    host: url.parse(file_url).host,
-	    port: 80,
-	    path: url.parse(file_url).pathname
-	};
-
-	http.get(options, function(res) {
-	    var data = [], dataLen = 0; 
-
-	    res.on('data', function(chunk) {
-
-		data.push(chunk);
-		dataLen += chunk.length;
-
-            }).on('end', function() {
-		self.logger.info('GOT ALL THE ZIP');
-		/*
-		var buf = new Buffer(dataLen);
-
-		for (var i=0, len = data.length, pos = 0; i < len; i++) { 
-                    data[i].copy(buf, pos); 
-                    pos += data[i].length; 
-		} 
-
-		var zip = new AdmZip(buf);
-		var zipEntries = zip.getEntries();
-		self.logger.info(zipEntries.length)
-
-		for (var i = 0; i < zipEntries.length; i++)
-                    self.logger.info(zip.readAsText(zipEntries[i])); 
-		*/
-            });
-	});
 
         for (var pkg in softwareModel.packages) {
 	    var pkgInfo = softwareModel.packages[pkg],
@@ -503,6 +463,7 @@ define([
 		deferred.resolve();
 	    });
 	}
+	return softwareModel;
     };
 
     SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, prefix, pkgInfo, compInfo) {
@@ -514,23 +475,65 @@ define([
 	filesToAdd[srcFileName] = ejs.render(compCPPTemplate, {'compInfo':compInfo});
     };
 
-    function ensureDirectoryExistence(filePath) {
-	var dirname = path.dirname(filePath);
-	if (directoryExists(dirname)) {
-	    return true;
-	}
-	ensureDirectoryExistence(dirname);
-	fs.mkdirSync(dirname);
-    }
+    SoftwareGenerator.prototype.downloadLibraries = function (softwareModel)
+    {
+	var self = this,
+	    prefix = './tmp/src/',
+	    deferred = new Q.defer();
 
-    function directoryExists(path) {
-	try {
-	    return fs.statSync(path).isDirectory();
-	}
-	catch (err) {
-	    return false;
-	}
-    }
+	// Dependencies
+	var fs = require('fs');
+	var AdmZip = require('adm-zip');
+	var url = require('url');
+	var http = require('http');
+	var exec = require('child_process').exec;
+	var spawn = require('child_process').spawn;
+
+	// App variables
+	var file_url = 'https://github.com/rosmod/lib-objecttracker/files/170732/ObjectTracker.zip';
+	var DOWNLOAD_DIR = prefix;
+
+	// We will be downloading the files to a directory, so make sure it's there
+	// This step is not required if you have manually created the directory
+	var mkdir = 'mkdir -p ' + DOWNLOAD_DIR;
+	var child = exec(mkdir, function(err, stdout, stderr) {
+	    if (err) throw err;
+	    else download_file_httpget(file_url);
+	});
+
+	// Function to download file using HTTP.get
+	var download_file_httpget = function(file_url) {
+	    var options = {
+		host: url.parse(file_url).host,
+		port: 80,
+		path: url.parse(file_url).pathname
+	    };
+
+	    var file_name = url.parse(file_url).pathname.split('/').pop();
+	    var file = fs.createWriteStream(DOWNLOAD_DIR + file_name);
+
+	    http.get(options, function(res) {
+		res.on('data', function(data) {
+		    file.write(data);
+		}).on('end', function() {
+		    file.end();
+		    self.logger.info(file_name + ' downloaded to ' + DOWNLOAD_DIR);
+		    var zip = new AdmZip(DOWNLOAD_DIR + file_name);
+		    var zipEntries = zip.getEntries(); // an array of ZipEntry records
+		    zipEntries.forEach(function(zipEntry) {
+			console.log(zipEntry.toString()); // outputs zip entries information
+		    });
+		    // extracts everything
+		    zip.extractAllTo(DOWNLOAD_DIR, /*overwrite*/true);
+		});
+	    });
+	};
+    };
+
+    SoftwareGenerator.prototype.compileBinaries = function (softwareModel)
+    {
+	return softwareModel;
+    };
 
     return SoftwareGenerator;
 });
