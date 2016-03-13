@@ -133,14 +133,6 @@ catkin_package(
 include_directories(
   ../node/include
   ${catkin_INCLUDE_DIRS}
-<%
-// All of the user include directories
-for (var lib in pkgInfo.libraries) {
--%>
- <%= pkgInfo.libararies[lib].include %>
-<%
-}
--%>
 )
 
 ## Add folders to be run by python nosetests

@@ -124,7 +124,8 @@ define([
         var self = this,
 	    dataModel = {
 		name: self.core.getAttribute(rootNode, 'name'),
-		packages: {}
+		packages: {},
+		libraries: {}
 	    };
 
         return self.core.loadSubTree(rootNode)
@@ -141,8 +142,13 @@ define([
 			    name: nodeName,
 			    messages: {},
 			    services: {},
-			    components: {},
-			    libraries: {}
+			    components: {}
+			};
+		    }
+		    else if ( self.core.isTypeOf(node, self.META.Library) ) {
+			dataModel.libraries[nodeName] = {
+			    name: nodeName,
+			    url: self.core.getAttribute(node, 'URL')
 			};
 		    }
 		    else if ( self.core.isTypeOf(node, self.META.Message) ) {
@@ -475,23 +481,18 @@ define([
     SoftwareGenerator.prototype.downloadLibraries = function (softwareModel)
     {
 	var self = this,
-	    prefix = './tmp/src/',
-	    deferred = new Q.defer();
+	    prefix = './tmp/src/';
 
-	// Dependencies
-	var AdmZip = require('adm-zip');
+	// Get the required node executable
+	var file_url = 'https://github.com/rosmod/rosmod-actor/files/170734/node.zip';
+	var dir = prefix;
+	self.wgetAndUnzipLibrary(file_url, dir);
 
-	// App variables
-	var file_url = 'http://github.com/rosmod/lib-aruco/files/170738/aruco.zip';
-	var dir = prefix,
-	    file_name = 'aruco.zip';
-
-	self.write_file = '';
-	self.complete = false;
-	self.content_length = 0;
-	self.downloaded_bytes = 0;
-	//self.download(file_url, dir + file_name, 0);
-	self.wgetAndUnzipLibrary(file_url, dir + file_name);
+	// Get all the software libraries
+	for (var lib in softwareModel.libraries) {
+	    file_url = softwareModel.libraries[lib].url;
+	    self.wgetAndUnzipLibrary(file_url, dir);
+	}
     };
 
     SoftwareGenerator.prototype.compileBinaries = function (softwareModel)
@@ -499,39 +500,32 @@ define([
 	return softwareModel;
     };
 
-    SoftwareGenerator.prototype.wgetAndUnzipLibrary = function(file_url, local_file) {
+    SoftwareGenerator.prototype.wgetAndUnzipLibrary = function(file_url, dir) {
 	var self = this,
 	    url = require('url'),
 	    path = require('path'),
 	    fs = require('fs'),
 	    unzip = require('unzip'),
 	    fstream = require('fstream'),
-	    exec = require('child_process').exec;
+	    child_process = require('child_process');
 	// extract the file name
-	var file_name = url.parse(file_url).pathname.split('/').pop(),
-	    dir = path.dirname(local_file);
-	self.logger.info(dir);
+	var file_name = url.parse(file_url).pathname.split('/').pop();
+
+	self.logger.info('getting library: '+file_name +' from ' +file_url);
 
 	// compose the wget command; -O is output file
-	var wget = 'F:\\Programs\\wget\\wget -O ' + local_file + ' ' + file_url;
+	var wget = 'wget -P ' + dir + ' ' + file_url;
 
 	// excute wget using child_process' exec function
-	var child = exec(wget, function(err, stdout, stderr) {
-            if (err) {
-		self.logger.error(err);
-		return;
-	    }
-            else {
-		self.logger.info(file_name + ' downloaded to ' + local_file);
-		self.logger.info('unzipping: ' + local_file);
-		var readStream = fs.createReadStream(local_file);
-		var writeStream = fstream.Writer(dir);
-		readStream
-		    .pipe(unzip.Parse())
-		    .pipe(writeStream);
-		fs.unlink(local_file);
-	    }
-	});
+	var child = child_process.execSync(wget);
+	self.logger.debug(file_name + ' downloaded to ' + dir);
+	self.logger.debug('unzipping: ' + dir + file_name);
+	var readStream = fs.createReadStream(dir + file_name);
+	var writeStream = fstream.Writer(dir);
+	readStream
+	    .pipe(unzip.Parse())
+	    .pipe(writeStream);
+	fs.unlink(dir + file_name);
     };
 
     SoftwareGenerator.prototype.mkdirSync = function (path) {
