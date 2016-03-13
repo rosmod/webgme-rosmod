@@ -492,13 +492,21 @@ define([
 	for (var f in filesToAdd){
 	    var fname = './tmp/' + f,
 		data = filesToAdd[f];
-	    self.logger.info('writing out: ' + fname);
-	    fs.writeFile(fname, data, function(err) {
+	    fs.openFile(fname, 'w' function(err, fd) {
 		if (err) {
 		    deferred.reject(new Error(err));
+		    self.logger.error("Couldn't open file " + fname + ': ' + err);
 		    return;
 		}
-    		deferred.resolve();
+		fs.writeFile(fd, data, function(err) {
+		    if (err) {
+			deferred.reject(new Error(err));
+			self.logger.error("Couldn't write file " + fname + ': ' + err);
+			return;
+		    }
+		    self.logger.info('writing out: ' + fname);
+    		    deferred.resolve();
+		});
 	    });
 	}
     };
