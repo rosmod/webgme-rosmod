@@ -1123,7 +1123,28 @@
                 }
             },
             "sets": {
-                "Libraries": []
+                "Libraries": [
+                    {
+                        "attributes": {},
+                        "guid": "8a20c8ac-2b78-609a-aebe-175f8964c890",
+                        "registry": {
+                            "position": {
+                                "x": 507,
+                                "y": 178
+                            }
+                        }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "c29ad503-417a-f40a-28da-57503f809a90",
+                        "registry": {
+                            "position": {
+                                "x": 508,
+                                "y": 231
+                            }
+                        }
+                    }
+                ]
             },
             "constraints": {}
         },
@@ -3912,7 +3933,28 @@
                 }
             },
             "sets": {
-                "Libraries": []
+                "Libraries": [
+                    {
+                        "attributes": {},
+                        "guid": "7dd6c967-4043-a173-2548-d357b944b810",
+                        "registry": {
+                            "position": {
+                                "x": 622,
+                                "y": 199
+                            }
+                        }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "d5367025-51d7-5b40-bcc6-664ee22902e4",
+                        "registry": {
+                            "position": {
+                                "x": 623,
+                                "y": 135
+                            }
+                        }
+                    }
+                ]
             },
             "constraints": {}
         },
@@ -4305,7 +4347,28 @@
                 }
             },
             "sets": {
-                "Libraries": []
+                "Libraries": [
+                    {
+                        "attributes": {},
+                        "guid": "8a20c8ac-2b78-609a-aebe-175f8964c890",
+                        "registry": {
+                            "position": {
+                                "x": 529,
+                                "y": 227
+                            }
+                        }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "c29ad503-417a-f40a-28da-57503f809a90",
+                        "registry": {
+                            "position": {
+                                "x": 528,
+                                "y": 170
+                            }
+                        }
+                    }
+                ]
             },
             "constraints": {}
         },
@@ -4691,7 +4754,18 @@
                 }
             },
             "sets": {
-                "Libraries": []
+                "Libraries": [
+                    {
+                        "attributes": {},
+                        "guid": "d5367025-51d7-5b40-bcc6-664ee22902e4",
+                        "registry": {
+                            "position": {
+                                "x": 621,
+                                "y": 276
+                            }
+                        }
+                    }
+                ]
             },
             "constraints": {}
         },
@@ -4756,7 +4830,28 @@
                 }
             },
             "sets": {
-                "Libraries": []
+                "Libraries": [
+                    {
+                        "attributes": {},
+                        "guid": "4d5526bf-5772-cc61-a03d-36ff99280a1f",
+                        "registry": {
+                            "position": {
+                                "x": 549,
+                                "y": 218
+                            }
+                        }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "7dd6c967-4043-a173-2548-d357b944b810",
+                        "registry": {
+                            "position": {
+                                "x": 549,
+                                "y": 148
+                            }
+                        }
+                    }
+                ]
             },
             "constraints": {}
         },
@@ -4873,7 +4968,28 @@
                 }
             },
             "sets": {
-                "Libraries": []
+                "Libraries": [
+                    {
+                        "attributes": {},
+                        "guid": "4d5526bf-5772-cc61-a03d-36ff99280a1f",
+                        "registry": {
+                            "position": {
+                                "x": 580,
+                                "y": 254
+                            }
+                        }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "7dd6c967-4043-a173-2548-d357b944b810",
+                        "registry": {
+                            "position": {
+                                "x": 581,
+                                "y": 301
+                            }
+                        }
+                    }
+                ]
             },
             "constraints": {}
         },
