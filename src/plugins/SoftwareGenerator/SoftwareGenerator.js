@@ -490,7 +490,7 @@ define([
 	}
 
 	for (var f in filesToAdd){
-	    var fname = '/.tmp/' + f,
+	    var fname = './tmp/' + f,
 		data = filesToAdd[f];
 	    self.logger.info('writing out: ' + fname);
 	    fs.writeFile(fname, data, function(err) {
