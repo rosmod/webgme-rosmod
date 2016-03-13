@@ -491,21 +491,7 @@ define([
 	self.content_length = 0;
 	self.downloaded_bytes = 0;
 	//self.download(file_url, dir + file_name, 0);
-	return self.wgetter(file_url, dir + file_name)
-	    .then(function() {
-		self.logger.info('download complete.');
-	    });
-	
-	/*
-	self.logger.info(file_name + ' downloaded to ' + dir);
-	var zip = new AdmZip(dir + file_name);
-	var zipEntries = zip.getEntries(); // an array of ZipEntry records
-	zipEntries.forEach(function(zipEntry) {
-	    self.logger.info(zipEntry.toString()); // outputs zip entries information
-	});
-	// extracts everything
-	zip.extractAllTo(dir, true);
-	*/
+	self.wgetAndUnzipLibrary(file_url, dir + file_name);
     };
 
     SoftwareGenerator.prototype.compileBinaries = function (softwareModel)
@@ -513,110 +499,40 @@ define([
 	return softwareModel;
     };
 
-    SoftwareGenerator.prototype.wgetter = function(file_url, local_file) {
+    SoftwareGenerator.prototype.wgetAndUnzipLibrary = function(file_url, local_file) {
 	var self = this,
 	    url = require('url'),
+	    path = require('path'),
+	    fs = require('fs'),
+	    unzip = require('unzip'),
+	    fstream = require('fstream'),
 	    exec = require('child_process').exec;
 	// extract the file name
-	var file_name = url.parse(file_url).pathname.split('/').pop();
-	// compose the wget command
+	var file_name = url.parse(file_url).pathname.split('/').pop(),
+	    dir = path.dirname(local_file);
+	self.logger.info(dir);
+
+	// compose the wget command; -O is output file
 	var wget = 'F:\\Programs\\wget\\wget -O ' + local_file + ' ' + file_url;
+
 	// excute wget using child_process' exec function
-
-	var promises = [];
-
 	var child = exec(wget, function(err, stdout, stderr) {
-            if (err) throw err;
+            if (err) {
+		self.logger.error(err);
+		return;
+	    }
             else {
-		console.log(file_name + ' downloaded to ' + local_file);
-		promises.push(1);
+		self.logger.info(file_name + ' downloaded to ' + local_file);
+		self.logger.info('unzipping: ' + local_file);
+		var readStream = fs.createReadStream(local_file);
+		var writeStream = fstream.Writer(dir);
+		readStream
+		    .pipe(unzip.Parse())
+		    .pipe(writeStream);
+		fs.unlink(local_file);
 	    }
-	});
-	return Q.all(promises);
-    };
-
-    SoftwareGenerator.prototype.download = function(remote, local_file, num) {
-	var fs = require('fs'),
-	    http = require('http'),
-	    https = require('https'),
-	    url = require('url');
-
-	var self = this;
-	self.logger.info( 'connecting to: ' + remote );
-	if ( num > 10 ) {
-	    self.logger.error( 'Too many redirects' );
-	    return;
-	}
-	//set some default values  
-	var redirect = false;
-	var new_remote = null;
-	var write_to_file = false;
-	var write_file_ready = false;
-	//parse the url of the remote file
-	var u = url.parse(remote);
-	//set the options for the 'get' from the remote file
-	var opts = {
-	    host: u.hostname,
-	    port: 80,
-	    path: u.pathname,
-	    method: 'GET',
-	    headers: {
-		accept: '*/*',
-		'User-Agent': 'curl/7.44.0'
-	    }
-	};
-	var transport = http;
-	if (remote.indexOf('https') > -1) {
-	    self.logger.info('Using https transport.');
-	    transport = https;
-	    opts.port = 443;
-	}
-	//get the file
-	var request = transport.get(opts, function(response ) {
-	    switch(response.statusCode) {
-	    case 200:
-		//this is good
-		//what is the content length?
-		self.content_length = response.headers['content-length'];
-		self.logger.info('content length: ' + self.content_length);
-		break;
-	    case 301:
-	    case 302:
-		new_remote = response.headers.location;
-		self.logger.info('redirecting to: ' + response.headers.location);
-		self.download(new_remote, local_file, num+1 );
-		return;
-		break;
-	    case 404:
-		self.logger.info("File Not Found");
-	    default:
-		//what the hell is default in this situation? 404?
-		self.logger.info("GOT SOMETHING ELSE: " + response.statusCode);
-		request.abort();
-		return;
-	    }
-	    response.on('data', function(chunk) {
-		//are we supposed to be writing to file?
-		if(!write_file_ready) {
-		    //set up the write file
-		    self.write_file = fs.createWriteStream(local_file);
-		    write_file_ready = true;
-		}
-		self.write_file.write(chunk);
-		self.downloaded_bytes+=chunk.length;
-		var percent = parseInt( (self.downloaded_bytes/self.content_length)*100 );
-		self.logger.info( 'percent: ' + percent );
-	    });
-	    response.on('end', function() {
-		self.complete = true;
-		self.write_file.end();
-	    });
-	});
-	request.on('error', function(e) {
-	    self.logger.info("Got error: " + e.message);
 	});
     };
-
 
     SoftwareGenerator.prototype.mkdirSync = function (path) {
 	var self = this,
