@@ -256,7 +256,6 @@ define([
 	
 	return self.gatherReferences(softwareModel.messages, softwareModel.services)
 	    .then(function(retData) {
-		self.createMessage(null,'gathering retData: ' + retData.length);
 		for (var i=0; i < retData.length; i++) {
 		    var subarr = retData[i];
 		    for (var j=0; j < subarr.length; j++) {
@@ -332,12 +331,12 @@ define([
 
 	return self.core.loadCollection(messages[0], 'Message')
 	    .then(function () {
-		self.createMessage(null,'iterating through messages');
+		self.logger.info('iterating through messages');
 		for (var i=0; i<messages.length; i++) {
 		    refPromises.push(self.getMessagePointerData(messages[i]));
 		}
 	    }).then(function () {
-		self.createMessage(null,'iterating through services');
+		self.logger.info('iterating through services');
 		for (var i=0; i<services.length; i++) {
 		    refPromises.push(self.getServicePointerData(services[i]));
 		}
@@ -350,7 +349,7 @@ define([
 	var self = this;
 	var msgName = self.core.getAttribute(msgObj, 'name');
 	var msgPkgName = self.core.getAttribute(self.core.getParent(msgObj), 'name');
-	self.createMessage(null,'Processing nodes for message ' + msgName);
+	self.logger.info('Processing nodes for message ' + msgName);
 	return self.core.loadCollection(msgObj, 'Message')
 	    .then(function (nodes) {
 		var msgDataReferences = [];
@@ -362,7 +361,6 @@ define([
 		    var pkgName = self.core.getAttribute(pkg, 'name');
 		    var baseObject = self.core.getBaseType(nodes[i]);
 		    var baseType = self.core.getAttribute(baseObject, 'name');
-		    //self.createMessage(null, nodeName + ' ' + compName + ' ' + pkgName + ' ' + msgName);
 		    msgDataReferences.push({
 			topic: msgName,
 			topicPackage: msgPkgName,
@@ -380,7 +378,7 @@ define([
 	var self = this;
 	var srvName = self.core.getAttribute(srvObj, 'name');
 	var srvPkgName = self.core.getAttribute(self.core.getParent(srvObj), 'name');
-	self.createMessage(null,'Processing nodes for service ' + srvName);
+	self.logger.info('Processing nodes for service ' + srvName);
 	return self.core.loadCollection(srvObj, 'Service')
 	    .then(function (nodes) {
 		var srvDataReferences = [];
@@ -392,7 +390,6 @@ define([
 		    var pkgName = self.core.getAttribute(pkg, 'name');
 		    var baseObject = self.core.getBaseType(nodes[i]);
 		    var baseType = self.core.getAttribute(baseObject, 'name');
-		    //self.createMessage(null, nodeName + ' ' + compName + ' ' + pkgName + ' ' + srvName);
 		    srvDataReferences.push({
 			service: srvName,
 			servicePackage: srvPkgName,
@@ -486,53 +483,77 @@ define([
 	var AdmZip = require('adm-zip');
 	var url = require('url');
 	var http = require('http');
-	var exec = require('child_process').exec;
-	var spawn = require('child_process').spawn;
 
 	// App variables
-	var file_url = 'https://github.com/rosmod/lib-objecttracker/files/170732/ObjectTracker.zip';
-	var DOWNLOAD_DIR = prefix;
+	var file_url = 'http://github.com/rosmod/lib-objecttracker/files/170732/ObjectTracker.zip',
+	    file_url = 'http://i.imgur.com/oHxaxxt.png';
+	file_url = 'http://github.com/rosmod/lib-aruco/archive/v1.0.0-beta.zip'
+	var dir = prefix,
+	    file_name = 'ObjectTracker.zip',
+	    file_name = 'test.png';
+	file_name = 'test.zip';
 
-	// We will be downloading the files to a directory, so make sure it's there
-	// This step is not required if you have manually created the directory
-	var mkdir = 'mkdir -p ' + DOWNLOAD_DIR;
-	var child = exec(mkdir, function(err, stdout, stderr) {
-	    if (err) throw err;
-	    else download_file_httpget(file_url);
+	var request = require('request'),
+	    fs = require('fs');
+
+	request({followAllRedirects: true, url: file_url}, function(err, response, body) {
+	    if (err) {
+		self.logger.error(err)
+		return;
+	    }
+	    fs.writeFileSync(dir + file_name, response);
+	    self.logger.info(file_name + ' downloaded to ' + dir);
+	    /*
+	      var zip = new AdmZip(dir + file_name);
+	      var zipEntries = zip.getEntries(); // an array of ZipEntry records
+	      zipEntries.forEach(function(zipEntry) {
+	      self.logger.info(zipEntry.toString()); // outputs zip entries information
+	      });
+	      // extracts everything
+	      zip.extractAllTo(dir, true);
+	    */
 	});
-
-	// Function to download file using HTTP.get
-	var download_file_httpget = function(file_url) {
-	    var options = {
-		host: url.parse(file_url).host,
-		port: 80,
-		path: url.parse(file_url).pathname
-	    };
-
-	    var file_name = url.parse(file_url).pathname.split('/').pop();
-	    var file = fs.createWriteStream(DOWNLOAD_DIR + file_name);
-
-	    http.get(options, function(res) {
-		res.on('data', function(data) {
-		    file.write(data);
-		}).on('end', function() {
-		    file.end();
-		    self.logger.info(file_name + ' downloaded to ' + DOWNLOAD_DIR);
-		    var zip = new AdmZip(DOWNLOAD_DIR + file_name);
-		    var zipEntries = zip.getEntries(); // an array of ZipEntry records
-		    zipEntries.forEach(function(zipEntry) {
-			self.logger.info(zipEntry.toString()); // outputs zip entries information
-		    });
-		    // extracts everything
-		    zip.extractAllTo(DOWNLOAD_DIR, /*overwrite*/true);
-		});
-	    });
-	};
     };
 
     SoftwareGenerator.prototype.compileBinaries = function (softwareModel)
     {
 	return softwareModel;
+    };
+
+    SoftwareGenerator.prototype.download = function(url, dest, cb) {
+	var fs = require('fs'),
+	    http = require('http'),
+	    request = require('request');
+
+	var file = fs.createWriteStream(dest);
+	request(url, function (error, response, body) {
+	    if (!error && response.statusCode == 200) {
+		response.pipe(file);
+		file.on('finish', function() {
+		    file.close(cb);  // close() is async, call cb after close completes.
+		});
+	    }
+	});
+    };
+
+    SoftwareGenerator.prototype.mkdirSync = function (path) {
+	var self = this,
+	    fs = require('fs'),
+	    path = require('path');
+	try {
+	    fs.mkdirSync(path);
+	} catch(e) {
+	    if ( e.code != 'EEXIST' ) throw e;
+	}
+    };
+
+    SoftwareGenerator.prototype.mkdirpSync = function (dirpath) {
+	var self = this,
+	    path = require('path');
+	var parts = dirpath.split(path.sep);
+	for( var i = 1; i <= parts.length; i++ ) {
+	    self.mkdirSync( path.join.apply(null, parts.slice(0, i)) );
+	}
     };
 
     return SoftwareGenerator;
