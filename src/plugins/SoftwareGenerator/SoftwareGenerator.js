@@ -492,7 +492,7 @@ define([
 	for (var f in filesToAdd){
 	    var fname = './tmp/' + f,
 		data = filesToAdd[f];
-	    fs.openFile(fname, 'w' function(err, fd) {
+	    fs.open(fname, 'w', function(err, fd) {
 		if (err) {
 		    deferred.reject(new Error(err));
 		    self.logger.error("Couldn't open file " + fname + ': ' + err);
