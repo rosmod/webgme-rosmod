@@ -482,17 +482,19 @@ define([
     {
 	var self = this,
 	    prefix = './tmp/src/';
+	var promises = [];
 
 	// Get the required node executable
 	var file_url = 'https://github.com/rosmod/rosmod-actor/files/170734/node.zip';
 	var dir = prefix;
-	self.wgetAndUnzipLibrary(file_url, dir);
+	promises.push(self.wgetAndUnzipLibrary(file_url, dir));
 
 	// Get all the software libraries
 	for (var lib in softwareModel.libraries) {
 	    file_url = softwareModel.libraries[lib].url;
-	    self.wgetAndUnzipLibrary(file_url, dir);
+	    promises.push(self.wgetAndUnzipLibrary(file_url, dir));
 	}
+	return Q.all(promises);
     };
 
     SoftwareGenerator.prototype.compileBinaries = function (softwareModel)
@@ -501,31 +503,39 @@ define([
     };
 
     SoftwareGenerator.prototype.wgetAndUnzipLibrary = function(file_url, dir) {
-	var self = this,
-	    url = require('url'),
-	    path = require('path'),
-	    fs = require('fs'),
-	    unzip = require('unzip'),
-	    fstream = require('fstream'),
-	    child_process = require('child_process');
-	// extract the file name
-	var file_name = url.parse(file_url).pathname.split('/').pop();
+	var self = this;
 
-	self.logger.info('getting library: '+file_name +' from ' +file_url);
+	return new Promise(function(resolve, reject) {
+	    var url = require('url'),
+		path = require('path'),
+		fs = require('fs'),
+		unzip = require('unzip'),
+		fstream = require('fstream'),
+		child_process = require('child_process');
+	    // extract the file name
+	    var file_name = url.parse(file_url).pathname.split('/').pop();
 
-	// compose the wget command; -O is output file
-	var wget = 'wget -P ' + dir + ' ' + file_url;
+	    self.logger.info('getting library: '+file_name +' from ' +file_url);
 
-	// excute wget using child_process' exec function
-	var child = child_process.execSync(wget);
-	self.logger.debug(file_name + ' downloaded to ' + dir);
-	self.logger.debug('unzipping: ' + dir + file_name);
-	var readStream = fs.createReadStream(dir + file_name);
-	var writeStream = fstream.Writer(dir);
-	readStream
-	    .pipe(unzip.Parse())
-	    .pipe(writeStream);
-	fs.unlink(dir + file_name);
+	    // compose the wget command; -O is output file
+	    var wget = 'wget -P ' + dir + ' ' + file_url;
+
+	    // excute wget using child_process' exec function
+	    var child = child_process.exec(wget, function(err, stdout, stderr) {
+		if (err) {
+		    reject(err);
+		}
+		else {
+		    var readStream = fs.createReadStream(dir + file_name);
+		    var writeStream = fstream.Writer(dir);
+		    readStream
+			.pipe(unzip.Parse())
+			.pipe(writeStream);
+		    fs.unlink(dir + file_name);
+		    resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
+		}
+	    });
+	});
     };
 
     SoftwareGenerator.prototype.mkdirSync = function (path) {
