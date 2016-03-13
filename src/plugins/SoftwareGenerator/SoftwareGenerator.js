@@ -482,50 +482,57 @@ define([
 	var AdmZip = require('adm-zip');
 
 	// App variables
-	var file_url = 'http://github.com/rosmod/lib-objecttracker/files/170732/ObjectTracker.zip',
-	    file_url = 'http://i.imgur.com/oHxaxxt.png';
-	file_url = 'http://github.com/rosmod/lib-aruco/archive/master.zip'
+	var file_url = 'http://github.com/rosmod/lib-aruco/files/170738/aruco.zip';
 	var dir = prefix,
-	    file_name = 'ObjectTracker.zip',
-	    file_name = 'test.png';
-	file_name = 'test.zip';
+	    file_name = 'aruco.zip';
 
 	self.write_file = '';
 	self.complete = false;
 	self.content_length = 0;
 	self.downloaded_bytes = 0;
-	self.download(file_url, dir + file_name, 0);
+	//self.download(file_url, dir + file_name, 0);
+	return self.wgetter(file_url, dir + file_name)
+	    .then(function() {
+		self.logger.info('download complete.');
+	    });
 	
 	/*
-	var file = fs.createWriteStream(dir + file_name);
-	request({ 'url':file_url,
-		  followRedirect: true,
-		  followAllRedirects: true}).pipe(file);
-
-	return request( file_url, function(err, response, body) {
-	    if (err) {
-		self.logger.error(err)
-		return;
-	    }
-	    self.logger.info('response size: ' + response.toString().length);
-	    self.logger.info('response: ' + response.statusCode);
-	    self.logger.info('body size: ' + body.length);
-	    fs.writeFileSync(dir + file_name, response.body);
-	    self.logger.info(file_name + ' downloaded to ' + dir);
-	      var zip = new AdmZip(dir + file_name);
-	      var zipEntries = zip.getEntries(); // an array of ZipEntry records
-	      zipEntries.forEach(function(zipEntry) {
-	      self.logger.info(zipEntry.toString()); // outputs zip entries information
-	      });
-	      // extracts everything
-	      zip.extractAllTo(dir, true);
+	self.logger.info(file_name + ' downloaded to ' + dir);
+	var zip = new AdmZip(dir + file_name);
+	var zipEntries = zip.getEntries(); // an array of ZipEntry records
+	zipEntries.forEach(function(zipEntry) {
+	    self.logger.info(zipEntry.toString()); // outputs zip entries information
 	});
+	// extracts everything
+	zip.extractAllTo(dir, true);
 	*/
     };
 
     SoftwareGenerator.prototype.compileBinaries = function (softwareModel)
     {
 	return softwareModel;
+    };
+
+    SoftwareGenerator.prototype.wgetter = function(file_url, local_file) {
+	var self = this,
+	    url = require('url'),
+	    exec = require('child_process').exec;
+	// extract the file name
+	var file_name = url.parse(file_url).pathname.split('/').pop();
+	// compose the wget command
+	var wget = 'F:\\Programs\\wget\\wget -O ' + local_file + ' ' + file_url;
+	// excute wget using child_process' exec function
+
+	var promises = [];
+
+	var child = exec(wget, function(err, stdout, stderr) {
+            if (err) throw err;
+            else {
+		console.log(file_name + ' downloaded to ' + local_file);
+		promises.push(1);
+	    }
+	});
+	return Q.all(promises);
     };
 
     SoftwareGenerator.prototype.download = function(remote, local_file, num) {
@@ -554,7 +561,8 @@ define([
 	    path: u.pathname,
 	    method: 'GET',
 	    headers: {
-		accept: '*/*'
+		accept: '*/*',
+		'User-Agent': 'curl/7.44.0'
 	    }
 	};
 	var transport = http;
