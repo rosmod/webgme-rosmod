@@ -77,7 +77,7 @@ define([
         // Use self to access core, project, result, logger etc from PluginBase.
         // These are all instantiated at this point.
         var self = this;
-        var exec, fs, path, temp, cmd, sim;
+        //var exec, fs, path, temp, cmd, sim;
 
         // Default fails
         self.result.success = false;
@@ -90,10 +90,12 @@ define([
             return;
         }
 	
+	/*
         exec = require('child_process').exec;
         fs = require('fs');
         path = require('path');
         temp = require('temp');
+	*/
 
         self.updateMETA(self.metaTypes);
 
@@ -419,7 +421,6 @@ define([
             pluginVersion: self.getVersion()
         }, null, 2);
 
-	/*
 	var request = require('request');
 	var http = require('http');
 	var url = require('url');
@@ -442,6 +443,7 @@ define([
 
             }).on('end', function() {
 		console.error('GOT ALL THE ZIP');
+		/*
 		var buf = new Buffer(dataLen);
 
 		for (var i=0, len = data.length, pos = 0; i < len; i++) { 
@@ -455,9 +457,9 @@ define([
 
 		for (var i = 0; i < zipEntries.length; i++)
                     console.log(zip.readAsText(zipEntries[i])); 
+		*/
             });
 	});
-	*/
 
         for (var pkg in softwareModel.packages) {
 	    var pkgInfo = softwareModel.packages[pkg],
