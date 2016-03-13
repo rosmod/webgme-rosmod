@@ -410,8 +410,7 @@ define([
 	var self = this,
 	    filesToAdd = {},
 	    prefix = 'src/',
-	    deferred = new Q.defer(),
-	    artifact = self.blobClient.createArtifact(softwareModel.name);
+	    deferred = new Q.defer();
 	filesToAdd[softwareModel.name + '.json'] = JSON.stringify(softwareModel, null, 2);
         filesToAdd[softwareModel.name + '_metadata.json'] = JSON.stringify({
     	    projectID: self.projectID,
@@ -421,6 +420,7 @@ define([
             pluginVersion: self.getVersion()
         }, null, 2);
 
+	var fs = require('fs');
 	var request = require('request');
 	var http = require('http');
 	var url = require('url');
@@ -442,7 +442,7 @@ define([
 		dataLen += chunk.length;
 
             }).on('end', function() {
-		console.error('GOT ALL THE ZIP');
+		self.logger.info('GOT ALL THE ZIP');
 		/*
 		var buf = new Buffer(dataLen);
 
@@ -453,10 +453,10 @@ define([
 
 		var zip = new AdmZip(buf);
 		var zipEntries = zip.getEntries();
-		console.log(zipEntries.length)
+		self.logger.info(zipEntries.length)
 
 		for (var i = 0; i < zipEntries.length; i++)
-                    console.log(zip.readAsText(zipEntries[i])); 
+                    self.logger.info(zip.readAsText(zipEntries[i])); 
 		*/
             });
 	});
@@ -489,20 +489,18 @@ define([
 	    }
 	}
 
-        artifact.addFiles(filesToAdd, function (err) {
-            if (err) {
-		deferred.reject(new Error(err));
-		return;
-	    }
-	    self.blobClient.saveAllArtifacts(function (err, hashes) {
-                if (err) {
-                    deferred.reject(new Error(err));
-    		    return;
+	for (var f in filesToAdd){
+	    var fname = '/.tmp/' + f,
+		data = filesToAdd[f];
+	    self.logger.info('writing out: ' + fname);
+	    fs.writeFile(fname, data, function(err) {
+		if (err) {
+		    deferred.reject(new Error(err));
+		    return;
 		}
-    		self.result.addArtifact(hashes[0]);
     		deferred.resolve();
 	    });
-	});
+	}
     };
 
     SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, prefix, pkgInfo, compInfo) {
