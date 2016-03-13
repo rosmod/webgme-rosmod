@@ -521,7 +521,7 @@ define([
 		    var zip = new AdmZip(DOWNLOAD_DIR + file_name);
 		    var zipEntries = zip.getEntries(); // an array of ZipEntry records
 		    zipEntries.forEach(function(zipEntry) {
-			console.log(zipEntry.toString()); // outputs zip entries information
+			self.logger.info(zipEntry.toString()); // outputs zip entries information
 		    });
 		    // extracts everything
 		    zip.extractAllTo(DOWNLOAD_DIR, /*overwrite*/true);
