@@ -7,6 +7,7 @@
         "2e129f64-d002-cefe-20f8-256883f4b003": {
             "0066ce30-e372-bb27-23c3-219c7d934553": {},
             "0f474808-eadf-a345-7ee9-7279326aab1e": {},
+            "11c26da0-dda2-d00c-dc36-f53c52c3fc62": {},
             "2562febd-1839-d9fe-3b97-0a0548314d85": {},
             "27271a90-b612-119a-4451-26b58c0a84b2": {},
             "36d534c1-207e-1c52-5336-c74ff256793f": {},
@@ -29,7 +30,8 @@
             "cf2109f7-7027-451c-095f-c0bc64833ba9": {},
             "da2ea5d7-26ee-0923-0025-38bfbceb5293": {},
             "df437d49-a83e-6944-62ed-52fd3dcf806d": {},
-            "e400d5b7-c955-fc81-382e-2c414b44fc20": {}
+            "e400d5b7-c955-fc81-382e-2c414b44fc20": {},
+            "e4236ea7-bd34-9066-b116-da90faa42f94": {}
         },
         "8bc323b4-a4eb-abcd-b7a2-f710630dce1c": {
             "04fdc95b-f567-260d-dc01-d41068d3367b": {
@@ -332,8 +334,8 @@
             "registry": {
                 "isAbstract": false,
                 "position": {
-                    "x": 179,
-                    "y": 801
+                    "x": 112,
+                    "y": 810
                 }
             },
             "sets": {},
@@ -429,6 +431,16 @@
                             "position": {
                                 "x": 391,
                                 "y": 580
+                            }
+                        }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "11c26da0-dda2-d00c-dc36-f53c52c3fc62",
+                        "registry": {
+                            "position": {
+                                "x": 300,
+                                "y": 458
                             }
                         }
                     },
@@ -681,6 +693,16 @@
                                 "y": 532
                             }
                         }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "e4236ea7-bd34-9066-b116-da90faa42f94",
+                        "registry": {
+                            "position": {
+                                "x": 321,
+                                "y": 387
+                            }
+                        }
                     }
                 ],
                 "MetaAspectSet_68f8146d-b1b7-6c40-3464-f8c070e97e8d": [
@@ -711,8 +733,8 @@
                         "guid": "0066ce30-e372-bb27-23c3-219c7d934553",
                         "registry": {
                             "position": {
-                                "x": 30,
-                                "y": 834
+                                "x": 8,
+                                "y": 966
                             }
                         }
                     },
@@ -721,8 +743,18 @@
                         "guid": "0f474808-eadf-a345-7ee9-7279326aab1e",
                         "registry": {
                             "position": {
-                                "x": 392.66666666666663,
-                                "y": 640
+                                "x": 328,
+                                "y": 776
+                            }
+                        }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "11c26da0-dda2-d00c-dc36-f53c52c3fc62",
+                        "registry": {
+                            "position": {
+                                "x": 372,
+                                "y": 511
                             }
                         }
                     },
@@ -741,8 +773,8 @@
                         "guid": "27271a90-b612-119a-4451-26b58c0a84b2",
                         "registry": {
                             "position": {
-                                "x": 182,
-                                "y": 458
+                                "x": 118,
+                                "y": 596
                             }
                         }
                     },
@@ -751,8 +783,8 @@
                         "guid": "36d534c1-207e-1c52-5336-c74ff256793f",
                         "registry": {
                             "position": {
-                                "x": 583,
-                                "y": 514
+                                "x": 684,
+                                "y": 518
                             }
                         }
                     },
@@ -761,8 +793,8 @@
                         "guid": "40634285-7f30-4d56-3e22-6047fe32f0d7",
                         "registry": {
                             "position": {
-                                "x": 380,
-                                "y": 834
+                                "x": 318,
+                                "y": 966
                             }
                         }
                     },
@@ -771,8 +803,8 @@
                         "guid": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9",
                         "registry": {
                             "position": {
-                                "x": 898,
-                                "y": 257
+                                "x": 1004,
+                                "y": 268
                             }
                         }
                     },
@@ -781,8 +813,8 @@
                         "guid": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643",
                         "registry": {
                             "position": {
-                                "x": 923,
-                                "y": 484
+                                "x": 1024,
+                                "y": 488
                             }
                         }
                     },
@@ -791,8 +823,8 @@
                         "guid": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
                         "registry": {
                             "position": {
-                                "x": 310,
-                                "y": 460
+                                "x": 248,
+                                "y": 596
                             }
                         }
                     },
@@ -801,8 +833,8 @@
                         "guid": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
                         "registry": {
                             "position": {
-                                "x": 270,
-                                "y": 834
+                                "x": 208,
+                                "y": 966
                             }
                         }
                     },
@@ -811,8 +843,8 @@
                         "guid": "5fa73dfc-a08d-9aa3-cb07-c7869fccd187",
                         "registry": {
                             "position": {
-                                "x": 250,
-                                "y": 340
+                                "x": 174,
+                                "y": 360
                             }
                         }
                     },
@@ -821,8 +853,8 @@
                         "guid": "6e77078a-7ffc-3881-d2b3-469431fa7020",
                         "registry": {
                             "position": {
-                                "x": 923,
-                                "y": 724
+                                "x": 1024,
+                                "y": 728
                             }
                         }
                     },
@@ -831,8 +863,8 @@
                         "guid": "6eee186c-a14e-3be3-d7b1-7fa840843c05",
                         "registry": {
                             "position": {
-                                "x": 525,
-                                "y": 260
+                                "x": 624,
+                                "y": 268
                             }
                         }
                     },
@@ -841,8 +873,8 @@
                         "guid": "7575417a-f5cb-d71e-d261-752e90aee4c3",
                         "registry": {
                             "position": {
-                                "x": 923,
-                                "y": 594
+                                "x": 1024,
+                                "y": 598
                             }
                         }
                     },
@@ -851,8 +883,8 @@
                         "guid": "7c902cff-78a7-29da-9892-c0ecdc182ab3",
                         "registry": {
                             "position": {
-                                "x": 913,
-                                "y": 364
+                                "x": 1014,
+                                "y": 368
                             }
                         }
                     },
@@ -861,8 +893,8 @@
                         "guid": "984baea9-4feb-5630-81f3-085218530d89",
                         "registry": {
                             "position": {
-                                "x": 743,
-                                "y": 404
+                                "x": 844,
+                                "y": 408
                             }
                         }
                     },
@@ -871,8 +903,8 @@
                         "guid": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
                         "registry": {
                             "position": {
-                                "x": 583,
-                                "y": 644
+                                "x": 684,
+                                "y": 648
                             }
                         }
                     },
@@ -891,8 +923,8 @@
                         "guid": "ae4baea9-4feb-5630-81f3-085218530d89",
                         "registry": {
                             "position": {
-                                "x": 743,
-                                "y": 574
+                                "x": 844,
+                                "y": 578
                             }
                         }
                     },
@@ -901,8 +933,8 @@
                         "guid": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
                         "registry": {
                             "position": {
-                                "x": 140,
-                                "y": 834
+                                "x": 78,
+                                "y": 966
                             }
                         }
                     },
@@ -911,8 +943,8 @@
                         "guid": "c2c96bb1-7afb-202f-aab6-2a75a33ffd0a",
                         "registry": {
                             "position": {
-                                "x": 370,
-                                "y": 330
+                                "x": 508,
+                                "y": 514
                             }
                         }
                     },
@@ -921,8 +953,8 @@
                         "guid": "cf2109f7-7027-451c-095f-c0bc64833ba9",
                         "registry": {
                             "position": {
-                                "x": 37,
-                                "y": 465
+                                "x": 8,
+                                "y": 596
                             }
                         }
                     },
@@ -931,8 +963,8 @@
                         "guid": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
                         "registry": {
                             "position": {
-                                "x": 240,
-                                "y": 645
+                                "x": 178,
+                                "y": 776
                             }
                         }
                     },
@@ -941,8 +973,8 @@
                         "guid": "df437d49-a83e-6944-62ed-52fd3dcf806d",
                         "registry": {
                             "position": {
-                                "x": 543,
-                                "y": 364
+                                "x": 644,
+                                "y": 368
                             }
                         }
                     },
@@ -951,8 +983,18 @@
                         "guid": "e400d5b7-c955-fc81-382e-2c414b44fc20",
                         "registry": {
                             "position": {
-                                "x": 743,
-                                "y": 684
+                                "x": 844,
+                                "y": 688
+                            }
+                        }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "e4236ea7-bd34-9066-b116-da90faa42f94",
+                        "registry": {
+                            "position": {
+                                "x": 370,
+                                "y": 368
                             }
                         }
                     }
@@ -1249,8 +1291,8 @@
             "registry": {
                 "decorator": "CodeEditorDecorator",
                 "position": {
-                    "x": 129,
-                    "y": 1039
+                    "x": 62,
+                    "y": 1050
                 }
             },
             "sets": {},
@@ -1310,6 +1352,26 @@
                 "position": {
                     "x": 310,
                     "y": 682
+                }
+            },
+            "sets": {},
+            "constraints": {}
+        },
+        "11c26da0-dda2-d00c-dc36-f53c52c3fc62": {
+            "attributes": {
+                "name": "System Library"
+            },
+            "base": "e4236ea7-bd34-9066-b116-da90faa42f94",
+            "meta": {},
+            "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
+            "pointers": {
+                "base": "e4236ea7-bd34-9066-b116-da90faa42f94"
+            },
+            "registry": {
+                "isAbstract": false,
+                "position": {
+                    "x": 228,
+                    "y": 664
                 }
             },
             "sets": {},
@@ -1557,7 +1619,7 @@
                 "children": {
                     "items": [
                         "5fa73dfc-a08d-9aa3-cb07-c7869fccd187",
-                        "c2c96bb1-7afb-202f-aab6-2a75a33ffd0a"
+                        "e4236ea7-bd34-9066-b116-da90faa42f94"
                     ],
                     "minItems": [
                         -1,
@@ -1643,8 +1705,8 @@
             "registry": {
                 "decorator": "CodeEditorDecorator",
                 "position": {
-                    "x": 39,
-                    "y": 578
+                    "x": -28,
+                    "y": 590
                 }
             },
             "sets": {},
@@ -2137,8 +2199,8 @@
                 "decorator": "CodeEditorDecorator",
                 "isAbstract": false,
                 "position": {
-                    "x": 180,
-                    "y": 970
+                    "x": 112,
+                    "y": 980
                 }
             },
             "sets": {},
@@ -2652,19 +2714,19 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Members": {
-                        "type": "string"
-                    },
-                    "Initialization": {
-                        "type": "string"
-                    },
-                    "Forwards": {
+                    "Definitions": {
                         "type": "string"
                     },
                     "Destruction": {
                         "type": "string"
                     },
-                    "Definitions": {
+                    "Forwards": {
+                        "type": "string"
+                    },
+                    "Initialization": {
+                        "type": "string"
+                    },
+                    "Members": {
                         "type": "string"
                     }
                 },
@@ -2685,7 +2747,7 @@
                 "pointers": {
                     "Libraries": {
                         "items": [
-                            "c2c96bb1-7afb-202f-aab6-2a75a33ffd0a"
+                            "e4236ea7-bd34-9066-b116-da90faa42f94"
                         ],
                         "minItems": [
                             -1
@@ -2703,8 +2765,8 @@
             "registry": {
                 "decorator": "CodeEditorDecorator",
                 "position": {
-                    "x": 50,
-                    "y": 657
+                    "x": -18,
+                    "y": 670
                 }
             },
             "sets": {
@@ -2860,8 +2922,8 @@
             "registry": {
                 "isAbstract": false,
                 "position": {
-                    "x": 179,
-                    "y": 917
+                    "x": 112,
+                    "y": 930
                 }
             },
             "sets": {},
@@ -5136,8 +5198,8 @@
                 "decorator": "CodeEditorDecorator",
                 "isAbstract": false,
                 "position": {
-                    "x": 180,
-                    "y": 864
+                    "x": 112,
+                    "y": 870
                 }
             },
             "sets": {},
@@ -5185,9 +5247,9 @@
         "c2c96bb1-7afb-202f-aab6-2a75a33ffd0a": {
             "attributes": {
                 "URL": "",
-                "name": "Library"
+                "name": "Source Library"
             },
-            "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
+            "base": "e4236ea7-bd34-9066-b116-da90faa42f94",
             "meta": {
                 "attributes": {
                     "URL": {
@@ -5197,12 +5259,13 @@
             },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
             "pointers": {
-                "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
+                "base": "e4236ea7-bd34-9066-b116-da90faa42f94"
             },
             "registry": {
+                "isAbstract": false,
                 "position": {
                     "x": 228,
-                    "y": 656
+                    "y": 604
                 }
             },
             "sets": {},
@@ -5364,8 +5427,8 @@
             "registry": {
                 "decorator": "CodeEditorDecorator",
                 "position": {
-                    "x": 33,
-                    "y": 512
+                    "x": -38,
+                    "y": 520
                 }
             },
             "sets": {},
@@ -5500,8 +5563,8 @@
                 "isAbstract": true,
                 "isPort": true,
                 "position": {
-                    "x": 180,
-                    "y": 741
+                    "x": 112,
+                    "y": 750
                 }
             },
             "sets": {},
@@ -5697,6 +5760,26 @@
                 "position": {
                     "x": 530,
                     "y": 652
+                }
+            },
+            "sets": {},
+            "constraints": {}
+        },
+        "e4236ea7-bd34-9066-b116-da90faa42f94": {
+            "attributes": {
+                "name": "Library"
+            },
+            "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
+            "meta": {},
+            "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
+            "pointers": {
+                "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
+            },
+            "registry": {
+                "isAbstract": true,
+                "position": {
+                    "x": 188,
+                    "y": 526
                 }
             },
             "sets": {},
@@ -6022,6 +6105,7 @@
         "112d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "11aa8166-89d9-0008-646c-9c5fc6816600": "T",
         "11ba8891-12a8-41c0-9380-f19a41e8dc53": "GY",
+        "11c26da0-dda2-d00c-dc36-f53c52c3fc62": "w",
         "11cb9167-ab2a-9164-a638-972a058f218c": "A",
         "12a356d3-8ec8-dd52-0801-686fb2299ef2": "UT",
         "132d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -6210,6 +6294,7 @@
         "e32d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "e3cd1771-47f7-af5e-11bf-1016427c49fb": "B",
         "e400d5b7-c955-fc81-382e-2c414b44fc20": "x",
+        "e4236ea7-bd34-9066-b116-da90faa42f94": "1",
         "e82d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "e95e44ec-0245-5b7d-1650-bfb4f10b941c": "G",
         "ea2d14c8-aee9-dece-1155-2553a795b2ef": "3",
