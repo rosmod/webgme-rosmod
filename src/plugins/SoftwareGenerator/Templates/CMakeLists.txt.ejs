@@ -132,6 +132,15 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ../node/include
+<% for (var cmp in pkgInfo.components) { %>
+<% for (var lib in pkgInfo.components[cmp].requiredLibs) {
+  <%= pkgInfo.components[cmp].requiredLibs[lib].includeDirs %>
+<%
+}
+-%>
+<%
+}
+-%>
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -139,15 +148,22 @@ include_directories(
 # catkin_add_nosetests(test)
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-<%
-// need to add components dependent library info
-for (var cmp in pkgInfo.components) {
--%>
+<% for (var cmp in pkgInfo.components) { %>
 add_library(<%= pkgInfo.components[cmp].name %>
             src/<%= pkgInfo.name%>/<%= pkgInfo.components[cmp].name %>.cpp
             )
 target_link_libraries(<%= pkgInfo.components[cmp].name %>
-                      ${catkin_LIBRARIES} 
+                      ${catkin_LIBRARIES}
+<% for (var lib in pkgInfo.components[cmp].requiredLibs) {
+if ( pkgInfo.components[cmp].requiredLibs[lib].linkLibs !== undefined ) {
+%>
+		      <%= pkgInfo.components[cmp].requiredLibs[lib].linkLibs %>
+<%
+}
+-%>
+<%
+}
+-%>
                       )
 add_dependencies(<%= pkgInfo.components[cmp].name %>
                  <%= pkgInfo.name %>_generate_messages_cpp

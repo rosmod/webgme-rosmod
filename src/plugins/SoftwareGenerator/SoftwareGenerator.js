@@ -149,7 +149,9 @@ define([
 		    else if ( self.core.isTypeOf(node, self.META.Library) ) {
 			dataModel.libraries[nodeName] = {
 			    name: nodeName,
-			    url: self.core.getAttribute(node, 'URL')
+			    url: self.core.getAttribute(node, 'URL'),
+			    linkLibs: self.core.getAttribute(node, 'Link Libraries'),
+			    includeDirs: self.core.getAttribute(node, 'Include Directories')
 			};
 			libraries.push(node);
 		    }
