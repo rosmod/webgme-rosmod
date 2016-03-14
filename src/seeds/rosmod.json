@@ -193,6 +193,7 @@
                 }
             },
             "7ec97e63-8e60-b0c0-8e25-eec82cec64be": {
+                "2fe9618f-ca21-b656-26d7-801acce13ec2": {},
                 "3abf1c09-fdc4-61e7-1e53-501eff8e76ee": {
                     "043de1ab-0b51-afeb-be5f-a5a167b3a363": {},
                     "75973fe4-d007-56ab-2df2-483fac45138c": {},
@@ -1889,6 +1890,26 @@
             },
             "constraints": {}
         },
+        "2fe9618f-ca21-b656-26d7-801acce13ec2": {
+            "attributes": {
+                "Link Libraries": "v4l2",
+                "name": "Video4Linux"
+            },
+            "base": "11c26da0-dda2-d00c-dc36-f53c52c3fc62",
+            "meta": {},
+            "parent": "7ec97e63-8e60-b0c0-8e25-eec82cec64be",
+            "pointers": {
+                "base": "11c26da0-dda2-d00c-dc36-f53c52c3fc62"
+            },
+            "registry": {
+                "position": {
+                    "x": 664,
+                    "y": 448
+                }
+            },
+            "sets": {},
+            "constraints": {}
+        },
         "302d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
                 "name": "eth0"
@@ -2069,8 +2090,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 323,
-                    "y": 265
+                    "x": 321,
+                    "y": 260
                 }
             },
             "sets": {},
@@ -2579,6 +2600,7 @@
         },
         "4d5526bf-5772-cc61-a03d-36ff99280a1f": {
             "attributes": {
+                "Link Libraries": "opencv_core, opencv_imgproc, opencv_highgui, opencv_contrib, opencv_legacy, opencv_photo, opencv_video, opencv_videostab, opencv_calib3d, opencv_ml",
                 "URL": "https://github.com/rosmod/lib-aruco/files/170738/aruco.zip",
                 "name": "aruco"
             },
@@ -3450,7 +3472,18 @@
                 }
             },
             "sets": {
-                "Libraries": []
+                "Libraries": [
+                    {
+                        "attributes": {},
+                        "guid": "2fe9618f-ca21-b656-26d7-801acce13ec2",
+                        "registry": {
+                            "position": {
+                                "x": 429,
+                                "y": 275
+                            }
+                        }
+                    }
+                ]
             },
             "constraints": {}
         },
@@ -3625,6 +3658,7 @@
         },
         "7dd6c967-4043-a173-2548-d357b944b810": {
             "attributes": {
+                "Link Libraries": "opencv_core, opencv_imgproc, opencv_highgui, opencv_contrib, opencv_legacy, opencv_photo, opencv_video, opencv_videostab, opencv_calib3d, opencv_ml",
                 "URL": "https://github.com/rosmod/lib-objecttracker/files/170732/ObjectTracker.zip",
                 "name": "objecttracker"
             },
@@ -5767,10 +5801,17 @@
         },
         "e4236ea7-bd34-9066-b116-da90faa42f94": {
             "attributes": {
+                "Link Libraries": "",
                 "name": "Library"
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
-            "meta": {},
+            "meta": {
+                "attributes": {
+                    "Link Libraries": {
+                        "type": "string"
+                    }
+                }
+            },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
             "pointers": {
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
@@ -6130,6 +6171,7 @@
         "2df2dde5-9823-c603-092a-f1fc1f28ca14": "7",
         "2e129f64-d002-cefe-20f8-256883f4b003": "3",
         "2e357525-43a6-9058-d9f6-607e9275fb5e": "X",
+        "2fe9618f-ca21-b656-26d7-801acce13ec2": "Bf",
         "302d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "3109804a-d102-0849-9ad7-b2411f3ce732": "5",
         "322d14c8-aee9-dece-1155-2553a795b2ef": "3",
