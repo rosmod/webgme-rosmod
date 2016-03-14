@@ -131,7 +131,8 @@ define([
         return self.core.loadSubTree(rootNode)
 	    .then(function (nodes) {
 		var messages = [],
-		    services = [];
+		    services = [],
+		    libraries = [];
 		for (var i=0;i<nodes.length; i+= 1) {
 		    var node = nodes[i],
 			nodeName = self.core.getAttribute(node, 'name'),
@@ -150,6 +151,7 @@ define([
 			    name: nodeName,
 			    url: self.core.getAttribute(node, 'URL')
 			};
+			libraries.push(node);
 		    }
 		    else if ( self.core.isTypeOf(node, self.META.Message) ) {
 			dataModel.packages[parentName].messages[nodeName] = {
@@ -172,6 +174,7 @@ define([
 			    name: nodeName,
 			    packageName: parentName,
 			    requiredTypes: [],
+			    requiredLibs: [],
 			    timers: {},
 			    publishers: {},
 			    subscribers: {},
@@ -250,7 +253,7 @@ define([
 			    };
 		    }
 		}
-		return {'dataModel':dataModel, 'messages':messages, 'services':services};
+		return {'dataModel':dataModel, 'messages':messages, 'services':services, 'libraries':libraries};
 	    })
 	    .then(function (softwareModel) {
 		return self.resolvePointers(softwareModel);
@@ -260,7 +263,7 @@ define([
     SoftwareGenerator.prototype.resolvePointers = function (softwareModel) {
 	var self = this;
 	
-	return self.gatherReferences(softwareModel.messages, softwareModel.services)
+	return self.gatherReferences(softwareModel.messages, softwareModel.services, softwareModel.libraries)
 	    .then(function(retData) {
 		for (var i=0; i < retData.length; i++) {
 		    var subarr = retData[i];
@@ -268,7 +271,15 @@ define([
 			var dataRef = subarr[j],
 			    test = -1,
 			    type = -1;
-			if (dataRef.srcType == 'Publisher') {
+			if (dataRef.srcType == 'Component') {
+			    softwareModel.dataModel.packages[dataRef.srcPkg]
+				.components[dataRef.src]
+				.requiredLibs.push(
+				    softwareModel.dataModel
+					.libraries[dataRef.library]
+				);
+			}
+			else if (dataRef.srcType == 'Publisher') {
 			    type = softwareModel
 				.dataModel.packages[dataRef.topicPackage]
 				.messages[dataRef.topic];
@@ -331,7 +342,7 @@ define([
 	    });
     };
 
-    SoftwareGenerator.prototype.gatherReferences = function (messages, services) {
+    SoftwareGenerator.prototype.gatherReferences = function (messages, services, libraries) {
 	var self = this;
 	var refPromises = [];
 
@@ -345,6 +356,11 @@ define([
 		self.logger.info('iterating through services');
 		for (var i=0; i<services.length; i++) {
 		    refPromises.push(self.getServicePointerData(services[i]));
+		}
+	    }).then(function () {
+		self.logger.info('iterating through libraries');
+		for (var i=0; i<libraries.length; i++) {
+		    refPromises.push(self.getLibraryPointerData(libraries[i]));
 		}
 	    }).then(function () {
 		return Q.all(refPromises);
@@ -406,6 +422,30 @@ define([
 		    });
 		}
 		return srvDataReferences;
+	    });
+    };
+
+    SoftwareGenerator.prototype.getLibraryPointerData = function (libObj) {
+	var self = this;
+	var libName = self.core.getAttribute(libObj, 'name');
+	self.logger.info('Processing nodes for library ' + libName);
+	return self.core.loadCollection(libObj, 'Library')
+	    .then(function (nodes) {
+		var libDataReferences = [];
+		for (var i=0; i < nodes.length; i++) {
+		    var compName = self.core.getAttribute(nodes[i], 'name');
+		    var pkg = self.core.getParent(nodes[i]);
+		    var pkgName = self.core.getAttribute(pkg, 'name');
+		    var baseObject = self.core.getBaseType(nodes[i]);
+		    var baseType = self.core.getAttribute(baseObject, 'name');
+		    libDataReferences.push({
+			library: libName,
+			srcType: baseType,
+			src: nodeName,
+			srcPkg: pkgName
+		    });
+		}
+		return libDataReferences;
 	    });
     };
 
