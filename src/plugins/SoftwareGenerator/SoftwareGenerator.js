@@ -373,9 +373,9 @@ define([
 	var self = this;
 	var msgName = self.core.getAttribute(msgObj, 'name');
 	var msgPkgName = self.core.getAttribute(self.core.getParent(msgObj), 'name');
-	self.logger.info('Processing nodes for message ' + msgName);
 	return self.core.loadCollection(msgObj, 'Message')
 	    .then(function (nodes) {
+		self.logger.info('Processing ' + nodes.length + ' nodes for message ' + msgName);
 		var msgDataReferences = [];
 		for (var i=0; i < nodes.length; i++) {
 		    var nodeName = self.core.getAttribute(nodes[i], 'name');
@@ -402,9 +402,9 @@ define([
 	var self = this;
 	var srvName = self.core.getAttribute(srvObj, 'name');
 	var srvPkgName = self.core.getAttribute(self.core.getParent(srvObj), 'name');
-	self.logger.info('Processing nodes for service ' + srvName);
 	return self.core.loadCollection(srvObj, 'Service')
 	    .then(function (nodes) {
+		self.logger.info('Processing ' + nodes.length + ' nodes for service ' + srvName);
 		var srvDataReferences = [];
 		for (var i=0; i < nodes.length; i++) {
 		    var nodeName = self.core.getAttribute(nodes[i], 'name');
@@ -430,22 +430,27 @@ define([
     SoftwareGenerator.prototype.getLibraryPointerData = function (libObj) {
 	var self = this;
 	var libName = self.core.getAttribute(libObj, 'name');
-	self.logger.info('Processing nodes for library ' + libName);
-	return self.core.loadCollection(libObj, 'Library')
-	    .then(function (nodes) {
+	return self.core.isMemberOf(libObj);
+	    .then(function (nodePathDict) {
+		self.logger.info('Processing '+Object.keys(nodePathDict).length+' nodes for library '+libName);
 		var libDataReferences = [];
-		for (var i=0; i < nodes.length; i++) {
-		    var compName = self.core.getAttribute(nodes[i], 'name');
-		    var pkg = self.core.getParent(nodes[i]);
-		    var pkgName = self.core.getAttribute(pkg, 'name');
-		    var baseObject = self.core.getBaseType(nodes[i]);
-		    var baseType = self.core.getAttribute(baseObject, 'name');
-		    libDataReferences.push({
-			library: libName,
-			srcType: baseType,
-			src: nodeName,
-			srcPkg: pkgName
-		    });
+		for (var nodePath in nodePathDict) {
+		    libDataReferences.push(
+			self.core.loadByPath(self.rootNode, nodePath)
+			    .then(function (node) {
+				var compName = self.core.getAttribute(node, 'name');
+				var pkg = self.core.getParent(node);
+				var pkgName = self.core.getAttribute(pkg, 'name');
+				var baseObject = self.core.getBaseType(node);
+				var baseType = self.core.getAttribute(baseObject, 'name');
+				return {
+				    library: libName,
+				    srcType: baseType,
+				    src: nodeName,
+				    srcPkg: pkgName
+				};
+			    })
+		    );
 		}
 		return libDataReferences;
 	    });
