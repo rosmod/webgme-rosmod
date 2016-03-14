@@ -492,7 +492,8 @@ define([
 	// Get all the software libraries
 	for (var lib in softwareModel.libraries) {
 	    file_url = softwareModel.libraries[lib].url;
-	    promises.push(self.wgetAndUnzipLibrary(file_url, dir));
+	    if (file_url !== undefined)
+		promises.push(self.wgetAndUnzipLibrary(file_url, dir));
 	}
 	return Q.all(promises);
     };
@@ -517,8 +518,11 @@ define([
 
 	    self.logger.info('getting library: '+file_name +' from ' +file_url);
 
+	    var final_dir = path.join(process.cwd(), dir).toString();
+	    var final_file = path.join(final_dir, file_name);
+
 	    // compose the wget command; -O is output file
-	    var wget = 'wget -P ' + dir + ' ' + file_url;
+	    var wget = 'wget --no-check-certificate -P ' + dir + ' ' + file_url;
 
 	    // excute wget using child_process' exec function
 	    var child = child_process.exec(wget, function(err, stdout, stderr) {
@@ -528,6 +532,10 @@ define([
 		else {
 		    var readStream = fs.createReadStream(dir + file_name);
 		    var writeStream = fstream.Writer(dir);
+		    if (readStream == undefined || writeStream == undefined) {
+			reject("Couldn't open " + dir + " or " + dir +file_name);
+			return;
+		    }
 		    readStream
 			.pipe(unzip.Parse())
 			.pipe(writeStream);
