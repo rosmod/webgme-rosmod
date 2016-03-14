@@ -411,19 +411,22 @@ define([
 
     SoftwareGenerator.prototype.generateArtifacts = function (softwareModel) {
 	var self = this,
+	    path = require('path'),
+	    filendir = require('filendir'),
 	    filesToAdd = {},
 	    prefix = 'src/',
 	    deferred = new Q.defer();
+
+	self.gen_dir = path.join(process.cwd(), 'generated', self.project.projectId, self.branchName);
+
 	filesToAdd[softwareModel.name + '.json'] = JSON.stringify(softwareModel, null, 2);
         filesToAdd[softwareModel.name + '_metadata.json'] = JSON.stringify({
-    	    projectID: self.projectID,
+    	    projectID: self.project.projectId,
             commitHash: self.commitHash,
             branchName: self.branchName,
             timeStamp: (new Date()).toISOString(),
             pluginVersion: self.getVersion()
         }, null, 2);
-
-	var filendir = require('filendir');
 
         for (var pkg in softwareModel.packages) {
 	    var pkgInfo = softwareModel.packages[pkg],
@@ -454,7 +457,7 @@ define([
 	}
 
 	for (var f in filesToAdd){
-	    var fname = './tmp/' + f,
+	    var fname = path.join(self.gen_dir, f),
 		data = filesToAdd[f];
 
 	    filendir.writeFile(fname, data, function(err) {
@@ -481,7 +484,8 @@ define([
     SoftwareGenerator.prototype.downloadLibraries = function (softwareModel)
     {
 	var self = this,
-	    prefix = './tmp/src/';
+	    path = require('path'),
+	    prefix = path.join(self.gen_dir, 'src');
 	var promises = [];
 
 	// Get the required node executable
@@ -530,16 +534,17 @@ define([
 		    reject(err);
 		}
 		else {
-		    var readStream = fs.createReadStream(dir + file_name);
+		    var fname = path.join(dir,file_name);
+		    var readStream = fs.createReadStream(fname);
 		    var writeStream = fstream.Writer(dir);
 		    if (readStream == undefined || writeStream == undefined) {
-			reject("Couldn't open " + dir + " or " + dir +file_name);
+			reject("Couldn't open " + dir + " or " + fname);
 			return;
 		    }
 		    readStream
 			.pipe(unzip.Parse())
 			.pipe(writeStream);
-		    fs.unlink(dir + file_name);
+		    fs.unlink(fname);
 		    resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
 		}
 	    });
