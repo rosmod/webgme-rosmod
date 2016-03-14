@@ -2610,7 +2610,7 @@
         },
         "4d5526bf-5772-cc61-a03d-36ff99280a1f": {
             "attributes": {
-                "Link Libraries": "opencv_core, opencv_imgproc, opencv_highgui, opencv_contrib, opencv_legacy, opencv_photo, opencv_video, opencv_videostab, opencv_calib3d, opencv_ml",
+                "Link Libraries": "",
                 "URL": "https://github.com/rosmod/lib-aruco/files/170738/aruco.zip",
                 "name": "aruco"
             },
@@ -3668,7 +3668,7 @@
         },
         "7dd6c967-4043-a173-2548-d357b944b810": {
             "attributes": {
-                "Link Libraries": "opencv_core, opencv_imgproc, opencv_highgui, opencv_contrib, opencv_legacy, opencv_photo, opencv_video, opencv_videostab, opencv_calib3d, opencv_ml",
+                "Link Libraries": "",
                 "URL": "https://github.com/rosmod/lib-objecttracker/files/170732/ObjectTracker.zip",
                 "name": "objecttracker"
             },
