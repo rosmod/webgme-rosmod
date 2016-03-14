@@ -21,5 +21,7 @@ config.seedProjects.defaultProject = "ROSMOD"
 //config.client.defaultProject = { name: 'guest+ROSMOD' };
 config.client.log.level = 'info';
 
+config.visualization.svgDirs = ["./src/svgs"]  
+
 validateConfig(config);
 module.exports = config;

@@ -105,18 +105,6 @@ define(['js/util',
             this._dialog.on('shown.bs.modal', function () {
                 // Render text from params into Editor and store it in local storage
 		self.editor.setValue(self.text);
-		self.editor.markText({line: -1, 
-				      ch: 0}, 
-				     {line: 2,
-				      ch: 0}, 
-				     {readOnly: true} 
-				  );
-		self.editor.markText({line: 3, 
-				      ch: 0}, 
-				     {line: 4,
-				      ch: 0}, 
-				     {readOnly: true} 
-				  );
 		self.editor.refresh();
             });
 
