@@ -555,11 +555,39 @@ define([
     {
 	var self = this;
 	return new Promise(function(resolve, reject) {
+	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
+
+	    terminal.stdout.on('data', function (data) {
+		self.logger.info('stdout: ' + data);
+	    });
+
+	    terminal.stderr.on('data', function (data) {
+		self.logger.error('stderr: ' + data);
+		//reject(data);
+	    });
+
+	    terminal.on('exit', function (code) {
+		self.logger.info('child process exited with code ' + code);
+		if (code == 0)
+		    resolve(code);
+		else
+		    reject('child process exited with code ' + code);
+	    });
+
+	    setTimeout(function() {
+		self.logger.info('Sending stdin to terminal');
+		terminal.stdin.write('pwd\n');
+		terminal.stdin.write('source /opt/ros/indigo/setup.bash\n');
+		terminal.stdin.write('catkin_make -DNAMESPACE=rosmod\n');
+		self.logger.info('Ending terminal session');
+		terminal.stdin.end();
+	    }, 1000);
+	    /*
 	    var spawn = require('child_process').spawn,
 	    compile = spawn('catkin_make',
 			    ['-DNAMESPACE=rosmod'],
 			    {
-				shell: '/bin/bash',
+				shell: '/bin/bash source /opt/ros/indigo/setup.bash',
 				cwd: self.gen_dir
 			    }
 			   );
@@ -577,7 +605,7 @@ define([
 		self.logger.info('child process exited with code ' + code);
 		resolve(code);
 	    });
-	    return softwareModel;
+	    */
 	});
     };
 
