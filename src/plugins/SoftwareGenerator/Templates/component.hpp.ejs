@@ -6,7 +6,7 @@
 <%
 for (var i=0; i < compInfo.requiredTypes.length; i++) {
 -%>
-#include "<%= compInfo.requiredTypes[i].packageName %>/<%= compInfo.requiredTypes[i].name %>.h"
+#include "<%- compInfo.requiredTypes[i].packageName %>/<%- compInfo.requiredTypes[i].name %>.h"
 <%
 }
 -%>
@@ -20,13 +20,13 @@ for (var i=0; i < compInfo.requiredTypes.length; i++) {
 #endif
 
 // User Global Forwards
-<%= compInfo.forwards %>
+<%- compInfo.forwards %>
 
-class <%= compInfo.name %> : public Component
+class <%- compInfo.name %> : public Component
 {
 public:
   // Constructor
-  <%= compInfo.name %>(ComponentConfig& _config, int argc, char **argv)
+  <%- compInfo.name %>(ComponentConfig& _config, int argc, char **argv)
   : Component(_config, argc, argv) {}
 
   // Initialization
@@ -36,7 +36,7 @@ public:
 <%
 for (var tmr in compInfo.timers) {
 -%>
-  void <%= compInfo.timers[tmr].name %>_operation(const NAMESPACE::TimerEvent& event);
+  void <%- compInfo.timers[tmr].name %>_operation(const NAMESPACE::TimerEvent& event);
 <%
 }
 -%>
@@ -44,7 +44,7 @@ for (var tmr in compInfo.timers) {
 <%
 for (var sub in compInfo.subscribers) {
 -%>
-  void <%= compInfo.subscribers[sub].name %>_operation(const <%= compInfo.subscribers[sub].topic.packageName %>::<%= compInfo.subscribers[sub].topic.name %>::ConstPtr& received_data);
+  void <%- compInfo.subscribers[sub].name %>_operation(const <%- compInfo.subscribers[sub].topic.packageName %>::<%- compInfo.subscribers[sub].topic.name %>::ConstPtr& received_data);
 <%
 }
 -%>
@@ -52,7 +52,7 @@ for (var sub in compInfo.subscribers) {
 <%
 for (var srv in compInfo.servers) {
 -%>
-  void <%= compInfo.servers[srv].name %>_operation(const <%= compInfo.servers[srv].service.packageName %>::<%= compInfo.servers[srv].service.name %>::Request &req, <%= compInfo.servers[srv].service.packageName %>::<%= compInfo.servers[srv].service.name %>::Response &res);
+  void <%- compInfo.servers[srv].name %>_operation(const <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Request &req, <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Response &res);
 <%
 }
 -%>
@@ -61,49 +61,49 @@ for (var srv in compInfo.servers) {
   void startUp();
 
   // Destructor
-  ~<%= compInfo.name %>();
+  ~<%- compInfo.name %>();
 
 private:
 
 <%
 for (var tmr in compInfo.timers) {
 -%>
-  NAMESPACE::Timer <%= compInfo.timers[tmr].name %>;
+  NAMESPACE::Timer <%- compInfo.timers[tmr].name %>;
 <%
 }
 -%>
 <%
 for (var svr in compInfo.servers) {
 -%>
-  NAMESPACE::ServiceServer <%= compInfo.servers[svr].name %>;
+  NAMESPACE::ServiceServer <%- compInfo.servers[svr].name %>;
 <%
 }
 -%>
 <%
 for (var clt in compInfo.clients) {
  -%>
-  NAMESPACE::ServiceClient <%= compInfo.clients[clt].name %>;
+  NAMESPACE::ServiceClient <%- compInfo.clients[clt].name %>;
 <%
 }
 -%>
 <%
 for (var pub in compInfo.publishers) {
  -%>
-  NAMESPACE::Publisher <%= compInfo.publishers[pub].name %>;
+  NAMESPACE::Publisher <%- compInfo.publishers[pub].name %>;
 <%
 }
 -%>
 <%
 for (var sub in compInfo.subscribers) {
  -%>
-  // <%= compInfo.subscribers[sub].name %>
-  NAMESPACE::Subscriber <%= compInfo.subscribers[sub].name %>;
+  // <%- compInfo.subscribers[sub].name %>
+  NAMESPACE::Subscriber <%- compInfo.subscribers[sub].name %>;
 <%
 }
 -%>
 
   // User Private Members
-  <%= compInfo.members %>
+  <%- compInfo.members %>
 };
 
 #endif

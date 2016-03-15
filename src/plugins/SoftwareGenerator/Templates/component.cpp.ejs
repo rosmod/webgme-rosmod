@@ -1,35 +1,35 @@
-#include "<%= compInfo.packageName %>/<%= compInfo.name %>.hpp"
+#include "<%- compInfo.packageName %>/<%- compInfo.name %>.hpp"
 
 // User Definitions
-<%= compInfo.definitions %>
+<%- compInfo.definitions %>
 
 // Initialization Function
-void <%= compInfo.name %>::init_timer_operation(const NAMESPACE::TimerEvent& event)
+void <%- compInfo.name %>::init_timer_operation(const NAMESPACE::TimerEvent& event)
 {
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%= compInfo.name %>::init_timer_operation");
+  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::init_timer_operation");
 #endif
   // User Initialization
-  <%= compInfo.initialization %>
+  <%- compInfo.initialization %>
   // Stop Init Timer
   init_timer.stop();
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%= compInfo.name %>::init_timer_operation");
+  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::init_timer_operation");
 #endif  
 }
 
 <%
 for (var tmr in compInfo.timers) {
 -%>
-// Timer Operation - <%= compInfo.timers[tmr].name %>
-void <%= compInfo.name %>::<%= compInfo.timers[tmr].name %>_operation(const NAMESPACE::TimerEvent& event)
+// Timer Operation - <%- compInfo.timers[tmr].name %>
+void <%- compInfo.name %>::<%- compInfo.timers[tmr].name %>_operation(const NAMESPACE::TimerEvent& event)
 {
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%= compInfo.name %>::<%= compInfo.timers[tmr].name %>_operation");
+  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::<%- compInfo.timers[tmr].name %>_operation");
 #endif
-  <%= compInfo.timers[tmr].operation %>
+  <%- compInfo.timers[tmr].operation %>
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%= compInfo.name %>::<%= compInfo.timers[tmr].name %>_operation");
+  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::<%- compInfo.timers[tmr].name %>_operation");
 #endif
 }
 <%
@@ -39,15 +39,15 @@ void <%= compInfo.name %>::<%= compInfo.timers[tmr].name %>_operation(const NAME
 <%
 for (var sub in compInfo.subscribers) {
 -%>
-// Subscriber Operation - <%= compInfo.subscribers[sub].name %>
-void <%= compInfo.name %>::<%= compInfo.subscribers[sub].name %>_operation(const <%= compInfo.subscribers[sub].topic.packageName %>::<%= compInfo.subscribers[sub].topic.name %>::ConstPtr& received_data)
+// Subscriber Operation - <%- compInfo.subscribers[sub].name %>
+void <%- compInfo.name %>::<%- compInfo.subscribers[sub].name %>_operation(const <%- compInfo.subscribers[sub].topic.packageName %>::<%- compInfo.subscribers[sub].topic.name %>::ConstPtr& received_data)
 {
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%= compInfo.name %>::<%= compInfo.subscribers[sub].name %>_operation");
+  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::<%- compInfo.subscribers[sub].name %>_operation");
 #endif
-  <%= compInfo.subscribers[sub].operation %>
+  <%- compInfo.subscribers[sub].operation %>
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%= compInfo.name %>::<%= compInfo.subscribers[sub].name %>_operation");
+  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::<%- compInfo.subscribers[sub].name %>_operation");
 #endif
 }
 <%
@@ -57,15 +57,15 @@ void <%= compInfo.name %>::<%= compInfo.subscribers[sub].name %>_operation(const
 <%
 for (var srv in compInfo.servers) {
 -%>
-// Server Operation - <%= compInfo.servers[srv].name %>
-void <%= compInfo.name %>::<%= compInfo.servers[srv].name %>_operation(const <%= compInfo.servers[srv].service.packageName %>::<%= compInfo.servers[srv].service.name %>::Request &req, <%= compInfo.servers[srv].service.packageName %>::<%= compInfo.servers[srv].service.name %>::Response &res )
+// Server Operation - <%- compInfo.servers[srv].name %>
+void <%- compInfo.name %>::<%- compInfo.servers[srv].name %>_operation(const <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Request &req, <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Response &res )
 {
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%= compInfo.name %>::<%= compInfo.servers[srv].name %>_operation");
+  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::<%- compInfo.servers[srv].name %>_operation");
 #endif
-  <%= compInfo.servers[srv].operation %>
+  <%- compInfo.servers[srv].operation %>
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%= compInfo.name %>::<%= compInfo.servers[srv].name %>_operation");
+  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::<%- compInfo.servers[srv].name %>_operation");
 #endif
 }
 <%
@@ -74,49 +74,49 @@ void <%= compInfo.name %>::<%= compInfo.servers[srv].name %>_operation(const <%=
 
 
 // Destructor - Cleanup Ports & Timers
-<%= compInfo.name %>::~<%= compInfo.name %>()
+<%- compInfo.name %>::~<%- compInfo.name %>()
 {
 <%
 for (var tmr in compInfo.timers){
 -%>
-  <%= compInfo.timers[tmr].name %>.stop();
+  <%- compInfo.timers[tmr].name %>.stop();
 <%
 }
 -%>
 <%
 for (var pub in compInfo.publishers){
 -%>
-  <%= compInfo.publishers[pub].name %>.stop();
+  <%- compInfo.publishers[pub].name %>.shutdown();
 <%
 }
 -%>
 <%
 for (var sub in compInfo.subscribers){
 -%>
-  <%= compInfo.subscribers[sub].name %>.stop();
+  <%- compInfo.subscribers[sub].name %>.shutdown();
 <%
 }
 -%>
 <%
 for (var clt in compInfo.clients){
 -%>
-  <%= compInfo.clients[clt].name %>.stop();
+  <%- compInfo.clients[clt].name %>.shutdown();
 <%
 }
 -%>
 <%
 for (var srv in compInfo.servers){
 -%>
-  <%= compInfo.servers[srv].name %>.stop();
+  <%- compInfo.servers[srv].name %>.shutdown();
 <%
 }
 -%>
   // User Destruction
-  <%= compInfo.destruction %>
+  <%- compInfo.destruction %>
 }
 
 // Startup - Setup Component Ports & Timers
-void <%= compInfo.name %>::startUp()
+void <%- compInfo.name %>::startUp()
 {
   NAMESPACE::NodeHandle nh;
   std::string advertiseName;
@@ -154,20 +154,20 @@ void <%= compInfo.name %>::startUp()
 <%
 for (var srv in compInfo.servers) {
 -%>
-  // Server - <%= compInfo.servers[srv].name %>
+  // Server - <%- compInfo.servers[srv].name %>
 #ifdef USE_ROSMOD  
-  callback_options.alias = "<%= compInfo.servers[srv].name %>_operation";
-  callback_options.priority = <%= compInfo.servers[srv].priority %>;
-  callback_options.deadline.sec =<%= Math.floor(compInfo.servers[srv].deadline) %>;
-  callback_options.deadline.nsec = <%= compInfo.servers[srv].deadline % 1 %>;
+  callback_options.alias = "<%- compInfo.servers[srv].name %>_operation";
+  callback_options.priority = <%- compInfo.servers[srv].priority %>;
+  callback_options.deadline.sec =<%- Math.floor(compInfo.servers[srv].deadline) %>;
+  callback_options.deadline.nsec = <%- compInfo.servers[srv].deadline % 1 %>;
 #endif    
-  advertiseName = "<%= compInfo.servers[srv].service.name %>";
-  if (config.portGroupMap.find("<%= compInfo.servers[srv].name %>") != config.portGroupMap.end())
-    advertiseName += "_" + config.portGroupMap["<%= compInfo.servers[srv].name %>"];
-  NAMESPACE::AdvertiseServiceOptions <%= compInfo.servers[srv].name %>_server_options;
-  <%= compInfo.servers[srv].name %>_server_options = NAMESPACE::AdvertiseServiceOptions::create<<%= compInfo.servers[srv].service.packageName %>::<%= compInfo.servers[srv].service.name %>>
+  advertiseName = "<%- compInfo.servers[srv].service.name %>";
+  if (config.portGroupMap.find("<%- compInfo.servers[srv].name %>") != config.portGroupMap.end())
+    advertiseName += "_" + config.portGroupMap["<%- compInfo.servers[srv].name %>"];
+  NAMESPACE::AdvertiseServiceOptions <%- compInfo.servers[srv].name %>_server_options;
+  <%- compInfo.servers[srv].name %>_server_options = NAMESPACE::AdvertiseServiceOptions::create<<%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>>
       (advertiseName.c_str(),
-       boost::bind(&Component_2::<%= compInfo.servers[srv].name %>_operation, this, _1, _2),
+       boost::bind(&<%- compInfo.name %>::<%- compInfo.servers[srv].name %>_operation, this, _1, _2),
        NAMESPACE::VoidPtr(),
 #ifdef USE_ROSMOD       
        &this->comp_queue,
@@ -175,7 +175,7 @@ for (var srv in compInfo.servers) {
 #else
        &this->comp_queue);
 #endif
-  this-><%= compInfo.servers[srv].name %> = nh.advertiseService(<%= compInfo.servers[srv].name %>_server_options);
+  this-><%- compInfo.servers[srv].name %> = nh.advertiseService(<%- compInfo.servers[srv].name %>_server_options);
 <%
 }
 -%>
@@ -183,11 +183,11 @@ for (var srv in compInfo.servers) {
 <%
 for (var clt in compInfo.clients) {
 -%>
-  // Client - <%= compInfo.clients[clt].name %>
-  advertiseName = "<%= compInfo.clients[clt].service.name %>";
-  if (config.portGroupMap.find("<%= compInfo.clients[clt].name %>") != config.portGroupMap.end())
-    advertiseName += "_" + config.portGroupMap["<%= compInfo.clients[clt].name %>"];
-  this-><%= compInfo.clients[clt].name %> = nh.serviceClient<<%= compInfo.clients[clt].service.packageName %>::<%= compInfo.clients[clt].service.name %>>(advertiseName.c_str(), true); 
+  // Client - <%- compInfo.clients[clt].name %>
+  advertiseName = "<%- compInfo.clients[clt].service.name %>";
+  if (config.portGroupMap.find("<%- compInfo.clients[clt].name %>") != config.portGroupMap.end())
+    advertiseName += "_" + config.portGroupMap["<%- compInfo.clients[clt].name %>"];
+  this-><%- compInfo.clients[clt].name %> = nh.serviceClient<<%- compInfo.clients[clt].service.packageName %>::<%- compInfo.clients[clt].service.name %>>(advertiseName.c_str(), true); 
 <%
 }
 -%>
@@ -195,11 +195,11 @@ for (var clt in compInfo.clients) {
 <%
 for (var pub in compInfo.publishers) {
 -%>
-  // Publisher - <%= compInfo.publishers[pub].name %>
-  advertiseName = <%= compInfo.publishers[pub].topic.name %>;
-  if (config.portGroupMap.find("<%= compInfo.publishers[pub].name %>") != config.portGroupMap.end())
-    advertiseName += "_" + config.portGroupMap["<%= compInfo.publishers[pub].name %>"];
-  this-><%= compInfo.publishers[pub].name %> = nh.advertise<<%= compInfo.publishers[pub].topic.packageName %>::<%= compInfo.publishers[pub].topic.name %>>(advertiseName.c_str(), true); 
+  // Publisher - <%- compInfo.publishers[pub].name %>
+  advertiseName = "<%- compInfo.publishers[pub].topic.name %>";
+  if (config.portGroupMap.find("<%- compInfo.publishers[pub].name %>") != config.portGroupMap.end())
+    advertiseName += "_" + config.portGroupMap["<%- compInfo.publishers[pub].name %>"];
+  this-><%- compInfo.publishers[pub].name %> = nh.advertise<<%- compInfo.publishers[pub].topic.packageName %>::<%- compInfo.publishers[pub].topic.name %>>(advertiseName.c_str(), true); 
 <%
 }
 -%>
@@ -207,21 +207,21 @@ for (var pub in compInfo.publishers) {
 <%
 for (var sub in compInfo.subscribers) {
 -%>
-  // Subscriber - <%= compInfo.subscribers[sub].name %>
+  // Subscriber - <%- compInfo.subscribers[sub].name %>
 #ifdef USE_ROSMOD 
-  callback_options.alias = "<%= compInfo.subscribers[sub].name %>_operation";
-  callback_options.priority = <%= compInfo.subscribers[sub].priority %>;
-  callback_options.deadline.sec = <%= Math.floor(compInfo.subscribers[sub].deadline) %>;
-  callback_options.deadline.nsec = <%= compInfo.subscribers[sub].deadline % 1 %>;
+  callback_options.alias = "<%- compInfo.subscribers[sub].name %>_operation";
+  callback_options.priority = <%- compInfo.subscribers[sub].priority %>;
+  callback_options.deadline.sec = <%- Math.floor(compInfo.subscribers[sub].deadline) %>;
+  callback_options.deadline.nsec = <%- compInfo.subscribers[sub].deadline % 1 %>;
 #endif  
-  advertiseName = "<%= compInfo.subscribers[sub].topic.name %>";
-  if (config.portGroupMap.find("<%= compInfo.subscribers[sub].name %>") != config.portGroupMap.end())
-    advertiseName += "_" + config.portGroupMap["<%= compInfo.subscribers[sub].name %>"];
-  NAMESPACE::SubscribeOptions <%= compInfo.subscribers[sub].name %>_options;
-  <%= compInfo.subscribers[sub].name %>_options = NAMESPACE::SubscribeOptions::create<<%= compInfo.subscribers[sub].topic.packageName %>::<%= compInfo.subscribers[sub].topic.name %>>
+  advertiseName = "<%- compInfo.subscribers[sub].topic.name %>";
+  if (config.portGroupMap.find("<%- compInfo.subscribers[sub].name %>") != config.portGroupMap.end())
+    advertiseName += "_" + config.portGroupMap["<%- compInfo.subscribers[sub].name %>"];
+  NAMESPACE::SubscribeOptions <%- compInfo.subscribers[sub].name %>_options;
+  <%- compInfo.subscribers[sub].name %>_options = NAMESPACE::SubscribeOptions::create<<%- compInfo.subscribers[sub].topic.packageName %>::<%- compInfo.subscribers[sub].topic.name %>>
       (advertiseName.c_str(),
        1000,
-       boost::bind(&Component_1::<%= compInfo.subscribers[sub].name %>_operation, this, _1),
+       boost::bind(&<%- compInfo.name %>::<%- compInfo.subscribers[sub].name %>_operation, this, _1),
        NAMESPACE::VoidPtr(),
 #ifdef USE_ROSMOD
        &this->comp_queue,
@@ -229,7 +229,7 @@ for (var sub in compInfo.subscribers) {
 #else
        &this->comp_queue);
 #endif 
-  this-><%= compInfo.subscribers[sub].name %> = nh.subscribe(<%= compInfo.subscribers[sub].name %>_options);
+  this-><%- compInfo.subscribers[sub].name %> = nh.subscribe(<%- compInfo.subscribers[sub].name %>_options);
 <%
 }
 -%>
@@ -245,7 +245,7 @@ for (var sub in compInfo.subscribers) {
   timer_options = 
     NAMESPACE::TimerOptions
     (ros::Duration(-1),
-     boost::bind(&<%= compInfo.name %>::init_timer_operation, this, _1),
+     boost::bind(&<%- compInfo.name %>::init_timer_operation, this, _1),
      &this->comp_queue,
 #ifdef USE_ROSMOD     
      callback_options,
@@ -259,25 +259,25 @@ for (var sub in compInfo.subscribers) {
 <%
 for (var tmr in compInfo.timers){
 -%>
-  // Component Timer - <%= compInfo.timers[tmr].name %>
+  // Component Timer - <%- compInfo.timers[tmr].name %>
 #ifdef USE_ROSMOD   
-  callback_options.alias = "<%= compInfo.timers[tmr].name %>_operation";
-  callback_options.priority = <%= compInfo.timers[tmr].priority %>;
-  callback_options.deadline.sec = <%= Math.floor(compInfo.timers[tmr].deadline) %>;
-  callback_options.deadline.nsec = <%= compInfo.timers[tmr].priority % 1 %>;
+  callback_options.alias = "<%- compInfo.timers[tmr].name %>_operation";
+  callback_options.priority = <%- compInfo.timers[tmr].priority %>;
+  callback_options.deadline.sec = <%- Math.floor(compInfo.timers[tmr].deadline) %>;
+  callback_options.deadline.nsec = <%- compInfo.timers[tmr].priority % 1 %>;
 #endif
   timer_options = 
     NAMESPACE::TimerOptions
     (ros::Duration(5.0),
-     boost::bind(&<%= compInfo.name %>::<%= compInfo.timers[tmr].name %>_operation, this, _1),
+     boost::bind(&<%- compInfo.name %>::<%- compInfo.timers[tmr].name %>_operation, this, _1),
      &this->comp_queue,
 #ifdef USE_ROSMOD     
      callback_options,
 #endif 
      false,
      false);
-  this-><%= compInfo.timers[tmr].name %> = nh.createTimer(timer_options);
-  this-><%= compInfo.timers[tmr].name %>.stop();
+  this-><%- compInfo.timers[tmr].name %> = nh.createTimer(timer_options);
+  this-><%- compInfo.timers[tmr].name %>.stop();
 <%
 }
 -%>
@@ -287,7 +287,7 @@ for (var tmr in compInfo.timers){
 <%
 for (var tmr in compInfo.timers){
 -%>
-  this-><%= compInfo.timers[tmr].name %>.start();
+  this-><%- compInfo.timers[tmr].name %>.start();
 <%
 }
 -%>
@@ -295,7 +295,7 @@ for (var tmr in compInfo.timers){
 
 extern "C" {
   Component *maker(ComponentConfig &config, int argc, char **argv) {
-    return new <%= compInfo.name %>(config,argc,argv);
+    return new <%- compInfo.name %>(config,argc,argv);
   }
 }
 

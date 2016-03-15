@@ -1,4 +1,9 @@
 {
+    "_metadata": {
+        "type": "project",
+        "rootGuid": "03d36072-9e09-7866-cb4e-d0a36ff825f6",
+        "hasAssets": false
+    },
     "root": {
         "path": "",
         "guid": "03d36072-9e09-7866-cb4e-d0a36ff825f6"
@@ -303,8 +308,7 @@
                     "y": 387
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "0066ce30-e372-bb27-23c3-219c7d934553": {
             "attributes": {
@@ -340,8 +344,7 @@
                     "y": 810
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "030622c4-50cc-32b0-031c-28be37569518": {
             "attributes": {},
@@ -359,8 +362,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "03d36072-9e09-7866-cb4e-d0a36ff825f6": {
             "attributes": {
@@ -368,11 +370,6 @@
             },
             "base": null,
             "meta": {
-                "attributes": {
-                    "name": {
-                        "type": "string"
-                    }
-                },
                 "children": {
                     "items": [
                         "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
@@ -383,6 +380,11 @@
                     "maxItems": [
                         -1
                     ]
+                },
+                "attributes": {
+                    "name": {
+                        "type": "string"
+                    }
                 }
             },
             "parent": null,
@@ -1001,8 +1003,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "04357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -1023,8 +1024,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "043de1ab-0b51-afeb-be5f-a5a167b3a363": {
             "attributes": {
@@ -1043,8 +1043,7 @@
                     "y": 342
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "04fdc95b-f567-260d-dc01-d41068d3367b": {
             "attributes": {
@@ -1062,8 +1061,7 @@
                     "y": 197
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "05c1b20d-f9c0-c853-9172-7dd28e48e313": {
             "attributes": {
@@ -1082,8 +1080,7 @@
                     "y": 168
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "06357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -1104,8 +1101,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "0880f4eb-1dea-2d26-2dfd-1e735a3e739b": {
             "attributes": {
@@ -1124,8 +1120,7 @@
                     "y": 512
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "0a064327-011a-e497-672b-785e37ff448a": {
             "attributes": {
@@ -1171,8 +1166,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "0d357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -1192,8 +1186,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "0dad946f-7b49-ccba-aff2-c85e58b60ea7": {
             "attributes": {
@@ -1213,8 +1206,7 @@
                     "y": 377
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "0ecb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
@@ -1233,8 +1225,7 @@
                     "y": 154
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "0f357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -1254,8 +1245,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "0f474808-eadf-a345-7ee9-7279326aab1e": {
             "attributes": {
@@ -1269,21 +1259,21 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "ABL": {
+                    "Operation": {
                         "type": "string"
+                    },
+                    "Period": {
+                        "type": "float"
+                    },
+                    "Deadline": {
+                        "type": "float"
                     },
                     "Priority": {
                         "type": "integer",
                         "min": 1,
                         "max": 99
                     },
-                    "Deadline": {
-                        "type": "float"
-                    },
-                    "Period": {
-                        "type": "float"
-                    },
-                    "Operation": {
+                    "ABL": {
                         "type": "string"
                     }
                 }
@@ -1300,8 +1290,7 @@
                     "y": 1050
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "112d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -1319,13 +1308,12 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "11aa8166-89d9-0008-646c-9c5fc6816600": {
             "attributes": {
                 "Operation": "  payloadBay.pos = received_data->pos;\n  payloadBay.orientation = received_data->orientation;",
-                "name": "payloadBayState-Message"
+                "name": "payloadBayStateSub"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -1340,8 +1328,7 @@
                     "y": 219
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "11ba8891-12a8-41c0-9380-f19a41e8dc53": {
             "attributes": {},
@@ -1359,8 +1346,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "11c26da0-dda2-d00c-dc36-f53c52c3fc62": {
             "attributes": {
@@ -1386,8 +1372,7 @@
                     "y": 664
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "11cb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
@@ -1406,8 +1391,7 @@
                     "y": 466
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "12a356d3-8ec8-dd52-0801-686fb2299ef2": {
             "attributes": {},
@@ -1425,8 +1409,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "132d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -1444,8 +1427,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "13476356-59e6-ee3c-2834-6fe453f1fd92": {
             "attributes": {},
@@ -1461,8 +1443,7 @@
                     "y": 254
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "182d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -1480,8 +1461,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "183b7c25-179d-e884-f133-0024a5db330e": {
             "attributes": {},
@@ -1499,8 +1479,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "1a2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -1518,8 +1497,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "1b4dffef-842f-6b3c-0302-596cf56a5459": {
             "attributes": {
@@ -1538,8 +1516,7 @@
                     "y": 199
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "1f0e696a-b922-ec04-d0bf-b3eeb74660c9": {
             "attributes": {
@@ -1558,8 +1535,7 @@
                     "y": 712
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "240e696a-b922-ec04-d0bf-b3eeb74660c9": {
             "attributes": {
@@ -1578,8 +1554,7 @@
                     "y": 227
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "242f9041-eeea-76ed-9546-62d8d83ee81e": {
             "attributes": {},
@@ -1597,8 +1572,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "25357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -1619,8 +1593,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "2562febd-1839-d9fe-3b97-0a0548314d85": {
             "attributes": {
@@ -1654,8 +1627,7 @@
                 },
                 "validPlugins": "SoftwareGenerator"
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "265e2d6f-1ce3-f1ce-af71-3934f174d63e": {
             "attributes": {
@@ -1674,8 +1646,7 @@
                     "y": 200
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "271decd7-fb7c-8661-135c-400aa45350df": {
             "attributes": {
@@ -1694,8 +1665,7 @@
                     "y": 460
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "27271a90-b612-119a-4451-26b58c0a84b2": {
             "attributes": {
@@ -1721,8 +1691,7 @@
                     "y": 590
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "27357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -1743,8 +1712,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "284dffef-842f-6b3c-0302-596cf56a5459": {
             "attributes": {
@@ -1763,8 +1731,7 @@
                     "y": 399
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "296d633b-35b8-77d3-eadf-d49fc03b8301": {
             "attributes": {
@@ -1784,8 +1751,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "2acb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
@@ -1804,8 +1770,7 @@
                     "y": 315
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "2c357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -1825,8 +1790,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "2df2dde5-9823-c603-092a-f1fc1f28ca14": {
             "attributes": {
@@ -1846,8 +1810,7 @@
                     "y": 349
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "2e129f64-d002-cefe-20f8-256883f4b003": {
             "attributes": {
@@ -1877,8 +1840,7 @@
                     "y": 379
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "2e357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -1898,8 +1860,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "2fe9618f-ca21-b656-26d7-801acce13ec2": {
             "attributes": {
@@ -1918,8 +1879,7 @@
                     "y": 448
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "302d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -1937,8 +1897,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "3109804a-d102-0849-9ad7-b2411f3ce732": {
             "attributes": {
@@ -1957,8 +1916,7 @@
                     "y": 242
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "322d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -1976,8 +1934,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "32e6a6ea-9cd5-fb73-ff8f-803b2d3492e6": {
             "attributes": {},
@@ -1995,8 +1952,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "34b22029-292d-bf37-d953-d91dedab2436": {
             "attributes": {
@@ -2014,8 +1970,7 @@
                     "y": 1304
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "35cb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
@@ -2034,8 +1989,7 @@
                     "y": 632
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "36d534c1-207e-1c52-5336-c74ff256793f": {
             "attributes": {
@@ -2046,10 +2000,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Netmask": {
+                    "Subnet": {
                         "type": "string"
                     },
-                    "Subnet": {
+                    "Netmask": {
                         "type": "string"
                     }
                 }
@@ -2066,8 +2020,7 @@
                     "y": 452
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "392d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -2085,8 +2038,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "3abf1c09-fdc4-61e7-1e53-501eff8e76ee": {
             "attributes": {
@@ -2104,8 +2056,7 @@
                     "y": 260
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "3b0e696a-b922-ec04-d0bf-b3eeb74660c9": {
             "attributes": {
@@ -2124,8 +2075,7 @@
                     "y": 552
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "3b2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -2143,8 +2093,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "3b80f4eb-1dea-2d26-2dfd-1e735a3e739b": {
             "attributes": {
@@ -2163,8 +2112,7 @@
                     "y": 300
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "3f413882-9032-19b3-46d5-342f9f8538cf": {
             "attributes": {},
@@ -2182,8 +2130,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "40634285-7f30-4d56-3e22-6047fe32f0d7": {
             "attributes": {
@@ -2195,14 +2142,14 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "ABL": {
-                        "type": "string"
+                    "Deadline": {
+                        "type": "float"
                     },
                     "Operation": {
                         "type": "string"
                     },
-                    "Deadline": {
-                        "type": "float"
+                    "ABL": {
+                        "type": "string"
                     }
                 },
                 "pointers": {
@@ -2234,8 +2181,7 @@
                     "y": 980
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "407b4c7e-9826-6855-d391-df7e96c3e73b": {
             "attributes": {
@@ -2254,8 +2200,7 @@
                     "y": 480
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "41357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -2276,8 +2221,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "43357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -2298,8 +2242,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9": {
             "attributes": {
@@ -2329,8 +2272,7 @@
                     "y": 282
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "447d091e-edb3-cc67-88f8-2c4b643ee131": {
             "attributes": {
@@ -2349,8 +2291,7 @@
                     "y": 375
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "44fcafc0-e7f2-3dd7-27fb-da8fd5960950": {
             "attributes": {},
@@ -2368,8 +2309,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "4585b7fc-307e-c80c-ada2-02a2845c404d": {
             "attributes": {},
@@ -2387,8 +2327,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "47725ce0-f096-ea93-a507-004673d77790": {
             "attributes": {
@@ -2420,8 +2359,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "47ab116f-f11c-a37a-8b11-291b91578348": {
             "attributes": {
@@ -2439,8 +2377,7 @@
                     "y": 148
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "47fdb167-6041-cd46-fa83-f6fb651c652d": {
             "attributes": {
@@ -2460,8 +2397,7 @@
                     "y": 266
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "48357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -2481,8 +2417,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "49725ce0-f096-ea93-a507-004673d77790": {
             "attributes": {
@@ -2514,8 +2449,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "4a357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -2535,8 +2469,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643": {
             "attributes": {
@@ -2566,8 +2499,7 @@
                     "y": 492
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "4bc1deb3-abb3-9bf2-ee49-a072843d1eaf": {
             "attributes": {},
@@ -2585,8 +2517,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "4d04c2a5-a077-dbc9-bb12-690bb10fffc9": {
             "attributes": {
@@ -2605,8 +2536,7 @@
                     "y": 188
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "4d5526bf-5772-cc61-a03d-36ff99280a1f": {
             "attributes": {
@@ -2626,8 +2556,7 @@
                     "y": 141
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "4f130061-8b9f-0389-c288-ad2d46eeab44": {
             "attributes": {},
@@ -2645,8 +2574,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "4fc00747-714d-4832-998f-c520d0d3edfc": {
             "attributes": {
@@ -2666,8 +2594,7 @@
                     "y": 249
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "50177db4-7d87-86ab-98ae-472f9cfd788c": {
             "attributes": {
@@ -2686,8 +2613,7 @@
                     "y": 261
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "51321b06-2a7b-eebe-187b-a68c11e80b87": {
             "attributes": {
@@ -2709,9 +2635,29 @@
                 }
             },
             "sets": {
-                "Libraries": []
-            },
-            "constraints": {}
+                "Libraries": [
+                    {
+                        "attributes": {},
+                        "guid": "c29ad503-417a-f40a-28da-57503f809a90",
+                        "registry": {
+                            "position": {
+                                "x": 709,
+                                "y": 328
+                            }
+                        }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "c2d1d475-839e-2efe-b48c-410517c4532c",
+                        "registry": {
+                            "position": {
+                                "x": 708,
+                                "y": 258
+                            }
+                        }
+                    }
+                ]
+            }
         },
         "5173ec58-cf6c-e536-1efc-d1cf17642062": {
             "attributes": {
@@ -2731,8 +2677,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "5364e1ea-29d3-bc62-87fa-b5715ac58d86": {
             "attributes": {
@@ -2745,23 +2690,6 @@
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
-                "attributes": {
-                    "Definitions": {
-                        "type": "string"
-                    },
-                    "Destruction": {
-                        "type": "string"
-                    },
-                    "Forwards": {
-                        "type": "string"
-                    },
-                    "Initialization": {
-                        "type": "string"
-                    },
-                    "Members": {
-                        "type": "string"
-                    }
-                },
                 "children": {
                     "items": [
                         "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -2775,6 +2703,23 @@
                         -1,
                         -1
                     ]
+                },
+                "attributes": {
+                    "Members": {
+                        "type": "string"
+                    },
+                    "Initialization": {
+                        "type": "string"
+                    },
+                    "Forwards": {
+                        "type": "string"
+                    },
+                    "Destruction": {
+                        "type": "string"
+                    },
+                    "Definitions": {
+                        "type": "string"
+                    }
                 },
                 "pointers": {
                     "Libraries": {
@@ -2803,8 +2748,7 @@
             },
             "sets": {
                 "Libraries": []
-            },
-            "constraints": {}
+            }
         },
         "542d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -2822,8 +2766,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "55125e5b-e6b2-0557-d0ca-e9e678b4581a": {
             "attributes": {},
@@ -2841,8 +2784,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "562d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -2860,8 +2802,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "5a1725b5-953f-cbf1-d72d-4897c4d55c11": {
             "attributes": {
@@ -2881,13 +2822,12 @@
                     "y": 310
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "5a606d01-44cd-486e-3400-45b5dc693198": {
             "attributes": {
                 "Operation": "  pb_rawImage = Mat(received_data->height, \n\t\t    received_data->width, \n\t\t    CV_8UC3, \n\t\t    const_cast<unsigned char*>(received_data->rawImgVector.data()));\n\n  pb_hsvImage = Mat(received_data->height, \n\t\t    received_data->width, \n\t\t    CV_8UC3, \n\t\t    const_cast<unsigned char*>(received_data->hsvThreshImgVector.data()));\n\n  pb_gsImage = Mat(received_data->height, \n\t\t   received_data->width, \n\t\t   CV_8UC3, \n\t\t   const_cast<unsigned char*>(received_data->gsThreshImgVector.data()));\n  \n  pb_bitwise = Mat(received_data->height, \n\t\t   received_data->width, \n\t\t   CV_8UC3, \n\t\t   const_cast<unsigned char*>(received_data->bitwiseAndImgVector.data()));\n\n  bottom_left = cvCreateImage(cvSize(pb_rawImage.cols, pb_rawImage.rows), 8, 3);\n  IplImage ipltemp = pb_rawImage;\n  cvCopy(&ipltemp, bottom_left);",
-                "name": "payloadBayDetectionImages-Message"
+                "name": "payloadBayDetectionImagesSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -2902,8 +2842,7 @@
                     "y": 182
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "5d2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -2921,8 +2860,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "5e036e97-58b4-2376-76c5-97ef45bd8c29": {
             "attributes": {
@@ -2958,8 +2896,7 @@
                     "y": 930
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "5e29f1d2-99a8-9559-faff-e924a9c5e677": {
             "attributes": {
@@ -2979,8 +2916,7 @@
                     "y": 218
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "5f2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -2998,8 +2934,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "5fa73dfc-a08d-9aa3-cb07-c7869fccd187": {
             "attributes": {
@@ -3023,6 +2958,13 @@
                         -1,
                         -1
                     ]
+                },
+                "constraints": {
+                    "nameConstraint": {
+                        "script": "function(core, node, callback) {\n  callback(node,{hasViolation:true,message:'TEST: '});\n}",
+                        "priority": 1,
+                        "info": ""
+                    }
                 }
             },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
@@ -3035,14 +2977,7 @@
                     "y": 382
                 }
             },
-            "sets": {},
-            "constraints": {
-                "nameConstraint": {
-                    "script": "function(core, node, callback) {\n  callback(node,{hasViolation:true,message:'TEST: '});\n}",
-                    "priority": 1,
-                    "info": ""
-                }
-            }
+            "sets": {}
         },
         "60357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -3063,8 +2998,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "62357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -3085,8 +3019,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "65d2144b-00c4-571f-ac50-4cfaa9bec92d": {
             "attributes": {},
@@ -3104,8 +3037,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "679e634b-48de-6844-8479-229fb51dfaf8": {
             "attributes": {},
@@ -3123,8 +3055,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "6815fb72-468f-ef04-95a9-117eb05569de": {
             "attributes": {
@@ -3144,13 +3075,12 @@
                     "y": 241
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "692c4cbd-629c-8265-5d80-9b1dd5103c39": {
             "attributes": {
                 "Operation": "  sample.pos = received_data->pos;\n  sample.orientation = received_data->orientation;",
-                "name": "sampleState-Message"
+                "name": "sampleStateSub"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
             "meta": {},
@@ -3165,8 +3095,7 @@
                     "y": 331
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "69357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -3186,8 +3115,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "6a84f65c-0fbe-1fc6-79e8-2ff4bc2dcd1e": {
             "attributes": {
@@ -3206,8 +3134,7 @@
                     "y": 112
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "6b357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -3227,8 +3154,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "6c0c5975-cf58-cb4b-be6c-292744a30726": {
             "attributes": {},
@@ -3246,8 +3172,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "6d32e61a-93a8-9056-b3db-be265442f959": {
             "attributes": {
@@ -3266,8 +3191,7 @@
                     "y": 308
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "6e77078a-7ffc-3881-d2b3-469431fa7020": {
             "attributes": {
@@ -3313,8 +3237,7 @@
                     "y": 642
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "6eee186c-a14e-3be3-d7b1-7fa840843c05": {
             "attributes": {
@@ -3344,8 +3267,7 @@
                     "y": 285
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "6f725ce0-f096-ea93-a507-004673d77790": {
             "attributes": {
@@ -3377,8 +3299,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "752d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -3396,8 +3317,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7575417a-f5cb-d71e-d261-752e90aee4c3": {
             "attributes": {
@@ -3407,15 +3327,6 @@
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
-                "attributes": {
-                    "Priority": {
-                        "type": "integer",
-                        "max": 99
-                    },
-                    "CMDLine": {
-                        "type": "string"
-                    }
-                },
                 "children": {
                     "items": [
                         "6e77078a-7ffc-3881-d2b3-469431fa7020"
@@ -3426,6 +3337,15 @@
                     "maxItems": [
                         -1
                     ]
+                },
+                "attributes": {
+                    "CMDLine": {
+                        "type": "string"
+                    },
+                    "Priority": {
+                        "type": "integer",
+                        "max": 99
+                    }
                 }
             },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
@@ -3438,8 +3358,7 @@
                     "y": 572
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "75973fe4-d007-56ab-2df2-483fac45138c": {
             "attributes": {
@@ -3458,8 +3377,7 @@
                     "y": 340
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7599b53d-653a-1ff6-0d2a-c6a49dec721c": {
             "attributes": {
@@ -3494,8 +3412,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "769c7992-7dd1-3447-3e3c-953fd7e158d4": {
             "attributes": {
@@ -3515,8 +3432,7 @@
                     "y": 266
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "772d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -3534,8 +3450,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "78617d39-7d27-d9f9-b421-7b8621f0380c": {
             "attributes": {
@@ -3555,8 +3470,7 @@
                     "y": 359
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7af22c4c-4adc-d2ff-0bc4-6fab8ebce68e": {
             "attributes": {
@@ -3574,8 +3488,7 @@
                     "y": 128
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7c2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -3593,8 +3506,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7c408f55-a315-ae29-dd73-60bbbfc9fb8d": {
             "attributes": {},
@@ -3612,8 +3524,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7c902cff-78a7-29da-9892-c0ecdc182ab3": {
             "attributes": {
@@ -3643,8 +3554,7 @@
                     "y": 382
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7c974a97-a7c9-94b1-12e9-dfddb839d1fb": {
             "attributes": {
@@ -3663,8 +3573,7 @@
                     "y": 230
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7dd6c967-4043-a173-2548-d357b944b810": {
             "attributes": {
@@ -3684,8 +3593,7 @@
                     "y": 386
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7e2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -3703,8 +3611,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7ea9e1e6-46ee-3981-0169-da6fd2981659": {
             "attributes": {
@@ -3723,8 +3630,7 @@
                     "y": 387
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7ec97e63-8e60-b0c0-8e25-eec82cec64be": {
             "attributes": {
@@ -3742,8 +3648,7 @@
                     "y": 130
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "7eea081c-beab-287a-1aed-46821198b17c": {
             "attributes": {
@@ -3763,8 +3668,7 @@
                     "y": 114
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "83f33549-7a85-a619-35b2-b18209fdda9d": {
             "attributes": {
@@ -3782,8 +3686,7 @@
                     "y": 191
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "84f4223f-5696-75ae-9190-d695085aea4d": {
             "attributes": {
@@ -3802,8 +3705,7 @@
                     "y": 238
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "852d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -3821,8 +3723,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "862a9375-04a6-d7d7-72c3-7fd13b4b4b3b": {
             "attributes": {
@@ -3841,8 +3742,7 @@
                     "y": 411
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "872d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -3860,8 +3760,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "874020d4-54d8-0c9b-0bda-18052dae44db": {
             "attributes": {
@@ -3880,8 +3779,7 @@
                     "y": 318
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "87dd799d-18a6-52e6-4fea-8bbf6167a7ef": {
             "attributes": {},
@@ -3899,8 +3797,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "883f2275-89f3-3656-d28f-33178a9e6a8d": {
             "attributes": {},
@@ -3918,8 +3815,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "8a20c8ac-2b78-609a-aebe-175f8964c890": {
             "attributes": {
@@ -3938,8 +3834,7 @@
                     "y": 317
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "8b4a76cc-97a5-fa9a-5eea-273484f9d5ac": {
             "attributes": {},
@@ -3957,8 +3852,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "8b77ee64-9293-7b02-03c2-508ee3e4ed74": {
             "attributes": {
@@ -3976,8 +3870,7 @@
                     "y": 269
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "8bc323b4-a4eb-abcd-b7a2-f710630dce1c": {
             "attributes": {
@@ -3995,14 +3888,13 @@
                     "y": 390
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "8c0974bd-12e4-dc59-4d43-7982b534b262": {
             "attributes": {
-                "Definitions": "const char* openPayloadBayString = \"1\";\nconst char* closePayloadBayString = \"0\";\n\nvoid arm_controller::PrintCurrentState()\n{\n  switch (currentState)\n    {\n    case INIT:\n      ROS_INFO(\"INITIALIZING\");\n      break;\n    case OPENING_PB:\n      ROS_INFO(\"OPENING PAYLOAD BAY\");\n      break;\n    case FINDING_SAMPLE:\n      ROS_INFO(\"FINDING SAMPLE\");\n      break;\n    case FINDING_PB:\n      ROS_INFO(\"FINDING PAYLOAD BAY\");\n      break;\n    case GRABBING_SAMPLE:\n      ROS_INFO(\"GRABBING SAMPLE\");\n      break;\n    case CARRYING_SAMPLE:\n      ROS_INFO(\"CARRYING SAMPLE\");\n      break;\n    case INSERTING_SAMPLE:\n      ROS_INFO(\"INSERTING SAMPLE\");\n      break;\n    case CLOSING_PB:\n      ROS_INFO(\"CLOSING PAYLOAD BAY\");\n      break;\n    case MOVING_AWAY:\n      ROS_INFO(\"MOVING AWAY\");\n      break;\n    }\n}\n\nvoid arm_controller::UpdateSensorData()\n{\n  // all servers have \n  // inputs: int64 goal, bool update\n  // output: current\n  high_level_controller::radialPos rPos;\n  rPos.request.update = false;\n  rPos.request.setZeroPosition = false;\n  radialPos_client.call(rPos);\n  currentRadialPos = rPos.response.current;\n\n  high_level_controller::verticalPos vPos;\n  vPos.request.update = false;\n  vPos.request.setZeroPosition = false;\n  verticalPos_client.call(vPos);\n  currentVerticalPos = vPos.response.current;\n\n  high_level_controller::armRotation arm;\n  arm.request.update = false;\n  armRotation_client.call(arm);\n  currentArmRotation = arm.response.current;\n\n  high_level_controller::gripperRotation gRot;\n  gRot.request.update = false;\n  gripperRotation_client.call(gRot);\n  currentGripperRotation = gRot.response.current;\n  \n  high_level_controller::gripperPos gPos;\n  gPos.request.update = false;\n  gripperPos_client.call(gPos);\n  currentGripperPos = gPos.response.current;\n}\n\nvoid arm_controller::UpdateArmPosition()\n{\n  // all servers have \n  // inputs: int64 goal, bool update\n  // output: current\n  high_level_controller ::radialPos rPos;\n  rPos.request.update = true;\n  rPos.request.setZeroPosition = false;\n  rPos.request.goal = goalRadialPos;\n  radialPos_client.call(rPos);\n  currentRadialPos = rPos.response.current;\n\n  high_level_controller::verticalPos vPos;\n  vPos.request.update = true;\n  vPos.request.setZeroPosition = false;\n  vPos.request.goal = goalVerticalPos;\n  verticalPos_client.call(vPos);\n  currentVerticalPos = vPos.response.current;\n\n  high_level_controller::armRotation arm;\n  arm.request.update = true;\n  arm.request.goal = goalArmRotation;\n  armRotation_client.call(arm);\n  currentArmRotation = arm.response.current;\n\n  high_level_controller::gripperRotation gRot;\n  gRot.request.update = true;\n  gRot.request.goal = goalGripperRotation;\n  gripperRotation_client.call(gRot);\n  currentGripperRotation = gRot.response.current;\n  \n  high_level_controller::gripperPos gPos;\n  gPos.request.update = true;\n  gPos.request.goal = goalGripperPos;\n  gripperPos_client.call(gPos);\n  currentGripperPos = gPos.response.current;\n}\n\nbool arm_controller::CheckGoals()\n{\n#if 1\n  ROS_INFO(\"RADIAL GOAL: %d\",goalRadialPos);\n  ROS_INFO(\"RADIUS : %d\",currentRadialPos);\n  ROS_INFO(\"HEIGHT GOAL: %d\",goalVerticalPos);\n  ROS_INFO(\"HEIGHT : %d\",currentVerticalPos);\n  ROS_INFO(\"ARM ROTATION GOAL: %f\",goalArmRotation);\n  ROS_INFO(\"ARM ROTATION : %f\",currentArmRotation);\n  ROS_INFO(\"GRIPPER ROTATION GOAL: %f\",goalGripperRotation);\n  ROS_INFO(\"GRIPPER ROTATION : %f\",currentGripperRotation);\n  ROS_INFO(\"GRIPPER POSITION GOAL: %f\",goalGripperPos);\n  ROS_INFO(\"GRIPPER POSITION : %f\",currentGripperPos);\n#endif\n  if ( abs(goalRadialPos - currentRadialPos) > radialEpsilon )\n    return false;\n  if ( abs(goalVerticalPos - currentVerticalPos) > verticalEpsilon )\n    return false;\n  if ( abs(goalArmRotation - currentArmRotation) > armRotationEpsilon )\n    return false;\n  if ( abs(goalGripperRotation - currentGripperRotation) > gripperRotationEpsilon )\n    return false;\n  if ( abs(goalGripperPos - currentGripperPos) > gripperPosEpsilon )\n    return false;\n  ROS_INFO(\"Reached Goals\");\n  return true;\n}\n\nvoid arm_controller::Init_StateFunc()\n{\n  // Init zeroes out the positions of the linear actuators for calibration\n  static bool zeroedHeight = false;\n  static bool zeroedRadius = false;\n  if (!zeroedHeight)\n    {\n      high_level_controller::verticalPos vPos;\n      vPos.request.update = true;\n      vPos.request.setZeroPosition = false;\n      vPos.request.goal = currentVerticalPos - 10000;\n      verticalPos_client.call(vPos);\n      if (vPos.response.lowerLimitReached)\n\t{\n    \t  ROS_INFO(\"ZEROED HEIGHT\");\n\t  vPos.request.update = false;\n\t  vPos.request.setZeroPosition = true;\n\t  verticalPos_client.call(vPos);\n\t  zeroedHeight = true;\n\t}\n    }\n  else if (!zeroedRadius)\n    {\n      high_level_controller::radialPos rPos;\n      rPos.request.update = true;\n      rPos.request.setZeroPosition = false;\n      rPos.request.goal = currentRadialPos - 10000;\n      radialPos_client.call(rPos);\n      if (rPos.response.lowerLimitReached)\n\t{\n\t  ROS_INFO(\"ZEROED RADIUS\");\n\t  rPos.request.update = false;\n\t  rPos.request.setZeroPosition = true;\n\t  radialPos_client.call(rPos);\n\t  zeroedRadius = true;\n\t}\n    }\n  else\n    {\n      //      ROS_INFO(\"ZEROED EVERYTHING\");\n      high_level_controller::verticalPos vPos;\n      vPos.request.update = true;\n      vPos.request.setZeroPosition = false;\n      vPos.request.goal = 0;\n      verticalPos_client.call(vPos);\n      high_level_controller::radialPos rPos;\n      rPos.request.update = true;\n      rPos.request.setZeroPosition = false;\n      rPos.request.goal = 0;\n      radialPos_client.call(rPos);\n\n      goalRadialPos = minRadialPos;\n      goalVerticalPos = minVerticalPos;\n      goalArmRotation = minArmRotation;\n      goalGripperRotation = currentGripperRotation;\n      goalGripperPos = gripperPosOpened;\n\n      currentState = OPENING_PB;\n      stateChanged = true;\n    }\n}\n\nvoid arm_controller::Opening_PB_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * known PB position\n  // * directly above PB\n\n  // State logic:\n  // send the command to the PB through UART to open the PB,\n  // OPTIONAL : use image based detection to confirm PB opens\n  // transition to next state (FINDING_SAMPLE) if PB responds well\n  payloadBayOpened = true;\n\n  //goalVerticalPos = minVerticalPos;\n\n  currentState = FINDING_SAMPLE;\n  stateChanged = true;\n}\n\nvoid arm_controller::Finding_Sample_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  static float startSearchArmRotation = 0.0f; //200.0f;\n  static float initRadialPos       = (maxRadialPos + minRadialPos) * 3.0f / 4.0f;\n  static float initVerticalPos     = 311000;//minVerticalPos + 50000;\n  static float initArmRotation     = startSearchArmRotation;\n  static float initGripperRotation = gripperRotationSafe;\n  static float initGripperPos      = gripperPosClosed;\n  static bool firstRun = true;\n\n  if (firstRun)\n    {\n      goalRadialPos = initRadialPos;\n      goalVerticalPos = initVerticalPos;\n      goalArmRotation = initArmRotation;\n      goalGripperRotation = initGripperRotation;\n      goalGripperPos = initGripperPos;\n      firstRun = false;\n      return;\n    }\n\n  static float maxSearchTime = 300.0f; // seconds we are allowed to search\n\n  static float armRotationStep = 15.0f;     // degrees between steps of the state search\n  static float radialPosStep = 10000.0f;    // amount to move by in radius\n  static float armRotationScale = 1.0f/150.0f;  // amount to move by in theta based on image space\n  static float radialPosScale = 100.0f;         // amount to move by in radius based on image space\n\n  static float positionRadius = 50.0f; // once center of sample is in this radius, we are done\n  \n  static bool foundSample = false;\n  static high_level_controller::sampleState internalSampleState; // used within this state; global state set when done\n  static float sX, sY; // image-space position of sample\n\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * known payload bay position and orientation (not relevant to this state)\n\n  // State logic:\n  // if !foundSample or internalSampleState.pos.{r,z} not within radius\n  if ( !foundSample || abs(sX) > positionRadius || abs(sY) > positionRadius )\n    {\n      // get image Processor result\n      bool newTest = false;\n      high_level_controller::sampleStateFromImage sStateImage;\n      if ( sampleStateFromImage_client.call(sStateImage) )\n\t{\n\t  switch (sStateImage.response.status)\n\t    {\n\t    case DETECTED:\n\t    case PARTIAL:\n\t      newTest = true;\n\t      ROS_INFO(\"FOUND SAMPLE: %d, %f , %f, %f\",\n\t\t       sStateImage.response.status, \n\t\t       sStateImage.response.x, \n\t\t       sStateImage.response.y, \n\t\t       sStateImage.response.angle);\n\t      break;\n\t    default: // covers the HIDDEN case too, already initialized to false\n    \t      ROS_INFO(\"NO SAMPLE FOUND\");\n\t      break;\n\t    }\n\t  // if result has no detection:\n\t  if (!newTest)\n\t    {\n\t      if (!foundSample) // if never found Sample:\n\t\t{\n\t\t  // increment arm rotation by arm rotation step\n\t\t  initArmRotation += armRotationStep;\n\t\t  if (initArmRotation >= 200.0f) //< minArmRotation)\n\t\t    {\n\t\t      initArmRotation = startSearchArmRotation;\n\t\t      initRadialPos += radialPosStep;\n\t\t      if (initRadialPos > maxRadialPos)\n\t\t\t{\n\t\t\t  initRadialPos = minRadialPos;\n\t\t\t}\n\t\t    }\n\n\t\t  goalRadialPos = initRadialPos;\n\t\t  goalVerticalPos = initVerticalPos;\n\t\t  goalArmRotation = initArmRotation;\n\t\t  goalGripperRotation = initGripperRotation;\n\t\t  goalGripperPos = initGripperPos;\n\t\t} else // else if found previously:\n\t\t{\n\t\t  // go half way between previous find location and current location\n\t\t  float previousArmRotation = internalSampleState.pos.theta;\n\t\t  int previousRadialPos = internalSampleState.pos.r;\n\n\t\t  goalRadialPos = (goalRadialPos + previousRadialPos) / 2.0f;\n\t\t  goalVerticalPos = initVerticalPos;\n\t\t  goalArmRotation = (goalArmRotation + previousArmRotation) / 2.0f;\n\t\t  goalGripperRotation = initGripperRotation;\n\t\t  goalGripperPos = initGripperPos;\n\t\t}\n\t    } else // else if result has detection:\n\t    {\n\t      // update internal variables\n\t      foundSample = true;\n\t      sX = sStateImage.response.x;\n\t      sY = sStateImage.response.y;\n\t      // update the internalSampleState\n\t      internalSampleState.pos.r = currentRadialPos;\n\t      internalSampleState.pos.theta = currentArmRotation;\n\t      internalSampleState.pos.z = currentVerticalPos;\n\t      internalSampleState.orientation.theta = sStateImage.response.angle + sampleOrientationOffset;\n\t      // if the sample's current image-space position is within the allowable radius\n\t      if ( abs(sX) <= positionRadius && abs(sY) <= positionRadius ) \n\t\t{\n\t\t  // we're not setting the goals; so this state should get triggered again immediately\n\t\t  // and it will have:\n\t\t  // * foundSample=true; \n\t\t  // * sX < positionRadius; \n\t\t  // * sY < positionRadius \n\t\t  // so will transition to next state\n\t\t} else // need to center the payload\n\t\t{\n\t\t  // move to detected position (i.e. set goals to detected position)\n\t\t  // NOTE: IMAGE SPACE IS +Y = DOWN; THIS MEANS +Y -> CCW\n\t\t  // if sY > 0 : rotate CW, else if sY < 0 CCW\n\t\t  if ( abs(sY) > positionRadius )\n\t\t    {\n\t\t      initArmRotation += (sY) * armRotationScale;\n\t\t      if ( initArmRotation > maxArmRotation )\n\t\t\tinitArmRotation = maxArmRotation;\n\t\t      if ( initArmRotation < minArmRotation )\n\t\t\tinitArmRotation = minArmRotation;\n\t\t    }\n\t\t  // NOTE: IMAGE SPACE IS +X = RETRACT RADIUS\n\t\t  // if sX > 0 : retract radius, else if sX < 0 extend\n\t\t  if ( abs(sX) > positionRadius )\n\t\t    {\n\t\t      initRadialPos += (-sX) * radialPosScale;\n\t\t      if ( initRadialPos > maxRadialPos )\n\t\t\tinitRadialPos = maxRadialPos;\n\t\t      if ( initRadialPos < minRadialPos )\n\t\t\tinitRadialPos = minRadialPos;\n\t\t    }\n\t\t  goalRadialPos = initRadialPos;\n\t\t  goalArmRotation = initArmRotation;\n\t\t}\n\t    }\n\t}\n    } else // else sample has been found and is within radius\n    {\n      // set component's SampleState\n      sample = internalSampleState;\n      // transition to next state (GRABBING_SAMPLE)\n      currentState = FINDING_PB;\n      //      currentState = GRABBING_SAMPLE;\n      stateChanged = true;\n    }\n}\n\nvoid arm_controller::Finding_PB_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  static float startSearchArmRotation = 200.0f;\n  static float initRadialPos       = (maxRadialPos + minRadialPos) * 3.0f / 4.0f;\n  static float initVerticalPos     = minVerticalPos + 50000;\n  static float initArmRotation     = startSearchArmRotation;\n  static float initGripperRotation = gripperRotationSafe;\n  static float initGripperPos      = gripperPosClosed;\n  static bool firstRun = true;\n  static bool reachedHeight = false;\n\n  if (!reachedHeight)\n    {\n      goalVerticalPos = initVerticalPos;\n      reachedHeight = true;\n      return;\n    }\n\n  if (firstRun)\n    {\n      goalRadialPos = initRadialPos;\n      goalVerticalPos = initVerticalPos;\n      goalArmRotation = initArmRotation;\n      goalGripperRotation = initGripperRotation;\n      goalGripperPos = initGripperPos;\n      firstRun = false;\n      return;\n    }\n\n  static float maxSearchTime = 300.0f; // seconds we are allowed to search\n\n  static float armRotationStep = 15.0f;     // degrees between steps of the state search (arm rotation)\n  static float radialPosStep = 10000.0f;    // distance between steps of state search (radius)\n  static float armRotationScale = 1.0f/150.0f;   // amount to move by in theta based on image space \n  static float radialPosScale = 100.0f;          // amount to move by in radius based on image space\n\n  static float positionRadius = 50.0f; // once center of PB is in this radius, we are done\n  \n  static bool foundPB = false;\n  static high_level_controller::payloadBayState internalPBState; // used within this state; global state set when done\n  static float pbX, pbY; // image-space position of Payload Bay\n\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * calibration data\n\n  // State logic:\n  // if !foundPB or internalPBState.pos.{r,z} not within radius\n  if ( !foundPB || abs(pbX) > positionRadius || abs(pbY) > positionRadius )\n    {\n      // get image Processor result\n      bool newTest = false;\n      high_level_controller::payloadBayStateFromImage pbStateImage;\n      if ( payloadBayStateFromImage_client.call(pbStateImage) )\n\t{\n\t  switch (pbStateImage.response.status)\n\t    {\n\t    case DETECTED:\n\t    case PARTIAL:\n\t      newTest = true;\n\t      ROS_INFO(\"FOUND PAYLOAD BAY: %d, %f , %f, %f\",\n\t\t       pbStateImage.response.status, \n\t\t       pbStateImage.response.x, \n\t\t       pbStateImage.response.y, \n\t\t       pbStateImage.response.angle);\n\t      break;\n\t    default: // covers the HIDDEN case too, already initialized to false\n\t      ROS_INFO(\"NO PAYLOAD BAY FOUND\");\n\t      break;\n\t    }\n\t  // if result has no detection:\n\t  if (!newTest)\n\t    {\n\t      if (!foundPB) // if never found PB:\n\t\t{\n\t\t  // increment arm rotation by arm rotation step\n\t\t  initArmRotation += armRotationStep;\n\t\t  if (initArmRotation > maxArmRotation)\n\t\t    {\n\t\t      initArmRotation = startSearchArmRotation;\n\t\t      initRadialPos += radialPosStep;\n\t\t      if (initRadialPos > maxRadialPos)\n\t\t\t{\n\t\t\t  initRadialPos = minRadialPos;\n\t\t\t}\n\t\t    }\n\n\t\t  goalRadialPos = initRadialPos;\n\t\t  goalVerticalPos = initVerticalPos;\n\t\t  goalArmRotation = initArmRotation;\n\t\t  goalGripperRotation = initGripperRotation;\n\t\t  goalGripperPos = initGripperPos;\n\t\t} else // else if found previously:\n\t\t{\n\t\t  // go half way between previous find location and current location\n\t\t  float previousArmRotation = internalPBState.pos.theta;\n\t\t  int previousRadialPos = internalPBState.pos.r;\n\n\t\t  goalRadialPos = (goalRadialPos + previousRadialPos) / 2.0f;\n\t\t  goalVerticalPos = initVerticalPos;\n\t\t  goalArmRotation = (goalArmRotation + previousArmRotation) / 2.0f;\n\t\t  goalGripperRotation = initGripperRotation;\n\t\t  goalGripperPos = initGripperPos;\n\t\t}\n\t    } else // else if result has detection:\n\t    {\n\t      // update internal variables\n\t      foundPB = true;\n\t      pbX = pbStateImage.response.x;\n\t      pbY = pbStateImage.response.y;\n\t      // update the internalPBState\n\t      internalPBState.pos.r = currentRadialPos;\n\t      internalPBState.pos.theta = currentArmRotation;\n\t      internalPBState.pos.z = currentVerticalPos;\n\t      internalPBState.orientation.theta = pbStateImage.response.angle;\n\t      // if the payload bay's current image-space position is within the allowable radius\n\t      if ( abs(pbX) <= positionRadius && abs(pbY) <= positionRadius ) \n\t\t{\n\t\t  // we're not setting the goals; so this state should get triggered again immediately\n\t\t  // and it will have:\n\t\t  // * foundPB=true; \n\t\t  // * pbX < positionRadius; \n\t\t  // * pbY < positionRadius \n\t\t  // so will transition to next state\n\t\t} else // need to center the payload bay\n\t\t{\n\t\t  // move to detected position (i.e. set goals to detected position)\n\t\t  // NOTE: IMAGE SPACE IS +Y = DOWN; THIS MEANS +Y -> CCW\n\t\t  // if pbY < 0 : rotate CW, else if pbY > 0 rotate CCW\n\t\t  if ( abs(pbY) > positionRadius )\n\t\t    {\n\t\t      initArmRotation += (pbY) * armRotationScale;\n\t\t      if ( initArmRotation > maxArmRotation )\n\t\t\tinitArmRotation = maxArmRotation;\n\t\t      if ( initArmRotation < minArmRotation )\n\t\t\tinitArmRotation = minArmRotation;\n\t\t    }\n\t\t  // NOTE: IMAGE SPACE IS +X = RETRACT RADIUS\n\t\t  // if pbX > 0 : retract radius, else if pbX < 0 extend radius\n\t\t  if ( abs(pbX) > positionRadius )\n\t\t    {\n\t\t      initRadialPos += (-pbX) * radialPosScale;\n\t\t      if ( initRadialPos > maxRadialPos )\n\t\t\tinitRadialPos = maxRadialPos;\n\t\t      if ( initRadialPos < minRadialPos )\n\t\t\tinitRadialPos = minRadialPos;\n\t\t    }\n\t\t  goalRadialPos = initRadialPos;\n\t\t  goalArmRotation = initArmRotation;\n\t\t}\n\t    }\n\t}\n      else // else client call to detector failed\n\t{\n\t  ROS_INFO(\"CLIENT CALL TO PAYLOAD BAY DETECTOR FAILED\");\n\t}\n    } else // else payload has been found and is within radius\n    {\n      // set component's PBState\n      payloadBay = internalPBState;\n      // transition to next state (GRABBING_SAMPLE)\n      currentState = GRABBING_SAMPLE;\n      stateChanged = true;\n    }\n}\n\nvoid arm_controller::Grabbing_Sample_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n  static float sampleZPlane = sampleVerticalPos;\n  static bool atSample = false;\n  static bool grabbedSample = false;\n\n  // starting with:\n  // * known sample position\n  // * directly above sample\n\n  // State logic:\n  if ( !atSample )\n    {\n      // Take into account the offset between center of camera and center of gripper:\n      goalRadialPos = sample.pos.r + radiusBetweenGripperAndCamera;\n      float angleOffset = 0;\n      angleOffset = atan2( arcLengthBetweenGripperAndCamera, goalRadialPos ) * 180.0f / M_PI;\n      ROS_INFO(\"ANGLE OFFSET = %f\",angleOffset);\n      goalArmRotation = sample.pos.theta - angleOffset;\n      // Orient gripper to sample (based on sample.orientation.theta)\n      if ( sample.orientation.theta < 0 )\n\tsample.orientation.theta += 180.0f;\n      if ( sample.orientation.theta > 180.0f )\n\tsample.orientation.theta -= 180.0f;\n      goalGripperRotation = sample.orientation.theta + gripperRotationOffset;\n      if ( goalGripperRotation > 180.0f )\n\tgoalGripperRotation -= 180.0f;\n      // Go down to proper Z level for the sample\n      goalVerticalPos = sampleZPlane;\n      // Open The gripper\n      goalGripperPos = gripperPosOpened;\n      atSample = true;\n    } else if ( !grabbedSample )\n    {\n      // close gripper\n      goalGripperPos = gripperPosClosed;\n      grabbedSample = true;\n    } else\n    {\n      // move up some amount\n      goalVerticalPos = payloadBayVerticalPos - 10000;\n      // transition to next state (CARRYING_SAMPLE)\n      currentState = CARRYING_SAMPLE;\n      stateChanged = true;\n    }\n}\n\nvoid arm_controller::Carrying_Sample_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n  static bool atPayloadBay = false;\n  static float payloadBayZPlane = payloadBayVerticalPos;\n\n  // starting with:\n  // * already have the sample\n  // * at max height\n  // * already know the position & orientation of the PB\n\n  // State Logic:\n  if ( !atPayloadBay )\n    {\n      // Go to Payload Bay's Radius and Angle\n      // Take into account the offset between center of camera and center of gripper:\n      goalRadialPos = payloadBay.pos.r + radiusBetweenGripperAndCamera;\n      float angleOffset = 0.0f;\n      angleOffset = atan2( arcLengthBetweenGripperAndCamera, goalRadialPos ) * 180.0f / M_PI;\n      ROS_INFO(\"ANGLE OFFSET = %f\",angleOffset);\n      goalArmRotation = payloadBay.pos.theta - angleOffset;\n      // change gripper rotation to payloadBay's orientation (payloadBay.orientation.theta)\n      if ( payloadBay.orientation.theta < 0 )\n      \tpayloadBay.orientation.theta += 180.0f;\n      if ( payloadBay.orientation.theta > 180.0f )\n      \tpayloadBay.orientation.theta -= 180.0f;\n      goalGripperRotation = payloadBay.orientation.theta + gripperRotationOffset;\n      //      goalGripperRotation = 100;\n      //goalArmRotation = 255;\n      //goalRadialPos = 253000;\n      atPayloadBay = true;\n    } else\n    {\n      // move down in Z to proper height for PB\n      goalVerticalPos = payloadBayZPlane;\n      //   goalVerticalPos = 161300;\n      // transition to next state (INSERTING_SAMPLE)\n      currentState = INSERTING_SAMPLE;\n      stateChanged = true;\n    }\n}\n\nvoid arm_controller::Inserting_Sample_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * payload is in gripper\n  // * directly above PB at appropriate height and orientation\n\n  // State Logic:\n  // Open Gripper (set gripper pos to open pos)\n  goalGripperPos = gripperPosOpened;\n  // transition to next state (CLOSING_PB)\n  currentState = CLOSING_PB;\n  stateChanged = true;\n}\n\nvoid arm_controller::Closing_PB_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * sample is in PB\n  // * directly above PB\n\n  // State logic:\n  // move up some amount (to max height)\n  goalVerticalPos = minVerticalPos;\n  // send the command to the PB through UART to close the PB,\n  payloadBayOpened = false;\n\n  // OPTIONAL : use image based detection to confirm PB closes\n  // transition to next state (MOVING_AWAY) if PB responds well\n  currentState = MOVING_AWAY;\n  stateChanged = true;\n}\n\nvoid arm_controller::Moving_Away_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * sample is in PB\n  // * PB is closed\n  // * directly above PB at max height\n\n  // State logic:\n  // determine safe zone for arm (based on PB position)\n  float safeRotation;\n  safeRotation = payloadBay.pos.theta - 90.0f;\n  if ( safeRotation < minArmRotation || safeRotation > maxArmRotation )\n    safeRotation += 180.0f;\n  // move to safe zone\n  goalArmRotation = safeRotation;\n}\n",
-                "Forwards": "#include \"objecttracker/detected_object.hpp\"\n#include \"dynamixel/SerialPort.h\"",
-                "Initialization": "  paused = true;\n  usingSerialPort = true;\n  payloadBayOpened = false;\n  stateChanged = true;\n  currentState = INIT;\n\n  // need to initialize the offsets with measurements from the system\n  radialOffset          = 0.0;\n  verticalOffset        = 0.0;\n  armRotationOffset     = 0.0f;\n  gripperRotationOffset = 15.0f;\n  gripperPosOffset      = 0.0f;\n\n  sampleOrientationOffset = 0.0f;\n\n  // need to initialize the offsets with measurements from the system\n  radiusBetweenGripperAndCamera = 25000;\n  arcLengthBetweenGripperAndCamera = int(1.75f * 20000.0f);  // 2.5 inches * 20000 counts per inch\n\n  // initialization of the z-plane for the payload bay and the sample\n  sampleVerticalPos = 498550;\n  payloadBayVerticalPos = 157660;\n\n  // need to initialize the min and max sensor values\n  maxRadialPos       = 275000;\n  maxVerticalPos     = 495000;\n  maxArmRotation     = 330.0f;\n  maxGripperRotation = 180.0f;\n  maxGripperPos      = 260.0f;\n\n  minRadialPos       = 0;\n  minVerticalPos     = 0;\n  minArmRotation     = 1.0f;\n  minGripperRotation = 0.0f;\n  minGripperPos      = 190.0f;\n\n  // Safe gripper rotation; won't hit vertical stage\n  gripperRotationSafe = 180.0f + gripperRotationOffset;\n\n  // need to initialize the gripper's state sensor values\n  gripperPosOpened = 250.0f;\n  gripperPosClosed = 200.0f;\n\n  // need to initialize the epsilons for the goal/current feedback loops\n  radialEpsilon          = 100;\n  verticalEpsilon        = 100;\n  armRotationEpsilon     = 4.0f;\n  gripperRotationEpsilon = 4.0f;\n  gripperPosEpsilon      = 4.0f;\n\n  // need to properly initialize the current sensor readings\n  currentRadialPos        = -1.0;\n  currentVerticalPos      = -1.0;\n  currentArmRotation      = -1.0f;\n  currentGripperRotation  = -1.0f;\n  currentGripperPos       = -1.0f;\n\n  // need to properly initialize the current actuator goals\n  goalRadialPos        = minRadialPos;\n  goalVerticalPos      = minVerticalPos;\n  goalArmRotation      = minArmRotation;\n  goalGripperRotation  = minGripperRotation;\n  goalGripperPos       = gripperPosOpened;\n\n  // need to properly initialize the sample and payloadBay\n  sample.pos.r     = -1.0f;\n  sample.pos.theta = -1.0f;\n  sample.pos.z     = -1.0f;\n  sample.orientation.theta = -1.0f;\n  sample.orientation.phi   = -1.0f;\n\n  payloadBay.pos.r     = -1.0f;\n  payloadBay.pos.theta = -1.0f;\n  payloadBay.pos.z     = -1.0f;\n  payloadBay.orientation.theta = -1.0f;\n  payloadBay.orientation.phi   = -1.0f;\n\n  // command line args parsing for arm_controller:\n  for (int i=0; i < node_argc; i++) \n    {\n      if (!strcmp(node_argv[i], \"-unpaused\"))\n\t{\n\t  paused = false;\n\t}\n      if (!strcmp(node_argv[i], \"-noSerial\"))\n\t{\n\t  usingSerialPort = false;\n\t}\n      if (!strcmp(node_argv[i], \"-state\"))\n\t{\n\t  currentState = (arm_controller::ArmState)atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-r\"))\n\t{\n\t  goalRadialPos = atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-theta\"))\n\t{\n\t  goalArmRotation = atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-z\"))\n\t{\n\t  goalVerticalPos = atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-gRot\"))\n\t{\n\t  goalGripperRotation = atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-gPos\"))\n\t{\n\t  goalGripperPos = atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-servoEpsilon\"))\n\t{\n\t  armRotationEpsilon = atof(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-samplePlane\"))\n\t{\n\t  sampleVerticalPos = atoi(node_argv[i+1]);\n\t}\n    }\n  // Jetson's USB-Serial Port for communicating with the ardunio\n  sprintf(portName,\"//dev//ttyACM0\");\n  int baudRate = 9600;\n  if ( usingSerialPort )\n    {\n      if (serialPort.connect(portName,baudRate)!=0)\n\t{\n\t  ROS_INFO(\"OPENED SERIAL PORT\");\n\t}\n      else\n\t{\n\t  ROS_INFO(\"COULDN'T OPEN SERIAL PORT %s at %d\",portName,baudRate);\n\t}\n    }\n",
+                "Definitions": "const char* openPayloadBayString = \"1\";\nconst char* closePayloadBayString = \"0\";\n\nvoid armController::PrintCurrentState()\n{\n  switch (currentState)\n    {\n    case INIT:\n      ROS_INFO(\"INITIALIZING\");\n      break;\n    case OPENING_PB:\n      ROS_INFO(\"OPENING PAYLOAD BAY\");\n      break;\n    case FINDING_SAMPLE:\n      ROS_INFO(\"FINDING SAMPLE\");\n      break;\n    case FINDING_PB:\n      ROS_INFO(\"FINDING PAYLOAD BAY\");\n      break;\n    case GRABBING_SAMPLE:\n      ROS_INFO(\"GRABBING SAMPLE\");\n      break;\n    case CARRYING_SAMPLE:\n      ROS_INFO(\"CARRYING SAMPLE\");\n      break;\n    case INSERTING_SAMPLE:\n      ROS_INFO(\"INSERTING SAMPLE\");\n      break;\n    case CLOSING_PB:\n      ROS_INFO(\"CLOSING PAYLOAD BAY\");\n      break;\n    case MOVING_AWAY:\n      ROS_INFO(\"MOVING AWAY\");\n      break;\n    }\n}\n\nvoid armController::UpdateSensorData()\n{\n  // all servers have \n  // inputs: int64 goal, bool update\n  // output: current\n  motor_controller::radialPosition rPos;\n  rPos.request.update = false;\n  rPos.request.setZeroPosition = false;\n  radialPositionClient.call(rPos);\n  currentRadialPos = rPos.response.current;\n\n  motor_controller::verticalPosition vPos;\n  vPos.request.update = false;\n  vPos.request.setZeroPosition = false;\n  verticalPositionClient.call(vPos);\n  currentVerticalPos = vPos.response.current;\n\n  motor_controller::armRotation arm;\n  arm.request.update = false;\n  armRotationClient.call(arm);\n  currentArmRotation = arm.response.current;\n\n  motor_controller::gripperRotation gRot;\n  gRot.request.update = false;\n  gripperRotationClient.call(gRot);\n  currentGripperRotation = gRot.response.current;\n  \n  motor_controller::gripperPosition gPos;\n  gPos.request.update = false;\n  gripperPositionClient.call(gPos);\n  currentGripperPos = gPos.response.current;\n}\n\nvoid armController::UpdateArmPosition()\n{\n  // all servers have \n  // inputs: int64 goal, bool update\n  // output: current\n  motor_controller::radialPosition rPos;\n  rPos.request.update = true;\n  rPos.request.setZeroPosition = false;\n  rPos.request.goal = goalRadialPos;\n  radialPositionClient.call(rPos);\n  currentRadialPos = rPos.response.current;\n\n  motor_controller::verticalPosition vPos;\n  vPos.request.update = true;\n  vPos.request.setZeroPosition = false;\n  vPos.request.goal = goalVerticalPos;\n  verticalPositionClient.call(vPos);\n  currentVerticalPos = vPos.response.current;\n\n  motor_controller::armRotation arm;\n  arm.request.update = true;\n  arm.request.goal = goalArmRotation;\n  armRotationClient.call(arm);\n  currentArmRotation = arm.response.current;\n\n  motor_controller::gripperRotation gRot;\n  gRot.request.update = true;\n  gRot.request.goal = goalGripperRotation;\n  gripperRotationClient.call(gRot);\n  currentGripperRotation = gRot.response.current;\n  \n  motor_controller::gripperPosition gPos;\n  gPos.request.update = true;\n  gPos.request.goal = goalGripperPos;\n  gripperPositionClient.call(gPos);\n  currentGripperPos = gPos.response.current;\n}\n\nbool armController::CheckGoals()\n{\n#if 1\n  ROS_INFO(\"RADIAL GOAL: %d\",goalRadialPos);\n  ROS_INFO(\"RADIUS : %d\",currentRadialPos);\n  ROS_INFO(\"HEIGHT GOAL: %d\",goalVerticalPos);\n  ROS_INFO(\"HEIGHT : %d\",currentVerticalPos);\n  ROS_INFO(\"ARM ROTATION GOAL: %f\",goalArmRotation);\n  ROS_INFO(\"ARM ROTATION : %f\",currentArmRotation);\n  ROS_INFO(\"GRIPPER ROTATION GOAL: %f\",goalGripperRotation);\n  ROS_INFO(\"GRIPPER ROTATION : %f\",currentGripperRotation);\n  ROS_INFO(\"GRIPPER POSITION GOAL: %f\",goalGripperPos);\n  ROS_INFO(\"GRIPPER POSITION : %f\",currentGripperPos);\n#endif\n  if ( abs(goalRadialPos - currentRadialPos) > radialEpsilon )\n    return false;\n  if ( abs(goalVerticalPos - currentVerticalPos) > verticalEpsilon )\n    return false;\n  if ( abs(goalArmRotation - currentArmRotation) > armRotationEpsilon )\n    return false;\n  if ( abs(goalGripperRotation - currentGripperRotation) > gripperRotationEpsilon )\n    return false;\n  if ( abs(goalGripperPos - currentGripperPos) > gripperPosEpsilon )\n    return false;\n  ROS_INFO(\"Reached Goals\");\n  return true;\n}\n\nvoid armController::Init_StateFunc()\n{\n  // Init zeroes out the positions of the linear actuators for calibration\n  static bool zeroedHeight = false;\n  static bool zeroedRadius = false;\n  if (!zeroedHeight)\n    {\n      motor_controller::verticalPosition vPos;\n      vPos.request.update = true;\n      vPos.request.setZeroPosition = false;\n      vPos.request.goal = currentVerticalPos - 10000;\n      verticalPositionClient.call(vPos);\n      if (vPos.response.lowerLimitReached)\n\t{\n    \t  ROS_INFO(\"ZEROED HEIGHT\");\n\t  vPos.request.update = false;\n\t  vPos.request.setZeroPosition = true;\n\t  verticalPositionClient.call(vPos);\n\t  zeroedHeight = true;\n\t}\n    }\n  else if (!zeroedRadius)\n    {\n      motor_controller::radialPosition rPos;\n      rPos.request.update = true;\n      rPos.request.setZeroPosition = false;\n      rPos.request.goal = currentRadialPos - 10000;\n      radialPositionClient.call(rPos);\n      if (rPos.response.lowerLimitReached)\n\t{\n\t  ROS_INFO(\"ZEROED RADIUS\");\n\t  rPos.request.update = false;\n\t  rPos.request.setZeroPosition = true;\n\t  radialPositionClient.call(rPos);\n\t  zeroedRadius = true;\n\t}\n    }\n  else\n    {\n      //      ROS_INFO(\"ZEROED EVERYTHING\");\n      motor_controller::verticalPosition vPos;\n      vPos.request.update = true;\n      vPos.request.setZeroPosition = false;\n      vPos.request.goal = 0;\n      verticalPositionClient.call(vPos);\n      motor_controller::radialPosition rPos;\n      rPos.request.update = true;\n      rPos.request.setZeroPosition = false;\n      rPos.request.goal = 0;\n      radialPositionClient.call(rPos);\n\n      goalRadialPos = minRadialPos;\n      goalVerticalPos = minVerticalPos;\n      goalArmRotation = minArmRotation;\n      goalGripperRotation = currentGripperRotation;\n      goalGripperPos = gripperPosOpened;\n\n      currentState = OPENING_PB;\n      stateChanged = true;\n    }\n}\n\nvoid armController::Opening_PB_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * known PB position\n  // * directly above PB\n\n  // State logic:\n  // send the command to the PB through UART to open the PB,\n  // OPTIONAL : use image based detection to confirm PB opens\n  // transition to next state (FINDING_SAMPLE) if PB responds well\n  payloadBayOpened = true;\n\n  //goalVerticalPos = minVerticalPos;\n\n  currentState = FINDING_SAMPLE;\n  stateChanged = true;\n}\n\nvoid armController::Finding_Sample_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  static float startSearchArmRotation = 0.0f; //200.0f;\n  static float initRadialPos       = (maxRadialPos + minRadialPos) * 3.0f / 4.0f;\n  static float initVerticalPos     = 311000;//minVerticalPos + 50000;\n  static float initArmRotation     = startSearchArmRotation;\n  static float initGripperRotation = gripperRotationSafe;\n  static float initGripperPos      = gripperPosClosed;\n  static bool firstRun = true;\n\n  if (firstRun)\n    {\n      goalRadialPos = initRadialPos;\n      goalVerticalPos = initVerticalPos;\n      goalArmRotation = initArmRotation;\n      goalGripperRotation = initGripperRotation;\n      goalGripperPos = initGripperPos;\n      firstRun = false;\n      return;\n    }\n\n  static float maxSearchTime = 300.0f; // seconds we are allowed to search\n\n  static float armRotationStep = 15.0f;     // degrees between steps of the state search\n  static float radialPosStep = 10000.0f;    // amount to move by in radius\n  static float armRotationScale = 1.0f/150.0f;  // amount to move by in theta based on image space\n  static float radialPosScale = 100.0f;         // amount to move by in radius based on image space\n\n  static float positionRadius = 50.0f; // once center of sample is in this radius, we are done\n  \n  static bool foundSample = false;\n  static high_level_controller::sampleState internalSampleState; // used within this state; global state set when done\n  static float sX, sY; // image-space position of sample\n\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * known payload bay position and orientation (not relevant to this state)\n\n  // State logic:\n  // if !foundSample or internalSampleState.pos.{r,z} not within radius\n  if ( !foundSample || abs(sX) > positionRadius || abs(sY) > positionRadius )\n    {\n      // get image Processor result\n      bool newTest = false;\n      image_processor::sampleStateFromImage sStateImage;\n      if ( sampleStateFromImageClient.call(sStateImage) )\n\t{\n\t  switch (sStateImage.response.status)\n\t    {\n\t    case DETECTED:\n\t    case PARTIAL:\n\t      newTest = true;\n\t      ROS_INFO(\"FOUND SAMPLE: %d, %f , %f, %f\",\n\t\t       sStateImage.response.status, \n\t\t       sStateImage.response.x, \n\t\t       sStateImage.response.y, \n\t\t       sStateImage.response.angle);\n\t      break;\n\t    default: // covers the HIDDEN case too, already initialized to false\n    \t      ROS_INFO(\"NO SAMPLE FOUND\");\n\t      break;\n\t    }\n\t  // if result has no detection:\n\t  if (!newTest)\n\t    {\n\t      if (!foundSample) // if never found Sample:\n\t\t{\n\t\t  // increment arm rotation by arm rotation step\n\t\t  initArmRotation += armRotationStep;\n\t\t  if (initArmRotation >= 200.0f) //< minArmRotation)\n\t\t    {\n\t\t      initArmRotation = startSearchArmRotation;\n\t\t      initRadialPos += radialPosStep;\n\t\t      if (initRadialPos > maxRadialPos)\n\t\t\t{\n\t\t\t  initRadialPos = minRadialPos;\n\t\t\t}\n\t\t    }\n\n\t\t  goalRadialPos = initRadialPos;\n\t\t  goalVerticalPos = initVerticalPos;\n\t\t  goalArmRotation = initArmRotation;\n\t\t  goalGripperRotation = initGripperRotation;\n\t\t  goalGripperPos = initGripperPos;\n\t\t} else // else if found previously:\n\t\t{\n\t\t  // go half way between previous find location and current location\n\t\t  float previousArmRotation = internalSampleState.pos.theta;\n\t\t  int previousRadialPos = internalSampleState.pos.r;\n\n\t\t  goalRadialPos = (goalRadialPos + previousRadialPos) / 2.0f;\n\t\t  goalVerticalPos = initVerticalPos;\n\t\t  goalArmRotation = (goalArmRotation + previousArmRotation) / 2.0f;\n\t\t  goalGripperRotation = initGripperRotation;\n\t\t  goalGripperPos = initGripperPos;\n\t\t}\n\t    } else // else if result has detection:\n\t    {\n\t      // update internal variables\n\t      foundSample = true;\n\t      sX = sStateImage.response.x;\n\t      sY = sStateImage.response.y;\n\t      // update the internalSampleState\n\t      internalSampleState.pos.r = currentRadialPos;\n\t      internalSampleState.pos.theta = currentArmRotation;\n\t      internalSampleState.pos.z = currentVerticalPos;\n\t      internalSampleState.orientation.theta = sStateImage.response.angle + sampleOrientationOffset;\n\t      // if the sample's current image-space position is within the allowable radius\n\t      if ( abs(sX) <= positionRadius && abs(sY) <= positionRadius ) \n\t\t{\n\t\t  // we're not setting the goals; so this state should get triggered again immediately\n\t\t  // and it will have:\n\t\t  // * foundSample=true; \n\t\t  // * sX < positionRadius; \n\t\t  // * sY < positionRadius \n\t\t  // so will transition to next state\n\t\t} else // need to center the payload\n\t\t{\n\t\t  // move to detected position (i.e. set goals to detected position)\n\t\t  // NOTE: IMAGE SPACE IS +Y = DOWN; THIS MEANS +Y -> CCW\n\t\t  // if sY > 0 : rotate CW, else if sY < 0 CCW\n\t\t  if ( abs(sY) > positionRadius )\n\t\t    {\n\t\t      initArmRotation += (sY) * armRotationScale;\n\t\t      if ( initArmRotation > maxArmRotation )\n\t\t\tinitArmRotation = maxArmRotation;\n\t\t      if ( initArmRotation < minArmRotation )\n\t\t\tinitArmRotation = minArmRotation;\n\t\t    }\n\t\t  // NOTE: IMAGE SPACE IS +X = RETRACT RADIUS\n\t\t  // if sX > 0 : retract radius, else if sX < 0 extend\n\t\t  if ( abs(sX) > positionRadius )\n\t\t    {\n\t\t      initRadialPos += (-sX) * radialPosScale;\n\t\t      if ( initRadialPos > maxRadialPos )\n\t\t\tinitRadialPos = maxRadialPos;\n\t\t      if ( initRadialPos < minRadialPos )\n\t\t\tinitRadialPos = minRadialPos;\n\t\t    }\n\t\t  goalRadialPos = initRadialPos;\n\t\t  goalArmRotation = initArmRotation;\n\t\t}\n\t    }\n\t}\n    } else // else sample has been found and is within radius\n    {\n      // set component's SampleState\n      sample = internalSampleState;\n      // transition to next state (GRABBING_SAMPLE)\n      currentState = FINDING_PB;\n      //      currentState = GRABBING_SAMPLE;\n      stateChanged = true;\n    }\n}\n\nvoid armController::Finding_PB_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  static float startSearchArmRotation = 200.0f;\n  static float initRadialPos       = (maxRadialPos + minRadialPos) * 3.0f / 4.0f;\n  static float initVerticalPos     = minVerticalPos + 50000;\n  static float initArmRotation     = startSearchArmRotation;\n  static float initGripperRotation = gripperRotationSafe;\n  static float initGripperPos      = gripperPosClosed;\n  static bool firstRun = true;\n  static bool reachedHeight = false;\n\n  if (!reachedHeight)\n    {\n      goalVerticalPos = initVerticalPos;\n      reachedHeight = true;\n      return;\n    }\n\n  if (firstRun)\n    {\n      goalRadialPos = initRadialPos;\n      goalVerticalPos = initVerticalPos;\n      goalArmRotation = initArmRotation;\n      goalGripperRotation = initGripperRotation;\n      goalGripperPos = initGripperPos;\n      firstRun = false;\n      return;\n    }\n\n  static float maxSearchTime = 300.0f; // seconds we are allowed to search\n\n  static float armRotationStep = 15.0f;     // degrees between steps of the state search (arm rotation)\n  static float radialPosStep = 10000.0f;    // distance between steps of state search (radius)\n  static float armRotationScale = 1.0f/150.0f;   // amount to move by in theta based on image space \n  static float radialPosScale = 100.0f;          // amount to move by in radius based on image space\n\n  static float positionRadius = 50.0f; // once center of PB is in this radius, we are done\n  \n  static bool foundPB = false;\n  static high_level_controller::payloadBayState internalPBState; // used within this state; global state set when done\n  static float pbX, pbY; // image-space position of Payload Bay\n\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * calibration data\n\n  // State logic:\n  // if !foundPB or internalPBState.pos.{r,z} not within radius\n  if ( !foundPB || abs(pbX) > positionRadius || abs(pbY) > positionRadius )\n    {\n      // get image Processor result\n      bool newTest = false;\n      image_processor::payloadBayStateFromImage pbStateImage;\n      if ( payloadBayStateFromImageClient.call(pbStateImage) )\n\t{\n\t  switch (pbStateImage.response.status)\n\t    {\n\t    case DETECTED:\n\t    case PARTIAL:\n\t      newTest = true;\n\t      ROS_INFO(\"FOUND PAYLOAD BAY: %d, %f , %f, %f\",\n\t\t       pbStateImage.response.status, \n\t\t       pbStateImage.response.x, \n\t\t       pbStateImage.response.y, \n\t\t       pbStateImage.response.angle);\n\t      break;\n\t    default: // covers the HIDDEN case too, already initialized to false\n\t      ROS_INFO(\"NO PAYLOAD BAY FOUND\");\n\t      break;\n\t    }\n\t  // if result has no detection:\n\t  if (!newTest)\n\t    {\n\t      if (!foundPB) // if never found PB:\n\t\t{\n\t\t  // increment arm rotation by arm rotation step\n\t\t  initArmRotation += armRotationStep;\n\t\t  if (initArmRotation > maxArmRotation)\n\t\t    {\n\t\t      initArmRotation = startSearchArmRotation;\n\t\t      initRadialPos += radialPosStep;\n\t\t      if (initRadialPos > maxRadialPos)\n\t\t\t{\n\t\t\t  initRadialPos = minRadialPos;\n\t\t\t}\n\t\t    }\n\n\t\t  goalRadialPos = initRadialPos;\n\t\t  goalVerticalPos = initVerticalPos;\n\t\t  goalArmRotation = initArmRotation;\n\t\t  goalGripperRotation = initGripperRotation;\n\t\t  goalGripperPos = initGripperPos;\n\t\t} else // else if found previously:\n\t\t{\n\t\t  // go half way between previous find location and current location\n\t\t  float previousArmRotation = internalPBState.pos.theta;\n\t\t  int previousRadialPos = internalPBState.pos.r;\n\n\t\t  goalRadialPos = (goalRadialPos + previousRadialPos) / 2.0f;\n\t\t  goalVerticalPos = initVerticalPos;\n\t\t  goalArmRotation = (goalArmRotation + previousArmRotation) / 2.0f;\n\t\t  goalGripperRotation = initGripperRotation;\n\t\t  goalGripperPos = initGripperPos;\n\t\t}\n\t    } else // else if result has detection:\n\t    {\n\t      // update internal variables\n\t      foundPB = true;\n\t      pbX = pbStateImage.response.x;\n\t      pbY = pbStateImage.response.y;\n\t      // update the internalPBState\n\t      internalPBState.pos.r = currentRadialPos;\n\t      internalPBState.pos.theta = currentArmRotation;\n\t      internalPBState.pos.z = currentVerticalPos;\n\t      internalPBState.orientation.theta = pbStateImage.response.angle;\n\t      // if the payload bay's current image-space position is within the allowable radius\n\t      if ( abs(pbX) <= positionRadius && abs(pbY) <= positionRadius ) \n\t\t{\n\t\t  // we're not setting the goals; so this state should get triggered again immediately\n\t\t  // and it will have:\n\t\t  // * foundPB=true; \n\t\t  // * pbX < positionRadius; \n\t\t  // * pbY < positionRadius \n\t\t  // so will transition to next state\n\t\t} else // need to center the payload bay\n\t\t{\n\t\t  // move to detected position (i.e. set goals to detected position)\n\t\t  // NOTE: IMAGE SPACE IS +Y = DOWN; THIS MEANS +Y -> CCW\n\t\t  // if pbY < 0 : rotate CW, else if pbY > 0 rotate CCW\n\t\t  if ( abs(pbY) > positionRadius )\n\t\t    {\n\t\t      initArmRotation += (pbY) * armRotationScale;\n\t\t      if ( initArmRotation > maxArmRotation )\n\t\t\tinitArmRotation = maxArmRotation;\n\t\t      if ( initArmRotation < minArmRotation )\n\t\t\tinitArmRotation = minArmRotation;\n\t\t    }\n\t\t  // NOTE: IMAGE SPACE IS +X = RETRACT RADIUS\n\t\t  // if pbX > 0 : retract radius, else if pbX < 0 extend radius\n\t\t  if ( abs(pbX) > positionRadius )\n\t\t    {\n\t\t      initRadialPos += (-pbX) * radialPosScale;\n\t\t      if ( initRadialPos > maxRadialPos )\n\t\t\tinitRadialPos = maxRadialPos;\n\t\t      if ( initRadialPos < minRadialPos )\n\t\t\tinitRadialPos = minRadialPos;\n\t\t    }\n\t\t  goalRadialPos = initRadialPos;\n\t\t  goalArmRotation = initArmRotation;\n\t\t}\n\t    }\n\t}\n      else // else client call to detector failed\n\t{\n\t  ROS_INFO(\"CLIENT CALL TO PAYLOAD BAY DETECTOR FAILED\");\n\t}\n    } else // else payload has been found and is within radius\n    {\n      // set component's PBState\n      payloadBay = internalPBState;\n      // transition to next state (GRABBING_SAMPLE)\n      currentState = GRABBING_SAMPLE;\n      stateChanged = true;\n    }\n}\n\nvoid armController::Grabbing_Sample_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n  static float sampleZPlane = sampleVerticalPos;\n  static bool atSample = false;\n  static bool grabbedSample = false;\n\n  // starting with:\n  // * known sample position\n  // * directly above sample\n\n  // State logic:\n  if ( !atSample )\n    {\n      // Take into account the offset between center of camera and center of gripper:\n      goalRadialPos = sample.pos.r + radiusBetweenGripperAndCamera;\n      float angleOffset = 0;\n      angleOffset = atan2( arcLengthBetweenGripperAndCamera, goalRadialPos ) * 180.0f / M_PI;\n      ROS_INFO(\"ANGLE OFFSET = %f\",angleOffset);\n      goalArmRotation = sample.pos.theta - angleOffset;\n      // Orient gripper to sample (based on sample.orientation.theta)\n      if ( sample.orientation.theta < 0 )\n\tsample.orientation.theta += 180.0f;\n      if ( sample.orientation.theta > 180.0f )\n\tsample.orientation.theta -= 180.0f;\n      goalGripperRotation = sample.orientation.theta + gripperRotationOffset;\n      if ( goalGripperRotation > 180.0f )\n\tgoalGripperRotation -= 180.0f;\n      // Go down to proper Z level for the sample\n      goalVerticalPos = sampleZPlane;\n      // Open The gripper\n      goalGripperPos = gripperPosOpened;\n      atSample = true;\n    } else if ( !grabbedSample )\n    {\n      // close gripper\n      goalGripperPos = gripperPosClosed;\n      grabbedSample = true;\n    } else\n    {\n      // move up some amount\n      goalVerticalPos = payloadBayVerticalPos - 10000;\n      // transition to next state (CARRYING_SAMPLE)\n      currentState = CARRYING_SAMPLE;\n      stateChanged = true;\n    }\n}\n\nvoid armController::Carrying_Sample_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n  static bool atPayloadBay = false;\n  static float payloadBayZPlane = payloadBayVerticalPos;\n\n  // starting with:\n  // * already have the sample\n  // * at max height\n  // * already know the position & orientation of the PB\n\n  // State Logic:\n  if ( !atPayloadBay )\n    {\n      // Go to Payload Bay's Radius and Angle\n      // Take into account the offset between center of camera and center of gripper:\n      goalRadialPos = payloadBay.pos.r + radiusBetweenGripperAndCamera;\n      float angleOffset = 0.0f;\n      angleOffset = atan2( arcLengthBetweenGripperAndCamera, goalRadialPos ) * 180.0f / M_PI;\n      ROS_INFO(\"ANGLE OFFSET = %f\",angleOffset);\n      goalArmRotation = payloadBay.pos.theta - angleOffset;\n      // change gripper rotation to payloadBay's orientation (payloadBay.orientation.theta)\n      if ( payloadBay.orientation.theta < 0 )\n      \tpayloadBay.orientation.theta += 180.0f;\n      if ( payloadBay.orientation.theta > 180.0f )\n      \tpayloadBay.orientation.theta -= 180.0f;\n      goalGripperRotation = payloadBay.orientation.theta + gripperRotationOffset;\n      //      goalGripperRotation = 100;\n      //goalArmRotation = 255;\n      //goalRadialPos = 253000;\n      atPayloadBay = true;\n    } else\n    {\n      // move down in Z to proper height for PB\n      goalVerticalPos = payloadBayZPlane;\n      //   goalVerticalPos = 161300;\n      // transition to next state (INSERTING_SAMPLE)\n      currentState = INSERTING_SAMPLE;\n      stateChanged = true;\n    }\n}\n\nvoid armController::Inserting_Sample_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * payload is in gripper\n  // * directly above PB at appropriate height and orientation\n\n  // State Logic:\n  // Open Gripper (set gripper pos to open pos)\n  goalGripperPos = gripperPosOpened;\n  // transition to next state (CLOSING_PB)\n  currentState = CLOSING_PB;\n  stateChanged = true;\n}\n\nvoid armController::Closing_PB_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * sample is in PB\n  // * directly above PB\n\n  // State logic:\n  // move up some amount (to max height)\n  goalVerticalPos = minVerticalPos;\n  // send the command to the PB through UART to close the PB,\n  payloadBayOpened = false;\n\n  // OPTIONAL : use image based detection to confirm PB closes\n  // transition to next state (MOVING_AWAY) if PB responds well\n  currentState = MOVING_AWAY;\n  stateChanged = true;\n}\n\nvoid armController::Moving_Away_StateFunc()\n{\n  // initialize static members for initial values of this state\n  //   e.g. where the search starts, what the goals of the state are, etc.\n  // perform any image processing required using the detector\n  // update the arm's goal variables based on the result of the image processing\n  // update the current state of the arm if necessary\n\n  // starting with:\n  // * sample is in PB\n  // * PB is closed\n  // * directly above PB at max height\n\n  // State logic:\n  // determine safe zone for arm (based on PB position)\n  float safeRotation;\n  safeRotation = payloadBay.pos.theta - 90.0f;\n  if ( safeRotation < minArmRotation || safeRotation > maxArmRotation )\n    safeRotation += 180.0f;\n  // move to safe zone\n  goalArmRotation = safeRotation;\n}",
+                "Forwards": "#include \"objecttracker/detected_object.hpp\"\n#include \"dynamixel/SerialPort.h\"\n#include \"image_processor/payloadBayStateFromImage.h\"\n#include \"image_processor/sampleStateFromImage.h\"",
+                "Initialization": "paused = true;\nusingSerialPort = true;\npayloadBayOpened = false;\nstateChanged = true;\ncurrentState = INIT;\n\n// need to initialize the offsets with measurements from the system\nradialOffset          = 0.0;\nverticalOffset        = 0.0;\narmRotationOffset     = 0.0f;\ngripperRotationOffset = 15.0f;\ngripperPosOffset      = 0.0f;\n\nsampleOrientationOffset = 0.0f;\n\n// need to initialize the offsets with measurements from the system\nradiusBetweenGripperAndCamera = 25000;\narcLengthBetweenGripperAndCamera = int(1.75f * 20000.0f);  // 2.5 inches * 20000 counts per inch\n\n// initialization of the z-plane for the payload bay and the sample\nsampleVerticalPos = 498550;\npayloadBayVerticalPos = 157660;\n\n// need to initialize the min and max sensor values\nmaxRadialPos       = 275000;\nmaxVerticalPos     = 495000;\nmaxArmRotation     = 330.0f;\nmaxGripperRotation = 180.0f;\nmaxGripperPos      = 260.0f;\n\nminRadialPos       = 0;\nminVerticalPos     = 0;\nminArmRotation     = 1.0f;\nminGripperRotation = 0.0f;\nminGripperPos      = 190.0f;\n\n// Safe gripper rotation; won't hit vertical stage\ngripperRotationSafe = 180.0f + gripperRotationOffset;\n\n// need to initialize the gripper's state sensor values\ngripperPosOpened = 250.0f;\ngripperPosClosed = 200.0f;\n\n// need to initialize the epsilons for the goal/current feedback loops\nradialEpsilon          = 100;\nverticalEpsilon        = 100;\narmRotationEpsilon     = 4.0f;\ngripperRotationEpsilon = 4.0f;\ngripperPosEpsilon      = 4.0f;\n\n// need to properly initialize the current sensor readings\ncurrentRadialPos        = -1.0;\ncurrentVerticalPos      = -1.0;\ncurrentArmRotation      = -1.0f;\ncurrentGripperRotation  = -1.0f;\ncurrentGripperPos       = -1.0f;\n\n// need to properly initialize the current actuator goals\ngoalRadialPos        = minRadialPos;\ngoalVerticalPos      = minVerticalPos;\ngoalArmRotation      = minArmRotation;\ngoalGripperRotation  = minGripperRotation;\ngoalGripperPos       = gripperPosOpened;\n\n// need to properly initialize the sample and payloadBay\nsample.pos.r     = -1.0f;\nsample.pos.theta = -1.0f;\nsample.pos.z     = -1.0f;\nsample.orientation.theta = -1.0f;\nsample.orientation.phi   = -1.0f;\n\npayloadBay.pos.r     = -1.0f;\npayloadBay.pos.theta = -1.0f;\npayloadBay.pos.z     = -1.0f;\npayloadBay.orientation.theta = -1.0f;\npayloadBay.orientation.phi   = -1.0f;\n\n// command line args parsing for arm_controller:\nfor (int i=0; i < node_argc; i++) \n{\n  if (!strcmp(node_argv[i], \"-unpaused\"))\n  {\n    paused = false;\n  }\n  if (!strcmp(node_argv[i], \"-noSerial\"))\n  {\n    usingSerialPort = false;\n  }\n  if (!strcmp(node_argv[i], \"-state\"))\n  {\n    currentState = (armController::ArmState)atoi(node_argv[i+1]);\n  }\n  if (!strcmp(node_argv[i], \"-r\"))\n  {\n    goalRadialPos = atoi(node_argv[i+1]);\n  }\n  if (!strcmp(node_argv[i], \"-theta\"))\n  {\n    goalArmRotation = atoi(node_argv[i+1]);\n  }\n  if (!strcmp(node_argv[i], \"-z\"))\n  {\n    goalVerticalPos = atoi(node_argv[i+1]);\n  }\n  if (!strcmp(node_argv[i], \"-gRot\"))\n  {\n    goalGripperRotation = atoi(node_argv[i+1]);\n  }\n  if (!strcmp(node_argv[i], \"-gPos\"))\n  {\n    goalGripperPos = atoi(node_argv[i+1]);\n  }\n  if (!strcmp(node_argv[i], \"-servoEpsilon\"))\n  {\n    armRotationEpsilon = atof(node_argv[i+1]);\n  }\n  if (!strcmp(node_argv[i], \"-samplePlane\"))\n  {\n    sampleVerticalPos = atoi(node_argv[i+1]);\n  }\n}\n// Jetson's USB-Serial Port for communicating with the ardunio\nsprintf(portName,\"//dev//ttyACM0\");\nint baudRate = 9600;\nif ( usingSerialPort )\n{\n  if (serialPort.connect(portName,baudRate)!=0)\n  {\n    ROS_INFO(\"OPENED SERIAL PORT\");\n  }\n  else\n  {\n    ROS_INFO(\"COULDN'T OPEN SERIAL PORT %s at %d\",portName,baudRate);\n  }\n}\n",
                 "Members": "  bool paused;\n  bool usingSerialPort;\n  bool payloadBayOpened;\n  bool stateChanged;\n  enum ArmState\n    {\n      INIT = 0,\n      OPENING_PB = 1,\n      FINDING_SAMPLE = 2,\n      FINDING_PB = 3,\n      GRABBING_SAMPLE = 4,\n      CARRYING_SAMPLE = 5,\n      INSERTING_SAMPLE = 6,\n      CLOSING_PB = 7,\n      MOVING_AWAY = 8\n    };\n\n  void PrintCurrentState();\n  void UpdateSensorData();\n  void UpdateArmPosition();\n  bool CheckGoals();\n\n  ArmState currentState;\n  high_level_controller::armState arm;\n  high_level_controller::sampleState sample;\n  high_level_controller::payloadBayState payloadBay;\n\n  void Init_StateFunc();\n  void Finding_PB_StateFunc();\n  void Opening_PB_StateFunc();\n  void Finding_Sample_StateFunc();\n  void Grabbing_Sample_StateFunc();\n  void Carrying_Sample_StateFunc();\n  void Inserting_Sample_StateFunc();\n  void Closing_PB_StateFunc();\n  void Moving_Away_StateFunc();\n  \n  int maxRadialPos;\n  int maxVerticalPos;\n  float maxArmRotation;\n  float maxGripperRotation;\n  float maxGripperPos;\n\n  int minRadialPos;\n  int minVerticalPos;\n  float minArmRotation;\n  float minGripperRotation;\n  float minGripperPos;\n\n  float gripperRotationSafe;\n\n  float gripperPosOpened;\n  float gripperPosClosed;\n  \n  int currentRadialPos;\n  int currentVerticalPos;\n  float currentArmRotation;\n  float currentGripperRotation;\n  float currentGripperPos;\n\n  int goalRadialPos;\n  int goalVerticalPos;\n  float goalArmRotation;\n  float goalGripperRotation;\n  float goalGripperPos;\n\n  int radialEpsilon;\n  int verticalEpsilon;\n  float armRotationEpsilon;\n  float gripperRotationEpsilon;\n  float gripperPosEpsilon;\n\n  int radialOffset;   // should be 0\n  int verticalOffset; // should be 0\n  float armRotationOffset; // difference between our 0 angle (arm frame) and servo's 0 angle\n  float gripperRotationOffset; // difference between our 0 angle (plane of radius) and servo's 0 angle\n  float gripperPosOffset; // difference between our 0 angle (open) and the servo's 0 angle\n\n  float sampleOrientationOffset;  // difference between angle gotten from image and gripper angle\n\n  // offsets measured between center of camera image and the center underneath the gripper (r,theta)\n  int arcLengthBetweenGripperAndCamera;\n  int radiusBetweenGripperAndCamera;\n\n  // presets for the z-plane on which the sample and payload bay will lie (will be different)\n  int sampleVerticalPos;\n  int payloadBayVerticalPos;\n\n  // serial port we use on the Jetson TK1 for reading from / writing to the payload bay\n  SerialPort serialPort;\n  char portName[50];\n",
                 "name": "armController"
             },
@@ -4041,8 +3933,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "8c2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -4060,8 +3951,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "8c5166ed-ded6-b1af-279f-ba01d0aff3fc": {
             "attributes": {
@@ -4079,8 +3969,7 @@
                     "y": 254
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "8e2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -4098,8 +3987,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "8ed56a84-1f2b-cf95-c812-e0a6f8646438": {
             "attributes": {
@@ -4118,8 +4006,7 @@
                     "y": 168
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "8ff74691-1535-f037-068b-52df355dd0bd": {
             "attributes": {
@@ -4139,8 +4026,7 @@
                     "y": 268
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "90357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -4161,8 +4047,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "92357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -4183,8 +4068,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "93f48121-6fe3-48ed-0cdc-dc9db647b01a": {
             "attributes": {
@@ -4204,8 +4088,7 @@
                     "y": 263
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "94dc4ba7-0a9c-f078-310f-cf1f2bf7bbe7": {
             "attributes": {
@@ -4224,8 +4107,7 @@
                     "y": 298
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "984baea9-4feb-5630-81f3-085218530d89": {
             "attributes": {
@@ -4236,10 +4118,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Directory": {
+                    "Key": {
                         "type": "string"
                     },
-                    "Key": {
+                    "Directory": {
                         "type": "string"
                     }
                 }
@@ -4254,8 +4136,7 @@
                     "y": 812
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "99357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -4275,8 +4156,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "99ea1844-3957-5ba6-7fa8-df10bec27d3e": {
             "attributes": {
@@ -4295,8 +4175,7 @@
                     "y": 62
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "9b357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -4327,8 +4206,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "9c50fc4a-3e84-5cb0-812e-59460da120f2": {
             "attributes": {
@@ -4339,10 +4217,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "NetworkProfile": {
+                    "IP": {
                         "type": "string"
                     },
-                    "IP": {
+                    "NetworkProfile": {
                         "type": "string"
                     }
                 },
@@ -4388,8 +4266,7 @@
                     "y": 742
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "9c9bbae3-dc41-51ba-4cf5-e29562b4b28a": {
             "attributes": {
@@ -4408,8 +4285,7 @@
                     "y": 315
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "9ec1ad14-ca6f-6895-63a1-6c501f97a49a": {
             "attributes": {
@@ -4455,8 +4331,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "a14ea363-cf12-dc75-fef2-48cc7b40fb6b": {
             "attributes": {
@@ -4474,8 +4349,7 @@
                     "y": 246
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "a377ee64-9293-7b02-03c2-508ee3e4ed74": {
             "attributes": {
@@ -4493,8 +4367,7 @@
                     "y": 269
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "a40d3a67-e6b2-043a-c7e3-3041d1475d11": {
             "attributes": {
@@ -4514,8 +4387,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "a42d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -4533,8 +4405,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "a4a3211d-4379-d33e-a070-7c38f71754ea": {
             "attributes": {},
@@ -4552,8 +4423,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "a62d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -4571,12 +4441,11 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "a755c03e-6812-2249-d918-920af2dea6b1": {
             "attributes": {
-                "Operation": "  if (!paused)\n    {\n      UpdateSensorData();\n      switch (currentState)\n\t{\n\tcase INIT:\n\t  Init_StateFunc();\n\t  break;\n\tcase FINDING_PB:\n\t  if ( CheckGoals() )\n\t    Finding_PB_StateFunc();\n\t  UpdateArmPosition();\n\t  break;\n\tcase OPENING_PB:\n\t  Opening_PB_StateFunc();\n\t  UpdateArmPosition();\n\t  break;\n\tcase FINDING_SAMPLE:\n\t  if ( CheckGoals() )\n\t    Finding_Sample_StateFunc();\n\t  UpdateArmPosition();\n\t  break;\n\tcase GRABBING_SAMPLE:\n\t  if ( CheckGoals() )\n\t    Grabbing_Sample_StateFunc();\n\t  UpdateArmPosition();\n\t  break;\n\tcase CARRYING_SAMPLE:\n\t  if ( CheckGoals() )\n\t    Carrying_Sample_StateFunc();\n\t  UpdateArmPosition();\n\t  break;\n\tcase INSERTING_SAMPLE:\n\t  if ( CheckGoals() )\n\t    Inserting_Sample_StateFunc();\n\t  UpdateArmPosition();\n\t  break;\n\tcase CLOSING_PB:\n\t  if ( CheckGoals() )\n\t    Closing_PB_StateFunc();\n\t  UpdateArmPosition();\n\t  break;\n\tcase MOVING_AWAY:\n\t  if ( CheckGoals() )\n\t    Moving_Away_StateFunc();\n\t  UpdateArmPosition();\n\t  break;\n\tdefault:\n\t  break;\n\t}\n      if ( stateChanged )\n\t{\n\t  PrintCurrentState();\n\t  stateChanged = false;\n\t}\n      sampleState_pub.publish(sample);\n      payloadBayState_pub.publish(payloadBay);\n      arm.state = currentState;\n      armState_pub.publish(arm);\n      if ( usingSerialPort )\n\t{\n\t  char buffer[20];\n\t  if ( payloadBayOpened )\n\t    {\n\t      sprintf(buffer,\"%s\",openPayloadBayString);\n\t    }\n\t  else\n\t    {\n\t      sprintf(buffer,\"%s\",closePayloadBayString);\n\t    }\n\t  serialPort.sendArray((unsigned char *)buffer,strlen(buffer));\n\t}\n    }\n",
+                "Operation": "if (!paused)\n{\n  UpdateSensorData();\n  switch (currentState)\n  {\n    case INIT:\n    Init_StateFunc();\n    break;\n    case FINDING_PB:\n    if ( CheckGoals() )\n      Finding_PB_StateFunc();\n    UpdateArmPosition();\n    break;\n    case OPENING_PB:\n    Opening_PB_StateFunc();\n    UpdateArmPosition();\n    break;\n    case FINDING_SAMPLE:\n    if ( CheckGoals() )\n      Finding_Sample_StateFunc();\n    UpdateArmPosition();\n    break;\n    case GRABBING_SAMPLE:\n    if ( CheckGoals() )\n      Grabbing_Sample_StateFunc();\n    UpdateArmPosition();\n    break;\n    case CARRYING_SAMPLE:\n    if ( CheckGoals() )\n      Carrying_Sample_StateFunc();\n    UpdateArmPosition();\n    break;\n    case INSERTING_SAMPLE:\n    if ( CheckGoals() )\n      Inserting_Sample_StateFunc();\n    UpdateArmPosition();\n    break;\n    case CLOSING_PB:\n    if ( CheckGoals() )\n      Closing_PB_StateFunc();\n    UpdateArmPosition();\n    break;\n    case MOVING_AWAY:\n    if ( CheckGoals() )\n      Moving_Away_StateFunc();\n    UpdateArmPosition();\n    break;\n    default:\n    break;\n  }\n  if ( stateChanged )\n  {\n    PrintCurrentState();\n    stateChanged = false;\n  }\n  sampleStatePublisher.publish(sample);\n  payloadBayStatePublisher.publish(payloadBay);\n  arm.state = currentState;\n  armStatePublisher.publish(arm);\n  if ( usingSerialPort )\n  {\n    char buffer[20];\n    if ( payloadBayOpened )\n    {\n      sprintf(buffer,\"%s\",openPayloadBayString);\n    }\n    else\n    {\n      sprintf(buffer,\"%s\",closePayloadBayString);\n    }\n    serialPort.sendArray((unsigned char *)buffer,strlen(buffer));\n  }\n}\n",
                 "name": "armTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -4591,8 +4460,7 @@
                     "y": 208
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "a83b8adb-232e-4f68-ca06-3ee2c728765b": {
             "attributes": {
@@ -4628,8 +4496,7 @@
                     "y": 161
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "a9958819-7856-4774-1ef4-934c974095af": {
             "attributes": {
@@ -4649,8 +4516,7 @@
                     "y": 124
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "ad2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -4668,8 +4534,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "ad688a62-aeb6-e1e6-31a2-573db6aee77c": {
             "attributes": {},
@@ -4687,8 +4552,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "ad77ee64-9293-7b02-03c2-508ee3e4ed74": {
             "attributes": {
@@ -4706,8 +4570,7 @@
                     "y": 269
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "ae4baea9-4feb-5630-81f3-085218530d89": {
             "attributes": {
@@ -4716,11 +4579,6 @@
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
-                "attributes": {
-                    "Architecture": {
-                        "type": "string"
-                    }
-                },
                 "children": {
                     "items": [
                         "e400d5b7-c955-fc81-382e-2c414b44fc20"
@@ -4731,6 +4589,11 @@
                     "maxItems": [
                         -1
                     ]
+                },
+                "attributes": {
+                    "Architecture": {
+                        "type": "string"
+                    }
                 },
                 "pointers": {
                     "Users": {
@@ -4758,8 +4621,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "af2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -4777,8 +4639,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "b0326662-28a6-3f54-d802-de46fa7dd357": {
             "attributes": {},
@@ -4796,8 +4657,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "b1357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -4817,8 +4677,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "b2e7d5ea-aee1-a65f-0c05-8ab227b5be8f": {
             "attributes": {
@@ -4854,8 +4713,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "b3357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -4876,8 +4734,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "b4ad8902-a012-9b67-be2b-2af12cdefa37": {
             "attributes": {},
@@ -4895,8 +4752,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "b6a8c9f5-4472-8e3b-4035-f5e90fdac5bb": {
             "attributes": {
@@ -4950,8 +4806,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "b8357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -4971,8 +4826,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "ba0b9e89-2b1a-6163-aeac-8b1884e7638b": {
             "attributes": {
@@ -5003,8 +4857,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "ba357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -5024,8 +4877,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "ba80db39-e4f4-0e84-a57a-02abf337529e": {
             "attributes": {},
@@ -5043,12 +4895,11 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1": {
             "attributes": {
-                "Forwards": "#include <opencv/cv.h>\n#include <opencv/highgui.h>\nusing namespace cv;",
+                "Forwards": "#include <opencv/cv.h>\n#include <opencv/highgui.h>\nusing namespace cv;\n\n\n#include <opencv/cv.h>\n#include <opencv/highgui.h>\n\n#include <stdio.h>\n#include <stdarg.h>\n#include <ctime>\n\n#include <iostream>\n#include <fstream>\nusing namespace std;\nIplImage *DispImage;\nIplImage *Mode_1;    \nIplImage *Mode_2;    \nIplImage *Mode_3;    \nIplImage *Mode_4;    \n\nvoid cvShowManyImages(char* title, int nArgs, ...) {\n\n  // img - Used for getting the arguments \n  IplImage *img;\n\n  int size;\n  int i;\n  int m, n;\n  int x, y;\n\n  // w - Maximum number of images in a row \n  // h - Maximum number of images in a column \n  int w, h;\n\n  // scale - How much we have to resize the image\n  float scale;\n  int max;\n\n  // If the number of arguments is lesser than 0 or greater than 12\n  // return without displaying \n  if(nArgs <= 0) {\n    printf(\"Number of arguments too small....\\n\");\n    return;\n  }\n  else if(nArgs > 12) {\n    printf(\"Number of arguments too large....\\n\");\n    return;\n  }\n  \n  // Determine the size of the image, \n  // and the number of rows/cols \n  // from number of arguments \n  else if (nArgs == 1) {\n    w = h = 1;\n    size = 300;\n  }\n  else if (nArgs == 2) {\n    w = 2; h = 1;\n    size = 300;\n  }\n  else if (nArgs == 3 || nArgs == 4) {\n    w = 2; h = 2;\n    size = 400;\n  }\n  else if (nArgs == 5 || nArgs == 6) {\n    w = 3; h = 2;\n    size = 200;\n  }\n  else if (nArgs == 7 || nArgs == 8) {\n    w = 4; h = 2;\n    size = 200;\n  }\n  else {\n    w = 4; h = 3;\n    size = 150;\n  }\n\n  // Create a new 3 channel image\n  DispImage = cvCreateImage( cvSize(800, 480), 8, 3);\n  //  DispImage = cvCreateImage( cvSize(100 + size*w, 60 + size*h), 8, 3 );\n\n  // Used to get the arguments passed\n  va_list args;\n  va_start(args, nArgs);\n\n  // Loop for nArgs number of arguments\n  for (i = 0, m = 1, n = 1; i < nArgs; i++, m += 400) {\n    // Get the Pointer to the IplImage\n    img = va_arg(args, IplImage*);\n\n    // Check whether it is NULL or not\n    // If it is NULL, release the image, and return\n    if(img == 0) {\n      printf(\"Invalid arguments\");\n      cvReleaseImage(&DispImage);\n      return;\n    }\n\n    // Find the width and height of the image\n    x = img->width;\n    y = img->height;\n  \n    // Find whether height or width is greater in order to resize the image\n    max = (x > y)? x: y;\n\n    // Find the scaling factor to resize the image\n    scale = (float) ( (float) max / size );\n\n    // Used to Align the images\n    if( i % w == 0 && m!= 1) {\n      m = 1;\n      n+= 245;\n    }\n\n    // Set the image ROI to display the current image\n    cvSetImageROI(DispImage, cvRect(m, n, (int)( x/scale ), (int)( y/scale )));\n\n    // Resize the input image and copy the it to the Single Big Image\n    cvResize(img, DispImage);\n\n    // Reset the ROI in order to display the next image\n    cvResetImageROI(DispImage);\n  }\n\n  // Create a new window, and show the Single Big Image\n  cvNamedWindow( title, 1 );\n  cvSetWindowProperty(title, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n\n  \n  // Add font to image\n  CvFont sample_font = cvFontQt(\"Arial\", 24, cvScalar(255, 0, 0), CV_FONT_BLACK, CV_STYLE_NORMAL, 0);\n  CvFont sample_state = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_state_value = cvFontQt(\"Arial\", 16, cvScalar(0, 0, 255), CV_FONT_BLACK, CV_STYLE_NORMAL, 0);\n  CvFont sample_center = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_center_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_radius = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_radius_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_angle = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_angle_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_depth = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_depth_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n\n  CvFont pb_font = cvFontQt(\"Arial\", 24, cvScalar(255, 0, 0), CV_FONT_BLACK, CV_STYLE_NORMAL, 0);\n  CvFont pb_state = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_state_value = cvFontQt(\"Arial\", 16, cvScalar(0, 0, 255), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_center = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_radius = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_angle = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_depth = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n\n  // Sample Detection Text\n  cvAddText (DispImage, \"Sample Detection\", cvPoint(410, 40), &sample_font);\n  cvAddText (DispImage, \"Detection State       : \", cvPoint(410, 80), &sample_state);  \n  cvAddText (DispImage, \"Searching...\", cvPoint(650, 80), &sample_state_value);  \n  cvAddText (DispImage, \"Sample Angle φ      : \", cvPoint(410, 110), &sample_center);  \n  cvAddText (DispImage, \"Arm Radius r           : \", cvPoint(410, 140), &sample_radius);  \n  cvAddText (DispImage, \"Arm Orientation θ   : \", cvPoint(410, 170), &sample_angle);  \n  cvAddText (DispImage, \"Arm Depth z            : \", cvPoint(410, 200), &sample_depth);  \n\n  // Payload Bay Detection Text\n  cvAddText (DispImage, \"Payload Bay Detection\", cvPoint(410, 280), &pb_font);\n  cvAddText (DispImage, \"Detection State       : \", cvPoint(410, 320), &pb_state);  \n  cvAddText (DispImage, \"Searching...\", cvPoint(650, 320), &pb_state_value);  \n  cvAddText (DispImage, \"Bay Center O           : \", cvPoint(410, 350), &pb_center);  \n  cvAddText (DispImage, \"Arm Radius r           : \", cvPoint(410, 380), &pb_radius);  \n  cvAddText (DispImage, \"Arm Orientation θ   : \", cvPoint(410, 410), &pb_angle);  \n  cvAddText (DispImage, \"Arm Depth z            : \", cvPoint(410, 440), &pb_depth);  \n  /*\n  unsigned int microseconds = 3000000;\n\n  while(true) {\n  cvShowManyImages(\"UIP\", 4, img1, img2, img3, img4);\n  usleep(microseconds);\n  }\n  */\n\n   cvShowImage( title, DispImage);\n\n   //   cvShowImage(title, DispImage);\n   /*\n    cvWaitKey();\n   cvDestroyWindow(title);\n\n  // End the number of arguments\n   va_end(args);\n\n  // Release the Image Memory\n   cvReleaseImage(&DispImage);\n   */\n}\n",
                 "Initialization": "  ROS_INFO(\"Initializing User Input Imager\");\n\n  //////////////////////////////////////////////\n  // UIP LCD SETUP\n  //////////////////////////////////////////////\n  \n  // The Four Images to show in UIP\n  //  top_right = cvLoadImage(\"/home/debian/Repositories/agse2015/code/UIP/input/white.png\");\n  //  bottom_right = cvLoadImage(\"/home/debian/Repositories/agse2015/code/UIP/input/white.png\");\n\n  key = 0;\n\n  Mode_1 = cvCreateImage( cvSize(800, 480), 8, 3);\n  Mode_2 = cvCreateImage( cvSize(800, 480), 8, 3);\n  Mode_3 = cvCreateImage( cvSize(800, 480), 8, 3);\n  Mode_4 = cvCreateImage( cvSize(800, 480), 8, 3);\n  processed_image = cvCreateImage(cvSize(1920, 1080), 8, 3);",
                 "Members": "  // Received Images\n  Mat pb_rawImage;\n  Mat pb_hsvImage;\n  Mat pb_gsImage;\n  Mat pb_bitwise;\n\n  Mat sample_rawImage;\n  Mat sample_hsvImage;\n  Mat sample_gsImage;\n  Mat sample_bitwise;\n\n  // Four Images to show in UIP\n  IplImage * top_left;\n  IplImage * top_right;\n  IplImage * bottom_left;\n  IplImage * bottom_right;\n\n  // Fullscreen single images\n  IplImage * camera_feed;\n  IplImage * processed_image;\n\n  // Keyboard interrupt\n  int key;",
                 "name": "userDisplay"
@@ -5098,8 +4949,7 @@
                         }
                     }
                 ]
-            },
-            "constraints": {}
+            }
         },
         "bf3c5759-8b0e-c5a7-7666-e3d42038bc48": {
             "attributes": {
@@ -5118,8 +4968,7 @@
                     "y": 446
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c02d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -5137,12 +4986,11 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c0742d5e-657f-56c8-fa2f-38560878df39": {
             "attributes": {
-                "Operation": "  if (noGPIO == false) {\n\n    // Business Logic for userInputTimer\n    // HANDLE MISSILE SWITCHES HERE\n    unsigned int previousSwitchState = pauseSwitchState;\n    gpio_get_value(pauseSwitchPin, &pauseSwitchState);\n    //  ROS_INFO(\"Pause Switch State: %d\", pauseSwitchState);\n\n    high_level_controller::controlInputs control;\n  \n    if ( previousSwitchState != pauseSwitchState )\n      {\n\tpaused = (pauseSwitchState == HIGH) ? true : false;\n\tif (paused) {\n\t  ROS_INFO(\"Pausing the system!\");\n\t}\n\telse {\n\t  ROS_INFO(\"Unpausing the system!\");\n\t}\n      }\n    previousSwitchState = haltSwitchState;\n    gpio_get_value(haltSwitchPin, &haltSwitchState);\n    if ( previousSwitchState != haltSwitchState )\n      {\n\thalted = (haltSwitchState == HIGH) ? true : false;\n\tif (halted) {\n\t  ROS_INFO(\"Halting the system!\");\n\t}\n\telse {\n\t  ROS_INFO(\"Un-halting the system!\");\n\t}\n      }\n    previousSwitchState = manualSwitchState;\n    gpio_get_value(manualSwitchPin, &manualSwitchState);\n    if ( previousSwitchState != manualSwitchState )\n      {\n\tmanual= (manualSwitchState == HIGH) ? true : false;\n\tif (manual) {\n\t  ROS_INFO(\"Switching the system to manual!\");\n\t}\n\telse {\n\t  ROS_INFO(\"Switching the system to automatic!\");\n\t}\n      }\n    control.paused = paused;\n    control.stop = halted;\n    control.manual = manual;\n    controlInputs_pub.publish(control);\n\n    // HANDLE LED OUTPUTS HERE\n    static int currentPauseLEDBlinkDelay = 0;\n    static int currentSampleLEDBlinkDelay = 0;\n    static int currentBayLEDBlinkDelay = 0;\n\n    if (paused)\n      {\n\tgpio_set_value(pauseLED, HIGH);\n      }\n    else\n      {\n\tif (currentPauseLEDBlinkDelay++ < pauseLEDBlinkDelay)\n\t  gpio_set_value(pauseLED,LOW);\n\telse\n\t  {\n\t    gpio_set_value(pauseLED,HIGH);\n\t    currentPauseLEDBlinkDelay = 0;\n\t  }\n      }\n\n    if (halted) {\n      gpio_set_value(alarmLED, HIGH);\n    }\n    else {\n      gpio_set_value(alarmLED, LOW);\n    }\n\n    switch (arm.state) {\n    case 0:\n      // INIT\n      gpio_set_value(initLED[0], HIGH);\n      break;\n    case 1:\n      // OPENING_PB\n      gpio_set_value(initLED[0], LOW); // Switch OFF Blue\n      gpio_set_value(initLED[1], HIGH); // Switch ON Green\n      gpio_set_value(bayLED[0], LOW); // Switch OFF Blue\n      //    gpio_set_value(bayLED[1], HIGH); // Switch ON Green    \n      break;\n    case 2:\n      // FINDING_SAMPLE\n      gpio_set_value(sampleLED[0], HIGH); // Switch ON Blue\n      break;\n    case 3:\n      // FINDING_PB\n      gpio_set_value(bayLED[0], HIGH); // Blue\n\n      // Blink Sample LED Green\n      gpio_set_value(sampleLED[0], LOW); // Switch ON Blue\n      if (currentSampleLEDBlinkDelay++ < sampleLEDBlinkDelay)\n\tgpio_set_value(sampleLED[1], LOW);\n      else\n\t{\n\t  gpio_set_value(sampleLED[1], HIGH);\n\t  currentSampleLEDBlinkDelay = 0;\n\t}\n      break;\n    case 4:\n      // GRABBING_SAMPLE\n      gpio_set_value(sampleLED[0], LOW); // Switch OFF Blue\n      gpio_set_value(sampleLED[1], HIGH); // Switch ON Green    \n\n      // Blink Payload Bay LED Gree\n      gpio_set_value(bayLED[0], LOW); // Switch OFF Blue\n      if (currentBayLEDBlinkDelay++ < bayLEDBlinkDelay)\n\tgpio_set_value(bayLED[1], LOW);\n      else\n\t{\n\t  gpio_set_value(bayLED[1], HIGH);\n\t  currentBayLEDBlinkDelay = 0;\n\t}\n      break;\n    case 5:\n      gpio_set_value(bayLED[1], HIGH);\n      gpio_set_value(sampleLED[1], HIGH);\n      break;\n    default:\n      break;\n    }\n  }\n",
+                "Operation": "if (noGPIO == false) {\n\n  // Business Logic for userInputTimer\n  // HANDLE MISSILE SWITCHES HERE\n  unsigned int previousSwitchState = pauseSwitchState;\n  gpio_get_value(pauseSwitchPin, &pauseSwitchState);\n  //  ROS_INFO(\"Pause Switch State: %d\", pauseSwitchState);\n\n  high_level_controller::controlInputs control;\n\n  if ( previousSwitchState != pauseSwitchState )\n  {\n    paused = (pauseSwitchState == HIGH) ? true : false;\n    if (paused) {\n      ROS_INFO(\"Pausing the system!\");\n    }\n    else {\n      ROS_INFO(\"Unpausing the system!\");\n    }\n  }\n  previousSwitchState = haltSwitchState;\n  gpio_get_value(haltSwitchPin, &haltSwitchState);\n  if ( previousSwitchState != haltSwitchState )\n  {\n    halted = (haltSwitchState == HIGH) ? true : false;\n    if (halted) {\n      ROS_INFO(\"Halting the system!\");\n    }\n    else {\n      ROS_INFO(\"Un-halting the system!\");\n    }\n  }\n  previousSwitchState = manualSwitchState;\n  gpio_get_value(manualSwitchPin, &manualSwitchState);\n  if ( previousSwitchState != manualSwitchState )\n  {\n    manual= (manualSwitchState == HIGH) ? true : false;\n    if (manual) {\n      ROS_INFO(\"Switching the system to manual!\");\n    }\n    else {\n      ROS_INFO(\"Switching the system to automatic!\");\n    }\n  }\n  control.paused = paused;\n  control.stop = halted;\n  control.manual = manual;\n  controlInputsPublisher.publish(control);\n\n  // HANDLE LED OUTPUTS HERE\n  static int currentPauseLEDBlinkDelay = 0;\n  static int currentSampleLEDBlinkDelay = 0;\n  static int currentBayLEDBlinkDelay = 0;\n\n  if (paused)\n  {\n    gpio_set_value(pauseLED, HIGH);\n  }\n  else\n  {\n    if (currentPauseLEDBlinkDelay++ < pauseLEDBlinkDelay)\n      gpio_set_value(pauseLED,LOW);\n    else\n    {\n      gpio_set_value(pauseLED,HIGH);\n      currentPauseLEDBlinkDelay = 0;\n    }\n  }\n\n  if (halted) {\n    gpio_set_value(alarmLED, HIGH);\n  }\n  else {\n    gpio_set_value(alarmLED, LOW);\n  }\n\n  switch (arm.state) {\n    case 0:\n    // INIT\n    gpio_set_value(initLED[0], HIGH);\n    break;\n    case 1:\n    // OPENING_PB\n    gpio_set_value(initLED[0], LOW); // Switch OFF Blue\n    gpio_set_value(initLED[1], HIGH); // Switch ON Green\n    gpio_set_value(bayLED[0], LOW); // Switch OFF Blue\n    //    gpio_set_value(bayLED[1], HIGH); // Switch ON Green    \n    break;\n    case 2:\n    // FINDING_SAMPLE\n    gpio_set_value(sampleLED[0], HIGH); // Switch ON Blue\n    break;\n    case 3:\n    // FINDING_PB\n    gpio_set_value(bayLED[0], HIGH); // Blue\n\n    // Blink Sample LED Green\n    gpio_set_value(sampleLED[0], LOW); // Switch ON Blue\n    if (currentSampleLEDBlinkDelay++ < sampleLEDBlinkDelay)\n      gpio_set_value(sampleLED[1], LOW);\n    else\n    {\n      gpio_set_value(sampleLED[1], HIGH);\n      currentSampleLEDBlinkDelay = 0;\n    }\n    break;\n    case 4:\n    // GRABBING_SAMPLE\n    gpio_set_value(sampleLED[0], LOW); // Switch OFF Blue\n    gpio_set_value(sampleLED[1], HIGH); // Switch ON Green    \n\n    // Blink Payload Bay LED Gree\n    gpio_set_value(bayLED[0], LOW); // Switch OFF Blue\n    if (currentBayLEDBlinkDelay++ < bayLEDBlinkDelay)\n      gpio_set_value(bayLED[1], LOW);\n    else\n    {\n      gpio_set_value(bayLED[1], HIGH);\n      currentBayLEDBlinkDelay = 0;\n    }\n    break;\n    case 5:\n    gpio_set_value(bayLED[1], HIGH);\n    gpio_set_value(sampleLED[1], HIGH);\n    break;\n    default:\n    break;\n  }\n}\n",
                 "name": "userInputTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -5157,8 +5005,7 @@
                     "y": 440
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c093774a-c2a4-bf78-3180-5f6f82ed8cf5": {
             "attributes": {
@@ -5178,8 +5025,7 @@
                     "y": 393
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c120272d-4798-3401-9087-d53be13fa646": {
             "attributes": {
@@ -5197,8 +5043,7 @@
                     "y": 197
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c13851f2-6d96-924e-ad80-da6c3c41050c": {
             "attributes": {},
@@ -5216,8 +5061,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5": {
             "attributes": {
@@ -5229,14 +5073,14 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "ABL": {
-                        "type": "string"
+                    "Deadline": {
+                        "type": "float"
                     },
                     "Operation": {
                         "type": "string"
                     },
-                    "Deadline": {
-                        "type": "float"
+                    "ABL": {
+                        "type": "string"
                     }
                 },
                 "pointers": {
@@ -5268,8 +5112,7 @@
                     "y": 870
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c22d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -5287,8 +5130,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c29ad503-417a-f40a-28da-57503f809a90": {
             "attributes": {
@@ -5307,8 +5149,7 @@
                     "y": 256
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c2c96bb1-7afb-202f-aab6-2a75a33ffd0a": {
             "attributes": {
@@ -5334,8 +5175,7 @@
                     "y": 604
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c2d1d475-839e-2efe-b48c-410517c4532c": {
             "attributes": {
@@ -5355,8 +5195,7 @@
                     "y": 516
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c40895ae-00a8-9a6d-8907-36175a362c97": {
             "attributes": {
@@ -5375,8 +5214,7 @@
                     "y": 81
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c4d02e7c-c012-94dc-0e24-d04b2752434b": {
             "attributes": {
@@ -5395,8 +5233,7 @@
                     "y": 447
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c8645e9e-668a-d508-45ff-0920ef6a39a8": {
             "attributes": {
@@ -5416,8 +5253,7 @@
                     "y": 221
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "c92d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -5435,8 +5271,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "cb2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -5454,8 +5289,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045": {
             "attributes": {
@@ -5467,11 +5301,6 @@
                     "name": {
                         "type": "string"
                     }
-                },
-                "children": {
-                    "items": [],
-                    "minItems": [],
-                    "maxItems": []
                 }
             },
             "parent": "03d36072-9e09-7866-cb4e-d0a36ff825f6",
@@ -5491,8 +5320,7 @@
                 },
                 "validVisualizers": "ModelEditor METAAspect SetEditor Crosscut GraphViz"
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "cf2109f7-7027-451c-095f-c0bc64833ba9": {
             "attributes": {
@@ -5518,8 +5346,7 @@
                     "y": 520
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "d2401091-4e08-04c7-a9a2-d668fb6ea4df": {
             "attributes": {
@@ -5538,8 +5365,7 @@
                     "y": 232
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "d5357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -5560,8 +5386,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "d5367025-51d7-5b40-bcc6-664ee22902e4": {
             "attributes": {
@@ -5580,8 +5405,7 @@
                     "y": 202
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "d7357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -5602,8 +5426,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "d99b77d9-0121-d873-f4c7-784bd7690980": {
             "attributes": {},
@@ -5621,8 +5444,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "da2ea5d7-26ee-0923-0025-38bfbceb5293": {
             "attributes": {
@@ -5633,12 +5455,12 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "NetworkProfile": {
-                        "type": "string"
-                    },
                     "Priority": {
                         "type": "integer",
                         "max": 99
+                    },
+                    "NetworkProfile": {
+                        "type": "string"
                     }
                 }
             },
@@ -5654,8 +5476,7 @@
                     "y": 750
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "db6aa52c-19d4-c683-5f30-17b381f7e42f": {
             "attributes": {},
@@ -5673,8 +5494,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "dc357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -5694,8 +5514,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "de357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -5715,8 +5534,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "df437d49-a83e-6944-62ed-52fd3dcf806d": {
             "attributes": {
@@ -5755,8 +5573,7 @@
                     "y": 382
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "e12d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -5774,8 +5591,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "e25ad296-2547-7c6a-ad35-e79b3d417157": {
             "attributes": {},
@@ -5791,8 +5607,7 @@
                     "y": 300
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "e32d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -5810,8 +5625,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "e3cd1771-47f7-af5e-11bf-1016427c49fb": {
             "attributes": {},
@@ -5829,8 +5643,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "e400d5b7-c955-fc81-382e-2c414b44fc20": {
             "attributes": {
@@ -5849,8 +5662,7 @@
                     "y": 652
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "e4236ea7-bd34-9066-b116-da90faa42f94": {
             "attributes": {
@@ -5876,8 +5688,7 @@
                     "y": 526
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "e82d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -5895,8 +5706,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {
             "attributes": {
@@ -5914,8 +5724,7 @@
                     "y": 266
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "ea2d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -5933,8 +5742,7 @@
                     "y": 255
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "eb7ba3ff-ef69-3368-24b8-84ee1a9e4e93": {
             "attributes": {},
@@ -5952,8 +5760,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "ecde4aa3-106a-f888-fe6b-473f56ac2d21": {
             "attributes": {
@@ -5972,8 +5779,7 @@
                     "y": 108
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "ed7d7340-3e40-ea91-ceaf-371d90d75662": {
             "attributes": {},
@@ -5991,8 +5797,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "ee48c86c-137a-c89e-f82d-2672e5ccff92": {
             "attributes": {},
@@ -6010,8 +5815,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "f0c3e8b4-d847-1890-e883-b293be17add9": {
             "attributes": {
@@ -6030,8 +5834,7 @@
                     "y": 238
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "f1d51591-74b9-6f43-d930-2e0cfebee7f2": {
             "attributes": {},
@@ -6049,8 +5852,7 @@
                     "y": 100
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "f4357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -6071,8 +5873,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "f5b6be0c-b866-ac8f-c0e9-38e8c3cba2de": {
             "attributes": {
@@ -6092,8 +5893,7 @@
                     "y": 383
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "f6357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -6114,8 +5914,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "fd357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -6135,8 +5934,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         },
         "ff038fbb-6658-4ff3-0bce-d0b26e5a494b": {
             "attributes": {},
@@ -6154,8 +5952,7 @@
                     "y": 682
                 }
             },
-            "sets": {},
-            "constraints": {}
+            "sets": {}
         },
         "ff357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
@@ -6175,8 +5972,7 @@
             },
             "sets": {
                 "Users": []
-            },
-            "constraints": {}
+            }
         }
     },
     "relids": {

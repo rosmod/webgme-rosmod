@@ -134,6 +134,13 @@ include_directories(
   ../node/include
 <%
 for (var cmp in pkgInfo.components) {
+for (var i=0; i<pkgInfo.components[cmp].requiredTypes.length; i++) {
+-%>
+  ../<%= pkgInfo.components[cmp].requiredTypes[i].packageName %>/include
+<%
+}
+-%>
+<%
 for (var i=0; i<pkgInfo.components[cmp].requiredLibs.length; i++) {
 if ( pkgInfo.components[cmp].requiredLibs[i].includeDirs !== undefined ) {
 -%>

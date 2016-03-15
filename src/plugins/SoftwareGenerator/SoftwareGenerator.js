@@ -147,11 +147,14 @@ define([
 			};
 		    }
 		    else if ( self.core.isTypeOf(node, self.META.Library) ) {
+			var inclDir = self.core.getAttribute(node, 'Include Directories');
+			if (inclDir == undefined)
+			    inclDir = '../' + nodeName + '/include';
 			dataModel.libraries[nodeName] = {
 			    name: nodeName,
 			    url: self.core.getAttribute(node, 'URL'),
 			    linkLibs: self.core.getAttribute(node, 'Link Libraries'),
-			    includeDirs: self.core.getAttribute(node, 'Include Directories')
+			    includeDirs: inclDir
 			};
 			libraries.push(node);
 		    }
