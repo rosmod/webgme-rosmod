@@ -3080,7 +3080,7 @@
         },
         "6815fb72-468f-ef04-95a9-117eb05569de": {
             "attributes": {
-                "Operation": "  if (req.update == true)\n    {\n      gripperRotationGoal = req.goal;\n    }\n  res.current = gripperRotationCurrent;\n  return true",
+                "Operation": "  if (req.update == true)\n    {\n      gripperRotationGoal = req.goal;\n    }\n  res.current = gripperRotationCurrent;\n  return true;",
                 "name": "gripperRotationServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -5220,7 +5220,7 @@
         "c2d1d475-839e-2efe-b48c-410517c4532c": {
             "attributes": {
                 "Include Directories": "/usr/include/opencv2",
-                "Link Libraries": "opencv_core, opencv_imgproc, opencv_highgui, opencv_contrib, opencv_legacy, opencv_photo, opencv_video, opencv_videostab, opencv_calib3d, opencv_ml",
+                "Link Libraries": "",
                 "name": "OpenCV"
             },
             "base": "11c26da0-dda2-d00c-dc36-f53c52c3fc62",
