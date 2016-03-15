@@ -93,6 +93,9 @@ define([
 
         self.createMessage(self.activeNode, 'ROSMOD::Starting Software Code Generator','info');
 
+	var path = require('path');
+	self.gen_dir = path.join(process.cwd(), 'generated', self.project.projectId, self.branchName);
+
       	self.loadSoftwareModel(self.activeNode)
   	    .then(function (softwareModel) {
         	self.createMessage(self.activeNode, 'Parsed model');
@@ -465,8 +468,6 @@ define([
 	    prefix = 'src/',
 	    deferred = new Q.defer();
 
-	self.gen_dir = path.join(process.cwd(), 'generated', self.project.projectId, self.branchName);
-
 	filesToAdd[softwareModel.name + '.json'] = JSON.stringify(softwareModel, null, 2);
         filesToAdd[softwareModel.name + '_metadata.json'] = JSON.stringify({
     	    projectID: self.project.projectId,
@@ -552,7 +553,32 @@ define([
 
     SoftwareGenerator.prototype.compileBinaries = function (softwareModel)
     {
-	return softwareModel;
+	var self = this;
+	return new Promise(function(resolve, reject) {
+	    var spawn = require('child_process').spawn,
+	    compile = spawn('catkin_make',
+			    ['-DNAMESPACE=rosmod'],
+			    {
+				shell: '/bin/bash',
+				cwd: self.gen_dir
+			    }
+			   );
+
+	    compile.stdout.on('data', function (data) {
+		self.logger.info('stdout: ' + data);
+	    });
+
+	    compile.stderr.on('data', function (data) {
+		self.logger.error('stderr: ' + data);
+		reject(data);
+	    });
+
+	    compile.on('exit', function (code) {
+		self.logger.info('child process exited with code ' + code);
+		resolve(code);
+	    });
+	    return softwareModel;
+	});
     };
 
     SoftwareGenerator.prototype.wgetAndUnzipLibrary = function(file_url, dir) {
@@ -597,26 +623,6 @@ define([
 		}
 	    });
 	});
-    };
-
-    SoftwareGenerator.prototype.mkdirSync = function (path) {
-	var self = this,
-	    fs = require('fs'),
-	    path = require('path');
-	try {
-	    fs.mkdirSync(path);
-	} catch(e) {
-	    if ( e.code != 'EEXIST' ) throw e;
-	}
-    };
-
-    SoftwareGenerator.prototype.mkdirpSync = function (dirpath) {
-	var self = this,
-	    path = require('path');
-	var parts = dirpath.split(path.sep);
-	for( var i = 1; i <= parts.length; i++ ) {
-	    self.mkdirSync( path.join.apply(null, parts.slice(0, i)) );
-	}
     };
 
     return SoftwareGenerator;
