@@ -65,6 +65,26 @@ define([
     };
 
     /**
+     * Gets the configuration structure for the ObservationSelection.
+     * The ConfigurationStructure defines the configuration for the plugin
+     * and will be used to populate the GUI when invoking the plugin from webGME.
+     * @returns {object} The version of the plugin.
+     * @public
+     */
+    SoftwareGenerator.prototype.getConfigStructure = function() {
+        return [
+            {
+                'name': 'compile',
+                'displayName': 'Compile Code',
+                'description': 'Turn off to just generate source files.',
+                'value': true,
+                'valueType': 'boolean',
+                'readOnly': false
+            }
+        ];
+    };
+
+    /**
      * Main function for the plugin to execute. This will perform the execution.
      * Notes:
      * - Always log with the provided logger.[error,warning,info,debug].
@@ -83,6 +103,7 @@ define([
 
 	var currentConfig = self.getCurrentConfig();
         self.logger.info('Current configuration ' + JSON.stringify(currentConfig, null, 4));
+	var compileCode = currentConfig.compile;
 
         if (typeof WebGMEGlobal !== 'undefined') {
             callback(new Error('Client-side execution is not supported'), self.result);
@@ -107,10 +128,16 @@ define([
 	    })
 	    .then(function (softwareModel) {
         	self.createMessage(self.activeNode, 'Downloaded libraries');
-		return self.compileBinaries(softwareModel);
+		if (compileCode)
+		    return self.compileBinaries(softwareModel);
+		else
+		    return softwareModel;
 	    })
 	    .then(function (softwareModel) {
-        	self.createMessage(self.activeNode, 'Compiled binaries');
+		if (compileCode)
+        	    self.createMessage(self.activeNode, 'Compiled binaries');
+		else
+        	    self.createMessage(self.activeNode, 'Skipped Compilation.');
         	self.result.setSuccess(true);
         	callback(null, self.result);
 	    })
@@ -558,11 +585,17 @@ define([
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
 
 	    terminal.stdout.on('data', function (data) {
-		self.logger.info('stdout: ' + data);
+		var patt = new RegExp("[0-9]+%");
+		var res = patt.exec(data);
+		if (res !== null)
+		    self.logger.info('progress: ' + res);
 	    });
 
 	    terminal.stderr.on('data', function (data) {
 		self.logger.error('stderr: ' + data);
+		self.createMessage(self.activeNode,
+				   'compilation: ' + data
+				  );
 		//reject(data);
 	    });
 
@@ -576,36 +609,11 @@ define([
 
 	    setTimeout(function() {
 		self.logger.info('Sending stdin to terminal');
-		terminal.stdin.write('pwd\n');
 		terminal.stdin.write('source /opt/ros/indigo/setup.bash\n');
 		terminal.stdin.write('catkin_make -DNAMESPACE=rosmod\n');
 		self.logger.info('Ending terminal session');
 		terminal.stdin.end();
 	    }, 1000);
-	    /*
-	    var spawn = require('child_process').spawn,
-	    compile = spawn('catkin_make',
-			    ['-DNAMESPACE=rosmod'],
-			    {
-				shell: '/bin/bash source /opt/ros/indigo/setup.bash',
-				cwd: self.gen_dir
-			    }
-			   );
-
-	    compile.stdout.on('data', function (data) {
-		self.logger.info('stdout: ' + data);
-	    });
-
-	    compile.stderr.on('data', function (data) {
-		self.logger.error('stderr: ' + data);
-		reject(data);
-	    });
-
-	    compile.on('exit', function (code) {
-		self.logger.info('child process exited with code ' + code);
-		resolve(code);
-	    });
-	    */
 	});
     };
 
