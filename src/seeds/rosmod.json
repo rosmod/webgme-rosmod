@@ -269,11 +269,13 @@
                     },
                     "8c0974bd-12e4-dc59-4d43-7982b534b262": {
                         "05c1b20d-f9c0-c853-9172-7dd28e48e313": {},
+                        "1aacd0f7-c612-def1-e351-b3e09db56136": {},
                         "271decd7-fb7c-8661-135c-400aa45350df": {},
                         "6d32e61a-93a8-9056-b3db-be265442f959": {},
                         "7ea9e1e6-46ee-3981-0169-da6fd2981659": {},
                         "84f4223f-5696-75ae-9190-d695085aea4d": {},
                         "8ed56a84-1f2b-cf95-c812-e0a6f8646438": {},
+                        "8f76797c-3114-7740-e093-71d15765f2b3": {},
                         "9c9bbae3-dc41-51ba-4cf5-e29562b4b28a": {},
                         "a755c03e-6812-2249-d918-920af2dea6b1": {},
                         "f0c3e8b4-d847-1890-e883-b293be17add9": {},
@@ -1495,6 +1497,25 @@
                 "position": {
                     "x": 362,
                     "y": 255
+                }
+            },
+            "sets": {}
+        },
+        "1aacd0f7-c612-def1-e351-b3e09db56136": {
+            "attributes": {
+                "name": "sampleStateFromImageClient"
+            },
+            "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
+            "meta": {},
+            "parent": "8c0974bd-12e4-dc59-4d43-7982b534b262",
+            "pointers": {
+                "Service": "75973fe4-d007-56ab-2df2-483fac45138c",
+                "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29"
+            },
+            "registry": {
+                "position": {
+                    "x": 860,
+                    "y": 249
                 }
             },
             "sets": {}
@@ -2900,7 +2921,7 @@
         },
         "5e29f1d2-99a8-9559-faff-e924a9c5e677": {
             "attributes": {
-                "Operation": "  if (!paused)\n    {\n      image_processor::captureImage arg;\n      if (this->captureImage_client.call(arg)) {\n\t//\tROS_INFO(\"Image width: %d, height: %d, size: %d\", \n\t//\t arg.response.width,\n\t//\t arg.response.height,\n\t//\t arg.response.imgVector.size());\n\tMat image = Mat( arg.response.height, \n\t\t\t arg.response.width, \n\t\t\t CV_8UC3, \n\t\t\t arg.response.imgVector.data());\n\tMat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n\t// NEED TO GET RETURN VALUES ABOUT DETECTED PAYLOAD BAY HERE\n\tDetectedObject payloadBay =\n\t  payloadBayDetector.run(image,detectedObjectsMask,\"autonomous_PB\"); \n\tROS_INFO(\"PayloadBay: %d, (%f,%f), %f\",payloadBay.state, payloadBay.x, payloadBay.y, payloadBay.angle);\n\tcv::imwrite(\"PayloadBay-01-Raw.png\", image+detectedObjectsMask);\n\tif ( payloadBay.x >= 0 && payloadBay.x <= arg.response.width &&\n\t     payloadBay.y >= 0 && payloadBay.y <= arg.response.height )\n\t  {\n\t    res.status = payloadBay.state;\n\t    res.x = payloadBay.x - arg.response.width / 2;   // convert [0,w] -> [-w/2,w/2]\n\t    res.y = payloadBay.y - arg.response.height / 2;  // convert [0,h] -> [-h/2,h/2]\n\t    res.angle = payloadBay.angle;\n\t  }\n\telse\n\t  res.status = HIDDEN;\n\treturn true;\n      }\n      else {\n\tROS_INFO(\"ERROR: Client call failed; couldn't get image.\");\n      }\n    }\n  return false;\n",
+                "Operation": "if (!paused)\n{\n  image_processor::captureImage arg;\n  if (this->captureImageClient.call(arg)) {\n    //\tROS_INFO(\"Image width: %d, height: %d, size: %d\", \n    //\t arg.response.width,\n    //\t arg.response.height,\n    //\t arg.response.imgVector.size());\n    Mat image = Mat( arg.response.height, \n                    arg.response.width, \n                    CV_8UC3, \n                    arg.response.imgVector.data());\n    Mat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n    // NEED TO GET RETURN VALUES ABOUT DETECTED PAYLOAD BAY HERE\n    DetectedObject payloadBay =\n      payloadBayDetector.run(image,detectedObjectsMask,\"autonomous_PB\"); \n    ROS_INFO(\"PayloadBay: %d, (%f,%f), %f\",payloadBay.state, payloadBay.x, payloadBay.y, payloadBay.angle);\n    cv::imwrite(\"PayloadBay-01-Raw.png\", image+detectedObjectsMask);\n    if ( payloadBay.x >= 0 && payloadBay.x <= arg.response.width &&\n        payloadBay.y >= 0 && payloadBay.y <= arg.response.height )\n    {\n      res.status = payloadBay.state;\n      res.x = payloadBay.x - arg.response.width / 2;   // convert [0,w] -> [-w/2,w/2]\n      res.y = payloadBay.y - arg.response.height / 2;  // convert [0,h] -> [-h/2,h/2]\n      res.angle = payloadBay.angle;\n    }\n    else\n      res.status = HIDDEN;\n    return true;\n  }\n  else {\n    ROS_INFO(\"ERROR: Client call failed; couldn't get image.\");\n  }\n}\nreturn false;\n",
                 "name": "payloadBayStateFromImageServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -4008,6 +4029,25 @@
             },
             "sets": {}
         },
+        "8f76797c-3114-7740-e093-71d15765f2b3": {
+            "attributes": {
+                "name": "payloadBayStateFromImageClient"
+            },
+            "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
+            "meta": {},
+            "parent": "8c0974bd-12e4-dc59-4d43-7982b534b262",
+            "pointers": {
+                "Service": "bf3c5759-8b0e-c5a7-7666-e3d42038bc48",
+                "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29"
+            },
+            "registry": {
+                "position": {
+                    "x": 860,
+                    "y": 313
+                }
+            },
+            "sets": {}
+        },
         "8ff74691-1535-f037-068b-52df355dd0bd": {
             "attributes": {
                 "Operation": "  sample_rawImage = Mat(received_data->height, \n\t\t\treceived_data->width, \n\t\t\tCV_8UC3, \n\t\t\tconst_cast<unsigned char*>(received_data->rawImgVector.data()));\n\n  sample_hsvImage = Mat(received_data->height, \n\t\t\treceived_data->width, \n\t\t\tCV_8UC3, \n\t\t\tconst_cast<unsigned char*>(received_data->hsvThreshImgVector.data()));\n\n  sample_gsImage = Mat(received_data->height, \n\t\t       received_data->width, \n\t\t       CV_8UC3, \n\t\t       const_cast<unsigned char*>(received_data->gsThreshImgVector.data()));\n  \n  sample_bitwise = Mat(received_data->height, \n\t\t       received_data->width, \n\t\t       CV_8UC3, \n\t\t       const_cast<unsigned char*>(received_data->bitwiseAndImgVector.data()));\n\n  top_left = cvCreateImage(cvSize(sample_rawImage.cols, sample_rawImage.rows), 8, 3);\n  IplImage ipltemp = sample_rawImage;\n  cvCopy(&ipltemp, top_left);",
@@ -4072,7 +4112,7 @@
         },
         "93f48121-6fe3-48ed-0cdc-dc9db647b01a": {
             "attributes": {
-                "Operation": "  if (!paused)\n    {\n      image_processor::captureImage arg;\n      if (this->captureImage_client.call(arg)) {\n\t//\tROS_INFO(\"Image width: %d, height: %d, size: %d\", \n\t//\t\t arg.response.width,\n\t//\t\t arg.response.height,\n\t//\t\t arg.response.imgVector.size());\n\tMat image = Mat( arg.response.height, \n\t\t\t arg.response.width, \n\t\t\t CV_8UC3, \n\t\t\t arg.response.imgVector.data());\n\tMat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n\t// NEED TO GET RETURN VALUES ABOUT DETECTED SAMPLE HERE\n\tDetectedObject sample =\n\t  sampleDetector.run(image,detectedObjectsMask,\"autonomous_S\"); \n\t//\tROS_INFO(\"Sample: %d, (%f,%f), %f\",sample.state, sample.x, sample.y, sample.angle);\n\tcv::imwrite(\"Sample-01-Raw.png\", image+detectedObjectsMask);\n\tcv::Mat sample_detected_image = image + detectedObjectsMask; \n\tif ( sample.x >= 0 && sample.x <= arg.response.width &&\n\t     sample.y >= 0 && sample.y <= arg.response.height )\n\t  {\n\t    res.status = sample.state;\n\t    res.x = sample.x - arg.response.width / 2;   // convert [0,w] -> [-w/2,w/2]\n\t    res.y = sample.y - arg.response.height / 2;  // convert [0,h] -> [-h/2,h/2]\n\t    res.angle = sample.angle;\n\t  }\n\telse\n\t  res.status = HIDDEN;\n\treturn true;\n      }\n      else {\n\tROS_INFO(\"ERROR: Client call failed; couldn't get image.\");\n      }\n    }\n  return false;\n",
+                "Operation": "if (!paused)\n{\n  image_processor::captureImage arg;\n  if (this->captureImageClient.call(arg)) {\n    //\tROS_INFO(\"Image width: %d, height: %d, size: %d\", \n    //\t\t arg.response.width,\n    //\t\t arg.response.height,\n    //\t\t arg.response.imgVector.size());\n    Mat image = Mat( arg.response.height, \n                    arg.response.width, \n                    CV_8UC3, \n                    arg.response.imgVector.data());\n    Mat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n    // NEED TO GET RETURN VALUES ABOUT DETECTED SAMPLE HERE\n    DetectedObject sample =\n      sampleDetector.run(image,detectedObjectsMask,\"autonomous_S\"); \n    //\tROS_INFO(\"Sample: %d, (%f,%f), %f\",sample.state, sample.x, sample.y, sample.angle);\n    cv::imwrite(\"Sample-01-Raw.png\", image+detectedObjectsMask);\n    cv::Mat sample_detected_image = image + detectedObjectsMask; \n    if ( sample.x >= 0 && sample.x <= arg.response.width &&\n        sample.y >= 0 && sample.y <= arg.response.height )\n    {\n      res.status = sample.state;\n      res.x = sample.x - arg.response.width / 2;   // convert [0,w] -> [-w/2,w/2]\n      res.y = sample.y - arg.response.height / 2;  // convert [0,h] -> [-h/2,h/2]\n      res.angle = sample.angle;\n    }\n    else\n      res.status = HIDDEN;\n    return true;\n  }\n  else {\n    ROS_INFO(\"ERROR: Client call failed; couldn't get image.\");\n  }\n}\nreturn false;\n",
                 "name": "sampleStateFromImageServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -4092,7 +4132,7 @@
         },
         "94dc4ba7-0a9c-f078-310f-cf1f2bf7bbe7": {
             "attributes": {
-                "Operation": "  image_processor::captureImage arg;\n  Mat camera_feed;\n\n  if (this->captureImage_client.call(arg)) {\n\n    ROS_INFO(\"Capture Image Client Call Successful; Height: %d, Width: %d \", arg.response.height, arg.response.width);\n    \n    camera_feed = Mat(arg.response.height, \n\t\t      arg.response.width, \n\t\t      CV_8UC3, \n\t\t      arg.response.imgVector.data());\n\n    // Mat to IplImage *\n    IplImage ipltemp = camera_feed;\n    cvCopy(&ipltemp, processed_image);\n    cvResize(processed_image, Mode_1);\n    cvShowImage( \"UIP\", Mode_1);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n  }\n\n  key = 0;\n  key = cvWaitKey(1);\n\n  // RAW CAMERA FEED\n  if (key == 65361) {\n    ROS_INFO(\"Mode 1 Activated\");\n    cvShowImage( \"UIP\", Mode_1);\n  }\n  /*\n  // SAMPLE PROCESSED IMAGE\n  else if (key == 65363) {\n    ROS_INFO(\"Mode 2 Activated\");\n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(sample_rawImage.cols, sample_rawImage.rows), 8, 3);\n    IplImage ipltemp = sample_rawImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_2);\n    cvShowImage( \"UIP\", Mode_2);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n\n  }\n\n  else if (key == 65362) {\n\n    ROS_INFO(\"Mode 3 Activated\");\n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(pb_rawImage.cols, pb_rawImage.rows), 8, 3);\n    IplImage ipltemp = pb_rawImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_3);\n    cvShowImage( \"UIP\", Mode_3);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n  }\n\n  else if (key == 65364) {\n\n    ROS_INFO(\"Mode 4 Activated\"); \n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(pb_gsImage.cols, pb_gsImage.rows), 8, 3);\n    IplImage ipltemp = pb_gsImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_4);\n    cvShowImage( \"UIP\", Mode_4);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n  }\n\n  else if (key == 13) {\n      \n    ROS_INFO(\"Mode 5 Activated\");\n    cvShowManyImages(\"UIP\", 4, top_left, top_right, bottom_left, bottom_right);\n    key = 0;\n  }\n  */\n  else {\n    ROS_INFO(\"No Mode Activated\");\n    cvShowImage( \"UIP\", Mode_1);\n  }\n",
+                "Operation": "image_processor::captureImage arg;\nMat camera_feed;\n\nif (this->captureImageClient.call(arg)) {\n\n  ROS_INFO(\"Capture Image Client Call Successful; Height: %d, Width: %d \", arg.response.height, arg.response.width);\n\n  camera_feed = Mat(arg.response.height, \n                    arg.response.width, \n                    CV_8UC3, \n                    arg.response.imgVector.data());\n\n  // Mat to IplImage *\n  IplImage ipltemp = camera_feed;\n  cvCopy(&ipltemp, processed_image);\n  cvResize(processed_image, Mode_1);\n  cvShowImage( \"UIP\", Mode_1);\n  cvNamedWindow( \"UIP\", 1 );\n  cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n}\n\nkey = 0;\nkey = cvWaitKey(1);\n\n// RAW CAMERA FEED\nif (key == 65361) {\n  ROS_INFO(\"Mode 1 Activated\");\n  cvShowImage( \"UIP\", Mode_1);\n}\n/*\n  // SAMPLE PROCESSED IMAGE\n  else if (key == 65363) {\n    ROS_INFO(\"Mode 2 Activated\");\n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(sample_rawImage.cols, sample_rawImage.rows), 8, 3);\n    IplImage ipltemp = sample_rawImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_2);\n    cvShowImage( \"UIP\", Mode_2);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n\n  }\n\n  else if (key == 65362) {\n\n    ROS_INFO(\"Mode 3 Activated\");\n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(pb_rawImage.cols, pb_rawImage.rows), 8, 3);\n    IplImage ipltemp = pb_rawImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_3);\n    cvShowImage( \"UIP\", Mode_3);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n  }\n\n  else if (key == 65364) {\n\n    ROS_INFO(\"Mode 4 Activated\"); \n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(pb_gsImage.cols, pb_gsImage.rows), 8, 3);\n    IplImage ipltemp = pb_gsImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_4);\n    cvShowImage( \"UIP\", Mode_4);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n  }\n\n  else if (key == 13) {\n\n    ROS_INFO(\"Mode 5 Activated\");\n    cvShowManyImages(\"UIP\", 4, top_left, top_right, bottom_left, bottom_right);\n    key = 0;\n  }\n  */\nelse {\n  ROS_INFO(\"No Mode Activated\");\n  cvShowImage( \"UIP\", Mode_1);\n}\n",
                 "name": "userDisplayTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -4757,7 +4797,7 @@
         "b6a8c9f5-4472-8e3b-4035-f5e90fdac5bb": {
             "attributes": {
                 "Forwards": "#include \"objecttracker/sample_detector.hpp\"\n#include \"objecttracker/payloadbay_detector.hpp\"",
-                "Initialization": "  paused = true;\n  // initialize both the sample detector code\n  // and the payload bay (marker) detector code\n    sampleDetector.init();\n    payloadBayDetector.init( 0.75f, \"/home/ubuntu/camera.yml\");\n\n    // Command line args for image processor\n    for (int i = 0; i < node_argc; i++)\n      {\n\tif (!strcmp(node_argv[i], \"-unpaused\"))\n\t  {\n\t    paused = false;\n\t  }\n\tif (!strcmp(node_argv[i], \"-detect\"))\n\t  {\n\t    image_processor::captureImage arg;\n\t    if (this->captureImage_client.call(arg)) {\n\t      //\t      ROS_INFO(\"Image width: %d, height: %d, size: %d\", \n\t      //\t\t       arg.response.width,\n\t      //\t       arg.response.height,\n\t      //       arg.response.imgVector.size());\n\t      Mat image = Mat( arg.response.height, \n\t\t\t       arg.response.width, \n\t\t\t       CV_8UC3, \n\t\t\t       arg.response.imgVector.data());\n\t      Mat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n\t      DetectedObject sample = \n\t\tsampleDetector.run( image,\n\t\t\t\t    detectedObjectsMask); \n\t      DetectedObject payloadBay =\n\t\tpayloadBayDetector.run( image,\n\t\t\t\t\tdetectedObjectsMask); \n\t      cv::imwrite(\"Sample-01-Raw.png\", image+detectedObjectsMask);\n\t      ROS_INFO(\"Sample: %d, (%f,%f), %f\",sample.state, sample.x, sample.y, sample.angle);\n\t      ROS_INFO(\"PayloadBay: %d, (%f,%f), %f\",payloadBay.state, payloadBay.x, payloadBay.y, payloadBay.angle);\n\t    }\n\t  }\n      }\n",
+                "Initialization": "paused = true;\n// initialize both the sample detector code\n// and the payload bay (marker) detector code\nsampleDetector.init();\npayloadBayDetector.init( 0.75f, \"/home/ubuntu/camera.yml\");\n\n// Command line args for image processor\nfor (int i = 0; i < node_argc; i++)\n{\n  if (!strcmp(node_argv[i], \"-unpaused\"))\n  {\n    paused = false;\n  }\n  if (!strcmp(node_argv[i], \"-detect\"))\n  {\n    image_processor::captureImage arg;\n    if (this->captureImageClient.call(arg)) {\n      //\t      ROS_INFO(\"Image width: %d, height: %d, size: %d\", \n      //\t\t       arg.response.width,\n      //\t       arg.response.height,\n      //       arg.response.imgVector.size());\n      Mat image = Mat( arg.response.height, \n                      arg.response.width, \n                      CV_8UC3, \n                      arg.response.imgVector.data());\n      Mat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n      DetectedObject sample = \n        sampleDetector.run( image,\n                           detectedObjectsMask); \n      DetectedObject payloadBay =\n        payloadBayDetector.run( image,\n                               detectedObjectsMask); \n      cv::imwrite(\"Sample-01-Raw.png\", image+detectedObjectsMask);\n      ROS_INFO(\"Sample: %d, (%f,%f), %f\",sample.state, sample.x, sample.y, sample.angle);\n      ROS_INFO(\"PayloadBay: %d, (%f,%f), %f\",payloadBay.state, payloadBay.x, payloadBay.y, payloadBay.angle);\n    }\n  }\n}\n",
                 "Members": "  bool paused;\n  Sample_Detector sampleDetector;\n  PayloadBay_Detector payloadBayDetector;",
                 "name": "imageProcessor"
             },
@@ -6003,6 +6043,7 @@
         "182d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "183b7c25-179d-e884-f133-0024a5db330e": "f",
         "1a2d14c8-aee9-dece-1155-2553a795b2ef": "3",
+        "1aacd0f7-c612-def1-e351-b3e09db56136": "5",
         "1b4dffef-842f-6b3c-0302-596cf56a5459": "K",
         "1f0e696a-b922-ec04-d0bf-b3eeb74660c9": "j",
         "240e696a-b922-ec04-d0bf-b3eeb74660c9": "9",
@@ -6116,6 +6157,7 @@
         "8c5166ed-ded6-b1af-279f-ba01d0aff3fc": "G",
         "8e2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "8ed56a84-1f2b-cf95-c812-e0a6f8646438": "M",
+        "8f76797c-3114-7740-e093-71d15765f2b3": "a",
         "8ff74691-1535-f037-068b-52df355dd0bd": "U",
         "90357525-43a6-9058-d9f6-607e9275fb5e": "d",
         "92357525-43a6-9058-d9f6-607e9275fb5e": "S",

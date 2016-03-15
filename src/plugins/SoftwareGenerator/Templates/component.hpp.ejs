@@ -52,7 +52,7 @@ for (var sub in compInfo.subscribers) {
 <%
 for (var srv in compInfo.servers) {
 -%>
-  void <%- compInfo.servers[srv].name %>_operation(const <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Request &req, <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Response &res);
+  bool <%- compInfo.servers[srv].name %>_operation(const <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Request &req, <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Response &res);
 <%
 }
 -%>

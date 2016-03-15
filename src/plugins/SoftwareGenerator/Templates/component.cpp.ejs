@@ -58,7 +58,7 @@ void <%- compInfo.name %>::<%- compInfo.subscribers[sub].name %>_operation(const
 for (var srv in compInfo.servers) {
 -%>
 // Server Operation - <%- compInfo.servers[srv].name %>
-void <%- compInfo.name %>::<%- compInfo.servers[srv].name %>_operation(const <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Request &req, <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Response &res )
+bool <%- compInfo.name %>::<%- compInfo.servers[srv].name %>_operation(const <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Request &req, <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Response &res )
 {
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::<%- compInfo.servers[srv].name %>_operation");
@@ -67,6 +67,7 @@ void <%- compInfo.name %>::<%- compInfo.servers[srv].name %>_operation(const <%-
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::<%- compInfo.servers[srv].name %>_operation");
 #endif
+  return true;
 }
 <%
 }
