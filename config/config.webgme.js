@@ -10,15 +10,30 @@ var config = require('webgme/config/config.default'),
 // The paths can be loaded from the webgme-setup.json
 config.plugin.basePaths.push('src/plugins');
 config.addOn.basePaths.push('src/addons');
+config.visualization.layout.basePaths.push('src/layouts');
 config.visualization.decoratorPaths.push('src/decorators');
 
 config.addOn.enable = true;
+
+config.visualization.panelPaths.push('node_modules/webgme-breadcrumbheader/src/visualizers/panels');
+config.visualization.panelPaths.push('node_modules/webgme-fab/src/visualizers/panels');
+
+
 // Visualizer descriptors
-
+config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');
 // Add requirejs paths
+config.requirejsPaths = {
+  'FloatingActionButton': 'panels/FloatingActionButton/FloatingActionButtonPanel',
+  'BreadcrumbHeader': 'panels/BreadcrumbHeader/BreadcrumbHeaderPanel',
+  'panels': './src/visualizers/panels',
+  'widgets': './src/visualizers/widgets',
+  'panels/FloatingActionButton': './node_modules/webgme-fab/src/visualizers/panels/FloatingActionButton',
+  'widgets/FloatingActionButton': './node_modules/webgme-fab/src/visualizers/widgets/FloatingActionButton',
+  'panels/BreadcrumbHeader': './node_modules/webgme-breadcrumbheader/src/visualizers/panels/BreadcrumbHeader',
+  'widgets/BreadcrumbHeader': './node_modules/webgme-breadcrumbheader/'
+};
 
-
-
+config.visualization.layout.default = 'NewDefaultLayout';
 config.mongo.uri = 'mongodb://127.0.0.1:27017/rosmod';
 validateConfig(config);
 module.exports = config;

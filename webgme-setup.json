@@ -27,11 +27,36 @@
       "CodeEditorDecorator": {
         "src": "src\\decorators\\CodeEditorDecorator"
       }
+    },
+    "visualizers": {},
+    "layouts": {
+      "NewDefaultLayout": {
+        "src": "src/layouts/NewDefaultLayout",
+        "enabled": true
+      }
     }
   },
   "dependencies": {
     "plugins": {},
     "addons": {},
-    "decorators": {}
+    "decorators": {},
+    "visualizers": {
+      "BreadcrumbHeader": {
+        "src": "panels/BreadcrumbHeader/BreadcrumbHeaderPanel",
+        "title": "BreadcrumbHeader",
+        "panel": "src/visualizers/panels/BreadcrumbHeader",
+        "secondary": true,
+        "project": "webgme-breadcrumbheader"
+      },
+      "FloatingActionButton": {
+        "src": "panels/FloatingActionButton/FloatingActionButtonPanel",
+        "title": "FloatingActionButton",
+        "panel": "src/visualizers/panels/FloatingActionButton",
+        "secondary": true,
+        "widget": "src/visualizers/widgets/FloatingActionButton",
+        "project": "webgme-fab"
+      }
+    },
+    "layouts": {}
   }
 }

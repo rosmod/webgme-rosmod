@@ -6,13 +6,15 @@
   },
   "version": "1.0.0",
   "dependencies": {
-      "webgme": "^1.1.0",
-      "filendir": "1.x.x",
-      "fs": "0.0.2",
-      "url": "0.11.x",
-      "path": "0.11.x",
-      "fstream": "1.0.x",
-      "unzip": "0.1.x"
+    "filendir": "1.x.x",
+    "fs": "0.0.2",
+    "fstream": "1.0.x",
+    "path": "0.11.x",
+    "unzip": "0.1.x",
+    "url": "0.11.x",
+    "webgme": "^1.1.0",
+    "webgme-breadcrumbheader": "dfst/webgme-breadcrumbheader",
+    "webgme-fab": "dfst/webgme-fab"
   },
   "devDependencies": {
     "mocha": "^2.2.5",
