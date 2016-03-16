@@ -588,14 +588,26 @@ define([
 	    terminal.stdout.on('data', function (data) {
 		var patt = new RegExp("[0-9]+%");
 		var res = patt.exec(data);
-		if (res !== null)
-		    self.logger.info('progress: ' + res);
+		if (res !== null) {
+		    var percent = parseInt(new String(res).replace('%',''), 10);
+		    self.logger.info('progress: ' + percent);
+		    self.sendNotification(
+			{ 
+			    message:'compilation: ',
+			    progress: percent
+			}
+		    );
+		}
 	    });
 
 	    terminal.stderr.on('data', function (data) {
+		var severity = 'warning';
+		if (data.indexOf(severity) == -1)
+		    severity = 'error';
 		self.logger.error('stderr: ' + data);
 		self.createMessage(self.activeNode,
-				   'compilation: ' + data
+				   'compilation: ' + data,
+				   severity
 				  );
 		//reject(data);
 	    });
