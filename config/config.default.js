@@ -1,11 +1,15 @@
+/* jshint node: true */
 'use strict';
-
-var config = require('./config.webgme'),
+var config = require('./config.base.js'),
     validateConfig = require('webgme/config/validator');
 
-// Add/overwrite any additional settings here
-// config.server.port = 8080;
-// config.mongo.uri = 'mongodb://127.0.0.1:27017/webgme_my_app';
+// Customize Visualizers
+//config.visualization.visualizerDescriptors = ['./src/visualizers/Visualizers.json'];
+//config.visualization.panelPaths.push('./src/visualizers/panels');
+//config.visualization.layout.basePaths.push('./src/layouts');
+
+// UI
+config.visualization.layout.default = 'NewDefaultLayout';
 
 validateConfig(config);
 module.exports = config;

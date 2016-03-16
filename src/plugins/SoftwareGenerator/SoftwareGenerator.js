@@ -33,6 +33,7 @@ define([
     var SoftwareGenerator = function () {
         // Call base class' constructor.
         PluginBase.call(this);
+	//this.disableBrowserExecution = true; // why doesn't this work?
         this.metaTypes = MetaTypes;
         this.FILES = {
             'component_cpp': 'component.cpp.ejs',
