@@ -71,13 +71,16 @@ define([
 	else if (isPort)
 	    objType = 'Port';
 
+	this.$el.append('<div class="row root-viz">');
 	for (var code in self.buttonDict[objType]) {
             this._skinParts[code] = EQN_EDIT_BTN_BASE.clone();
 	    this.$el.append('<br><body>'+code+'  </body>');
 	    this.$el.append(this._skinParts[code]);
+	    this.$el.append('</br>');
 	    var codeClick = self._on_click.bind(self, code);
 	    this._skinParts[code].on('click', codeClick);
 	}
+	this.$el.append('</div>');
     };
 
     CodeEditorDecorator.prototype._on_click = function(attr) {

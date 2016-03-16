@@ -31,7 +31,7 @@ define(['js/util',
             this._el = this._dialog.find('.modal-body').first();
             this._btnSave = this._dialog.find('.btn-save').first();
 
-	    this._title = this._dialog.find('.modal-header').first();
+	    this._title = this._dialog.find('#title').first();
 	    this._codearea = this._dialog.find('#codearea').first();
 
 	    var CodeMirrorEditorOptions = {
@@ -85,7 +85,8 @@ define(['js/util',
             // Initialize Modal and append it to main DOM
             this._dialog.modal({ show: false});
 
-	    this._title.find('#title').text(title);
+	    //this._title.find('#title').text(title);
+	    this._title.text(title);
 
             // Event listener on click for SAVE button
             this._btnSave.on('click', function (event) {

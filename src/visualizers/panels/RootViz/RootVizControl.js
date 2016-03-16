@@ -62,8 +62,6 @@ define(['js/Constants',
             self._selfPatterns = {};
             self._selfPatterns[nodeId] = {children: 0};  // Territory "rule"
 
-            self._widget.setTitle(desc.name.toUpperCase());
-
             if (desc.parentId || desc.parentId === CONSTANTS.PROJECT_ROOT_ID) {
                 self.$btnModelHierarchyUp.show();
             } else {
@@ -90,9 +88,16 @@ define(['js/Constants',
             objDescriptor;
 
         if (nodeObj) {
+	    var metaObj = this._client.getNode(nodeObj.getMetaTypeId()),
+	    metaName = undefined;
+	    if (metaObj) {
+		metaName = metaObj.getAttribute(nodePropertyNames.Attributes.name);
+	    }
+
             objDescriptor = {
                 'id': undefined,
                 'name': undefined,
+		'meta': undefined,
                 'childrenIds': undefined,
                 'parentId': undefined,
                 'isConnection': false
@@ -100,6 +105,7 @@ define(['js/Constants',
 
             objDescriptor.id = nodeObj.getId();
             objDescriptor.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name);
+	    objDescriptor.meta = metaName;
             objDescriptor.childrenIds = nodeObj.getChildrenIds();
             objDescriptor.childrenNum = objDescriptor.childrenIds.length;
             objDescriptor.parentId = nodeObj.getParentId();
@@ -227,17 +233,6 @@ define(['js/Constants',
         });
         this._toolbarItems.push(this.$btnModelHierarchyUp);
         this.$btnModelHierarchyUp.hide();
-
-        /************** Checkbox example *******************/
-
-        this.$cbShowConnection = toolBar.addCheckBox({
-            title: 'toggle checkbox',
-            icon: 'gme icon-gme_diagonal-arrow',
-            checkChangedFn: function (data, checked) {
-                self._logger.log('Checkbox has been clicked!');
-            }
-        });
-        this._toolbarItems.push(this.$cbShowConnection);
 
         this._toolbarInitialized = true;
     };

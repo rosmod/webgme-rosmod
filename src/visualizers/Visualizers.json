@@ -4,5 +4,11 @@
     "title": "RootViz",
     "panel": "panels/RootViz/RootVizPanel",
     "DEBUG_ONLY": false
+  },
+  {
+    "id": "ModelEditor",
+    "title": "Model",
+    "panel": "js/Panels/ModelEditor/ModelEditorPanel",
+    "DEBUG_ONLY": false
   }
 ]
