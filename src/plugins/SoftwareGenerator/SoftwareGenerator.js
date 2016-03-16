@@ -39,7 +39,8 @@ define([
             'component_cpp': 'component.cpp.ejs',
             'component_hpp': 'component.hpp.ejs',
             'cmakelists': 'CMakeLists.txt.ejs',
-            'package_xml': 'package_xml.ejs'
+            'package_xml': 'package_xml.ejs',
+	    'doxygen_config': 'doxygen_config.ejs'
         };
     };
 
@@ -81,7 +82,17 @@ define([
                 'value': true,
                 'valueType': 'boolean',
                 'readOnly': false
-            }
+            },
+
+	    {
+		'name': 'generate_docs',
+		'displayName': 'Generate Doxygen Docs',
+		'description': 'Turn off to ignorre doc generation.',
+		'value': true,
+		'valueType': 'boolean',
+		'readOnly': false
+	    }
+
         ];
     };
 
@@ -105,6 +116,7 @@ define([
 	var currentConfig = self.getCurrentConfig();
         self.logger.info('Current configuration ' + JSON.stringify(currentConfig, null, 4));
 	var compileCode = currentConfig.compile;
+	var generateDocs = currentConfig.generate_docs;
 
         if (typeof WebGMEGlobal !== 'undefined') {
             callback(new Error('Client-side execution is not supported'), self.result);
@@ -128,10 +140,16 @@ define([
 		return self.downloadLibraries(softwareModel);
 	    })
 	    .then(function (softwareModel) {
-        	self.createMessage(self.activeNode, 'Downloaded libraries');
+		self.createMessage(self.activeNode, 'Downloaded libraries');
+		if (generateDocs)
+		    return self.generateDocumentation(softwareModel);
+		else
+		    return softwareModel;
+	    })
+	    .then(function (softwareModel) {
 		if (compileCode)
 		    return self.compileBinaries(softwareModel);
-		else
+		else		    
 		    return softwareModel;
 	    })
 	    .then(function (softwareModel) {
@@ -154,11 +172,11 @@ define([
     SoftwareGenerator.prototype.loadSoftwareModel = function (rootNode) {
         var self = this,
 	    dataModel = {
-		name: self.core.getAttribute(rootNode, 'name'),
+		name: self.core.getAttribute(self.core.getParent(rootNode), 'name'),
 		packages: {},
 		libraries: {}
 	    };
-
+	self.logger.info('ROOT NODE NAME: ' + dataModel.name);
         return self.core.loadSubTree(rootNode)
 	    .then(function (nodes) {
 		var messages = [],
@@ -505,6 +523,12 @@ define([
             pluginVersion: self.getVersion()
         }, null, 2);
 
+	var projectName = softwareModel.name,
+	    doxygenConfigName = '/doxygen_config',
+	    doxygenTemplate = TEMPLATES[self.FILES['doxygen_config']];
+	filesToAdd[doxygenConfigName] = ejs.render(doxygenTemplate, 
+						   {'projectName': projectName});
+
         for (var pkg in softwareModel.packages) {
 	    var pkgInfo = softwareModel.packages[pkg],
 		cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt',
@@ -578,6 +602,56 @@ define([
 	}
 	return Q.all(promises);
     };
+
+    SoftwareGenerator.prototype.generateDocumentation = function (softwareModel) 
+    {
+	var self = this;
+	return new Promise(function(resolve, reject) {
+	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
+
+	    terminal.stdout.on('data', function (data) {
+		var patt = new RegExp("[0-9]+%");
+		var res = patt.exec(data);
+		if (res !== null) {
+		    var percent = parseInt(new String(res).replace('%',''), 10);
+		    self.logger.info('progress: ' + percent);
+		    self.sendNotification(
+			{ 
+			    message:'doxygen: ',
+			    progress: percent
+			}
+		    );
+		}
+	    });
+
+	    terminal.stderr.on('data', function (data) {
+		var severity = 'warning';
+		if (data.indexOf(severity) == -1)
+		    severity = 'error';
+		self.logger.error('stderr: ' + data);
+		self.createMessage(self.activeNode,
+				   'doxygen: ' + data,
+				   severity
+				  );
+		//reject(data);
+	    });
+
+	    terminal.on('exit', function (code) {
+		self.logger.info('child process exited with code ' + code);
+		if (code == 0)
+		    resolve(code);
+		else
+		    reject('child process exited with code ' + code);
+	    });
+
+	    setTimeout(function() {
+		self.logger.info('Sending stdin to terminal');
+		terminal.stdin.write('doxygen doxygen_config\n');
+		self.logger.info('Ending terminal session');
+		terminal.stdin.end();
+	    }, 1000);
+	});	
+    }
 
     SoftwareGenerator.prototype.compileBinaries = function (softwareModel)
     {

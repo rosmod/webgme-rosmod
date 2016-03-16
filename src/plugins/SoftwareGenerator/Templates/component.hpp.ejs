@@ -1,8 +1,15 @@
+/** <%- compInfo.name %>.hpp 
+ * 
+ * This file declares the <%- compInfo.name %> class
+ */
+
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 #include "node/Component.hpp"
 
-// Messages and Services required for this component
+/**
+ * Component Message and Service Headers
+ */
 <%
 for (var i=0; i < compInfo.requiredTypes.length; i++) {
 -%>
@@ -19,48 +26,83 @@ for (var i=0; i < compInfo.requiredTypes.length; i++) {
   #endif
 #endif
 
-// User Global Forwards
+/**
+ * Forward declarations
+ */
 <%- compInfo.forwards %>
 
 class <%- compInfo.name %> : public Component
 {
 public:
-  // Constructor
+  /**
+   * <%- compInfo.name %> Constructor.
+   * @param _config Component configuration parsed from deployment XML
+   * @param argc command-line argument count
+   * @param argv command-line arguments of the actor process
+   */
   <%- compInfo.name %>(ComponentConfig& _config, int argc, char **argv)
   : Component(_config, argc, argv) {}
 
-  // Initialization
+  /**
+   * <%- compInfo.name %> Initializer
+   * This operation is executed immediately after startup.
+   * @param event a oneshot timer event
+   * @see startUp()
+   */
   void init_timer_operation(const NAMESPACE::TimerEvent& event);
 
-  // Timers
 <%
 for (var tmr in compInfo.timers) {
 -%>
+  /**
+   * <%- compInfo.timers[tmr].name %>_operation 
+   * This operation is executed every time the  
+   * <%- compInfo.timers[tmr].name %> operation request is serviced 
+   * @param event a timer event
+   */
   void <%- compInfo.timers[tmr].name %>_operation(const NAMESPACE::TimerEvent& event);
 <%
 }
 -%>
-  // Subscribers
+
 <%
 for (var sub in compInfo.subscribers) {
 -%>
+  /**
+   * <%- compInfo.subscribers[sub].name %>_operation
+   * This operation is executed every time the  
+   * <%- compInfo.subscribers[sub].name %> operation request is serviced 
+   * @param received_data message received by the component subscriber
+   */
   void <%- compInfo.subscribers[sub].name %>_operation(const <%- compInfo.subscribers[sub].topic.packageName %>::<%- compInfo.subscribers[sub].topic.name %>::ConstPtr& received_data);
 <%
 }
 -%>
-  // Servers
+
 <%
 for (var srv in compInfo.servers) {
 -%>
+  /**
+   * <%- compInfo.servers[srv].name %>_operation
+   * This operation is executed every time the  
+   * <%- compInfo.servers[srv].name %> operation request is serviced 
+   * @param req request received from the client
+   * @param res response sent back to the client
+   */
   bool <%- compInfo.servers[srv].name %>_operation(const <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Request &req, <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Response &res);
 <%
 }
 -%>
 
-  // Start up
+ /**
+   * Component startup function
+   * This function configures all the component ports and timers
+   */ 
   void startUp();
 
-  // Destructor
+ /**
+   * Component Destructor
+   */ 
   ~<%- compInfo.name %>();
 
 private:
@@ -68,28 +110,28 @@ private:
 <%
 for (var tmr in compInfo.timers) {
 -%>
-  NAMESPACE::Timer <%- compInfo.timers[tmr].name %>;
+  NAMESPACE::Timer <%- compInfo.timers[tmr].name %>;  /*!< <%- compInfo.timers[tmr].name %> Component Timer */
 <%
 }
 -%>
 <%
 for (var svr in compInfo.servers) {
 -%>
-  NAMESPACE::ServiceServer <%- compInfo.servers[svr].name %>;
+  NAMESPACE::ServiceServer <%- compInfo.servers[svr].name %>;  /*!< <%- compInfo.servers[svr].name %> Component Server */
 <%
 }
 -%>
 <%
 for (var clt in compInfo.clients) {
  -%>
-  NAMESPACE::ServiceClient <%- compInfo.clients[clt].name %>;
+  NAMESPACE::ServiceClient <%- compInfo.clients[clt].name %>;  /*!< <%- compInfo.clients[clt].name %> Component Client */
 <%
 }
 -%>
 <%
 for (var pub in compInfo.publishers) {
  -%>
-  NAMESPACE::Publisher <%- compInfo.publishers[pub].name %>;
+  NAMESPACE::Publisher <%- compInfo.publishers[pub].name %>;  /*!< <%- compInfo.publishers[pub].name %> Component Publisher */
 <%
 }
 -%>
@@ -97,12 +139,14 @@ for (var pub in compInfo.publishers) {
 for (var sub in compInfo.subscribers) {
  -%>
   // <%- compInfo.subscribers[sub].name %>
-  NAMESPACE::Subscriber <%- compInfo.subscribers[sub].name %>;
+  NAMESPACE::Subscriber <%- compInfo.subscribers[sub].name %>;  /*!< <%- compInfo.subscribers[sub].name %> Component Subscriber */
 <%
 }
 -%>
 
-  // User Private Members
+  /** 
+   * User-defined private variables
+   */
   <%- compInfo.members %>
 };
 

@@ -1,17 +1,20 @@
+/** <%- compInfo.name %>.cpp 
+ * 
+ * This file contains definitions for the <%- compInfo.name %> class
+ */
+
 #include "<%- compInfo.packageName %>/<%- compInfo.name %>.hpp"
 
 // User Definitions
 <%- compInfo.definitions %>
 
-// Initialization Function
+// Component Initialization 
 void <%- compInfo.name %>::init_timer_operation(const NAMESPACE::TimerEvent& event)
 {
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::init_timer_operation");
 #endif
-  // User Initialization
   <%- compInfo.initialization %>
-  // Stop Init Timer
   init_timer.stop();
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::init_timer_operation");
@@ -72,7 +75,6 @@ bool <%- compInfo.name %>::<%- compInfo.servers[srv].name %>_operation(const <%-
 <%
 }
 -%>
-
 
 // Destructor - Cleanup Ports & Timers
 <%- compInfo.name %>::~<%- compInfo.name %>()
