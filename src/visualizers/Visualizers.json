@@ -1,2 +1,8 @@
 [
+  {
+    "id": "RootViz",
+    "title": "RootViz",
+    "panel": "panels/RootViz/RootVizPanel",
+    "DEBUG_ONLY": false
+  }
 ]

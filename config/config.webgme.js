@@ -17,6 +17,7 @@ config.addOn.enable = true;
 
 config.visualization.panelPaths.push('node_modules/webgme-breadcrumbheader/src/visualizers/panels');
 config.visualization.panelPaths.push('node_modules/webgme-fab/src/visualizers/panels');
+config.visualization.panelPaths.push('src/visualizers/panels');
 
 
 // Visualizer descriptors
