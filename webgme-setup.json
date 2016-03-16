@@ -28,7 +28,15 @@
         "src": "src\\decorators\\CodeEditorDecorator"
       }
     },
-    "visualizers": {},
+    "visualizers": {
+      "RootViz": {
+        "src": "panels/RootViz/RootVizPanel",
+        "title": "RootViz",
+        "panel": "src/visualizers/panels/RootViz",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/RootViz"
+      }
+    },
     "layouts": {
       "NewDefaultLayout": {
         "src": "src/layouts/NewDefaultLayout",

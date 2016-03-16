@@ -56,15 +56,6 @@ define([
      * @param {function(Error, AddOnUpdateResult)} callback
      */
     ExperimentMonitor.prototype.update = function (rootNode, commitObj, callback) {
-        var newName = commitObj.updater.toString();
-        this.logger.info('ExperimentMonitor in update at commitHash', commitObj._id);
-
-        if (this.core.getAttribute(rootNode, 'name') !== newName) {
-            this.logger.info('ExperimentMonitor changing name of root to committer(s): ', newName);
-            this.core.setAttribute(rootNode, 'name', newName);
-            this.addCommitMessage('Changed rootNode name to "' + newName + '"');
-        }
-
         callback(null, this.updateResult);
     };
 
