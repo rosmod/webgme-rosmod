@@ -36,7 +36,8 @@
             "da2ea5d7-26ee-0923-0025-38bfbceb5293": {},
             "df437d49-a83e-6944-62ed-52fd3dcf806d": {},
             "e400d5b7-c955-fc81-382e-2c414b44fc20": {},
-            "e4236ea7-bd34-9066-b116-da90faa42f94": {}
+            "e4236ea7-bd34-9066-b116-da90faa42f94": {},
+            "eecf10d5-1ea4-b2f5-5342-4b3dc960899c": {}
         },
         "8bc323b4-a4eb-abcd-b7a2-f710630dce1c": {
             "04fdc95b-f567-260d-dc01-d41068d3367b": {
@@ -416,7 +417,7 @@
                 "usedAddOns": "ExperimentMonitor",
                 "validDecorators": "CircleDecorator CodeEditorDecorator DefaultDecorator MetaDecorator ModelDecorator SVGDecorator UMLStateMachineDecorator",
                 "validPlugins": "PluginGenerator",
-                "validVisualizers": "ModelEditor METAAspect RootViz"
+                "validVisualizers": "RootViz"
             },
             "sets": {
                 "MetaAspectSet": [
@@ -709,6 +710,16 @@
                                 "y": 387
                             }
                         }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "eecf10d5-1ea4-b2f5-5342-4b3dc960899c",
+                        "registry": {
+                            "position": {
+                                "x": 114,
+                                "y": 55
+                            }
+                        }
                     }
                 ],
                 "MetaAspectSet_68f8146d-b1b7-6c40-3464-f8c070e97e8d": [
@@ -718,7 +729,7 @@
                         "registry": {
                             "position": {
                                 "x": 361,
-                                "y": 194
+                                "y": 190
                             }
                         }
                     },
@@ -939,8 +950,8 @@
                         "guid": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
                         "registry": {
                             "position": {
-                                "x": 78,
-                                "y": 966
+                                "x": 81,
+                                "y": 970
                             }
                         }
                     },
@@ -1001,6 +1012,16 @@
                             "position": {
                                 "x": 370,
                                 "y": 368
+                            }
+                        }
+                    },
+                    {
+                        "attributes": {},
+                        "guid": "eecf10d5-1ea4-b2f5-5342-4b3dc960899c",
+                        "registry": {
+                            "position": {
+                                "x": 64,
+                                "y": 37
                             }
                         }
                     }
@@ -1368,10 +1389,12 @@
                 "base": "e4236ea7-bd34-9066-b116-da90faa42f94"
             },
             "registry": {
+                "SVGIcon": "svgs/systemLibrary.svg",
+                "decorator": "SVGDecorator",
                 "isAbstract": false,
                 "position": {
-                    "x": 228,
-                    "y": 664
+                    "x": 275,
+                    "y": 688
                 }
             },
             "sets": {}
@@ -1896,8 +1919,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 664,
-                    "y": 448
+                    "x": 673,
+                    "y": 336
                 }
             },
             "sets": {}
@@ -2036,6 +2059,7 @@
             "registry": {
                 "DisplayFormat": "$name:$Subnet",
                 "SVGIcon": "CloudComputing.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 440,
                     "y": 452
@@ -2073,8 +2097,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 321,
-                    "y": 260
+                    "x": 316,
+                    "y": 288
                 }
             },
             "sets": {}
@@ -2754,13 +2778,17 @@
                             -1
                         ]
                     }
-                }
+                },
+                "mixins": [
+                    "eecf10d5-1ea4-b2f5-5342-4b3dc960899c"
+                ]
             },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
             "pointers": {
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/component.svg",
                 "decorator": "CodeEditorDecorator",
                 "position": {
                     "x": -18,
@@ -2986,13 +3014,18 @@
                         "priority": 1,
                         "info": ""
                     }
-                }
+                },
+                "mixins": [
+                    "eecf10d5-1ea4-b2f5-5342-4b3dc960899c"
+                ]
             },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
             "pointers": {
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/package.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 146,
                     "y": 382
@@ -3610,8 +3643,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 659,
-                    "y": 386
+                    "x": 829,
+                    "y": 228
                 }
             },
             "sets": {}
@@ -3703,8 +3736,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 320,
-                    "y": 191
+                    "x": 307,
+                    "y": 214
                 }
             },
             "sets": {}
@@ -3851,8 +3884,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 663,
-                    "y": 317
+                    "x": 655,
+                    "y": 245
                 }
             },
             "sets": {}
@@ -4524,13 +4557,18 @@
                         1,
                         1
                     ]
-                }
+                },
+                "mixins": [
+                    "eecf10d5-1ea4-b2f5-5342-4b3dc960899c"
+                ]
             },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
             "pointers": {
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/project.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 340,
                     "y": 161
@@ -5185,8 +5223,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 662,
-                    "y": 256
+                    "x": 833,
+                    "y": 140
                 }
             },
             "sets": {}
@@ -5209,6 +5247,8 @@
                 "base": "e4236ea7-bd34-9066-b116-da90faa42f94"
             },
             "registry": {
+                "SVGIcon": "svgs/sourceLibrary.svg",
+                "decorator": "SVGDecorator",
                 "isAbstract": false,
                 "position": {
                     "x": 228,
@@ -5231,8 +5271,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 664,
-                    "y": 516
+                    "x": 770,
+                    "y": 329
                 }
             },
             "sets": {}
@@ -5358,7 +5398,7 @@
                     "x": 318,
                     "y": 295
                 },
-                "validVisualizers": "ModelEditor METAAspect SetEditor Crosscut GraphViz"
+                "validVisualizers": "ModelEditor"
             },
             "sets": {}
         },
@@ -5441,8 +5481,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 662,
-                    "y": 202
+                    "x": 743,
+                    "y": 203
                 }
             },
             "sets": {}
@@ -5510,7 +5550,7 @@
             },
             "registry": {
                 "isAbstract": true,
-                "isPort": true,
+                "isPort": false,
                 "position": {
                     "x": 112,
                     "y": 750
@@ -5601,7 +5641,10 @@
                         -1,
                         -1
                     ]
-                }
+                },
+                "mixins": [
+                    "eecf10d5-1ea4-b2f5-5342-4b3dc960899c"
+                ]
             },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
             "pointers": {
@@ -5853,6 +5896,39 @@
                 "position": {
                     "x": 100,
                     "y": 100
+                }
+            },
+            "sets": {}
+        },
+        "eecf10d5-1ea4-b2f5-5342-4b3dc960899c": {
+            "attributes": {
+                "Authors": "",
+                "Brief": "",
+                "Detailed": "",
+                "name": "Documentation"
+            },
+            "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
+            "meta": {
+                "attributes": {
+                    "Authors": {
+                        "type": "string"
+                    },
+                    "Detailed": {
+                        "type": "string"
+                    },
+                    "Brief": {
+                        "type": "string"
+                    }
+                }
+            },
+            "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
+            "pointers": {
+                "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
+            },
+            "registry": {
+                "position": {
+                    "x": 82,
+                    "y": 111
                 }
             },
             "sets": {}
@@ -6236,6 +6312,7 @@
         "ecde4aa3-106a-f888-fe6b-473f56ac2d21": "l",
         "ed7d7340-3e40-ea91-ceaf-371d90d75662": "zr",
         "ee48c86c-137a-c89e-f82d-2672e5ccff92": "P",
+        "eecf10d5-1ea4-b2f5-5342-4b3dc960899c": "n",
         "f0c3e8b4-d847-1890-e883-b293be17add9": "X",
         "f1d51591-74b9-6f43-d930-2e0cfebee7f2": "m",
         "f4357525-43a6-9058-d9f6-607e9275fb5e": "x",
