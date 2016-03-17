@@ -695,6 +695,7 @@ define([
 
 	    setTimeout(function() {
 		self.logger.info('Sending stdin to terminal');
+		terminal.stdin.write('rm -rf bin\n');
 		terminal.stdin.write('source /opt/ros/indigo/setup.bash\n');
 		terminal.stdin.write('catkin_make -DNAMESPACE=rosmod\n');
 		terminal.stdin.write('mkdir bin\n');
