@@ -1729,6 +1729,7 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/service.svg",
                 "decorator": "CodeEditorDecorator",
                 "position": {
                     "x": -28,
@@ -3698,8 +3699,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 99,
-                    "y": 130
+                    "x": 100,
+                    "y": 131
                 }
             },
             "sets": {}
@@ -4774,8 +4775,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 500,
-                    "y": 398
+                    "x": 489,
+                    "y": 467
                 }
             },
             "sets": {
@@ -5420,6 +5421,7 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/message.svg",
                 "decorator": "CodeEditorDecorator",
                 "position": {
                     "x": -38,
