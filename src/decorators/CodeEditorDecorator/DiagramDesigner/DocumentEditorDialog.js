@@ -5,13 +5,17 @@
 define(['js/util',
 	'../Libs/cm/lib/codemirror', '../Libs/cm/mode/clike/clike',
 	'../Libs/cm/keymap/emacs', '../Libs/cm/keymap/sublime', '../Libs/cm/keymap/vim',
+	'../Libs/cm/addon/display/fullscreen',
 	'text!./DocumentEditorDialog.html',
 	'css!./DocumentEditorDialog.css',
+	'css!../Libs/cm/addon/display/fullscreen.css',
+	'css!../Libs/cm/theme/night.css',
 	'css!../Libs/cm/lib/codemirror.css'],
     function(Util,
              CodeMirror,
 	     CodeMirrorModeClike,
 	     CodeMirrorEmacsKeymap, CodeMirrorSublimeKeymap, CodeMirrorVimKeymap,
+	     CodeMirrorFullScreen,
              DocumentEditorDialogTemplate){
         'use strict';
 	
@@ -37,8 +41,10 @@ define(['js/util',
 	    var CodeMirrorEditorOptions = {
 		lineNumbers: true,
 		viewPortMargin: Infinity,
-		keyMap: "emacs",
+		keyMap: 'emacs',
 		path: 'decorators/DocumentEditorDialog/Libs/cm/lib/',
+		theme: 'night',
+		fullscreen: false,
 		mode: {
 		    name: 'clike',
 		    keywords: {
@@ -64,6 +70,14 @@ define(['js/util',
 		this._codearea.get(0),
 		CodeMirrorEditorOptions
 	    );
+	    this.editor.setOption("extraKeys", {
+		'F11': function(cm) {
+		    cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+		},
+		'Esc': function(cm) {
+		    cm.setOption('fullScreen', false);
+		}
+	    });
 
             this.text = ''; // Keep track modified text in editor
         };
