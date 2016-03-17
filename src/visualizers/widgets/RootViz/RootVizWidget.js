@@ -61,7 +61,7 @@ define([
 		column = this.$el.find('#columnClass');
 
 		title = desc.name;
-		description = 'TEST DESCRIPTION';
+		description = desc.detailed;
 		projectHtml = ejs.render(TEMPLATES['Project.html.ejs'], {title: title, description: description});
 
 		column.append(projectHtml);
