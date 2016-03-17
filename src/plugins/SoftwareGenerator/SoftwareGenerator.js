@@ -628,6 +628,10 @@ define([
 	return new Promise(function(resolve, reject) {
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
 
+	    //terminal.stdout.on('data', function (data) {
+	    //self.logger.info('Data:\n' + data);
+	    //});
+
 	    terminal.stderr.on('data', function (data) {
 		var severity = 'warning';
 		if (data.indexOf(severity) == -1)
@@ -646,6 +650,7 @@ define([
 	    setTimeout(function() {
 		self.logger.info('Sending stdin to terminal');
 		terminal.stdin.write('doxygen doxygen_config\n');
+		terminal.stdin.write('make -C ./doc/latex/ pdf\n');
 		self.logger.info('Ending terminal session');
 		terminal.stdin.end();
 	    }, 1000);
