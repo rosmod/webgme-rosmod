@@ -1,25 +1,26 @@
 {
-    "name": "rosmod",
-    "scripts": {
-	"start": "node app.js",
-	"start-dev": "NODE_ENV=dev node app.js",
-	"test": "node ./node_modules/mocha/bin/mocha --recursive test"
-    },
-    "version": "1.0.0",
-    "dependencies": {
-	"filendir": "1.x.x",
-	"fs": "0.0.2",
-	"fstream": "1.0.x",
-	"path": "0.11.x",
-	"unzip": "0.1.x",
-	"url": "0.11.x",
-	"webgme": "^1.1.0",
-	"webgme-breadcrumbheader": "dfst/webgme-breadcrumbheader",
-	"webgme-fab": "dfst/webgme-fab"
-    },
-    "devDependencies": {
-	"mocha": "^2.2.5",
-	"rimraf": "^2.4.0",
-	"chai": "^3.0.0"
-    }
+  "name": "rosmod",
+  "scripts": {
+    "start": "node app.js",
+    "start-dev": "NODE_ENV=dev node app.js",
+    "test": "node ./node_modules/mocha/bin/mocha --recursive test"
+  },
+  "version": "1.0.0",
+  "dependencies": {
+    "filendir": "1.x.x",
+    "fs": "0.0.2",
+    "fstream": "1.0.x",
+    "path": "0.11.x",
+    "tar": "^2.2.1",
+    "unzip": "0.1.x",
+    "url": "0.11.x",
+    "webgme": "^1.1.0",
+    "webgme-breadcrumbheader": "dfst/webgme-breadcrumbheader",
+    "webgme-fab": "dfst/webgme-fab"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5",
+    "rimraf": "^2.4.0",
+    "chai": "^3.0.0"
+  }
 }

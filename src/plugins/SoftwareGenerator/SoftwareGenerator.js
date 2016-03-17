@@ -83,7 +83,6 @@ define([
                 'valueType': 'boolean',
                 'readOnly': false
             },
-
 	    {
 		'name': 'generate_docs',
 		'displayName': 'Generate Doxygen Docs',
@@ -91,8 +90,15 @@ define([
 		'value': true,
 		'valueType': 'boolean',
 		'readOnly': false
+	    },
+	    {
+		'name': 'returnZip',
+		'displayName': 'Zip and return generated artifacts.',
+		'description': 'If true, it enables the client to download a zip of the artifacts.',
+		'value': false,
+		'valueType': 'boolean',
+		'readOnly': false
 	    }
-
         ];
     };
 
@@ -117,6 +123,7 @@ define([
         self.logger.info('Current configuration ' + JSON.stringify(currentConfig, null, 4));
 	var compileCode = currentConfig.compile;
 	var generateDocs = currentConfig.generate_docs;
+	var returnZip = currentConfig.returnZip;
 
         if (typeof WebGMEGlobal !== 'undefined') {
             callback(new Error('Client-side execution is not supported'), self.result);
@@ -125,28 +132,30 @@ define([
 	
         self.updateMETA(self.metaTypes);
 
-        self.createMessage(self.activeNode, 'ROSMOD::Starting Software Code Generator','info');
-
 	var path = require('path');
 	self.gen_dir = path.join(process.cwd(), 'generated', self.project.projectId, self.branchName);
 
       	self.loadSoftwareModel(self.activeNode)
   	    .then(function (softwareModel) {
-        	self.createMessage(self.activeNode, 'Parsed model');
+        	self.createMessage(self.activeNode, 'Parsed model.');
         	return self.generateArtifacts(softwareModel);
   	    })
 	    .then(function (softwareModel) {
-        	self.createMessage(self.activeNode, 'Generated artifacts');
+        	self.createMessage(self.activeNode, 'Generated artifacts.');
 		return self.downloadLibraries(softwareModel);
 	    })
 	    .then(function (softwareModel) {
-		self.createMessage(self.activeNode, 'Downloaded libraries');
+		self.createMessage(self.activeNode, 'Downloaded libraries.');
 		if (generateDocs)
 		    return self.generateDocumentation(softwareModel);
 		else
 		    return softwareModel;
 	    })
 	    .then(function (softwareModel) {
+		if (generateDocs)
+        	    self.createMessage(self.activeNode, 'Generated documentation.');
+		else
+        	    self.createMessage(self.activeNode, 'Skipped documentation generation.');
 		if (compileCode)
 		    return self.compileBinaries(softwareModel);
 		else		    
@@ -154,9 +163,19 @@ define([
 	    })
 	    .then(function (softwareModel) {
 		if (compileCode)
-        	    self.createMessage(self.activeNode, 'Compiled binaries');
+        	    self.createMessage(self.activeNode, 'Compiled binaries.');
 		else
-        	    self.createMessage(self.activeNode, 'Skipped Compilation.');
+        	    self.createMessage(self.activeNode, 'Skipped compilation.');
+		if (returnZip)
+		    return self.createZip(softwareModel);
+		else
+		    return softwareModel
+	    })
+	    .then(function (softwareModel) {
+		if (returnZip)
+        	    self.createMessage(self.activeNode, 'Compressed into zip.');
+		else
+        	    self.createMessage(self.activeNode, 'Skipped compression.');
         	self.result.setSuccess(true);
         	callback(null, self.result);
 	    })
@@ -701,6 +720,49 @@ define([
 		self.logger.info('Ending terminal session');
 		terminal.stdin.end();
 	    }, 1000);
+	});
+    };
+
+    SoftwareGenerator.prototype.createZip = function(softwareModel) {
+	var self = this;
+	
+	return new Promise(function(resolve, reject) {
+	    var zlib = require('zlib'),
+	    tar = require('tar'),
+	    fstream = require('fstream'),
+	    input = self.gen_dir;
+
+	    self.logger.info('zipping ' + input);
+
+	    var bufs = [];
+
+	    var packer = tar.Pack()
+		.on('error', function(e) { reject(e); });
+
+	    var gzipper = zlib.Gzip()
+		.on('error', function(e) { reject(e); })
+		.on('data', function(d) { bufs.push(d); })
+		.on('end', function() {
+		    self.logger.info('gzip ended.');
+		    var buf = Buffer.concat(bufs);
+		    self.blobClient.putFile('artifacts.tar.gz',buf)
+			.then(function (hash) {
+			    self.result.addArtifact(hash);
+			    self.logger.info('compression complete');
+			    resolve();
+			})
+			.catch(function(err) {
+			    reject(err);
+			})
+			    .done();
+		});
+
+	    var reader = fstream.Reader({ 'path': input, 'type': 'Directory' })
+		.on('error', function(e) { reject(e); });
+
+	    reader
+		.pipe(packer)
+		.pipe(gzipper);
 	});
     };
 
