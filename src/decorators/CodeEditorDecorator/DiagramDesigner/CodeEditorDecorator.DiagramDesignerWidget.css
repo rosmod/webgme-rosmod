@@ -35,6 +35,12 @@
 .CodeEditor-decorator .connector.bottom {
     bottom: -6px; }
 
+.CodeEditor-decorator .alignright {
+    text-align:right }
+
+.CodeEditor-decorator .link {
+    background:none;border:none }
+
 .selected .CodeEditor-decorator {
     border: 1px solid #52a8ec;
     background-color: #dbeafc; }

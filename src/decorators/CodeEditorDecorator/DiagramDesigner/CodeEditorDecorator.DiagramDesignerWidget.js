@@ -5,7 +5,8 @@ define([
     'js/RegistryKeys',
     'js/Constants',
     './DocumentEditorDialog',
-    'decorators/ModelDecorator/DiagramDesigner/ModelDecorator.DiagramDesignerWidget'
+    'decorators/ModelDecorator/DiagramDesigner/ModelDecorator.DiagramDesignerWidget',
+    'css!./CodeEditorDecorator.DiagramDesignerWidget.css'
   ], function (
     REGISTRY_KEYS,
     CONSTANTS,
