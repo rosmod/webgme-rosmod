@@ -10,6 +10,7 @@
     "filendir": "1.x.x",
     "fs": "0.0.2",
     "fstream": "1.0.x",
+    "moment": "^2.12.0",
     "path": "0.11.x",
     "tar": "^2.2.1",
     "unzip": "0.1.x",

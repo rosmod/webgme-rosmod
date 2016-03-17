@@ -597,8 +597,9 @@ define([
 	    srcFileName = prefix + pkgInfo.name + '/src/' + pkgInfo.name + '/' + compInfo.name + '.cpp',
 	    compCPPTemplate = TEMPLATES[this.FILES['component_cpp']],
 	    compHPPTemplate = TEMPLATES[this.FILES['component_hpp']];
-	filesToAdd[inclFileName] = ejs.render(compHPPTemplate, {'compInfo':compInfo});
-	filesToAdd[srcFileName] = ejs.render(compCPPTemplate, {'compInfo':compInfo});
+	var moment = require('moment');
+	filesToAdd[inclFileName] = ejs.render(compHPPTemplate, {'compInfo':compInfo, 'moment':moment});
+	filesToAdd[srcFileName] = ejs.render(compCPPTemplate, {'compInfo':compInfo, 'moment':moment});
     };
 
     SoftwareGenerator.prototype.downloadLibraries = function (softwareModel)
@@ -609,7 +610,7 @@ define([
 	var promises = [];
 
 	// Get the required node executable
-	var file_url = 'https://github.com/rosmod/rosmod-actor/files/170734/node.zip';
+	var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.1-beta/rosmod-node.zip';
 	var dir = prefix;
 	promises.push(self.wgetAndUnzipLibrary(file_url, dir));
 
@@ -628,9 +629,7 @@ define([
 	return new Promise(function(resolve, reject) {
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
 
-	    //terminal.stdout.on('data', function (data) {
-	    //self.logger.info('Data:\n' + data);
-	    //});
+	    terminal.stdout.on('data', function (data) {});
 
 	    terminal.stderr.on('data', function (data) {
 		var severity = 'warning';

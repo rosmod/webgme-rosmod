@@ -1,6 +1,7 @@
-/** <%- compInfo.name %>.hpp 
- * 
- * This file declares the <%- compInfo.name %> class
+/** @file    <%- compInfo.name %>.hpp 
+ *  @author  Author Name here
+ *  @date    <%= moment().format() %>
+ *  @brief   This file declares the <%- compInfo.name %> class
  */
 
 #ifndef CLIENT_HPP
@@ -31,22 +32,25 @@ for (var i=0; i < compInfo.requiredTypes.length; i++) {
  */
 <%- compInfo.forwards %>
 
+/**
+ * @brief <%- compInfo.name %> class
+ */
 class <%- compInfo.name %> : public Component
 {
 public:
   /**
-   * <%- compInfo.name %> Constructor.
+   * @brief <%- compInfo.name %> Constructor.
    * @param _config Component configuration parsed from deployment XML
-   * @param argc command-line argument count
-   * @param argv command-line arguments of the actor process
+   * @param[in] argc command-line argument count
+   * @param[in] argv command-line arguments of the actor process
    */
   <%- compInfo.name %>(ComponentConfig& _config, int argc, char **argv)
   : Component(_config, argc, argv) {}
 
   /**
-   * <%- compInfo.name %> Initializer
+   * @brief <%- compInfo.name %> Initializer
    * This operation is executed immediately after startup.
-   * @param event a oneshot timer event
+   * @param[in] event a oneshot timer event
    * @see startUp()
    */
   void init_timer_operation(const NAMESPACE::TimerEvent& event);
@@ -55,10 +59,11 @@ public:
 for (var tmr in compInfo.timers) {
 -%>
   /**
-   * <%- compInfo.timers[tmr].name %>_operation 
+   * @brief <%- compInfo.timers[tmr].name %>_operation 
+   *
    * This operation is executed every time the  
    * <%- compInfo.timers[tmr].name %> operation request is serviced 
-   * @param event a timer event
+   * @param[in] event a timer event
    */
   void <%- compInfo.timers[tmr].name %>_operation(const NAMESPACE::TimerEvent& event);
 <%
@@ -69,10 +74,11 @@ for (var tmr in compInfo.timers) {
 for (var sub in compInfo.subscribers) {
 -%>
   /**
-   * <%- compInfo.subscribers[sub].name %>_operation
+   * @brief <%- compInfo.subscribers[sub].name %>_operation
+   *
    * This operation is executed every time the  
    * <%- compInfo.subscribers[sub].name %> operation request is serviced 
-   * @param received_data message received by the component subscriber
+   * @param[in] received_data message received by the component subscriber
    */
   void <%- compInfo.subscribers[sub].name %>_operation(const <%- compInfo.subscribers[sub].topic.packageName %>::<%- compInfo.subscribers[sub].topic.name %>::ConstPtr& received_data);
 <%
@@ -83,11 +89,12 @@ for (var sub in compInfo.subscribers) {
 for (var srv in compInfo.servers) {
 -%>
   /**
-   * <%- compInfo.servers[srv].name %>_operation
+   * @brief <%- compInfo.servers[srv].name %>_operation
+   *
    * This operation is executed every time the  
    * <%- compInfo.servers[srv].name %> operation request is serviced 
-   * @param req request received from the client
-   * @param res response sent back to the client
+   * @param[in] req request received from the client
+   * @param[out] res response sent back to the client
    */
   bool <%- compInfo.servers[srv].name %>_operation(const <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Request &req, <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Response &res);
 <%
@@ -95,13 +102,14 @@ for (var srv in compInfo.servers) {
 -%>
 
  /**
-   * Component startup function
+   * @brief Component startup function
+   *
    * This function configures all the component ports and timers
    */ 
   void startUp();
 
  /**
-   * Component Destructor
+   * @brief <%- compInfo.name %> Destructor
    */ 
   ~<%- compInfo.name %>();
 
