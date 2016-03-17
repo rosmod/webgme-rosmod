@@ -628,31 +628,11 @@ define([
 	return new Promise(function(resolve, reject) {
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
 
-	    terminal.stdout.on('data', function (data) {
-		var patt = new RegExp("[0-9]+%");
-		var res = patt.exec(data);
-		if (res !== null) {
-		    var percent = parseInt(new String(res).replace('%',''), 10);
-		    self.logger.info('progress: ' + percent);
-		    self.sendNotification(
-			{ 
-			    message:'doxygen: ',
-			    progress: percent
-			}
-		    );
-		}
-	    });
-
 	    terminal.stderr.on('data', function (data) {
 		var severity = 'warning';
 		if (data.indexOf(severity) == -1)
 		    severity = 'error';
 		self.logger.error('stderr: ' + data);
-		self.createMessage(self.activeNode,
-				   'doxygen: ' + data,
-				   severity
-				  );
-		//reject(data);
 	    });
 
 	    terminal.on('exit', function (code) {
@@ -717,6 +697,10 @@ define([
 		self.logger.info('Sending stdin to terminal');
 		terminal.stdin.write('source /opt/ros/indigo/setup.bash\n');
 		terminal.stdin.write('catkin_make -DNAMESPACE=rosmod\n');
+		terminal.stdin.write('mkdir bin\n');
+		terminal.stdin.write('cp devel/lib/*.so bin/.\n');
+		terminal.stdin.write('cp devel/lib/node/node_main bin/.\n');
+		terminal.stdin.write('rm -rf devel build\n');
 		self.logger.info('Ending terminal session');
 		terminal.stdin.end();
 	    }, 1000);
