@@ -16,7 +16,7 @@ define([
 
     var CodeEditorDecorator,
         DECORATOR_ID = 'CodeEditorDecorator',
-        EQN_EDIT_BTN_BASE = $('<i class="glyphicon glyphicon-edit text-meta"/>');
+        EQN_EDIT_BTN_BASE = '<i class="glyphicon glyphicon-edit text-meta"/>';
 
     CodeEditorDecorator = function (options) {
         var opts = _.extend({}, options);
@@ -71,16 +71,27 @@ define([
 	else if (isPort)
 	    objType = 'Port';
 
-	this.$el.append('<div class="row root-viz">');
+	var fullText = '<table width="100%">';
 	for (var code in self.buttonDict[objType]) {
-            this._skinParts[code] = EQN_EDIT_BTN_BASE.clone();
-	    this.$el.append('<br><body>'+code+'  </body>');
-	    this.$el.append(this._skinParts[code]);
-	    this.$el.append('</br>');
-	    var codeClick = self._on_click.bind(self, code);
-	    this._skinParts[code].on('click', codeClick);
+	    var header = '<tr><td style="text-align:right">';
+	    var codeButton = 
+		'<button id="'+ code +'" style="background:none;border:none">' + 
+		code + '  ' +
+		EQN_EDIT_BTN_BASE + 
+		'</button>'; 
+	    var footer = '</td></tr>';
+	    fullText += header + codeButton + footer;
 	}
-	this.$el.append('</div>');
+	fullText += '</table>';
+	this.$el.append(fullText);
+
+	for (var code in self.buttonDict[objType]) {
+	    var button = this.$el.find('#' + code);
+            this._skinParts[code] = button;
+
+	    var codeClick = self._on_click.bind(self, code);
+	    this._skinParts[code].on('click', codeClick);	
+	}
     };
 
     CodeEditorDecorator.prototype._on_click = function(attr) {
@@ -120,7 +131,6 @@ define([
 
     CodeEditorDecorator.prototype.destroy = function () {
 	for (var btn in this._skinParts) {
-            //this._skinParts.$EqnEditorBtn.off('click');
             this._skinParts[btn].off('click');
 	}
         ModelDecoratorDiagramDesignerWidget.prototype.destroy.apply(this, arguments);
