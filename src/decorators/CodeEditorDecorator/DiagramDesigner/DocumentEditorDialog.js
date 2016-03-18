@@ -40,31 +40,13 @@ define(['js/util',
 
 	    var CodeMirrorEditorOptions = {
 		lineNumbers: true,
+		matchBrackets: true,
 		viewPortMargin: Infinity,
 		keyMap: 'emacs',
 		path: 'decorators/DocumentEditorDialog/Libs/cm/lib/',
 		theme: 'night',
 		fullscreen: false,
-		mode: {
-		    name: 'clike',
-		    keywords: {
-			int8: 'int8',
-			int16: 'int16',
-			int32: 'int32',
-			int64: 'int64',
-			uint8: 'uint8',
-			uint16: 'uint16',
-			uint32: 'uint32',
-			uint64: 'uint64',
-			bool: 'bool',
-			float32: 'float32',
-			float64: 'float64',
-			string: 'string',
-			time: 'time',
-			duration: 'duration'
-		    },
-		    useCPP: true
-		}
+		mode: {name:'text/x-c++src', useCPP:true}
 	    };
 	    this.editor = new CodeMirror.fromTextArea(
 		this._codearea.get(0),
