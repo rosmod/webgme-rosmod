@@ -650,6 +650,7 @@ define([
 		self.logger.info('Sending stdin to terminal');
 		terminal.stdin.write('doxygen doxygen_config\n');
 		terminal.stdin.write('make -C ./doc/latex/ pdf\n');
+		terminal.stdin.write('cp ./doc/latex/refman.pdf ' + softwareModel.name  + '.pdf');
 		self.logger.info('Ending terminal session');
 		terminal.stdin.end();
 	    }, 1000);
