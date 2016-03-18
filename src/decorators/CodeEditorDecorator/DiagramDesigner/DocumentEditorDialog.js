@@ -5,13 +5,17 @@
 define(['js/util',
 	'../Libs/cm/lib/codemirror', '../Libs/cm/mode/clike/clike',
 	'../Libs/cm/keymap/emacs', '../Libs/cm/keymap/sublime', '../Libs/cm/keymap/vim',
+	'../Libs/cm/addon/display/fullscreen',
 	'text!./DocumentEditorDialog.html',
 	'css!./DocumentEditorDialog.css',
+	'css!../Libs/cm/addon/display/fullscreen.css',
+	'css!../Libs/cm/theme/night.css',
 	'css!../Libs/cm/lib/codemirror.css'],
     function(Util,
              CodeMirror,
 	     CodeMirrorModeClike,
 	     CodeMirrorEmacsKeymap, CodeMirrorSublimeKeymap, CodeMirrorVimKeymap,
+	     CodeMirrorFullScreen,
              DocumentEditorDialogTemplate){
         'use strict';
 	
@@ -36,34 +40,26 @@ define(['js/util',
 
 	    var CodeMirrorEditorOptions = {
 		lineNumbers: true,
+		matchBrackets: true,
 		viewPortMargin: Infinity,
-		keyMap: "emacs",
+		keyMap: 'emacs',
 		path: 'decorators/DocumentEditorDialog/Libs/cm/lib/',
-		mode: {
-		    name: 'clike',
-		    keywords: {
-			int8: 'int8',
-			int16: 'int16',
-			int32: 'int32',
-			int64: 'int64',
-			uint8: 'uint8',
-			uint16: 'uint16',
-			uint32: 'uint32',
-			uint64: 'uint64',
-			bool: 'bool',
-			float32: 'float32',
-			float64: 'float64',
-			string: 'string',
-			time: 'time',
-			duration: 'duration'
-		    },
-		    useCPP: true
-		}
+		theme: 'night',
+		fullscreen: false,
+		mode: {name:'text/x-c++src', useCPP:true}
 	    };
 	    this.editor = new CodeMirror.fromTextArea(
 		this._codearea.get(0),
 		CodeMirrorEditorOptions
 	    );
+	    this.editor.setOption("extraKeys", {
+		'F11': function(cm) {
+		    cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+		},
+		'Esc': function(cm) {
+		    cm.setOption('fullScreen', false);
+		}
+	    });
 
             this.text = ''; // Keep track modified text in editor
         };
