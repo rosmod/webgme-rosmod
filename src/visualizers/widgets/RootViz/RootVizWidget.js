@@ -52,6 +52,7 @@ define([
 	    var isValid = NODE_WHITELIST[desc.meta],
 	    column,
 	    projectHtml,
+	    panelId,
 	    title,
 	    description,
 	    htmlId,
@@ -61,12 +62,17 @@ define([
 		column = this.$el.find('#columnClass');
 
 		title = desc.name;
+		panelId = title.replace(/ /g,'-');
 		description = desc.detailed;
-		projectHtml = ejs.render(TEMPLATES['Project.html.ejs'], {title: title, description: description});
+		projectHtml = ejs.render(TEMPLATES['Project.html.ejs'], {
+		    id: panelId,
+		    title: title,
+		    description: description
+		});
 
 		column.append(projectHtml);
 
-                htmlId = desc.name + '-node-panel';
+                htmlId = panelId + '-node-panel';
                 html = this.$el.find('#' + htmlId);
 
                 html.addClass('panel-info');
