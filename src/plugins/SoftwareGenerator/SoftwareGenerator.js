@@ -665,6 +665,14 @@ define([
 	  How to hanldle the storage of these files when cross compilation is done?
 	  Do I delete them on the remote machine after I'm done?
 
+	  - Get the hardware model (all possible networks and machines/users)
+	  - For each network in each system model : test subnet reachability; mark good/bad
+	  - For each good network : test host reachability (and architecture match); mark good/bad
+	  - For one of each good host _type_ : scp code over and issue a compile; get code back
+	  
+	  Hopefully can tell that cluster is same as two of the
+	  devices in AGSE and so only builds for one type
+
 	  var client = require('scp2');
 	  client.scp('file.txt', {
   	    host: 'example.com',

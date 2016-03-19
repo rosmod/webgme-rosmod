@@ -358,7 +358,9 @@
             "sets": {}
         },
         "030622c4-50cc-32b0-031c-28be37569518": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.27"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -888,8 +890,8 @@
                         "guid": "6eee186c-a14e-3be3-d7b1-7fa840843c05",
                         "registry": {
                             "position": {
-                                "x": 624,
-                                "y": 268
+                                "x": 617,
+                                "y": 227
                             }
                         }
                     },
@@ -1078,7 +1080,7 @@
         },
         "04fdc95b-f567-260d-dc01-d41068d3367b": {
             "attributes": {
-                "name": "Hardware"
+                "name": "Systems"
             },
             "base": "6eee186c-a14e-3be3-d7b1-7fa840843c05",
             "meta": {},
@@ -1378,7 +1380,9 @@
             "sets": {}
         },
         "11ba8891-12a8-41c0-9380-f19a41e8dc53": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.30"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -1443,7 +1447,9 @@
             "sets": {}
         },
         "12a356d3-8ec8-dd52-0801-686fb2299ef2": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.4"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -1479,7 +1485,9 @@
             "sets": {}
         },
         "13476356-59e6-ee3c-2834-6fe453f1fd92": {
-            "attributes": {},
+            "attributes": {
+                "Subnet": "127.0.0.0"
+            },
             "base": "36d534c1-207e-1c52-5336-c74ff256793f",
             "meta": {},
             "parent": "a14ea363-cf12-dc75-fef2-48cc7b40fb6b",
@@ -1513,7 +1521,9 @@
             "sets": {}
         },
         "183b7c25-179d-e884-f133-0024a5db330e": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.13"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -1625,7 +1635,9 @@
             "sets": {}
         },
         "242f9041-eeea-76ed-9546-62d8d83ee81e": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.22"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -1665,7 +1677,7 @@
         },
         "2562febd-1839-d9fe-3b97-0a0548314d85": {
             "attributes": {
-                "name": "Software Workspace"
+                "name": "Software"
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
@@ -2008,7 +2020,9 @@
             "sets": {}
         },
         "32e6a6ea-9cd5-fb73-ff8f-803b2d3492e6": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.26"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -2187,7 +2201,9 @@
             "sets": {}
         },
         "3f413882-9032-19b3-46d5-342f9f8538cf": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.19"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -2368,7 +2384,9 @@
             "sets": {}
         },
         "44fcafc0-e7f2-3dd7-27fb-da8fd5960950": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.7"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -2402,7 +2420,9 @@
             "sets": {}
         },
         "4585b7fc-307e-c80c-ada2-02a2845c404d": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.18"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -2592,7 +2612,9 @@
             "sets": {}
         },
         "4bc1deb3-abb3-9bf2-ee49-a072843d1eaf": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.29"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -2649,7 +2671,9 @@
             "sets": {}
         },
         "4f130061-8b9f-0389-c288-ad2d46eeab44": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.9"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -2863,7 +2887,9 @@
             "sets": {}
         },
         "55125e5b-e6b2-0557-d0ca-e9e678b4581a": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.24"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -3121,7 +3147,9 @@
             }
         },
         "65d2144b-00c4-571f-ac50-4cfaa9bec92d": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.11"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -3139,7 +3167,9 @@
             "sets": {}
         },
         "679e634b-48de-6844-8479-229fb51dfaf8": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.28"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -3272,7 +3302,9 @@
             }
         },
         "6c0c5975-cf58-cb4b-be6c-292744a30726": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.8"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -3356,7 +3388,7 @@
         },
         "6eee186c-a14e-3be3-d7b1-7fa840843c05": {
             "attributes": {
-                "name": "Hardware Workspace"
+                "name": "Systems"
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
@@ -3377,7 +3409,7 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
-                "SVGIcon": "svgs/circuit.svg",
+                "SVGIcon": "svgs/nature.svg",
                 "decorator": "SVGDecorator",
                 "position": {
                     "x": 450,
@@ -3642,7 +3674,9 @@
             "sets": {}
         },
         "7c408f55-a315-ae29-dd73-60bbbfc9fb8d": {
-            "attributes": {},
+            "attributes": {
+                "IP": "127.0.0.1"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "a14ea363-cf12-dc75-fef2-48cc7b40fb6b",
@@ -3917,7 +3951,9 @@
             "sets": {}
         },
         "87dd799d-18a6-52e6-4fea-8bbf6167a7ef": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.21"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -3935,7 +3971,9 @@
             "sets": {}
         },
         "883f2275-89f3-3656-d28f-33178a9e6a8d": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.23"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -3972,7 +4010,9 @@
             "sets": {}
         },
         "8b4a76cc-97a5-fa9a-5eea-273484f9d5ac": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.5"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -4101,8 +4141,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 225,
-                    "y": 254
+                    "x": 712,
+                    "y": 223
                 }
             },
             "sets": {}
@@ -4584,7 +4624,9 @@
             "sets": {}
         },
         "a4a3211d-4379-d33e-a070-7c38f71754ea": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.12"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -4718,7 +4760,9 @@
             "sets": {}
         },
         "ad688a62-aeb6-e1e6-31a2-573db6aee77c": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.16"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -4824,7 +4868,9 @@
             "sets": {}
         },
         "b0326662-28a6-3f54-d802-de46fa7dd357": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.2"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -4919,7 +4965,9 @@
             }
         },
         "b4ad8902-a012-9b67-be2b-2af12cdefa37": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.20"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -5062,7 +5110,9 @@
             }
         },
         "ba80db39-e4f4-0e84-a57a-02abf337529e": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.32"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -5228,7 +5278,9 @@
             "sets": {}
         },
         "c13851f2-6d96-924e-ad80-da6c3c41050c": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.1"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -5384,7 +5436,7 @@
         "c40895ae-00a8-9a6d-8907-36175a362c97": {
             "attributes": {
                 "Directory": "/home/jeb",
-                "name": "Jeb"
+                "name": "jeb"
             },
             "base": "984baea9-4feb-5630-81f3-085218530d89",
             "meta": {},
@@ -5614,7 +5666,9 @@
             }
         },
         "d99b77d9-0121-d873-f4c7-784bd7690980": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.3"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -5664,7 +5718,9 @@
             "sets": {}
         },
         "db6aa52c-19d4-c683-5f30-17b381f7e42f": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.25"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -5723,7 +5779,7 @@
         },
         "df437d49-a83e-6944-62ed-52fd3dcf806d": {
             "attributes": {
-                "name": "Hardware"
+                "name": "System"
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
@@ -5818,7 +5874,9 @@
             "sets": {}
         },
         "e3cd1771-47f7-af5e-11bf-1016427c49fb": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.14"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -5916,7 +5974,7 @@
         },
         "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {
             "attributes": {
-                "name": "Deployment"
+                "name": "Deployments"
             },
             "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9",
             "meta": {},
@@ -5951,7 +6009,9 @@
             "sets": {}
         },
         "eb7ba3ff-ef69-3368-24b8-84ee1a9e4e93": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.6"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -5988,7 +6048,9 @@
             "sets": {}
         },
         "ed7d7340-3e40-ea91-ceaf-371d90d75662": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.31"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -6006,7 +6068,9 @@
             "sets": {}
         },
         "ee48c86c-137a-c89e-f82d-2672e5ccff92": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.10"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -6076,7 +6140,9 @@
             "sets": {}
         },
         "f1d51591-74b9-6f43-d930-2e0cfebee7f2": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.15"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
@@ -6176,7 +6242,9 @@
             }
         },
         "ff038fbb-6658-4ff3-0bce-d0b26e5a494b": {
-            "attributes": {},
+            "attributes": {
+                "IP": "10.1.1.17"
+            },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
             "parent": "c120272d-4798-3401-9087-d53be13fa646",
