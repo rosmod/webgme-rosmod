@@ -1215,7 +1215,8 @@
                 "position": {
                     "x": 250,
                     "y": 594
-                }
+                },
+                "rotation": 0
             },
             "sets": {
                 "Users": []
@@ -2475,7 +2476,7 @@
         },
         "47ab116f-f11c-a37a-8b11-291b91578348": {
             "attributes": {
-                "name": "ROSMOD"
+                "name": "AGSE"
             },
             "base": "df437d49-a83e-6944-62ed-52fd3dcf806d",
             "meta": {},
@@ -4806,6 +4807,7 @@
         "ae4baea9-4feb-5630-81f3-085218530d89": {
             "attributes": {
                 "Architecture": "x64",
+                "OS": "Linux",
                 "name": "Host"
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
@@ -4822,6 +4824,9 @@
                     ]
                 },
                 "attributes": {
+                    "OS": {
+                        "type": "string"
+                    },
                     "Architecture": {
                         "type": "string"
                     }
@@ -5776,7 +5781,7 @@
             "registry": {
                 "position": {
                     "x": 250,
-                    "y": 464
+                    "y": 459
                 }
             },
             "sets": {
