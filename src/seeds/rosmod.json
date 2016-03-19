@@ -288,7 +288,15 @@
                 "c2d1d475-839e-2efe-b48c-410517c4532c": {},
                 "d5367025-51d7-5b40-bcc6-664ee22902e4": {}
             },
-            "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {}
+            "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {
+                "453ca24e-7880-8749-b62d-a3d9717d32ad": {},
+                "6af13451-3d33-a993-7f16-bcbcc85fce96": {}
+            }
+        },
+        "a361e083-c5a2-be94-f0c4-e157912d2d77": {
+            "0efa5f96-1a20-d716-2400-b65695efddc2": {},
+            "7781e7ee-ca18-2432-2180-4dadebfe0def": {},
+            "e5a436af-5bd6-f65e-739d-64600c8e4683": {}
         },
         "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045": {}
     },
@@ -1062,8 +1070,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 251,
-                    "y": 342
+                    "x": 249,
+                    "y": 405
                 }
             },
             "sets": {}
@@ -1080,8 +1088,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 100,
-                    "y": 197
+                    "x": 121,
+                    "y": 200
                 }
             },
             "sets": {}
@@ -1139,8 +1147,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 185,
-                    "y": 512
+                    "x": 214,
+                    "y": 598
                 }
             },
             "sets": {}
@@ -1250,6 +1258,22 @@
             },
             "sets": {}
         },
+        "0efa5f96-1a20-d716-2400-b65695efddc2": {
+            "attributes": {},
+            "base": "6eee186c-a14e-3be3-d7b1-7fa840843c05",
+            "meta": {},
+            "parent": "a361e083-c5a2-be94-f0c4-e157912d2d77",
+            "pointers": {
+                "base": "6eee186c-a14e-3be3-d7b1-7fa840843c05"
+            },
+            "registry": {
+                "position": {
+                    "x": 151,
+                    "y": 213
+                }
+            },
+            "sets": {}
+        },
         "0f357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "name": "Node16"
@@ -1282,21 +1306,21 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "ABL": {
+                    "Operation": {
                         "type": "string"
+                    },
+                    "Period": {
+                        "type": "float"
+                    },
+                    "Deadline": {
+                        "type": "float"
                     },
                     "Priority": {
                         "type": "integer",
                         "min": 1,
                         "max": 99
                     },
-                    "Deadline": {
-                        "type": "float"
-                    },
-                    "Period": {
-                        "type": "float"
-                    },
-                    "Operation": {
+                    "ABL": {
                         "type": "string"
                     }
                 }
@@ -1556,8 +1580,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 180,
-                    "y": 199
+                    "x": 242,
+                    "y": 217
                 }
             },
             "sets": {}
@@ -1665,6 +1689,8 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/code.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 206,
                     "y": 282
@@ -1772,8 +1798,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 182,
-                    "y": 399
+                    "x": 147,
+                    "y": 434
                 }
             },
             "sets": {}
@@ -2045,10 +2071,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Netmask": {
+                    "Subnet": {
                         "type": "string"
                     },
-                    "Subnet": {
+                    "Netmask": {
                         "type": "string"
                     }
                 }
@@ -2059,7 +2085,7 @@
             },
             "registry": {
                 "DisplayFormat": "$name:$Subnet",
-                "SVGIcon": "CloudComputing.svg",
+                "SVGIcon": "svgs/cloud_network.svg",
                 "decorator": "SVGDecorator",
                 "position": {
                     "x": 440,
@@ -2154,8 +2180,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 179,
-                    "y": 300
+                    "x": 58,
+                    "y": 293
                 }
             },
             "sets": {}
@@ -2188,14 +2214,14 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "ABL": {
-                        "type": "string"
+                    "Deadline": {
+                        "type": "float"
                     },
                     "Operation": {
                         "type": "string"
                     },
-                    "Deadline": {
-                        "type": "float"
+                    "ABL": {
+                        "type": "string"
                     }
                 },
                 "pointers": {
@@ -2313,6 +2339,8 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/deployment.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 668,
                     "y": 282
@@ -2357,6 +2385,22 @@
             },
             "sets": {}
         },
+        "453ca24e-7880-8749-b62d-a3d9717d32ad": {
+            "attributes": {},
+            "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3",
+            "meta": {},
+            "parent": "e95e44ec-0245-5b7d-1650-bfb4f10b941c",
+            "pointers": {
+                "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3"
+            },
+            "registry": {
+                "position": {
+                    "x": 209,
+                    "y": 269
+                }
+            },
+            "sets": {}
+        },
         "4585b7fc-307e-c80c-ada2-02a2845c404d": {
             "attributes": {},
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
@@ -2388,8 +2432,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 586,
-                    "y": 266
+                    "x": 585,
+                    "y": 230
                 }
             },
             "sets": {
@@ -2399,8 +2443,8 @@
                         "guid": "99ea1844-3957-5ba6-7fa8-df10bec27d3e",
                         "registry": {
                             "position": {
-                                "x": 428,
-                                "y": 184
+                                "x": 379,
+                                "y": 240
                             }
                         }
                     }
@@ -2419,8 +2463,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 360,
-                    "y": 148
+                    "x": 359,
+                    "y": 120
                 }
             },
             "sets": {}
@@ -2478,8 +2522,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 586,
-                    "y": 396
+                    "x": 580,
+                    "y": 443
                 }
             },
             "sets": {
@@ -2751,19 +2795,19 @@
                     ]
                 },
                 "attributes": {
-                    "Definitions": {
-                        "type": "string"
-                    },
-                    "Destruction": {
-                        "type": "string"
-                    },
-                    "Forwards": {
+                    "Members": {
                         "type": "string"
                     },
                     "Initialization": {
                         "type": "string"
                     },
-                    "Members": {
+                    "Forwards": {
+                        "type": "string"
+                    },
+                    "Destruction": {
+                        "type": "string"
+                    },
+                    "Definitions": {
                         "type": "string"
                     }
                 },
@@ -2888,8 +2932,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 640,
-                    "y": 182
+                    "x": 614,
+                    "y": 130
                 }
             },
             "sets": {}
@@ -3185,8 +3229,24 @@
             },
             "registry": {
                 "position": {
-                    "x": 180,
-                    "y": 112
+                    "x": 210,
+                    "y": 56
+                }
+            },
+            "sets": {}
+        },
+        "6af13451-3d33-a993-7f16-bcbcc85fce96": {
+            "attributes": {},
+            "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3",
+            "meta": {},
+            "parent": "e95e44ec-0245-5b7d-1650-bfb4f10b941c",
+            "pointers": {
+                "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3"
+            },
+            "registry": {
+                "position": {
+                    "x": 204,
+                    "y": 158
                 }
             },
             "sets": {}
@@ -3317,6 +3377,8 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/circuit.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 450,
                     "y": 285
@@ -3337,8 +3399,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 586,
-                    "y": 326
+                    "x": 577,
+                    "y": 328
                 }
             },
             "sets": {
@@ -3394,12 +3456,12 @@
                     ]
                 },
                 "attributes": {
+                    "CMDLine": {
+                        "type": "string"
+                    },
                     "Priority": {
                         "type": "integer",
                         "max": 99
-                    },
-                    "CMDLine": {
-                        "type": "string"
                     }
                 }
             },
@@ -3428,8 +3490,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 444,
-                    "y": 340
+                    "x": 447,
+                    "y": 374
                 }
             },
             "sets": {}
@@ -3450,7 +3512,7 @@
             },
             "registry": {
                 "position": {
-                    "x": 642,
+                    "x": 1084,
                     "y": 115
                 }
             },
@@ -3503,6 +3565,22 @@
                 "position": {
                     "x": 362,
                     "y": 255
+                }
+            },
+            "sets": {}
+        },
+        "7781e7ee-ca18-2432-2180-4dadebfe0def": {
+            "attributes": {},
+            "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9",
+            "meta": {},
+            "parent": "a361e083-c5a2-be94-f0c4-e157912d2d77",
+            "pointers": {
+                "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9"
+            },
+            "registry": {
+                "position": {
+                    "x": 150,
+                    "y": 316
                 }
             },
             "sets": {}
@@ -3604,6 +3682,8 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/robot.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 680,
                     "y": 382
@@ -3624,8 +3704,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 441,
-                    "y": 230
+                    "x": 458,
+                    "y": 216
                 }
             },
             "sets": {}
@@ -3699,8 +3779,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 100,
-                    "y": 131
+                    "x": 122,
+                    "y": 100
                 }
             },
             "sets": {}
@@ -3929,6 +4009,7 @@
         },
         "8bc323b4-a4eb-abcd-b7a2-f710630dce1c": {
             "attributes": {
+                "Detailed": "Detailed description of the AGSE",
                 "name": "AGSE"
             },
             "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
@@ -4192,10 +4273,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Directory": {
+                    "Key": {
                         "type": "string"
                     },
-                    "Key": {
+                    "Directory": {
                         "type": "string"
                     }
                 }
@@ -4205,6 +4286,8 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/user.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 450,
                     "y": 812
@@ -4291,10 +4374,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "NetworkProfile": {
+                    "IP": {
                         "type": "string"
                     },
-                    "IP": {
+                    "NetworkProfile": {
                         "type": "string"
                     }
                 },
@@ -4389,8 +4472,8 @@
                         "guid": "8a20c8ac-2b78-609a-aebe-175f8964c890",
                         "registry": {
                             "position": {
-                                "x": 529,
-                                "y": 227
+                                "x": 393,
+                                "y": 368
                             }
                         }
                     },
@@ -4399,8 +4482,8 @@
                         "guid": "c29ad503-417a-f40a-28da-57503f809a90",
                         "registry": {
                             "position": {
-                                "x": 528,
-                                "y": 170
+                                "x": 393,
+                                "y": 257
                             }
                         }
                     }
@@ -4420,7 +4503,26 @@
             "registry": {
                 "position": {
                     "x": 360,
-                    "y": 246
+                    "y": 283
+                }
+            },
+            "sets": {}
+        },
+        "a361e083-c5a2-be94-f0c4-e157912d2d77": {
+            "attributes": {
+                "Detailed": "Simple Client Server example",
+                "name": "Client Server"
+            },
+            "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
+            "meta": {},
+            "parent": "03d36072-9e09-7866-cb4e-d0a36ff825f6",
+            "pointers": {
+                "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b"
+            },
+            "registry": {
+                "position": {
+                    "x": 100,
+                    "y": 100
                 }
             },
             "sets": {}
@@ -4693,6 +4795,7 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/computer.svg",
                 "position": {
                     "x": 430,
                     "y": 582
@@ -4848,8 +4951,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 644,
-                    "y": 289
+                    "x": 936,
+                    "y": 111
                 }
             },
             "sets": {
@@ -4991,8 +5094,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 640,
-                    "y": 497
+                    "x": 786,
+                    "y": 108
                 }
             },
             "sets": {
@@ -5002,8 +5105,8 @@
                         "guid": "4d5526bf-5772-cc61-a03d-36ff99280a1f",
                         "registry": {
                             "position": {
-                                "x": 580,
-                                "y": 254
+                                "x": 419,
+                                "y": 189
                             }
                         }
                     },
@@ -5012,8 +5115,8 @@
                         "guid": "7dd6c967-4043-a173-2548-d357b944b810",
                         "registry": {
                             "position": {
-                                "x": 581,
-                                "y": 301
+                                "x": 595,
+                                "y": 209
                             }
                         }
                     },
@@ -5043,8 +5146,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 444,
-                    "y": 446
+                    "x": 447,
+                    "y": 530
                 }
             },
             "sets": {}
@@ -5152,14 +5255,14 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "ABL": {
-                        "type": "string"
+                    "Deadline": {
+                        "type": "float"
                     },
                     "Operation": {
                         "type": "string"
                     },
-                    "Deadline": {
-                        "type": "float"
+                    "ABL": {
+                        "type": "string"
                     }
                 },
                 "pointers": {
@@ -5399,7 +5502,7 @@
                     "x": 318,
                     "y": 295
                 },
-                "validVisualizers": "ModelEditor"
+                "validVisualizers": "ModelEditor SetEditor"
             },
             "sets": {}
         },
@@ -5537,12 +5640,12 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "NetworkProfile": {
-                        "type": "string"
-                    },
                     "Priority": {
                         "type": "integer",
                         "max": 99
+                    },
+                    "NetworkProfile": {
+                        "type": "string"
                     }
                 }
             },
@@ -5653,6 +5756,8 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/network.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 450,
                     "y": 382
@@ -5775,6 +5880,22 @@
             },
             "sets": {}
         },
+        "e5a436af-5bd6-f65e-739d-64600c8e4683": {
+            "attributes": {},
+            "base": "2562febd-1839-d9fe-3b97-0a0548314d85",
+            "meta": {},
+            "parent": "a361e083-c5a2-be94-f0c4-e157912d2d77",
+            "pointers": {
+                "base": "2562febd-1839-d9fe-3b97-0a0548314d85"
+            },
+            "registry": {
+                "position": {
+                    "x": 155,
+                    "y": 137
+                }
+            },
+            "sets": {}
+        },
         "e82d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
                 "name": "eth0"
@@ -5805,8 +5926,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 100,
-                    "y": 266
+                    "x": 123,
+                    "y": 325
                 }
             },
             "sets": {}
@@ -5860,8 +5981,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 814,
-                    "y": 108
+                    "x": 802,
+                    "y": 38
                 }
             },
             "sets": {}
@@ -5912,13 +6033,13 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Authors": {
+                    "Brief": {
                         "type": "string"
                     },
                     "Detailed": {
                         "type": "string"
                     },
-                    "Brief": {
+                    "Authors": {
                         "type": "string"
                     }
                 }
@@ -6108,6 +6229,7 @@
         "0d357525-43a6-9058-d9f6-607e9275fb5e": "4",
         "0dad946f-7b49-ccba-aff2-c85e58b60ea7": "3",
         "0ecb9167-ab2a-9164-a638-972a058f218c": "u",
+        "0efa5f96-1a20-d716-2400-b65695efddc2": "l",
         "0f357525-43a6-9058-d9f6-607e9275fb5e": "8",
         "0f474808-eadf-a345-7ee9-7279326aab1e": "l",
         "112d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -6160,6 +6282,7 @@
         "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9": "W",
         "447d091e-edb3-cc67-88f8-2c4b643ee131": "c",
         "44fcafc0-e7f2-3dd7-27fb-da8fd5960950": "K",
+        "453ca24e-7880-8749-b62d-a3d9717d32ad": "A",
         "4585b7fc-307e-c80c-ada2-02a2845c404d": "W",
         "47725ce0-f096-ea93-a507-004673d77790": "u",
         "47ab116f-f11c-a37a-8b11-291b91578348": "O",
@@ -6195,6 +6318,7 @@
         "692c4cbd-629c-8265-5d80-9b1dd5103c39": "x",
         "69357525-43a6-9058-d9f6-607e9275fb5e": "I",
         "6a84f65c-0fbe-1fc6-79e8-2ff4bc2dcd1e": "d",
+        "6af13451-3d33-a993-7f16-bcbcc85fce96": "Y",
         "6b357525-43a6-9058-d9f6-607e9275fb5e": "E",
         "6c0c5975-cf58-cb4b-be6c-292744a30726": "IH",
         "6d32e61a-93a8-9056-b3db-be265442f959": "Q",
@@ -6207,6 +6331,7 @@
         "7599b53d-653a-1ff6-0d2a-c6a49dec721c": "W",
         "769c7992-7dd1-3447-3e3c-953fd7e158d4": "1",
         "772d14c8-aee9-dece-1155-2553a795b2ef": "3",
+        "7781e7ee-ca18-2432-2180-4dadebfe0def": "W",
         "78617d39-7d27-d9f9-b421-7b8621f0380c": "T",
         "7af22c4c-4adc-d2ff-0bc4-6fab8ebce68e": "c",
         "7c2d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -6249,6 +6374,7 @@
         "9c9bbae3-dc41-51ba-4cf5-e29562b4b28a": "S",
         "9ec1ad14-ca6f-6895-63a1-6c501f97a49a": "V",
         "a14ea363-cf12-dc75-fef2-48cc7b40fb6b": "h",
+        "a361e083-c5a2-be94-f0c4-e157912d2d77": "Z",
         "a377ee64-9293-7b02-03c2-508ee3e4ed74": "s",
         "a40d3a67-e6b2-043a-c7e3-3041d1475d11": "T",
         "a42d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -6307,6 +6433,7 @@
         "e3cd1771-47f7-af5e-11bf-1016427c49fb": "B",
         "e400d5b7-c955-fc81-382e-2c414b44fc20": "x",
         "e4236ea7-bd34-9066-b116-da90faa42f94": "1",
+        "e5a436af-5bd6-f65e-739d-64600c8e4683": "k",
         "e82d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "e95e44ec-0245-5b7d-1650-bfb4f10b941c": "G",
         "ea2d14c8-aee9-dece-1155-2553a795b2ef": "3",

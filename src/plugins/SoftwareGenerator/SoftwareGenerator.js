@@ -659,6 +659,22 @@ define([
 
     SoftwareGenerator.prototype.compileBinaries = function (softwareModel)
     {
+	/*
+	  Need to cross compile these binaries: 
+	  How to properly figure out which hardwares to cross compile for?
+	  How to hanldle the storage of these files when cross compilation is done?
+	  Do I delete them on the remote machine after I'm done?
+
+	  var client = require('scp2');
+	  client.scp('file.txt', {
+  	    host: 'example.com',
+	    username: 'admin',
+	    password: 'password',
+	    privateKey: '...',
+	    path: '/home/admin/'
+	  }, function(err) {})
+	 */
+
 	var self = this;
 	return new Promise(function(resolve, reject) {
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
