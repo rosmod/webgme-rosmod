@@ -664,6 +664,7 @@ define([
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
 
 	    terminal.stdout.on('data', function (data) {
+		/*
 		var patt = new RegExp("[0-9]+%");
 		var res = patt.exec(data);
 		if (res !== null) {
@@ -676,17 +677,34 @@ define([
 			}
 		    );
 		}
+		*/
 	    });
 
 	    terminal.stderr.on('data', function (data) {
-		var severity = 'warning';
-		if (data.indexOf(severity) == -1)
-		    severity = 'error';
-		self.logger.error('stderr: ' + data);
-		self.createMessage(self.activeNode,
-				   'compilation: ' + data,
-				   severity
-				  );
+		var regex = /([^:^\n]+):(\d+):(\d+):\s(\w+\s*\w*):\s(.+)\n(\s+)(.*)\s+\^+/gm;
+		var match = null;
+		var stdout = data.toString();
+		while (match = regex.exec(stdout)) {
+		    var filename = match[1].replace(self.gen_dir + '/src/', '');
+		    var packageName = filename.split('/')[0];
+		    var line = parseInt(match[2]);
+		    var column = parseInt(match[3]);
+		    var type = match[4];
+		    var text = match[5];
+		    var codeWhitespace = match[6];
+		    var code = match[7];
+		    var adjustedColumn = column - codeWhitespace.length;
+		    self.logger.info('filename: ' + filename);
+		    self.logger.info('packageName: ' + packageName);
+		    //self.logger.error('stderr: ' + data);
+		    self.createMessage(self.activeNode,
+				       type + ': ' + 
+				       packageName + ': ' + 
+				       filename + ':' + 
+				       line + ': ' + text,
+				       type
+				      );
+		}
 		//reject(data);
 	    });
 
