@@ -119,63 +119,45 @@ define([
         // Default fails
         self.result.success = false;
 
-	var currentConfig = self.getCurrentConfig();
-        self.logger.info('Current configuration ' + JSON.stringify(currentConfig, null, 4));
-	var compileCode = currentConfig.compile;
-	var generateDocs = currentConfig.generate_docs;
-	var returnZip = currentConfig.returnZip;
-
         if (typeof WebGMEGlobal !== 'undefined') {
             callback(new Error('Client-side execution is not supported'), self.result);
             return;
         }
 	
+	// What did the user select for our configuration?
+	var currentConfig = self.getCurrentConfig();
+        self.logger.info('Current configuration ' + JSON.stringify(currentConfig, null, 4));
+
         self.updateMETA(self.metaTypes);
 
 	var path = require('path');
-	self.gen_dir = path.join(process.cwd(), 'generated', self.project.projectId, self.branchName);
 
-      	self.loadSoftwareModel(self.activeNode)
-  	    .then(function (softwareModel) {
-        	self.createMessage(self.activeNode, 'Parsed model.');
-        	return self.generateArtifacts(softwareModel);
+	// Setting up variables that will be used by various functions of this plugin
+	self.gen_dir = path.join(process.cwd(), 'generated', self.project.projectId, self.branchName);
+	self.compileCode = currentConfig.compile;
+	self.generateDocs = currentConfig.generate_docs;
+	self.returnZip = currentConfig.returnZip;
+	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
+
+	var projectNode = self.core.getParent(self.activeNode);
+
+      	self.loadProjectModel(projectNode)
+  	    .then(function () {
+        	return self.generateArtifacts();
   	    })
-	    .then(function (softwareModel) {
-        	self.createMessage(self.activeNode, 'Generated artifacts.');
-		return self.downloadLibraries(softwareModel);
+	    .then(function () {
+		return self.downloadLibraries();
 	    })
-	    .then(function (softwareModel) {
-		self.createMessage(self.activeNode, 'Downloaded libraries.');
-		if (generateDocs)
-		    return self.generateDocumentation(softwareModel);
-		else
-		    return softwareModel;
+	    .then(function () {
+		return self.generateDocumentation();
 	    })
-	    .then(function (softwareModel) {
-		if (generateDocs)
-        	    self.createMessage(self.activeNode, 'Generated documentation.');
-		else
-        	    self.createMessage(self.activeNode, 'Skipped documentation generation.');
-		if (compileCode)
-		    return self.compileBinaries(softwareModel);
-		else		    
-		    return softwareModel;
+	    .then(function () {
+		return self.compileBinaries();
 	    })
-	    .then(function (softwareModel) {
-		if (compileCode)
-        	    self.createMessage(self.activeNode, 'Compiled binaries.');
-		else
-        	    self.createMessage(self.activeNode, 'Skipped compilation.');
-		if (returnZip)
-		    return self.createZip(softwareModel);
-		else
-		    return softwareModel
+	    .then(function () {
+		return self.createZip();
 	    })
-	    .then(function (softwareModel) {
-		if (returnZip)
-        	    self.createMessage(self.activeNode, 'Compressed into zip.');
-		else
-        	    self.createMessage(self.activeNode, 'Skipped compression.');
+	    .then(function () {
         	self.result.setSuccess(true);
         	callback(null, self.result);
 	    })
@@ -188,15 +170,18 @@ define([
 		.done();
     };
 
-    SoftwareGenerator.prototype.loadSoftwareModel = function (rootNode) {
-        var self = this,
-	    dataModel = {
-		name: self.core.getAttribute(self.core.getParent(rootNode), 'name'),
+    SoftwareGenerator.prototype.loadProjectModel = function (projectNode) {
+	var self = this;
+	self.projectModel = {
+	    name: self.core.getAttribute(projectNode, 'name'),
+	    software: {
 		packages: {},
 		libraries: {}
-	    };
-	self.logger.info('ROOT NODE NAME: ' + dataModel.name);
-        return self.core.loadSubTree(rootNode)
+	    },
+	    systems: {},
+	    deployments: {}
+	};
+        return self.core.loadSubTree(projectNode)
 	    .then(function (nodes) {
 		var messages = [],
 		    services = [],
@@ -207,7 +192,7 @@ define([
 			parent = self.core.getParent(node),
 			parentName = self.core.getAttribute(parent, 'name');
 		    if ( self.core.isTypeOf(node, self.META.Package) ) {
-			dataModel.packages[nodeName] = {
+			self.projectModel.software.packages[nodeName] = {
 			    name: nodeName,
 			    messages: {},
 			    services: {},
@@ -218,7 +203,7 @@ define([
 			var inclDir = self.core.getAttribute(node, 'Include Directories');
 			if (inclDir == undefined)
 			    inclDir = '../' + nodeName + '/include';
-			dataModel.libraries[nodeName] = {
+			self.projectModel.software.libraries[nodeName] = {
 			    name: nodeName,
 			    url: self.core.getAttribute(node, 'URL'),
 			    linkLibs: self.core.getAttribute(node, 'Link Libraries'),
@@ -227,7 +212,7 @@ define([
 			libraries.push(node);
 		    }
 		    else if ( self.core.isTypeOf(node, self.META.Message) ) {
-			dataModel.packages[parentName].messages[nodeName] = {
+			self.projectModel.software.packages[parentName].messages[nodeName] = {
 			    name: nodeName,
 			    packageName: parentName,
 			    definition: self.core.getAttribute(node, 'Definition')
@@ -235,7 +220,7 @@ define([
 			messages.push(node);
 		    }
 		    else if ( self.core.isTypeOf(node, self.META.Service) ) {
-			dataModel.packages[parentName].services[nodeName] = {
+			self.projectModel.software.packages[parentName].services[nodeName] = {
 			    name: nodeName,
 			    packageName: parentName,
 			    definition: self.core.getAttribute(node, 'Definition')
@@ -243,7 +228,7 @@ define([
 			services.push(node);
 		    }
 		    else if ( self.core.isTypeOf(node, self.META.Component) ) {
-			dataModel.packages[parentName].components[nodeName] = {
+			self.projectModel.software.packages[parentName].components[nodeName] = {
 			    name: nodeName,
 			    packageName: parentName,
 			    requiredTypes: [],
@@ -263,7 +248,7 @@ define([
 		    else if ( self.core.isTypeOf(node, self.META.Timer) ) {
 			var pkgName = self.core.getAttribute(
 			    self.core.getParent(parent), 'name');
-			dataModel.packages[pkgName]
+			self.projectModel.software.packages[pkgName]
 			    .components[parentName]
 			    .timers[nodeName] = {
 				name: nodeName,
@@ -276,7 +261,7 @@ define([
 		    else if ( self.core.isTypeOf(node, self.META.Publisher) ) {
 			var pkgName = self.core.getAttribute(
 			    self.core.getParent(parent), 'name');
-			dataModel.packages[pkgName]
+			self.projectModel.software.packages[pkgName]
 			    .components[parentName]
 			    .publishers[nodeName] = {
 				name: nodeName,
@@ -288,7 +273,7 @@ define([
 		    else if ( self.core.isTypeOf(node, self.META.Subscriber) ) {
 			var pkgName = self.core.getAttribute(
 			    self.core.getParent(parent), 'name');
-			dataModel.packages[pkgName]
+			self.projectModel.software.packages[pkgName]
 			    .components[parentName]
 			    .subscribers[nodeName] = {
 				name: nodeName,
@@ -302,7 +287,7 @@ define([
 		    else if ( self.core.isTypeOf(node, self.META.Client) ) {
 			var pkgName = self.core.getAttribute(
 			    self.core.getParent(parent), 'name');
-			dataModel.packages[pkgName]
+			self.projectModel.software.packages[pkgName]
 			    .components[parentName]
 			    .clients[nodeName] = {
 				name: nodeName,
@@ -314,7 +299,7 @@ define([
 		    else if ( self.core.isTypeOf(node, self.META.Server) ) {
 			var pkgName = self.core.getAttribute(
 			    self.core.getParent(parent), 'name');
-			dataModel.packages[pkgName]
+			self.projectModel.software.packages[pkgName]
 			    .components[parentName]
 			    .servers[nodeName] = {
 				name: nodeName,
@@ -326,17 +311,17 @@ define([
 			    };
 		    }
 		}
-		return {'dataModel':dataModel, 'messages':messages, 'services':services, 'libraries':libraries};
+		return self.resolvePointers(messages, services, libraries);
 	    })
-	    .then(function (softwareModel) {
-		return self.resolvePointers(softwareModel);
+	    .then(function() {
+		self.createMessage(self.activeNode, 'Parsed Project.');
 	    });
     };
 
-    SoftwareGenerator.prototype.resolvePointers = function (softwareModel) {
+    SoftwareGenerator.prototype.resolvePointers = function (messages, services, libraries) {
 	var self = this;
 	
-	return self.gatherReferences(softwareModel.messages, softwareModel.services, softwareModel.libraries)
+	return self.gatherReferences(messages, services, libraries)
 	    .then(function(retData) {
 		for (var i=0; i < retData.length; i++) {
 		    var subarr = retData[i];
@@ -345,73 +330,72 @@ define([
 			    test = -1,
 			    type = -1;
 			if (dataRef.srcType == 'Component') {
-			    softwareModel.dataModel.packages[dataRef.srcPkg]
+			    self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.src]
 				.requiredLibs.push(
-				    softwareModel.dataModel
+				    self.projectModel.software
 					.libraries[dataRef.library]
 				);
 			}
 			else if (dataRef.srcType == 'Publisher') {
-			    type = softwareModel
-				.dataModel.packages[dataRef.topicPackage]
+			    type = self.projectModel
+				.software.packages[dataRef.topicPackage]
 				.messages[dataRef.topic];
-			    softwareModel.dataModel.packages[dataRef.srcPkg]
+			    self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.publishers[dataRef.src]
 				.topic = type;
-			    test = softwareModel.dataModel.packages[dataRef.srcPkg]
+			    test = self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.requiredTypes
 				.indexOf(type);
 			}
 			else if (dataRef.srcType == 'Subscriber') {
-			    type = softwareModel
-				.dataModel.packages[dataRef.topicPackage]
+			    type = self.projectModel
+				.software.packages[dataRef.topicPackage]
 				.messages[dataRef.topic];
-			    softwareModel.dataModel.packages[dataRef.srcPkg]
+			    self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.subscribers[dataRef.src]
 				.topic = type;
-			    test = softwareModel.dataModel.packages[dataRef.srcPkg]
+			    test = self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.requiredTypes
 				.indexOf(type);
 			}
 			else if (dataRef.srcType == 'Client') {
-			    type = softwareModel
-				.dataModel.packages[dataRef.servicePackage]
+			    type = self.projectModel
+				.software.packages[dataRef.servicePackage]
 				.services[dataRef.service];
-			    softwareModel.dataModel.packages[dataRef.srcPkg]
+			    self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.clients[dataRef.src]
 				.service = type;
-			    test = softwareModel.dataModel.packages[dataRef.srcPkg]
+			    test = self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.requiredTypes
 				.indexOf(type);
 			}
 			else if (dataRef.srcType == 'Server') {
-			    type = softwareModel
-				.dataModel.packages[dataRef.servicePackage]
+			    type = self.projectModel
+				.software.packages[dataRef.servicePackage]
 				.services[dataRef.service];
-			    softwareModel.dataModel.packages[dataRef.srcPkg]
+			    self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.servers[dataRef.src]
 				.service = type;
-			    test = softwareModel.dataModel.packages[dataRef.srcPkg]
+			    test = self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.requiredTypes
 				.indexOf(type);
 			}
 			if (test == -1 && type != -1) {
-			    softwareModel.dataModel.packages[dataRef.srcPkg]
+			    self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
 				.requiredTypes.push(type);
 			}
 		    }
 		}
-		return softwareModel.dataModel;
 	    });
     };
 
@@ -525,16 +509,15 @@ define([
 	return Q.all(libDataReferences);
     };
 
-    SoftwareGenerator.prototype.generateArtifacts = function (softwareModel) {
+    SoftwareGenerator.prototype.generateArtifacts = function () {
 	var self = this,
 	    path = require('path'),
 	    filendir = require('filendir'),
 	    filesToAdd = {},
-	    prefix = 'src/',
-	    deferred = new Q.defer();
+	    prefix = 'src/';
 
-	filesToAdd[softwareModel.name + '.json'] = JSON.stringify(softwareModel, null, 2);
-        filesToAdd[softwareModel.name + '_metadata.json'] = JSON.stringify({
+	filesToAdd[self.projectModel.name + '.json'] = JSON.stringify(self.projectModel, null, 2);
+        filesToAdd[self.projectModel.name + '_metadata.json'] = JSON.stringify({
     	    projectID: self.project.projectId,
             commitHash: self.commitHash,
             branchName: self.branchName,
@@ -542,14 +525,14 @@ define([
             pluginVersion: self.getVersion()
         }, null, 2);
 
-	var projectName = softwareModel.name,
+	var projectName = self.projectModel.name,
 	    doxygenConfigName = '/doxygen_config',
 	    doxygenTemplate = TEMPLATES[self.FILES['doxygen_config']];
 	filesToAdd[doxygenConfigName] = ejs.render(doxygenTemplate, 
 						   {'projectName': projectName});
 
-        for (var pkg in softwareModel.packages) {
-	    var pkgInfo = softwareModel.packages[pkg],
+        for (var pkg in self.projectModel.software.packages) {
+	    var pkgInfo = self.projectModel.software.packages[pkg],
 		cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt',
 		cmakeTemplate = TEMPLATES[self.FILES['cmakelists']];
 	    filesToAdd[cmakeFileName] = ejs.render(cmakeTemplate, {'pkgInfo':pkgInfo});
@@ -576,20 +559,31 @@ define([
 	    }
 	}
 
-	for (var f in filesToAdd){
-	    var fname = path.join(self.gen_dir, f),
+	var promises = [];
+
+	return (function () {
+	    for (var f in filesToAdd) {
+		var fname = path.join(self.gen_dir, f),
 		data = filesToAdd[f];
 
-	    filendir.writeFile(fname, data, function(err) {
-		if(err) {
-		    deferred.reject(new Error(err));
-		    self.logger.error(err);
-		    return;
-		}
-		deferred.resolve();
-	    });
-	}
-	return softwareModel;
+		promises.push(new Promise(function(resolve, reject) {
+		    filendir.writeFile(fname, data, function(err) {
+			if (err) {
+			    self.logger.error(err);
+			    reject(err);
+			}
+			else {
+			    resolve();
+			}
+		    });
+		}));
+	    }
+	    return Q.all(promises);
+	})()
+	    .then(function() {
+		self.logger.info('generated artifacts.');
+		self.createMessage(self.activeNode, 'Generated artifacts.');
+	    })
     };
 
     SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, prefix, pkgInfo, compInfo) {
@@ -602,40 +596,51 @@ define([
 	filesToAdd[srcFileName] = ejs.render(compCPPTemplate, {'compInfo':compInfo, 'moment':moment});
     };
 
-    SoftwareGenerator.prototype.downloadLibraries = function (softwareModel)
-    {
-	var self = this,
-	    path = require('path'),
-	    prefix = path.join(self.gen_dir, 'src');
-	var promises = [];
-
-	// Get the required node executable
-	var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.1-beta/rosmod-node.zip';
-	var dir = prefix;
-	promises.push(self.wgetAndUnzipLibrary(file_url, dir));
-
-	// Get all the software libraries
-	for (var lib in softwareModel.libraries) {
-	    file_url = softwareModel.libraries[lib].url;
-	    if (file_url !== undefined)
-		promises.push(self.wgetAndUnzipLibrary(file_url, dir));
-	}
-	return Q.all(promises);
-    };
-
-    SoftwareGenerator.prototype.generateDocumentation = function (softwareModel) 
+    SoftwareGenerator.prototype.downloadLibraries = function ()
     {
 	var self = this;
+	(function() {
+	    var path = require('path'),
+	    prefix = path.join(self.gen_dir, 'src');
+	    var promises = [];
+
+	    // Get the required node executable
+	    var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.1-beta/rosmod-node.zip';
+	    var dir = prefix;
+	    promises.push(self.wgetAndUnzipLibrary(file_url, dir));
+
+	    // Get all the software libraries
+	    for (var lib in self.projectModel.software.libraries) {
+		file_url = self.projectModel.software.libraries[lib].url;
+		if (file_url !== undefined)
+		    promises.push(self.wgetAndUnzipLibrary(file_url, dir));
+	    }
+	    return Q.all(promises);
+	})()
+	.then(function() {
+	    self.createMessage(self.activeNode, 'Downloaded libraries.');
+	})
+    };
+
+    SoftwareGenerator.prototype.generateDocumentation = function () 
+    {
+	var self = this;
+	if (!self.generateDocs) {
+            self.createMessage(self.activeNode, 'Skipping documentation generation.');
+	    return;
+	}
 	return new Promise(function(resolve, reject) {
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
 
 	    terminal.stdout.on('data', function (data) {});
 
 	    terminal.stderr.on('data', function (data) {
+		/*
 		var severity = 'warning';
 		if (data.indexOf(severity) == -1)
 		    severity = 'error';
 		self.logger.error('stderr: ' + data);
+		*/
 	    });
 
 	    terminal.on('exit', function (code) {
@@ -650,14 +655,17 @@ define([
 		self.logger.info('Sending stdin to terminal');
 		terminal.stdin.write('doxygen doxygen_config\n');
 		terminal.stdin.write('make -C ./doc/latex/ pdf\n');
-		terminal.stdin.write('cp ./doc/latex/refman.pdf ' + softwareModel.name  + '.pdf');
+		terminal.stdin.write('cp ./doc/latex/refman.pdf ' + self.projectModel.name  + '.pdf');
 		self.logger.info('Ending terminal session');
 		terminal.stdin.end();
 	    }, 1000);
-	});	
+	})
+	    .then(function() {
+		self.createMessage(self.activeNode, 'Generated doxygen documentation.');
+	    });
     }
 
-    SoftwareGenerator.prototype.compileBinaries = function (softwareModel)
+    SoftwareGenerator.prototype.compileBinaries = function ()
     {
 	/*
 	  Need to cross compile these binaries: 
@@ -673,6 +681,9 @@ define([
 	  Hopefully can tell that cluster is same as two of the
 	  devices in AGSE and so only builds for one type
 
+	  - use 'uname -m' for just architecture (armv7l)
+	  - use 'uname' for just OS (Linux)
+
 	  var client = require('scp2');
 	  client.scp('file.txt', {
   	    host: 'example.com',
@@ -684,6 +695,10 @@ define([
 	 */
 
 	var self = this;
+	if (!self.compileCode) {
+            self.createMessage(self.activeNode, 'Skipping compilation.');
+	    return;
+	}
 	return new Promise(function(resolve, reject) {
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
 
@@ -752,11 +767,19 @@ define([
 		self.logger.info('Ending terminal session');
 		terminal.stdin.end();
 	    }, 1000);
-	});
+	})
+	    .then(function() {
+        	self.createMessage(self.activeNode, 'Compiled binaries.');
+	    });
     };
 
-    SoftwareGenerator.prototype.createZip = function(softwareModel) {
+    SoftwareGenerator.prototype.createZip = function() {
 	var self = this;
+	
+	if (!self.returnZip) {
+            self.createMessage(self.activeNode, 'Skipping compression.');
+	    return;
+	}
 	
 	return new Promise(function(resolve, reject) {
 	    var zlib = require('zlib'),
@@ -795,7 +818,10 @@ define([
 	    reader
 		.pipe(packer)
 		.pipe(gzipper);
-	});
+	})
+	    .then(function() {
+		self.createMessage(self.activeNode, 'Created archive.');
+	    });
     };
 
     SoftwareGenerator.prototype.wgetAndUnzipLibrary = function(file_url, dir) {
