@@ -1269,9 +1269,11 @@
                 "base": "6eee186c-a14e-3be3-d7b1-7fa840843c05"
             },
             "registry": {
+                "borderColor": "#99ff99",
+                "color": "#33ffff",
                 "position": {
-                    "x": 151,
-                    "y": 213
+                    "x": 152,
+                    "y": 243
                 }
             },
             "sets": {}
@@ -2334,7 +2336,7 @@
         },
         "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9": {
             "attributes": {
-                "name": "Deployment Workspace"
+                "name": "Deployments"
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
@@ -3602,7 +3604,9 @@
             "sets": {}
         },
         "7781e7ee-ca18-2432-2180-4dadebfe0def": {
-            "attributes": {},
+            "attributes": {
+                "name": "Deployments"
+            },
             "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9",
             "meta": {},
             "parent": "a361e083-c5a2-be94-f0c4-e157912d2d77",
@@ -3610,9 +3614,11 @@
                 "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9"
             },
             "registry": {
+                "borderColor": "#99ff99",
+                "color": "#33ffff",
                 "position": {
                     "x": 150,
-                    "y": 316
+                    "y": 348
                 }
             },
             "sets": {}
@@ -4049,7 +4055,7 @@
         },
         "8bc323b4-a4eb-abcd-b7a2-f710630dce1c": {
             "attributes": {
-                "Detailed": "Detailed description of the AGSE",
+                "Detailed": "The Autonomous Ground Support Equipment (AGSE) is the Vandebilt Aerospace Design Lab's (VADL) robot built using ROSMOD for a NASA competition in 2015 to perform a simulated Mars Sample Return (MSR) mission which autonomously finds a Martian sample and places it into a rocket before launching the rocket.",
                 "name": "AGSE"
             },
             "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
@@ -4550,7 +4556,7 @@
         },
         "a361e083-c5a2-be94-f0c4-e157912d2d77": {
             "attributes": {
-                "Detailed": "Simple Client Server example",
+                "Detailed": "Simple Client Server example demonstrating how to define and use ROS services in a software model.",
                 "name": "Client Server"
             },
             "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
@@ -5947,6 +5953,8 @@
                 "base": "2562febd-1839-d9fe-3b97-0a0548314d85"
             },
             "registry": {
+                "borderColor": "#99ff99",
+                "color": "#33ffff",
                 "position": {
                     "x": 155,
                     "y": 137
