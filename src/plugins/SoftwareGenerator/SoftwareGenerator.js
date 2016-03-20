@@ -184,13 +184,16 @@ define([
         return self.core.loadSubTree(projectNode)
 	    .then(function (nodes) {
 		var messages = [],
-		    services = [],
-		    libraries = [];
+		services = [],
+		libraries = [],
+		users = [],
+		links = [];
 		for (var i=0;i<nodes.length; i+= 1) {
 		    var node = nodes[i],
 			nodeName = self.core.getAttribute(node, 'name'),
 			parent = self.core.getParent(node),
 			parentName = self.core.getAttribute(parent, 'name');
+		    // RELATED TO SOFTWARE
 		    if ( self.core.isTypeOf(node, self.META.Package) ) {
 			self.projectModel.software.packages[nodeName] = {
 			    name: nodeName,
@@ -310,6 +313,62 @@ define([
 				operation: self.core.getAttribute(node, 'Operation')
 			    };
 		    }
+		    // RELATED TO SYSTEMS:
+		    else if ( self.core.isTypeOf(node, self.META.System) ) {
+			self.projectModel.systems[nodeName] = {
+			    name: nodeName,
+			    hosts: {},
+			    networks: {},
+			    users: {},
+			    links: {}
+			};
+		    }
+		    else if ( self.core.isTypeOf(node, self.META.Host) ) {
+			self.projectModel.systems[parentName]
+			    .hosts[nodeName] = {
+				name: nodeName,
+				os: self.core.getAttribute(node, 'OS'),
+				architecture: self.core.getAttribute(node, 'Architecture'),
+				interfaces: {},
+				users: {}
+			};
+		    }
+		    else if ( self.core.isTypeOf(node, self.META.Interface) ) {
+			var systemName = self.core.getAttribute(self.core.getParent(parent), 'name');
+			self.projectModel.systems[systemName]
+			    .hosts[parentName]
+			    .interfaces[nodeName] = {
+				name: nodeName,
+				link: {}
+			};
+		    }
+		    else if ( self.core.isTypeOf(node, self.META.Network) ) {
+			self.projectModel.systems[parentName]
+			    .networks[nodeName] = {
+				name: nodeName,
+				subnet: self.core.getAttribute(node, 'Subnet'),
+				netmask: self.core.getAttribute(node, 'Netmask'),
+				links: {}
+			};
+		    }
+		    else if ( self.core.isTypeOf(node, self.META.User) ) {
+			self.projectModel.systems[parentName]
+			    .users[nodeName] = {
+				name: nodeName,
+				directory: self.core.getAttribute(node, 'Directory'),
+				key: self.core.getAttribute(node, 'Key')
+			};
+			users.push(node);
+		    }
+		    else if ( self.core.isTypeOf(node, self.META.Link) ) {
+			self.projectModel.systems[parentName]
+			    .links[nodeName] = {
+				name: nodeName,
+				ip: self.core.getAttribute(node, 'IP')
+			};
+			links.push(node);
+		    }
+		    // RELATED TO DEPLOYMENTS:
 		}
 		return self.resolvePointers(messages, services, libraries);
 	    })
