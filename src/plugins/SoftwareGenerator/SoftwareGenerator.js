@@ -847,13 +847,19 @@ define([
 		ping.promise.probe(intf.ip)
 		    .then(function (res) { // {alive: bool, host: str, output: str}
 			self.logger.info('Host: ' + res.host + ' isAlive? ' + res.alive);
-			return res.alive;
+			if (!res.alive)
+			    throw new String(intf.ip + ' is not reachable!');
+		    })
+		    .then(function() {
+			// test user connection (UN + Key)
 		    })
 		    .then(function(isAlive) {
-			if (!isAlive)
-			    return isAlive;
-			// test user connection (UN + Key)
-			return isAlive;
+			// ensure the correct architecture and OS
+			return true;
+		    })
+		    .catch(function(e) {
+			self.logger.error(e);
+			return false;
 		    })
 	    );
         }
@@ -871,7 +877,7 @@ define([
 
 	  - [Yes] Get the hardware model (all possible networks and machines/users)
 	  - [N/A]  For each network in each system model : test subnet reachability; mark good/bad
-	  - [] For each good network : test host reachability (and architecture match); mark good/bad
+	  - [Yes] For each good network : test host reachability (and architecture match); mark good/bad
 	  - [] For one of each good host _type_ : scp code over and issue a compile; get code back
 	  
 	  Hopefully can tell that cluster is same as two of the
