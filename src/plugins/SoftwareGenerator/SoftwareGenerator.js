@@ -819,6 +819,48 @@ define([
 	    });
     }
 
+    SoftwareGenerator.prototype.getValidArchitectures = function() {
+	var self = this,
+	validArchs = {};
+	for (var sys in self.projectModel.systems) {
+	    var system = self.projectModel.systems[sys];
+	    for (var hst in system.hosts) {
+		var host = system.hosts[hst];
+		if (validArchs[host.architecture] === undefined) {
+		    validArchs[host.architecture] = [];
+		}
+		validArchs[host.architecture].push(host);
+	    }
+	}
+	return validArchs;
+    };
+
+    SoftwareGenerator.prototype.testConnectivity = function(host) {
+	var self = this,
+	ping = require('ping');
+	
+	var promises = [];
+	// test IP connectivity
+	for (var i in host.interfaces) {
+	    var intf = host.interfaces[i];
+	    promises.push(
+		ping.promise.probe(intf.ip)
+		    .then(function (res) { // {alive: bool, host: str, output: str}
+			self.logger.info('Host: ' + res.host + ' isAlive? ' + res.alive);
+			return res.alive;
+		    })
+		    .then(function(isAlive) {
+			if (!isAlive)
+			    return isAlive;
+			// test user connection (UN + Key)
+			return isAlive;
+		    })
+	    );
+        }
+
+	return Q.any(promises);
+    };
+
     SoftwareGenerator.prototype.compileBinaries = function ()
     {
 	/*
@@ -849,6 +891,16 @@ define([
 	 */
 
 	var self = this;
+
+	var validArchitectures = self.getValidArchitectures();
+	for (var arch in validArchitectures) {
+	    for (var hst in validArchitectures[arch]) {
+		var host = validArchitectures[arch][hst];
+		if (self.testConnectivity(host))
+		    break;
+	    }
+	}
+
 	if (!self.compileCode) {
             self.createMessage(self.activeNode, 'Skipping compilation.');
 	    return;
@@ -978,6 +1030,58 @@ define([
 	    .then(function() {
 		self.createMessage(self.activeNode, 'Created archive.');
 	    });
+    };
+
+    SoftwareGenerator.prototype.getPidOnHost = function(proc, host, intf, user) {
+	var self = this;
+
+	return new Promise(function(resolve, reject) {
+
+	    var rexec = require('remote-exec');
+	    var streams = require('memory-streams');
+	    
+	    var stdout_writer = new streams.WritableStream();
+	    stdout_writer
+		.on('data', function(data) {
+		    self.logger.info('stdout data: ' + data);
+		})
+		.on('end', function() {
+		});
+
+	    var stderr_writer = new streams.WritableStream();
+	    stderr_writer
+		.on('data', function(data) {
+		    self.logger.error('stderr data: ' + data);
+		})
+		.on('end', function() {
+		});
+
+	    var connection_options = {
+		port: 22,
+		username: user.name,
+		privateKey: require('fs').readFileSync(user.key),
+		stdout: stdout_writer,
+		stderr: stderr_writer
+	    };
+	    
+	    var hosts = [
+		host.interfaces[intf].ip
+	    ];
+	    
+	    var cmds = [
+		'ps aux | grep ' + proc,
+	    ];
+	    
+	    rexec(hosts, cmds, connection_options, function(err){
+		if (err) {
+		    self.logger.error(err);
+		    reject();
+		} else {
+		    self.logger.info('Great Success!!');
+		    resolve();
+		}
+	    });
+	});
     };
 
     SoftwareGenerator.prototype.wgetAndUnzipLibrary = function(file_url, dir) {
