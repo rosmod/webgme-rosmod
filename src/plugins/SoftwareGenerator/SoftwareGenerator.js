@@ -167,7 +167,7 @@ define([
 	    })
 	    .catch(function (err) {
         	self.logger.error(err);
-        	self.createMessage(self.activeNode, err.message, 'error');
+        	self.createMessage(self.activeNode, err, 'error');
         	self.result.setSuccess(false);
         	callback(err, self.result);
 	    })
@@ -851,14 +851,14 @@ define([
 			// test user connection (UN + Key)
 			var p = []
 			for (var u in host.users) {
-			    p.push(self.executeOnHost('echo "hello"', intf.ip, host.users[u]));
+			    p.push(self.executeOnHost(['echo "hello"'], intf.ip, host.users[u]));
 			}
 			return Q.all(p);
 		    })
 		    .then(function(outputs) {
 			var user = outputs[0].user;
 			// ensure the correct architecture
-			return self.executeOnHost('uname -m', intf.ip, user);
+			return self.executeOnHost(['uname -m'], intf.ip, user);
 		    })
 		    .then(function(output) {
 			var user = output.user;
@@ -868,7 +868,7 @@ define([
 					     ' has incorrect architecture: '+ output.stdout);
 			}
 			// ensure the correct OS
-			return self.executeOnHost('uname', intf.ip, user);
+			return self.executeOnHost(['uname'], intf.ip, user);
 		    })
 		    .then(function(output) {
 			var user = output.user;
@@ -950,7 +950,7 @@ define([
 		path: from
 	    }, to, function(err) {
 		if (err)
-		    reject();
+		    reject(err);
 		else
 		    resolve();
 	    });
@@ -961,106 +961,134 @@ define([
     {
 	var self = this;
 
-	var selectedHosts = [];
-
-	for (var arch in self.hostsValidForCompilation) {
-	    var hosts = self.hostsValidForCompilation[arch];
-	    if (hosts.length) {
-		selectedHosts.push(hosts[0]);
-		self.createMessage(self.activeNode, 'Compiling for ' + arch + ' on ' + hosts[0].intf.ip);
-	    }
-	    else {
-		self.createMessage(self.activeNode, 'No hosts could be found for compilation on ' + arch);
-	    }
-	}
-
-	var path = require('path');
-	selectedHosts.forEach(function(host) {
-	    var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
-	    self.mkdirRemote(compile_dir, host.intf.ip, host.user)
-		.then(function() {
-		    self.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
-		});
-	});
-
 	if (!self.compileCode) {
             self.createMessage(self.activeNode, 'Skipping compilation.');
 	    return;
 	}
+
 	var percent = 0;
 	return new Promise(function(resolve, reject) {
-	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
+	    var selectedHosts = [];
 
-	    terminal.stdout.on('data', function (data) {
-		var patt = new RegExp("[0-9]+%");
-		var res = patt.exec(data);
-		if (res !== null) {
-		    var new_percent = parseInt(new String(res).replace('%',''), 10);
-		    if ((new_percent-percent) > 10) {
-			percent = new_percent
-			self.logger.info('progress: ' + percent);
-			self.sendNotification(
-			    { 
-				message:'compilation: ',
-				progress: percent
-			    }
-			);
-		    }
+	    for (var arch in self.hostsValidForCompilation) {
+		var hosts = self.hostsValidForCompilation[arch];
+		if (hosts.length) {
+		    selectedHosts.push(hosts[0]);
+		    self.createMessage(self.activeNode, 'Compiling for ' + arch + ' on ' + hosts[0].intf.ip);
 		}
-	    });
-
-	    terminal.stderr.on('data', function (data) {
-		var regex = /([^:^\n]+):(\d+):(\d+):\s(\w+\s*\w*):\s(.+)\n(\s+)(.*)\s+\^+/gm;
-		var match = null;
-		var stdout = data.toString();
-		while (match = regex.exec(stdout)) {
-		    var filename = match[1].replace(self.gen_dir + '/src/', '');
-		    var packageName = filename.split('/')[0];
-		    var line = parseInt(match[2]);
-		    var column = parseInt(match[3]);
-		    var type = match[4];
-		    var text = match[5];
-		    var codeWhitespace = match[6];
-		    var code = match[7];
-		    var adjustedColumn = column - codeWhitespace.length;
-		    self.logger.info('filename: ' + filename);
-		    self.logger.info('packageName: ' + packageName);
-		    //self.logger.error('stderr: ' + data);
-		    self.createMessage(self.activeNode,
-				       type + ': ' + 
-				       packageName + ': ' + 
-				       filename + ':' + 
-				       line + ': ' + text,
-				       type
-				      );
+		else {
+		    self.createMessage(self.activeNode, 'No hosts could be found for compilation on ' + arch);
 		}
-		//reject(data);
-	    });
+	    }
 
-	    terminal.on('exit', function (code) {
-		self.logger.info('child process exited with code ' + code);
-		if (code == 0)
-		    resolve(code);
-		else
-		    reject('child process exited with code ' + code);
+	    var path = require('path');
+	    selectedHosts.forEach(function(host) {
+		var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
+		self.mkdirRemote(compile_dir, host.intf.ip, host.user)
+		    .then(function() {
+			self.logger.info('copying to host: ' + host.intf.ip);
+			return self.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
+		    })
+		    .then(function() {
+			// new compilation code
+			self.logger.info('compiling on host: ' + host.intf.ip);
+			var commands = [
+			    'cd ' + compile_dir,
+			    'rm -rf bin',
+			    'source /opt/ros/indigo/setup.bash',
+			    'catkin_make -DNAMESPACE=rosmod',
+			    'mkdir bin',
+			    'cp devel/lib/*.so bin/.',
+			    'cp devel/lib/node/node_main bin/.',
+			    'rm -rf devel build'
+			];
+			return self.executeOnHost(commands, host.intf.ip, host.user);
+		    })
+		    .then(function(outputs) {
+			var archBinPath = path.join(self.gen_dir, 'bin' , host.host.architecture);
+			self.logger.info('creating new bin folder: ' + archBinPath);
+			var filendir = require('filendir');
+			return new Promise(function(resolve, reject) {
+			    filendir.mkdirp(archBinPath, function (err) {
+				if (err) {
+				    self.logger.error(err);
+				    reject(err);
+				}
+				else {
+				    self.logger.info('generated: ' + archBinPath);
+				    resolve();
+				}
+			    });
+			});
+		    })
+		    .then(function() {
+			self.logger.info('copying back from host: ' + host.intf.ip);
+			return self.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
+						 path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
+						 host.intf.ip,
+						 host.user);
+		    })
+		    .then(function() {
+			self.logger.info('removing directories on host: ' + host.intf.ip);
+			return self.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
+		    })
+		    .then(function(outputs) {
+			resolve();
+		    })
+		    .catch(function(err) {
+			reject(err);
+		    });
 	    });
-
-	    setTimeout(function() {
-		self.logger.info('Sending stdin to terminal');
-		terminal.stdin.write('rm -rf bin\n');
-		terminal.stdin.write('source /opt/ros/indigo/setup.bash\n');
-		terminal.stdin.write('catkin_make -DNAMESPACE=rosmod\n');
-		terminal.stdin.write('mkdir bin\n');
-		terminal.stdin.write('cp devel/lib/*.so bin/.\n');
-		terminal.stdin.write('cp devel/lib/node/node_main bin/.\n');
-		terminal.stdin.write('rm -rf devel build\n');
-		self.logger.info('Ending terminal session');
-		terminal.stdin.end();
-	    }, 1000);
 	})
 	    .then(function() {
         	self.createMessage(self.activeNode, 'Compiled binaries.');
+		resolve();
 	    });
+    };
+
+    SoftwareGenerator.prototype.remoteCompile = function(ip, user) {
+    };
+
+    SoftwareGenerator.prototype.parseMakePercentOutput = function(output) {
+	var self = this;
+	var regex = /[0-9]+%/gm;
+	var match = null;
+	while (match = regex.exec(output)) {
+	    var percent = parseInt(new String(match).replace('%',''), 10);
+	    self.logger.info('progress: ' + percent);
+	    self.sendNotification(
+		{ 
+		    message:'compilation: ',
+		    progress: percent
+		}
+	    );
+	}
+    };
+
+    SoftwareGenerator.prototype.parseMakeErrorOutput = function(output) {
+	var self = this;
+	var regex = /([^:^\n]+):(\d+):(\d+):\s(\w+\s*\w*):\s(.+)\n(\s+)(.*)\s+\^+/gm;
+	var match = null;
+	while (match = regex.exec(output)) {
+	    var filename = match[1].replace(self.gen_dir + '/src/', '');
+	    var packageName = filename.split('/')[0];
+	    var line = parseInt(match[2]);
+	    var column = parseInt(match[3]);
+	    var type = match[4];
+	    var text = match[5];
+	    var codeWhitespace = match[6];
+	    var code = match[7];
+	    var adjustedColumn = column - codeWhitespace.length;
+	    self.logger.info('filename: ' + filename);
+	    self.logger.info('packageName: ' + packageName);
+	    self.createMessage(self.activeNode,
+			       type + ': ' + 
+			       packageName + ': ' + 
+			       filename + ':' + 
+			       line + ': ' + text,
+			       type
+			      );
+	}
     };
 
     SoftwareGenerator.prototype.createZip = function() {
@@ -1114,42 +1142,46 @@ define([
 	    });
     };
 
-    SoftwareGenerator.prototype.executeOnHost = function(cmd, ip, user) {
+    // optional callback (cb) to get progress on command processing
+    SoftwareGenerator.prototype.executeOnHost = function(cmds, ip, user, cb) {
 	var self = this;
 
-	var rexec = require('remote-exec');
-	var streams = require('memory-streams');
-	
-	var stdout_writer = new streams.WritableStream();
-	var stderr_writer = new streams.WritableStream();
+	var ssh2shell = require('ssh2shell');
 
-	var connection_options = {
-	    port: 22,
-	    readyTimeout: 50000,
-	    username: user.name,
-	    privateKey: require('fs').readFileSync(user.key),
-	    stdout: stdout_writer,
-	    stderr: stderr_writer
-	};
-	
-	var hosts = [ ip ];
-	
-	var cmds = [ cmd ];
-	
 	return new Promise(function(resolve, reject) {
-	    rexec(hosts, cmds, connection_options, function(err){
-		if (err) {
-		    self.logger.error(err);
-		    self.logger.error(stderr_writer.toString());
-		    reject();
-		} else {
-		    resolve();
+
+	    var host = {
+		server: {
+		    host: ip,
+		    port: 22,
+		    userName: user.name,
+		    privateKey: require('fs').readFileSync(user.key)
+		},
+		commands: cmds,
+		idleTimeOut: 10000,
+		msg: {
+		    send: function( message ) {
+			//self.logger.info(message);
+		    }
+		},
+		onCommandProcessing: function( command, response, sshObj, stream ) {
+		    if (cb)
+			cb(command, response);
+		},
+		onCommandComplete: function( command, response, sshObj ) {
+		    self.logger.info('completed command: ' + command);
+		},
+		onCommandTimeout: function( command, response, sshObj, stream, connection) {
+		    reject(command + ': ' + response);
+		},
+		onEnd: function( sessionText, sshObj ) {
+		    //self.logger.info('\nSESSION TEXT:\n'+sessionText + '\n\n');
+		    resolve({user: user, ip: ip, stdout: sessionText});
 		}
-	    });
-	})
-	    .then(function() {
-		return {user: user, stdout: stdout_writer.toString()};
-	    });
+	    };
+	    var ssh = new ssh2shell(host);
+	    ssh.connect();
+	});
     };
 
     SoftwareGenerator.prototype.getPidOnHost = function(proc, ip, user) {
