@@ -138,6 +138,7 @@ define([
 	self.generateDocs = currentConfig.generate_docs;
 	self.returnZip = currentConfig.returnZip;
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
+	self.hostsValidForCompilation = {}; // will be filled out by selectCompilationArchitectures
 
 	var projectNode = self.core.getParent(self.activeNode);
 
@@ -147,6 +148,9 @@ define([
   	    })
 	    .then(function () {
 		return self.downloadLibraries();
+	    })
+	    .then(function () {
+		return self.selectCompilationArchitectures();
 	    })
 	    .then(function () {
 		return self.generateDocumentation();
@@ -821,6 +825,7 @@ define([
 		var host = system.hosts[hst];
 		if (validArchs[host.architecture] === undefined) {
 		    validArchs[host.architecture] = [];
+		    self.hostsValidForCompilation[host.architecture] = [];
 		}
 		validArchs[host.architecture].push(host);
 	    }
@@ -866,12 +871,14 @@ define([
 			return self.executeOnHost('uname', intf.ip, user);
 		    })
 		    .then(function(output) {
+			var user = output.user;
 			var correctOS = output.stdout.indexOf(host.os) > -1;
 			if (!correctOS) {
 			    throw new String('host ' + host.name + ':' + host.os +
 					     ' has incorrect OS: '+ output.stdout);
 			}
-			return true;
+			self.hostsValidForCompilation[host.architecture].push({host:host, intf: intf, user: user});
+			return {host: host, intf: intf, user: user};
 		    })
 		    .catch(function(e) {
 			self.logger.error(e);
@@ -881,6 +888,73 @@ define([
         }
 
 	return Q.any(promises);
+    };
+
+    SoftwareGenerator.prototype.selectCompilationArchitectures = function() {
+	
+	var self = this;
+
+	var validArchitectures = self.getValidArchitectures();
+	var promises = []
+
+	for (var arch in validArchitectures) {
+	    for (var hst in validArchitectures[arch]) {
+		var host = validArchitectures[arch][hst];
+		promises.push(self.testConnectivity(host));
+	    }
+	}
+	return Q.all(promises);
+    };
+
+    SoftwareGenerator.prototype.mkdirRemote = function(dir, ip, user) {
+	var client = require('scp2');
+	client.defaults({
+	    host: ip,
+	    username: user.name,
+	    privateKey: require('fs').readFileSync(user.key),
+	});
+	return new Promise(function(resolve, reject) {
+	    client.mkdir(dir, function(err) {
+		if (err)
+		    reject();
+		else
+		    resolve();
+	    });
+	});
+    };
+
+    SoftwareGenerator.prototype.copyToHost = function(from, to, ip, user) {
+	var client = require('scp2');
+	return new Promise(function(resolve, reject) {
+	    client.scp(from, {
+		host: ip,
+		username: user.name,
+		privateKey: require('fs').readFileSync(user.key),
+		path: to
+	    }, function(err) {
+		if (err)
+		    reject();
+		else
+		    resolve();
+	    });
+	});
+    };
+
+    SoftwareGenerator.prototype.copyFromHost = function(from, to, ip, user) {
+	var client = require('scp2');
+	return new Promise(function(resolve, reject) {
+	    client.scp({
+		host: ip,
+		username: user.name,
+		privateKey: require('fs').readFileSync(user.key),
+		path: from
+	    }, to, function(err) {
+		if (err)
+		    reject();
+		else
+		    resolve();
+	    });
+	});
     };
 
     SoftwareGenerator.prototype.compileBinaries = function ()
@@ -894,39 +968,30 @@ define([
 	  - [Yes] Get the hardware model (all possible networks and machines/users)
 	  - [N/A]  For each network in each system model : test subnet reachability; mark good/bad
 	  - [Yes] For each good network : test host reachability (and architecture match); mark good/bad
-	  - [] For one of each good host _type_ : scp code over and issue a compile; get code back
-	  
-	  Hopefully can tell that cluster is same as two of the
-	  devices in AGSE and so only builds for one type
-
-	  - use 'uname -m' for just architecture (armv7l)
-	  - use 'uname' for just OS (Linux)
-
-	  var client = require('scp2');
-	  client.scp('file.txt', {
-  	    host: 'example.com',
-	    username: 'admin',
-	    password: 'password',
-	    privateKey: '...',
-	    path: '/home/admin/'
-	  }, function(err) {})
+	  - [Yes] For one of each good host _type_ : scp code over and issue a compile; get code back
 	 */
 
 	var self = this;
 
-	var validArchitectures = self.getValidArchitectures();
-	for (var arch in validArchitectures) {
-	    for (var hst in validArchitectures[arch]) {
-		var host = validArchitectures[arch][hst];
-		var tests = self.testConnectivity(host);
-		for (var t in tests) {
-		    if (tests[t] == true) {
-			self.logger.info(host.name + ' is valid for ' + arch);
-			break;
-		    }
-		}
+	var selectedHosts = [];
+
+	for (var arch in self.hostsValidForCompilation) {
+	    var hosts = self.hostsValidForCompilation[arch];
+	    if (hosts.length) {
+		selectedHosts.push(hosts[0]);
 	    }
 	}
+
+	self.createMessage(self.activeNode, 'Compiling on ' + JSON.stringify(selectedHosts, null, 2));
+
+	var path = require('path');
+	selectedHosts.forEach(function(host) {
+	    var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
+	    self.mkdirRemote(compile_dir, host.intf.ip, host.user)
+		.then(function() {
+		    self.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
+		});
+	});
 
 	if (!self.compileCode) {
             self.createMessage(self.activeNode, 'Skipping compilation.');
@@ -1088,7 +1153,6 @@ define([
 		    self.logger.error(stderr_writer.toString());
 		    reject();
 		} else {
-		    //self.logger.info('stdout: ' + stdout_writer.toString());
 		    resolve();
 		}
 	    });
