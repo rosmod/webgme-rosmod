@@ -852,6 +852,11 @@ define([
 		    })
 		    .then(function() {
 			// test user connection (UN + Key)
+			var p = []
+			for (var u in host.users) {
+			    p.push(self.executeOnHost('echo "hello"', intf.ip, host.users[u]));
+			}
+			return Q.all(p);
 		    })
 		    .then(function(isAlive) {
 			// ensure the correct architecture and OS
@@ -1038,7 +1043,60 @@ define([
 	    });
     };
 
-    SoftwareGenerator.prototype.getPidOnHost = function(proc, host, intf, user) {
+    SoftwareGenerator.prototype.executeOnHost = function(cmd, ip, user) {
+	var self = this;
+
+	return new Promise(function(resolve, reject) {
+
+	    var rexec = require('remote-exec');
+	    var streams = require('memory-streams');
+	    
+	    var stdout_writer = new streams.WritableStream();
+	    stdout_writer
+		.on('data', function(data) {
+		    self.logger.info('stdout data: ' + data);
+		})
+		.on('end', function() {
+		});
+
+	    var stderr_writer = new streams.WritableStream();
+	    stderr_writer
+		.on('data', function(data) {
+		    self.logger.error('stderr data: ' + data);
+		    reject(false);
+		})
+		.on('end', function() {
+		});
+
+	    var connection_options = {
+		port: 22,
+		username: user.name,
+		privateKey: require('fs').readFileSync(user.key),
+		stdout: stdout_writer,
+		stderr: stderr_writer
+	    };
+	    
+	    var hosts = [
+		ip
+	    ];
+	    
+	    var cmds = [
+		cmd
+	    ];
+	    
+	    rexec(hosts, cmds, connection_options, function(err){
+		if (err) {
+		    self.logger.error(err);
+		    reject(false);
+		} else {
+		    self.logger.info('Great Success!!');
+		    resolve(true);
+		}
+	    });
+	});
+    };
+
+    SoftwareGenerator.prototype.getPidOnHost = function(proc, ip, user) {
 	var self = this;
 
 	return new Promise(function(resolve, reject) {
@@ -1064,6 +1122,7 @@ define([
 
 	    var connection_options = {
 		port: 22,
+		readyTimeout: 50000,
 		username: user.name,
 		privateKey: require('fs').readFileSync(user.key),
 		stdout: stdout_writer,
@@ -1071,7 +1130,7 @@ define([
 	    };
 	    
 	    var hosts = [
-		host.interfaces[intf].ip
+		ip
 	    ];
 	    
 	    var cmds = [
