@@ -827,10 +827,10 @@ define([
 	  How to hanldle the storage of these files when cross compilation is done?
 	  Do I delete them on the remote machine after I'm done?
 
-	  - Get the hardware model (all possible networks and machines/users)
-	  - For each network in each system model : test subnet reachability; mark good/bad
-	  - For each good network : test host reachability (and architecture match); mark good/bad
-	  - For one of each good host _type_ : scp code over and issue a compile; get code back
+	  - [Yes] Get the hardware model (all possible networks and machines/users)
+	  - [N/A]  For each network in each system model : test subnet reachability; mark good/bad
+	  - [] For each good network : test host reachability (and architecture match); mark good/bad
+	  - [] For one of each good host _type_ : scp code over and issue a compile; get code back
 	  
 	  Hopefully can tell that cluster is same as two of the
 	  devices in AGSE and so only builds for one type
@@ -853,24 +853,26 @@ define([
             self.createMessage(self.activeNode, 'Skipping compilation.');
 	    return;
 	}
+	var percent = 0;
 	return new Promise(function(resolve, reject) {
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
 
 	    terminal.stdout.on('data', function (data) {
-		/*
 		var patt = new RegExp("[0-9]+%");
 		var res = patt.exec(data);
 		if (res !== null) {
-		    var percent = parseInt(new String(res).replace('%',''), 10);
-		    self.logger.info('progress: ' + percent);
-		    self.sendNotification(
-			{ 
-			    message:'compilation: ',
-			    progress: percent
-			}
-		    );
+		    var new_percent = parseInt(new String(res).replace('%',''), 10);
+		    if ((new_percent-percent) > 10) {
+			percent = new_percent
+			self.logger.info('progress: ' + percent);
+			self.sendNotification(
+			    { 
+				message:'compilation: ',
+				progress: percent
+			    }
+			);
+		    }
 		}
-		*/
 	    });
 
 	    terminal.stderr.on('data', function (data) {
