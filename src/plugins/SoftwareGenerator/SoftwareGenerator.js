@@ -187,7 +187,7 @@ define([
 		services = [],
 		libraries = [],
 		users = [],
-		links = [];
+		interfaces = [];
 		for (var i=0;i<nodes.length; i+= 1) {
 		    var node = nodes[i],
 			nodeName = self.core.getAttribute(node, 'name'),
@@ -339,8 +339,9 @@ define([
 			    .hosts[parentName]
 			    .interfaces[nodeName] = {
 				name: nodeName,
-				link: {}
+				ip: ''
 			};
+			interfaces.push(node);
 		    }
 		    else if ( self.core.isTypeOf(node, self.META.Network) ) {
 			self.projectModel.systems[parentName]
@@ -348,7 +349,7 @@ define([
 				name: nodeName,
 				subnet: self.core.getAttribute(node, 'Subnet'),
 				netmask: self.core.getAttribute(node, 'Netmask'),
-				links: {}
+				links: []
 			};
 		    }
 		    else if ( self.core.isTypeOf(node, self.META.User) ) {
@@ -366,21 +367,26 @@ define([
 				name: nodeName,
 				ip: self.core.getAttribute(node, 'IP')
 			};
-			links.push(node);
 		    }
 		    // RELATED TO DEPLOYMENTS:
 		}
-		return self.resolvePointers(messages, services, libraries);
+		return self.resolvePointers({
+		    messages: messages,
+		    services: services,
+		    libraries: libraries, 
+		    interfaces: interfaces,
+		    users: users
+		});
 	    })
 	    .then(function() {
 		self.createMessage(self.activeNode, 'Parsed Project.');
 	    });
     };
 
-    SoftwareGenerator.prototype.resolvePointers = function (messages, services, libraries) {
+    SoftwareGenerator.prototype.resolvePointers = function (pointerDict) {
 	var self = this;
 	
-	return self.gatherReferences(messages, services, libraries)
+	return self.gatherReferences(pointerDict)
 	    .then(function(retData) {
 		for (var i=0; i < retData.length; i++) {
 		    var subarr = retData[i];
@@ -388,6 +394,7 @@ define([
 			var dataRef = subarr[j],
 			    test = -1,
 			    type = -1;
+			// Relevant for software
 			if (dataRef.srcType == 'Component') {
 			    self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.src]
@@ -448,6 +455,24 @@ define([
 				.requiredTypes
 				.indexOf(type);
 			}
+			// Relevant for Systems
+			else if (dataRef.srcType == 'Host') {
+			    self.projectModel
+				.systems[dataRef.systemName]
+				.hosts[dataRef.src]
+				.users[dataRef.user] = 
+				self.projectModel
+				.systems[dataRef.systemName]
+				.users[dataRef.user];
+			}
+			else if (dataRef.srcType == 'Link') {
+			    self.projectModel
+				.systems[dataRef.systemName]
+				.hosts[dataRef.hostName]
+				.interfaces[dataRef.interfaceName].ip = dataRef.ip;
+			}
+
+			// If the pointer should not be duplicated and has not been:
 			if (test == -1 && type != -1) {
 			    self.projectModel.software.packages[dataRef.srcPkg]
 				.components[dataRef.srcComp]
@@ -458,9 +483,15 @@ define([
 	    });
     };
 
-    SoftwareGenerator.prototype.gatherReferences = function (messages, services, libraries) {
+    SoftwareGenerator.prototype.gatherReferences = function (pointerDict) {
 	var self = this;
 	var refPromises = [];
+	
+	var messages = pointerDict.messages,
+	services = pointerDict.services,
+	libraries = pointerDict.libraries,
+	interfaces = pointerDict.interfaces,
+	users = pointerDict.users;
 
 	return self.core.loadCollection(messages[0], 'Message')
 	    .then(function () {
@@ -477,6 +508,16 @@ define([
 		self.logger.info('iterating through libraries');
 		for (var i=0; i<libraries.length; i++) {
 		    refPromises.push(self.getLibraryPointerData(libraries[i]));
+		}
+	    }).then(function () {
+		self.logger.info('iterating through interfaces');
+		for (var i=0; i<interfaces.length; i++) {
+		    refPromises.push(self.getInterfacePointerData(interfaces[i]));
+		}
+	    }).then(function () {
+		self.logger.info('iterating through users');
+		for (var i=0; i<users.length; i++) {
+		    refPromises.push(self.getUserPointerData(users[i]));
 		}
 	    }).then(function () {
 		return Q.all(refPromises);
@@ -566,6 +607,60 @@ define([
 	    );
 	}
 	return Q.all(libDataReferences);
+    };
+
+    SoftwareGenerator.prototype.getInterfacePointerData = function (interfaceObj) {
+	var self = this;
+	var interfaceName = self.core.getAttribute(interfaceObj, 'name'),
+	host = self.core.getParent(interfaceObj),
+	hostName = self.core.getAttribute(host, 'name'),
+	system = self.core.getParent(host),
+	systemName = self.core.getAttribute(system, 'name');
+
+	return self.core.loadCollection(interfaceObj, 'src')
+	    .then(function (nodes) {
+		self.logger.info('Processing ' + nodes.length + ' nodes for interface ' + interfaceName);
+		var interfaceDataReferences = [];
+		for (var i=0; i < nodes.length; i++) {
+		    var baseObject = self.core.getBaseType(nodes[i]);
+		    var baseType = self.core.getAttribute(baseObject, 'name');
+		    interfaceDataReferences.push({
+			ip: self.core.getAttribute(nodes[i], 'IP'),
+			srcType: baseType,
+			interfaceName: interfaceName,
+			hostName: hostName,
+			systemName: systemName
+		    });
+		}
+		return interfaceDataReferences;
+	    });
+    };
+
+    SoftwareGenerator.prototype.getUserPointerData = function (userObj) {
+	var self = this;
+	var userName = self.core.getAttribute(userObj, 'name');
+	var nodePathDict = self.core.isMemberOf(userObj);
+	self.logger.info('Processing '+Object.keys(nodePathDict).length+' nodes for user '+userName);
+	var userDataReferences = [];
+	for (var nodePath in nodePathDict) {
+	    userDataReferences.push(
+		self.core.loadByPath(self.rootNode, nodePath)
+		    .then(function (node) {
+			var hostName = self.core.getAttribute(node, 'name');
+			var system = self.core.getParent(node);
+			var systemName = self.core.getAttribute(system, 'name');
+			var baseObject = self.core.getBaseType(node);
+			var baseType = self.core.getAttribute(baseObject, 'name');
+			return {
+			    user: userName,
+			    src: hostName,
+			    srcType: baseType,
+			    systemName: systemName
+			};
+		    })
+	    );
+	}
+	return Q.all(userDataReferences);
     };
 
     SoftwareGenerator.prototype.generateArtifacts = function () {
