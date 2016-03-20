@@ -153,10 +153,10 @@ define([
 		return self.selectCompilationArchitectures();
 	    })
 	    .then(function () {
-		return self.generateDocumentation();
+		return self.compileBinaries();
 	    })
 	    .then(function () {
-		return self.compileBinaries();
+		return self.generateDocumentation();
 	    })
 	    .then(function () {
 		return self.createZip();
@@ -959,18 +959,6 @@ define([
 
     SoftwareGenerator.prototype.compileBinaries = function ()
     {
-	/*
-	  Need to cross compile these binaries: 
-	  How to properly figure out which hardwares to cross compile for?
-	  How to hanldle the storage of these files when cross compilation is done?
-	  Do I delete them on the remote machine after I'm done?
-
-	  - [Yes] Get the hardware model (all possible networks and machines/users)
-	  - [N/A]  For each network in each system model : test subnet reachability; mark good/bad
-	  - [Yes] For each good network : test host reachability (and architecture match); mark good/bad
-	  - [Yes] For one of each good host _type_ : scp code over and issue a compile; get code back
-	 */
-
 	var self = this;
 
 	var selectedHosts = [];
@@ -979,10 +967,12 @@ define([
 	    var hosts = self.hostsValidForCompilation[arch];
 	    if (hosts.length) {
 		selectedHosts.push(hosts[0]);
+		self.createMessage(self.activeNode, 'Compiling for ' + arch + ' on ' + hosts[0].intf.ip);
+	    }
+	    else {
+		self.createMessage(self.activeNode, 'No hosts could be found for compilation on ' + arch);
 	    }
 	}
-
-	self.createMessage(self.activeNode, 'Compiling on ' + JSON.stringify(selectedHosts, null, 2));
 
 	var path = require('path');
 	selectedHosts.forEach(function(host) {
