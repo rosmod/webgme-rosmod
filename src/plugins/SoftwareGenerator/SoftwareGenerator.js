@@ -846,7 +846,6 @@ define([
 	    promises.push(
 		ping.promise.probe(intf.ip)
 		    .then(function (res) { // {alive: bool, host: str, output: str}
-			self.logger.info('Host: ' + res.host + ' isAlive? ' + res.alive);
 			if (!res.alive)
 			    throw new String(intf.ip + ' is not reachable!');
 		    })
@@ -858,8 +857,27 @@ define([
 			}
 			return Q.all(p);
 		    })
-		    .then(function(isAlive) {
-			// ensure the correct architecture and OS
+		    .then(function(outputs) {
+			var user = outputs[0].user;
+			// ensure the correct architecture
+			return self.executeOnHost('uname -m', intf.ip, user);
+		    })
+		    .then(function(output) {
+			var user = output.user;
+			var correctArch = output.stdout.indexOf(host.architecture) > -1;
+			if (!correctArch) {
+			    throw new String('host ' + host.name + ':' + host.architecture +
+					     ' has incorrect architecture '+ output.stdout);
+			}
+			// ensure the correct OS
+			return self.executeOnHost('uname', intf.ip, user);
+		    })
+		    .then(function(output) {
+			var correctOS = output.stdout.indexOf(host.os) > -1;
+			if (!correctOS) {
+			    throw new String('host ' + host.name + ':' + host.os +
+					     ' has incorrect OS '+ output.stdout);
+			}
 			return true;
 		    })
 		    .catch(function(e) {
@@ -907,8 +925,13 @@ define([
 	for (var arch in validArchitectures) {
 	    for (var hst in validArchitectures[arch]) {
 		var host = validArchitectures[arch][hst];
-		if (self.testConnectivity(host))
-		    break;
+		var tests = self.testConnectivity(host);
+		for (var t in tests) {
+		    if (tests[t] == true) {
+			self.logger.info(host.name + ' is valid for ' + arch);
+			break;
+		    }
+		}
 	    }
 	}
 
@@ -1052,45 +1075,29 @@ define([
 	    var streams = require('memory-streams');
 	    
 	    var stdout_writer = new streams.WritableStream();
-	    stdout_writer
-		.on('data', function(data) {
-		    self.logger.info('stdout data: ' + data);
-		})
-		.on('end', function() {
-		});
-
 	    var stderr_writer = new streams.WritableStream();
-	    stderr_writer
-		.on('data', function(data) {
-		    self.logger.error('stderr data: ' + data);
-		    reject(false);
-		})
-		.on('end', function() {
-		});
 
 	    var connection_options = {
 		port: 22,
+		readyTimeout: 50000,
 		username: user.name,
 		privateKey: require('fs').readFileSync(user.key),
 		stdout: stdout_writer,
 		stderr: stderr_writer
 	    };
 	    
-	    var hosts = [
-		ip
-	    ];
+	    var hosts = [ ip ];
 	    
-	    var cmds = [
-		cmd
-	    ];
+	    var cmds = [ cmd ];
 	    
 	    rexec(hosts, cmds, connection_options, function(err){
 		if (err) {
 		    self.logger.error(err);
+		    self.logger.error(stderr_writer.toString());
 		    reject(false);
 		} else {
-		    self.logger.info('Great Success!!');
-		    resolve(true);
+		    //self.logger.info('stdout: ' + stdout_writer.toString());
+		    resolve({user: user, stdout: stdout_writer.toString()});
 		}
 	    });
 	});
