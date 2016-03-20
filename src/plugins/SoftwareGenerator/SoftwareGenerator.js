@@ -860,7 +860,7 @@ define([
 			var correctArch = output.stdout.indexOf(host.architecture) > -1;
 			if (!correctArch) {
 			    throw new String('host ' + host.name + ':' + host.architecture +
-					     ' has incorrect architecture '+ output.stdout);
+					     ' has incorrect architecture: '+ output.stdout);
 			}
 			// ensure the correct OS
 			return self.executeOnHost('uname', intf.ip, user);
@@ -869,7 +869,7 @@ define([
 			var correctOS = output.stdout.indexOf(host.os) > -1;
 			if (!correctOS) {
 			    throw new String('host ' + host.name + ':' + host.os +
-					     ' has incorrect OS '+ output.stdout);
+					     ' has incorrect OS: '+ output.stdout);
 			}
 			return true;
 		    })
@@ -1062,38 +1062,40 @@ define([
     SoftwareGenerator.prototype.executeOnHost = function(cmd, ip, user) {
 	var self = this;
 
+	var rexec = require('remote-exec');
+	var streams = require('memory-streams');
+	
+	var stdout_writer = new streams.WritableStream();
+	var stderr_writer = new streams.WritableStream();
+
+	var connection_options = {
+	    port: 22,
+	    readyTimeout: 50000,
+	    username: user.name,
+	    privateKey: require('fs').readFileSync(user.key),
+	    stdout: stdout_writer,
+	    stderr: stderr_writer
+	};
+	
+	var hosts = [ ip ];
+	
+	var cmds = [ cmd ];
+	
 	return new Promise(function(resolve, reject) {
-
-	    var rexec = require('remote-exec');
-	    var streams = require('memory-streams');
-	    
-	    var stdout_writer = new streams.WritableStream();
-	    var stderr_writer = new streams.WritableStream();
-
-	    var connection_options = {
-		port: 22,
-		readyTimeout: 50000,
-		username: user.name,
-		privateKey: require('fs').readFileSync(user.key),
-		stdout: stdout_writer,
-		stderr: stderr_writer
-	    };
-	    
-	    var hosts = [ ip ];
-	    
-	    var cmds = [ cmd ];
-	    
 	    rexec(hosts, cmds, connection_options, function(err){
 		if (err) {
 		    self.logger.error(err);
 		    self.logger.error(stderr_writer.toString());
-		    reject(false);
+		    reject();
 		} else {
 		    //self.logger.info('stdout: ' + stdout_writer.toString());
-		    resolve({user: user, stdout: stdout_writer.toString()});
+		    resolve();
 		}
 	    });
-	});
+	})
+	    .then(function() {
+		return {user: user, stdout: stdout_writer.toString()};
+	    });
     };
 
     SoftwareGenerator.prototype.getPidOnHost = function(proc, ip, user) {
