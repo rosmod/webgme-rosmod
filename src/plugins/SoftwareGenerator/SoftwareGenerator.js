@@ -788,14 +788,7 @@ define([
 
 	    terminal.stdout.on('data', function (data) {});
 
-	    terminal.stderr.on('data', function (data) {
-		/*
-		var severity = 'warning';
-		if (data.indexOf(severity) == -1)
-		    severity = 'error';
-		self.logger.error('stderr: ' + data);
-		*/
-	    });
+	    terminal.stderr.on('data', function (data) {});
 
 	    terminal.on('exit', function (code) {
 		self.logger.info('child process exited with code ' + code);
