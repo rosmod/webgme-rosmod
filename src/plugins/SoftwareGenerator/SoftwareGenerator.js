@@ -11,8 +11,8 @@ define([
     'common/util/ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/SoftwareGenerator/SoftwareGenerator/Templates/Templates', // 
-    'plugin/SoftwareGenerator/SoftwareGenerator/meta',
-    'plugin/SoftwareGenerator/SoftwareGenerator/remote_utils',
+    'rosmod/meta',
+    'rosmod/remote_utils',
     'q'
 ], function (
     PluginConfig,
