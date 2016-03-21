@@ -25,6 +25,8 @@ config.seedProjects.enable = true;
 config.seedProjects.basePaths = ["./src/seeds"]
 config.seedProjects.defaultProject = "ROSMOD"
 
+config.requirejsPaths.rosmod = "./src/common/"
+
 // Default Project
 //config.client.defaultProject = { name: 'guest+ROSMOD' };
 
