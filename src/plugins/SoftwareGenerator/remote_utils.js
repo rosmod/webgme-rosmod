@@ -123,6 +123,29 @@ define(['q'], function(Q) {
 	    });
 	},
 	copyFromHost: function(from, to, ip, user) {
+	    return new Promise(function(resolve, reject) {
+		var url = require('url'),
+		path = require('path'),
+		fs = require('fs'),
+		unzip = require('unzip'),
+		fstream = require('fstream'),
+		child_process = require('child_process');
+
+		var local = to;
+		var remote = user.name + '@' + ip + ':' + from;
+
+		var scp = 'scp -o StrictHostKeyChecking=no -i ' + user.key + ' -r ' + remote + ' ' + local;
+
+		var child = child_process.exec(scp, function(err, stdout, stderr) {
+		    if (err) {
+			reject(err);
+		    }
+		    else {
+			resolve('copied ' + remote + ' into ' + local);
+		    }
+		});
+	    });
+	    /*
 	    var client = require('scp2');
 	    return new Promise(function(resolve, reject) {
 		client.scp({
@@ -137,6 +160,7 @@ define(['q'], function(Q) {
 			resolve();
 		});
 	    });
+	    */
 	},
 	getPidOnHost: function(procName, hosts, user, stdout_cb, stderr_cb) {
 	    return new Promise(function(resolve, reject) {
