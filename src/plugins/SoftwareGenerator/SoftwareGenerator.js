@@ -128,7 +128,7 @@ define([
 	
 	// What did the user select for our configuration?
 	var currentConfig = self.getCurrentConfig();
-        self.logger.info('Current configuration ' + JSON.stringify(currentConfig, null, 4));
+        self.logger.debug('Current configuration ' + JSON.stringify(currentConfig, null, 4));
 
         self.updateMETA(self.metaTypes);
 
@@ -501,27 +501,27 @@ define([
 
 	return self.core.loadCollection(messages[0], 'Message')
 	    .then(function () {
-		self.logger.info('iterating through messages');
+		self.logger.debug('iterating through messages');
 		for (var i=0; i<messages.length; i++) {
 		    refPromises.push(self.getMessagePointerData(messages[i]));
 		}
 	    }).then(function () {
-		self.logger.info('iterating through services');
+		self.logger.debug('iterating through services');
 		for (var i=0; i<services.length; i++) {
 		    refPromises.push(self.getServicePointerData(services[i]));
 		}
 	    }).then(function () {
-		self.logger.info('iterating through libraries');
+		self.logger.debug('iterating through libraries');
 		for (var i=0; i<libraries.length; i++) {
 		    refPromises.push(self.getLibraryPointerData(libraries[i]));
 		}
 	    }).then(function () {
-		self.logger.info('iterating through interfaces');
+		self.logger.debug('iterating through interfaces');
 		for (var i=0; i<interfaces.length; i++) {
 		    refPromises.push(self.getInterfacePointerData(interfaces[i]));
 		}
 	    }).then(function () {
-		self.logger.info('iterating through users');
+		self.logger.debug('iterating through users');
 		for (var i=0; i<users.length; i++) {
 		    refPromises.push(self.getUserPointerData(users[i]));
 		}
@@ -536,7 +536,7 @@ define([
 	var msgPkgName = self.core.getAttribute(self.core.getParent(msgObj), 'name');
 	return self.core.loadCollection(msgObj, 'Message')
 	    .then(function (nodes) {
-		self.logger.info('Processing ' + nodes.length + ' nodes for message ' + msgName);
+		self.logger.debug('Processing ' + nodes.length + ' nodes for message ' + msgName);
 		var msgDataReferences = [];
 		for (var i=0; i < nodes.length; i++) {
 		    var nodeName = self.core.getAttribute(nodes[i], 'name');
@@ -565,7 +565,7 @@ define([
 	var srvPkgName = self.core.getAttribute(self.core.getParent(srvObj), 'name');
 	return self.core.loadCollection(srvObj, 'Service')
 	    .then(function (nodes) {
-		self.logger.info('Processing ' + nodes.length + ' nodes for service ' + srvName);
+		self.logger.debug('Processing ' + nodes.length + ' nodes for service ' + srvName);
 		var srvDataReferences = [];
 		for (var i=0; i < nodes.length; i++) {
 		    var nodeName = self.core.getAttribute(nodes[i], 'name');
@@ -592,7 +592,7 @@ define([
 	var self = this;
 	var libName = self.core.getAttribute(libObj, 'name');
 	var nodePathDict = self.core.isMemberOf(libObj);
-	self.logger.info('Processing '+Object.keys(nodePathDict).length+' nodes for library '+libName);
+	self.logger.debug('Processing '+Object.keys(nodePathDict).length+' nodes for library '+libName);
 	var libDataReferences = [];
 	for (var nodePath in nodePathDict) {
 	    libDataReferences.push(
@@ -625,7 +625,7 @@ define([
 
 	return self.core.loadCollection(interfaceObj, 'src')
 	    .then(function (nodes) {
-		self.logger.info('Processing ' + nodes.length + ' nodes for interface ' + interfaceName);
+		self.logger.debug('Processing ' + nodes.length + ' nodes for interface ' + interfaceName);
 		var interfaceDataReferences = [];
 		for (var i=0; i < nodes.length; i++) {
 		    var baseObject = self.core.getBaseType(nodes[i]);
@@ -646,7 +646,7 @@ define([
 	var self = this;
 	var userName = self.core.getAttribute(userObj, 'name');
 	var nodePathDict = self.core.isMemberOf(userObj);
-	self.logger.info('Processing '+Object.keys(nodePathDict).length+' nodes for user '+userName);
+	self.logger.debug('Processing '+Object.keys(nodePathDict).length+' nodes for user '+userName);
 	var userDataReferences = [];
 	for (var nodePath in nodePathDict) {
 	    userDataReferences.push(
@@ -741,7 +741,7 @@ define([
 	    return Q.all(promises);
 	})()
 	    .then(function() {
-		self.logger.info('generated artifacts.');
+		self.logger.debug('generated artifacts.');
 		self.createMessage(self.activeNode, 'Generated artifacts.');
 	    })
     };
@@ -797,7 +797,7 @@ define([
 	    terminal.stderr.on('data', function (data) {});
 
 	    terminal.on('exit', function (code) {
-		self.logger.info('child process exited with code ' + code);
+		self.logger.debug('child process exited with code ' + code);
 		if (code == 0)
 		    resolve(code);
 		else
@@ -805,11 +805,11 @@ define([
 	    });
 
 	    setTimeout(function() {
-		self.logger.info('Sending stdin to terminal');
+		self.logger.debug('Sending stdin to terminal');
 		terminal.stdin.write('doxygen doxygen_config\n');
 		terminal.stdin.write('make -C ./doc/latex/ pdf\n');
 		terminal.stdin.write('cp ./doc/latex/refman.pdf ' + self.projectModel.name  + '.pdf');
-		self.logger.info('Ending terminal session');
+		self.logger.debug('Ending terminal session');
 		terminal.stdin.end();
 	    }, 1000);
 	})
@@ -873,7 +873,7 @@ define([
 			    throw new String('host ' + host.name + ':' + host.os +
 					     ' has incorrect OS: '+ output.stdout);
 			}
-			self.logger.info('host ' + host.name + ':' + host.os +
+			self.logger.debug('host ' + host.name + ':' + host.os +
 					 ' has corret OS/arch');
 			self.hostsValidForCompilation[host.architecture]
 			    .push({host:host, intf: intf, user: user});
@@ -922,14 +922,14 @@ define([
 	var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
 	return utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
 	    .then(function() {
-		self.logger.info('copying to host: ' + host.intf.ip);
+		self.logger.debug('copying to host: ' + host.intf.ip);
 		return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
 	    })
 	    .then(function() {
 		// new compilation code
-		self.logger.info('compiling on host: ' + host.intf.ip);
+		self.logger.debug('compiling on host: ' + host.intf.ip);
 		var msgHandler = function(message) {
-		    self.logger.info(JSON.stringify(message,null,2));
+		    self.logger.debug(JSON.stringify(message,null,2));
 		};
 		var sshError = function(err, type, close, cb) {
 		    self.logger.error('got sshError');
@@ -938,11 +938,11 @@ define([
 		};
 		var parseOutput = function(cmd, resp) {
 		    /*
-		      self.logger.info('processing command: '+cmd);
-		      self.logger.info('output: '+ resp);
+		      self.logger.debug('processing command: '+cmd);
+		      self.logger.debug('output: '+ resp);
 		      var percents = utils.parseMakePercentOutput(resp);
 		      for (var p in percents) {
-		      self.logger.info('compilation: '+percents[p]);
+		      self.logger.debug('compilation: '+percents[p]);
 		      }
 		      var errors = utils.parseMakeErrorOutput(resp);
 		      for (var e in errors) {
@@ -971,7 +971,7 @@ define([
 	    })
 	    .then(function(outputs) {
 		var archBinPath = path.join(self.gen_dir, 'bin' , host.host.architecture);
-		self.logger.info('creating new bin folder: ' + archBinPath);
+		self.logger.debug('creating new bin folder: ' + archBinPath);
 		var filendir = require('filendir');
 		return new Promise(function(resolve, reject) {
 		    filendir.mkdirp(archBinPath, function (err) {
@@ -980,27 +980,30 @@ define([
 			    reject(err);
 			}
 			else {
-			    self.logger.info('generated: ' + archBinPath);
+			    self.logger.debug('generated: ' + archBinPath);
 			    resolve();
 			}
 		    });
 		});
 	    })
 	    .then(function() {
-		self.logger.info('copying back from host: ' + host.intf.ip);
+		self.logger.debug('copying back from host: ' + host.intf.ip);
 		return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
 					  path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
 					  host.intf.ip,
 					  host.user);
 	    })
 	    .then(function() {
-		self.logger.info('removing directories on host: ' + host.intf.ip);
+		self.logger.debug('removing directories on host: ' + host.intf.ip);
 		return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
-	    })
+	    });
+	/*
 	    .catch(function(err) {
 		// need to properly handle the error here
 		self.logger.error('ERROR IN COMPILATION: ' + err);
+		throw
 	    });
+	*/
     };
 
     SoftwareGenerator.prototype.compileBinaries = function ()
@@ -1009,7 +1012,7 @@ define([
 
 	if (!self.compileCode) {
 	    var msg = 'Skipping compilation.';
-	    self.logger.info(msg);
+	    self.logger.debug(msg);
             self.createMessage(self.activeNode, msg);
 	    return;
 	}
@@ -1021,13 +1024,13 @@ define([
 	    var hosts = self.hostsValidForCompilation[arch];
 	    if (hosts.length) {
 		var msg = 'Compiling for ' + arch + ' on ' + hosts[0].intf.ip;
-		self.logger.info(msg);
+		self.logger.debug(msg);
 		self.createMessage(self.activeNode, msg);
 		promises.push(self.compileOnHost(hosts[0]));
 	    }
 	    else {
 		var msg = 'No hosts could be found for compilation on ' + arch;
-		self.logger.info(msg);
+		self.logger.debug(msg);
 		self.createMessage(self.activeNode, msg);
 	    }
 	}
@@ -1051,7 +1054,7 @@ define([
 	    fstream = require('fstream'),
 	    input = self.gen_dir;
 
-	    self.logger.info('zipping ' + input);
+	    self.logger.debug('zipping ' + input);
 
 	    var bufs = [];
 
@@ -1062,12 +1065,12 @@ define([
 		.on('error', function(e) { reject(e); })
 		.on('data', function(d) { bufs.push(d); })
 		.on('end', function() {
-		    self.logger.info('gzip ended.');
+		    self.logger.debug('gzip ended.');
 		    var buf = Buffer.concat(bufs);
 		    self.blobClient.putFile('artifacts.tar.gz',buf)
 			.then(function (hash) {
 			    self.result.addArtifact(hash);
-			    self.logger.info('compression complete');
+			    self.logger.debug('compression complete');
 			    resolve();
 			})
 			.catch(function(err) {

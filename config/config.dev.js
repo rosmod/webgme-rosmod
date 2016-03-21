@@ -4,5 +4,7 @@
 var config = require('./config.base.js'),
     validateConfig = require('webgme/config/validator');
 
+config.client.log.level = 'debug';
+
 validateConfig(config);
 module.exports = config;
