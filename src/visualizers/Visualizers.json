@@ -10,5 +10,11 @@
     "title": "Model",
     "panel": "js/Panels/ModelEditor/ModelEditorPanel",
     "DEBUG_ONLY": false
+  },
+  {
+    "id": "CodeMirrorViz",
+    "title": "CodeMirrorViz",
+    "panel": "panels/CodeMirrorViz/CodeMirrorVizPanel",
+    "DEBUG_ONLY": false
   }
 ]

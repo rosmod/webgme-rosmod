@@ -35,6 +35,13 @@
         "panel": "src/visualizers/panels/RootViz",
         "secondary": false,
         "widget": "src/visualizers/widgets/RootViz"
+      },
+      "CodeMirrorViz": {
+        "src": "panels/CodeMirrorViz/CodeMirrorVizPanel",
+        "title": "CodeMirrorViz",
+        "panel": "src/visualizers/panels/CodeMirrorViz",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/CodeMirrorViz"
       }
     },
     "layouts": {
