@@ -39,7 +39,10 @@ define(['q'], function(Q) {
 			// pass through, we don't want to time out
 		    },
 		    onEnd: function( sessionText, sshObj ) {
-			output.stdout = sessionText;
+			var stdout = sessionText;
+			stdout = stdout.replace('Connected to '+ip,'');
+			stdout = stdout.replace(new RegExp(user.name + '@.+\$'), '');
+			output.stdout = stdout;
 		    }
 		};
 		var ssh = new ssh2shell(host);
@@ -89,6 +92,9 @@ define(['q'], function(Q) {
 		});
 	    }
 	    return retVals;
+	},
+	parsePsAuxOutput: function(output) {
+	    return output;
 	},
 	mkdirRemote: function(dir, ip, user) {
 	    var client = require('scp2');
@@ -162,52 +168,14 @@ define(['q'], function(Q) {
 	    });
 	    */
 	},
-	getPidOnHost: function(procName, hosts, user, stdout_cb, stderr_cb) {
-	    return new Promise(function(resolve, reject) {
-
-		var rexec = require('remote-exec');
-		var streams = require('memory-streams');
-		
-		var stdout_writer = new streams.WritableStream();
-		stdout_writer
-		    .on('data', function(data) {
-			if (stdout_cb)
-			    stdout_cb(data);
-		    })
-		    .on('end', function() {
-		    });
-
-		var stderr_writer = new streams.WritableStream();
-		stderr_writer
-		    .on('data', function(data) {
-			if (stderr_cb)
-			    stderr_cb(data);
-		    })
-		    .on('end', function() {
-		    });
-
-		var connection_options = {
-		    port: 22,
-		    readyTimeout: 50000,
-		    username: user.name,
-		    privateKey: require('fs').readFileSync(user.key),
-		    stdout: stdout_writer,
-		    stderr: stderr_writer
-		};
-		
-		var cmds = [
-		    'ps aux | grep ' + procName,
-		];
-		
-		rexec(hosts, cmds, connection_options, function(err){
-		    if (err) {
-			self.logger.error(err);
-			reject(false);
-		    } else {
-			resolve(true);
-		    }
+	getPidOnHost: function(procName, ip, user, stdout_cb, stderr_cb) {
+	    var self = this;
+	    var cmd = 'ps aux | grep -v grep | grep ' + procName;
+	    return self.executeOnHost([cmd], ip, user)
+		.then(function(output) {
+		    output.stdout = output.stdout.replace(cmd, '').match(procName);
+		    return output;
 		});
-	    });
 	},
 	wgetAndUnzipLibrary: function(file_url, dir) {
 	    return new Promise(function(resolve, reject) {
