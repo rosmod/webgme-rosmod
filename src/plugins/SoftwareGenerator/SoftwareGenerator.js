@@ -915,6 +915,94 @@ define([
 	return Q.all(promises);
     };
 
+    SoftwareGenerator.prototype.compileOnHost = function (host) {
+	var self = this;
+	var path = require('path');
+
+	var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
+	return utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
+	    .then(function() {
+		self.logger.info('copying to host: ' + host.intf.ip);
+		return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
+	    })
+	    .then(function() {
+		// new compilation code
+		self.logger.info('compiling on host: ' + host.intf.ip);
+		var msgHandler = function(message) {
+		    self.logger.info(JSON.stringify(message,null,2));
+		};
+		var sshError = function(err, type, close, cb) {
+		    self.logger.error('got sshError');
+		    //self.logger.error(type);
+		    //self.logger.error(err);
+		};
+		var parseOutput = function(cmd, resp) {
+		    /*
+		      self.logger.info('processing command: '+cmd);
+		      self.logger.info('output: '+ resp);
+		      var percents = utils.parseMakePercentOutput(resp);
+		      for (var p in percents) {
+		      self.logger.info('compilation: '+percents[p]);
+		      }
+		      var errors = utils.parseMakeErrorOutput(resp);
+		      for (var e in errors) {
+		      self.logger.error('error in package: '+errors[e].packageName + 
+		      ': '+ errors[e].filename +
+		      ': '+ errors[e].line);
+		      }
+		    */
+		};
+		var commands = [
+		    'cd ' + compile_dir,
+		    'rm -rf bin',
+		    'source /opt/ros/indigo/setup.bash',
+		    'catkin_make -DNAMESPACE=rosmod',
+		    'mkdir bin',
+		    'cp devel/lib/*.so bin/.',
+		    'cp devel/lib/node/node_main bin/.',
+		    'rm -rf devel build'
+		];
+		return utils.executeOnHost(commands, host.intf.ip, 
+					   host.user, 
+					   msgHandler,
+					   null, 
+					   parseOutput,
+					   sshError);
+	    })
+	    .then(function(outputs) {
+		var archBinPath = path.join(self.gen_dir, 'bin' , host.host.architecture);
+		self.logger.info('creating new bin folder: ' + archBinPath);
+		var filendir = require('filendir');
+		return new Promise(function(resolve, reject) {
+		    filendir.mkdirp(archBinPath, function (err) {
+			if (err) {
+			    self.logger.error(err);
+			    reject(err);
+			}
+			else {
+			    self.logger.info('generated: ' + archBinPath);
+			    resolve();
+			}
+		    });
+		});
+	    })
+	    .then(function() {
+		self.logger.info('copying back from host: ' + host.intf.ip);
+		return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
+					  path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
+					  host.intf.ip,
+					  host.user);
+	    })
+	    .then(function() {
+		self.logger.info('removing directories on host: ' + host.intf.ip);
+		return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
+	    })
+	    .catch(function(err) {
+		// need to properly handle the error here
+		self.logger.error('ERROR IN COMPILATION: ' + err);
+	    });
+    };
+
     SoftwareGenerator.prototype.compileBinaries = function ()
     {
 	var self = this;
@@ -927,16 +1015,15 @@ define([
 	}
 
 	var percent = 0;
-	var selectedHosts = [];
 	var promises=[];
 
 	for (var arch in self.hostsValidForCompilation) {
 	    var hosts = self.hostsValidForCompilation[arch];
 	    if (hosts.length) {
-		selectedHosts.push(hosts[0]);
 		var msg = 'Compiling for ' + arch + ' on ' + hosts[0].intf.ip;
 		self.logger.info(msg);
 		self.createMessage(self.activeNode, msg);
+		promises.push(self.compileOnHost(hosts[0]));
 	    }
 	    else {
 		var msg = 'No hosts could be found for compilation on ' + arch;
@@ -944,105 +1031,12 @@ define([
 		self.createMessage(self.activeNode, msg);
 	    }
 	}
-
-	var path = require('path');
-	selectedHosts.forEach(function(host) {
-	    var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
-	    promises.push(
-		utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
-		    .then(function() {
-			self.logger.info('copying to host: ' + host.intf.ip);
-			return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
-		    })
-		    .then(function() {
-			// new compilation code
-			self.logger.info('compiling on host: ' + host.intf.ip);
-			var msgHandler = function(message) {
-			    self.logger.info(JSON.stringify(message,null,2));
-			};
-			var sshError = function(err, type, close, cb) {
-			    self.logger.error('got sshError');
-			    //self.logger.error(type);
-			    //self.logger.error(err);
-			};
-			var parseOutput = function(cmd, resp) {
-			    /*
-			      self.logger.info('processing command: '+cmd);
-			      self.logger.info('output: '+ resp);
-			      var percents = utils.parseMakePercentOutput(resp);
-			      for (var p in percents) {
-			      self.logger.info('compilation: '+percents[p]);
-			      }
-			      var errors = utils.parseMakeErrorOutput(resp);
-			      for (var e in errors) {
-			      self.logger.error('error in package: '+errors[e].packageName + 
-			      ': '+ errors[e].filename +
-			      ': '+ errors[e].line);
-			      }
-			    */
-			};
-			var commands = [
-			    'cd ' + compile_dir,
-			    'rm -rf bin',
-			    'source /opt/ros/indigo/setup.bash',
-			    'catkin_make -DNAMESPACE=rosmod',
-			    'mkdir bin',
-			    'cp devel/lib/*.so bin/.',
-			    'cp devel/lib/node/node_main bin/.',
-			    'rm -rf devel build'
-			];
-			return utils.executeOnHost(commands, host.intf.ip, 
-						   host.user, 
-						   msgHandler,
-						   null, 
-						   parseOutput,
-						   sshError);
-		    })
-		    .then(function(outputs) {
-			var archBinPath = path.join(self.gen_dir, 'bin' , host.host.architecture);
-			self.logger.info('creating new bin folder: ' + archBinPath);
-			var filendir = require('filendir');
-			return new Promise(function(resolve, reject) {
-			    filendir.mkdirp(archBinPath, function (err) {
-				if (err) {
-				    self.logger.error(err);
-				    reject(err);
-				}
-				else {
-				    self.logger.info('generated: ' + archBinPath);
-				    resolve();
-				}
-			    });
-			});
-		    })
-		    .then(function() {
-			self.logger.info('copying back from host: ' + host.intf.ip);
-			return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
-						  path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
-						  host.intf.ip,
-						  host.user);
-		    })
-		    .then(function() {
-			self.logger.info('removing directories on host: ' + host.intf.ip);
-			return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
-		    })
-		    .then(function(outputs) {
-			resolve();
-		    })
-		    .catch(function(err) {
-			self.logger.error('ERROR IN COMPILATION: ' + err);
-			reject(err);
-		    })
-			); // promises.push
-	});  // foreach
+	
 	return Q.all(promises).then(function() {
 	    self.createMessage(self.activeNode, 'Compiled binaries.');
 	});
-    }; // function
-			      
-    SoftwareGenerator.prototype.remoteCompile = function(ip, user) {
     };
-
+			      
     SoftwareGenerator.prototype.createZip = function() {
 	var self = this;
 	
