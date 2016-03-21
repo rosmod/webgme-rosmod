@@ -12,6 +12,7 @@ define([
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/SoftwareGenerator/SoftwareGenerator/Templates/Templates', // 
     'plugin/SoftwareGenerator/SoftwareGenerator/meta',
+    'plugin/SoftwareGenerator/SoftwareGenerator/remote_utils',
     'q'
 ], function (
     PluginConfig,
@@ -20,6 +21,7 @@ define([
     Converter,
     TEMPLATES,
     MetaTypes,
+    utils,
     Q) {
     'use strict';
 
@@ -765,13 +767,13 @@ define([
 	    // Get the required node executable
 	    var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.1-beta/rosmod-node.zip';
 	    var dir = prefix;
-	    promises.push(self.wgetAndUnzipLibrary(file_url, dir));
+	    promises.push(utils.wgetAndUnzipLibrary(file_url, dir));
 
 	    // Get all the software libraries
 	    for (var lib in self.projectModel.software.libraries) {
 		file_url = self.projectModel.software.libraries[lib].url;
 		if (file_url !== undefined)
-		    promises.push(self.wgetAndUnzipLibrary(file_url, dir));
+		    promises.push(utils.wgetAndUnzipLibrary(file_url, dir));
 	    }
 	    return Q.all(promises);
 	})()
@@ -846,48 +848,55 @@ define([
 		    .then(function (res) { // {alive: bool, host: str, output: str}
 			if (!res.alive)
 			    throw new String(intf.ip + ' is not reachable!');
-		    })
-		    .then(function() {
 			// test user connection (UN + Key)
 			var p = []
 			for (var u in host.users) {
-			    p.push(self.executeOnHost(['echo "hello"'], intf.ip, host.users[u]));
+			    p.push(utils.executeOnHost(['echo "hello"'], intf.ip, host.users[u]));
 			}
 			return Q.all(p);
 		    })
 		    .then(function(outputs) {
+			// TODO: handle all the outputs (different users)
+			// TODO: make sure the host isn't running node_main, roscore, cmake, gcc/g+++, or catkin
 			var user = outputs[0].user;
-			// ensure the correct architecture
-			return self.executeOnHost(['uname -m'], intf.ip, user);
+			return utils.executeOnHost(['uname -om'], intf.ip, user);
 		    })
 		    .then(function(output) {
 			var user = output.user;
 			var correctArch = output.stdout.indexOf(host.architecture) > -1;
+			var correctOS = output.stdout.indexOf(host.os) > -1;
 			if (!correctArch) {
 			    throw new String('host ' + host.name + ':' + host.architecture +
 					     ' has incorrect architecture: '+ output.stdout);
 			}
-			// ensure the correct OS
-			return self.executeOnHost(['uname'], intf.ip, user);
-		    })
-		    .then(function(output) {
-			var user = output.user;
-			var correctOS = output.stdout.indexOf(host.os) > -1;
 			if (!correctOS) {
 			    throw new String('host ' + host.name + ':' + host.os +
 					     ' has incorrect OS: '+ output.stdout);
 			}
-			self.hostsValidForCompilation[host.architecture].push({host:host, intf: intf, user: user});
-			return {host: host, intf: intf, user: user};
+			self.logger.info('host ' + host.name + ':' + host.os +
+					 ' has corret OS/arch');
+			self.hostsValidForCompilation[host.architecture]
+			    .push({host:host, intf: intf, user: user});
+			return true;
 		    })
 		    .catch(function(e) {
 			self.logger.error(e);
 			return false;
 		    })
+			.then(function() {
+			    return true;
+			})
 	    );
         }
 
-	return Q.any(promises);
+	return Q.all(promises).timeout(10000).then(
+	    function(result) {
+		return result;
+	    },
+	    function(err) {
+		self.logger.error(err);
+	    }
+	);
     };
 
     SoftwareGenerator.prototype.selectCompilationArchitectures = function() {
@@ -906,92 +915,72 @@ define([
 	return Q.all(promises);
     };
 
-    SoftwareGenerator.prototype.mkdirRemote = function(dir, ip, user) {
-	var client = require('scp2');
-	client.defaults({
-	    host: ip,
-	    username: user.name,
-	    privateKey: require('fs').readFileSync(user.key),
-	});
-	return new Promise(function(resolve, reject) {
-	    client.mkdir(dir, function(err) {
-		if (err)
-		    reject();
-		else
-		    resolve();
-	    });
-	});
-    };
-
-    SoftwareGenerator.prototype.copyToHost = function(from, to, ip, user) {
-	var client = require('scp2');
-	return new Promise(function(resolve, reject) {
-	    client.scp(from, {
-		host: ip,
-		username: user.name,
-		privateKey: require('fs').readFileSync(user.key),
-		path: to
-	    }, function(err) {
-		if (err)
-		    reject();
-		else
-		    resolve();
-	    });
-	});
-    };
-
-    SoftwareGenerator.prototype.copyFromHost = function(from, to, ip, user) {
-	var client = require('scp2');
-	return new Promise(function(resolve, reject) {
-	    client.scp({
-		host: ip,
-		username: user.name,
-		privateKey: require('fs').readFileSync(user.key),
-		path: from
-	    }, to, function(err) {
-		if (err)
-		    reject(err);
-		else
-		    resolve();
-	    });
-	});
-    };
-
     SoftwareGenerator.prototype.compileBinaries = function ()
     {
 	var self = this;
 
 	if (!self.compileCode) {
-            self.createMessage(self.activeNode, 'Skipping compilation.');
+	    var msg = 'Skipping compilation.';
+	    self.logger.info(msg);
+            self.createMessage(self.activeNode, msg);
 	    return;
 	}
 
 	var percent = 0;
-	return new Promise(function(resolve, reject) {
-	    var selectedHosts = [];
+	var selectedHosts = [];
+	var promises=[];
 
-	    for (var arch in self.hostsValidForCompilation) {
-		var hosts = self.hostsValidForCompilation[arch];
-		if (hosts.length) {
-		    selectedHosts.push(hosts[0]);
-		    self.createMessage(self.activeNode, 'Compiling for ' + arch + ' on ' + hosts[0].intf.ip);
-		}
-		else {
-		    self.createMessage(self.activeNode, 'No hosts could be found for compilation on ' + arch);
-		}
+	for (var arch in self.hostsValidForCompilation) {
+	    var hosts = self.hostsValidForCompilation[arch];
+	    if (hosts.length) {
+		selectedHosts.push(hosts[0]);
+		var msg = 'Compiling for ' + arch + ' on ' + hosts[0].intf.ip;
+		self.logger.info(msg);
+		self.createMessage(self.activeNode, msg);
 	    }
+	    else {
+		var msg = 'No hosts could be found for compilation on ' + arch;
+		self.logger.info(msg);
+		self.createMessage(self.activeNode, msg);
+	    }
+	}
 
-	    var path = require('path');
-	    selectedHosts.forEach(function(host) {
-		var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
-		self.mkdirRemote(compile_dir, host.intf.ip, host.user)
+	var path = require('path');
+	selectedHosts.forEach(function(host) {
+	    var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
+	    promises.push(
+		utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
 		    .then(function() {
 			self.logger.info('copying to host: ' + host.intf.ip);
-			return self.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
+			return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
 		    })
 		    .then(function() {
 			// new compilation code
 			self.logger.info('compiling on host: ' + host.intf.ip);
+			var msgHandler = function(message) {
+			    self.logger.info(JSON.stringify(message,null,2));
+			};
+			var sshError = function(err, type, close, cb) {
+			    self.logger.error('got sshError');
+			    //self.logger.error(type);
+			    //self.logger.error(err);
+			};
+			var parseOutput = function(cmd, resp) {
+			    /*
+			      self.logger.info('processing command: '+cmd);
+			      self.logger.info('output: '+ resp);
+			      var percents = utils.parseMakePercentOutput(resp);
+			      for (var p in percents) {
+			      self.logger.info('compilation: '+percents[p]);
+			      }
+			      var errors = utils.parseMakeErrorOutput(resp);
+			      for (var e in errors) {
+			      self.logger.error('error in package: '+errors[e].packageName + 
+			      ': '+ errors[e].filename +
+			      ': '+ errors[e].line);
+			      }
+			    */
+			};
 			var commands = [
 			    'cd ' + compile_dir,
 			    'rm -rf bin',
@@ -1002,7 +991,12 @@ define([
 			    'cp devel/lib/node/node_main bin/.',
 			    'rm -rf devel build'
 			];
-			return self.executeOnHost(commands, host.intf.ip, host.user);
+			return utils.executeOnHost(commands, host.intf.ip, 
+						   host.user, 
+						   msgHandler,
+						   null, 
+						   parseOutput,
+						   sshError);
 		    })
 		    .then(function(outputs) {
 			var archBinPath = path.join(self.gen_dir, 'bin' , host.host.architecture);
@@ -1023,72 +1017,30 @@ define([
 		    })
 		    .then(function() {
 			self.logger.info('copying back from host: ' + host.intf.ip);
-			return self.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
-						 path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
-						 host.intf.ip,
-						 host.user);
+			return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
+						  path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
+						  host.intf.ip,
+						  host.user);
 		    })
 		    .then(function() {
 			self.logger.info('removing directories on host: ' + host.intf.ip);
-			return self.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
+			return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
 		    })
 		    .then(function(outputs) {
 			resolve();
 		    })
 		    .catch(function(err) {
+			self.logger.error('ERROR IN COMPILATION: ' + err);
 			reject(err);
-		    });
-	    });
-	})
-	    .then(function() {
-        	self.createMessage(self.activeNode, 'Compiled binaries.');
-		resolve();
-	    });
-    };
-
+		    })
+			); // promises.push
+	});  // foreach
+	return Q.all(promises).then(function() {
+	    self.createMessage(self.activeNode, 'Compiled binaries.');
+	});
+    }; // function
+			      
     SoftwareGenerator.prototype.remoteCompile = function(ip, user) {
-    };
-
-    SoftwareGenerator.prototype.parseMakePercentOutput = function(output) {
-	var self = this;
-	var regex = /[0-9]+%/gm;
-	var match = null;
-	while (match = regex.exec(output)) {
-	    var percent = parseInt(new String(match).replace('%',''), 10);
-	    self.logger.info('progress: ' + percent);
-	    self.sendNotification(
-		{ 
-		    message:'compilation: ',
-		    progress: percent
-		}
-	    );
-	}
-    };
-
-    SoftwareGenerator.prototype.parseMakeErrorOutput = function(output) {
-	var self = this;
-	var regex = /([^:^\n]+):(\d+):(\d+):\s(\w+\s*\w*):\s(.+)\n(\s+)(.*)\s+\^+/gm;
-	var match = null;
-	while (match = regex.exec(output)) {
-	    var filename = match[1].replace(self.gen_dir + '/src/', '');
-	    var packageName = filename.split('/')[0];
-	    var line = parseInt(match[2]);
-	    var column = parseInt(match[3]);
-	    var type = match[4];
-	    var text = match[5];
-	    var codeWhitespace = match[6];
-	    var code = match[7];
-	    var adjustedColumn = column - codeWhitespace.length;
-	    self.logger.info('filename: ' + filename);
-	    self.logger.info('packageName: ' + packageName);
-	    self.createMessage(self.activeNode,
-			       type + ': ' + 
-			       packageName + ': ' + 
-			       filename + ':' + 
-			       line + ': ' + text,
-			       type
-			      );
-	}
     };
 
     SoftwareGenerator.prototype.createZip = function() {
@@ -1140,145 +1092,6 @@ define([
 	    .then(function() {
 		self.createMessage(self.activeNode, 'Created archive.');
 	    });
-    };
-
-    // optional callback (cb) to get progress on command processing
-    SoftwareGenerator.prototype.executeOnHost = function(cmds, ip, user, cb) {
-	var self = this;
-
-	var ssh2shell = require('ssh2shell');
-
-	return new Promise(function(resolve, reject) {
-
-	    var host = {
-		server: {
-		    host: ip,
-		    port: 22,
-		    userName: user.name,
-		    privateKey: require('fs').readFileSync(user.key)
-		},
-		commands: cmds,
-		idleTimeOut: 10000,
-		msg: {
-		    send: function( message ) {
-			//self.logger.info(message);
-		    }
-		},
-		onCommandProcessing: function( command, response, sshObj, stream ) {
-		    if (cb)
-			cb(command, response);
-		},
-		onCommandComplete: function( command, response, sshObj ) {
-		    self.logger.info('completed command: ' + command);
-		},
-		onCommandTimeout: function( command, response, sshObj, stream, connection) {
-		    reject(command + ': ' + response);
-		},
-		onEnd: function( sessionText, sshObj ) {
-		    //self.logger.info('\nSESSION TEXT:\n'+sessionText + '\n\n');
-		    resolve({user: user, ip: ip, stdout: sessionText});
-		}
-	    };
-	    var ssh = new ssh2shell(host);
-	    ssh.connect();
-	});
-    };
-
-    SoftwareGenerator.prototype.getPidOnHost = function(proc, ip, user) {
-	var self = this;
-
-	return new Promise(function(resolve, reject) {
-
-	    var rexec = require('remote-exec');
-	    var streams = require('memory-streams');
-	    
-	    var stdout_writer = new streams.WritableStream();
-	    stdout_writer
-		.on('data', function(data) {
-		    self.logger.info('stdout data: ' + data);
-		})
-		.on('end', function() {
-		});
-
-	    var stderr_writer = new streams.WritableStream();
-	    stderr_writer
-		.on('data', function(data) {
-		    self.logger.error('stderr data: ' + data);
-		})
-		.on('end', function() {
-		});
-
-	    var connection_options = {
-		port: 22,
-		readyTimeout: 50000,
-		username: user.name,
-		privateKey: require('fs').readFileSync(user.key),
-		stdout: stdout_writer,
-		stderr: stderr_writer
-	    };
-	    
-	    var hosts = [
-		ip
-	    ];
-	    
-	    var cmds = [
-		'ps aux | grep ' + proc,
-	    ];
-	    
-	    rexec(hosts, cmds, connection_options, function(err){
-		if (err) {
-		    self.logger.error(err);
-		    reject();
-		} else {
-		    self.logger.info('Great Success!!');
-		    resolve();
-		}
-	    });
-	});
-    };
-
-    SoftwareGenerator.prototype.wgetAndUnzipLibrary = function(file_url, dir) {
-	var self = this;
-
-	return new Promise(function(resolve, reject) {
-	    var url = require('url'),
-		path = require('path'),
-		fs = require('fs'),
-		unzip = require('unzip'),
-		fstream = require('fstream'),
-		child_process = require('child_process');
-	    // extract the file name
-	    var file_name = url.parse(file_url).pathname.split('/').pop();
-
-	    self.logger.info('getting library: '+file_name +' from ' +file_url);
-
-	    var final_dir = path.join(process.cwd(), dir).toString();
-	    var final_file = path.join(final_dir, file_name);
-
-	    // compose the wget command; -O is output file
-	    var wget = 'wget --no-check-certificate -P ' + dir + ' ' + file_url;
-
-	    // excute wget using child_process' exec function
-	    var child = child_process.exec(wget, function(err, stdout, stderr) {
-		if (err) {
-		    reject(err);
-		}
-		else {
-		    var fname = path.join(dir,file_name);
-		    var readStream = fs.createReadStream(fname);
-		    var writeStream = fstream.Writer(dir);
-		    if (readStream == undefined || writeStream == undefined) {
-			reject("Couldn't open " + dir + " or " + fname);
-			return;
-		    }
-		    readStream
-			.pipe(unzip.Parse())
-			.pipe(writeStream);
-		    fs.unlink(fname);
-		    resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
-		}
-	    });
-	});
     };
 
     return SoftwareGenerator;

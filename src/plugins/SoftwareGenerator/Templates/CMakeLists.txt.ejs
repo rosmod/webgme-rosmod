@@ -64,33 +64,21 @@ ENDIF()
 # Generate services in the 'srv' folder
 add_service_files(
   FILES
-<%
-for (var srv in pkgInfo.services) {
--%>
+<% for (var srv in pkgInfo.services) { -%>
  <%= pkgInfo.services[srv].name %>.srv
-<%
-}
--%>
+<% } -%>
 )
-<%
-}
--%>
+<% } -%>
 
 <% if (Object.keys(pkgInfo.messages).length > 0) { %>
 # Generate messages in the 'msg' folder
 add_message_files(
   FILES
-<%
-for (var msg in pkgInfo.messages) {
--%>
+<% for (var msg in pkgInfo.messages) { -%>
  <%= pkgInfo.messages[msg].name %>.msg
-<%
-}
--%>
+<% } -%>
 )
-<%
-}
--%>
+<% } -%>
 
 
 ## Generate actions in the 'action' folder
@@ -134,22 +122,15 @@ include_directories(
   ../node/include
 <%
 for (var cmp in pkgInfo.components) {
-for (var i=0; i<pkgInfo.components[cmp].requiredTypes.length; i++) {
--%>
+   for (var i=0; i<pkgInfo.components[cmp].requiredTypes.length; i++) { -%>
   ../<%= pkgInfo.components[cmp].requiredTypes[i].packageName %>/include
-<%
-}
--%>
-<%
-for (var i=0; i<pkgInfo.components[cmp].requiredLibs.length; i++) {
-if ( pkgInfo.components[cmp].requiredLibs[i].includeDirs !== undefined ) {
--%>
+<% } 
+   for (var i=0; i<pkgInfo.components[cmp].requiredLibs.length; i++) {
+     if ( pkgInfo.components[cmp].requiredLibs[i].includeDirs !== undefined ) { -%>
   <%= pkgInfo.components[cmp].requiredLibs[i].includeDirs %>
-<%
-}
-}
-}
--%>
+<%   }
+   }
+} -%>
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -164,18 +145,21 @@ add_library(<%= pkgInfo.components[cmp].name %>
 target_link_libraries(<%= pkgInfo.components[cmp].name %>
                       ${catkin_LIBRARIES}
 <%
-for (var i=0; i<pkgInfo.components[cmp].requiredLibs.length; i++) {
-if ( pkgInfo.components[cmp].requiredLibs[i].linkLibs !== undefined ) {
--%>
+  for (var i=0; i<pkgInfo.components[cmp].requiredLibs.length; i++) {
+    if ( pkgInfo.components[cmp].requiredLibs[i].linkLibs !== undefined ) { -%>
 		      <%= pkgInfo.components[cmp].requiredLibs[i].linkLibs %>
-<%
-}
-}
--%>
+<%  } 
+  } -%>
                       )
 add_dependencies(<%= pkgInfo.components[cmp].name %>
                  <%= pkgInfo.name %>_generate_messages_cpp
+<% var types = [];
+   for (var typ in pkgInfo.components[cmp].requiredTypes) { 
+     var t = pkgInfo.components[cmp].requiredTypes[typ]; 
+     if (types.indexOf(t) == -1) {
+       types.push(t); -%>
+	         <%= t.packageName %>_generate_messages_cpp
+<%   } 
+   } -%>
 		 )
-<%
-}
--%>
+<% } -%>
