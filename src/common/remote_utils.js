@@ -12,8 +12,6 @@ define(['q'], function(Q) {
 		stdout: ''
 	    };
 	    
-	    var prevStr = '';
-
 	    var host = {
 		server: {
 		    host: ip,
@@ -30,12 +28,8 @@ define(['q'], function(Q) {
 		    }
 		},
 		onCommandProcessing: function( command, response, sshObj, stream ) {
-		    var tmp = response;
-		    response = response.replace(prevStr,'');
-		    prevStr = tmp;
 		    if (cb_processing) {
-			process.stdout.write(response);
-			//cb_processing(command, response);
+			cb_processing(command, response);
 		    }
 		},
 		onCommandComplete: function( command, response, sshObj ) {

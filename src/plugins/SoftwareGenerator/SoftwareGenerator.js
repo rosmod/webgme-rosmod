@@ -449,19 +449,24 @@ define([
 
 	// make the compile dir
 	return  utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
-	// copy the sources to remote
-	    .then(utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user))
-	// run the compile step
-	    .then(utils.executeOnHost(compile_commands, host.intf.ip, host.user, null, null, true))
-	// make the local binary folder for the architecture
-	    .then(mkdirp.sync(archBinPath))
-	// copy the compiled binaries from remote into the local bin folder
-	    .then(utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
-				     path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
-				     host.intf.ip,
-				     host.user))
-	// remove the remote folders
-	    .then(utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user));
+	    .then(function() { 	// copy the sources to remote
+		return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
+	    })
+	    .then(function() {  // run the compile step
+		return utils.executeOnHost(compile_commands, host.intf.ip, host.user);
+	    })
+	    .then(function() {  // make the local binary folder for the architecture
+		mkdirp.sync(archBinPath);
+	    })
+	    .then(function() {  // copy the compiled binaries from remote into the local bin folder
+		return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
+				   path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
+				   host.intf.ip,
+				   host.user);
+	    })
+	    .then(function() {  // remove the remote folders
+		return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
+	    });
     };
 
     SoftwareGenerator.prototype.compileBinaries = function ()
