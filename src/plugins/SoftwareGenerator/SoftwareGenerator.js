@@ -449,7 +449,7 @@ define([
 
 	// make the compile dir
 	var t1 = new Promise(function(resolve,reject) {
-	    self.logger.info('mkdirRemote');
+	    self.logger.info('mkdirRemote: ' + host.intf.ip);
 	    utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
 		.then(function() {
 		    resolve();
@@ -457,23 +457,23 @@ define([
 	});
 	// copy the sources to remote
 	var t2 = t1.then(function() {
-	    self.logger.info('copyToHost');
+	    self.logger.info('copyToHost: ' + host.intf.ip);
 	    return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
 	});
 	// run the compile step
 	var t3 = t2.then(function() {
-	    self.logger.info('compile');
+	    self.logger.info('compile: ' + host.intf.ip);
 	    return utils.executeOnHost(compile_commands, host.intf.ip, host.user);
 	});
 	// make the local binary folder for the architecture
 	var t4 = t3.then(function() {
-	    self.logger.info('mkdir');
+	    self.logger.info('mkdir: ' + host.intf.ip);
 	    mkdirp.sync(archBinPath);
 	    return true;
 	});
 	// copy the compiled binaries from remote into the local bin folder
 	var t5 = t4.then(function() {
-	    self.logger.info('copyFromHost');
+	    self.logger.info('copyFromHost: ' + host.intf.ip);
 	    return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
 				      path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
 				      host.intf.ip,
@@ -481,10 +481,13 @@ define([
 	});
 	// remove the remote folders
 	var t6 = t5.then(function() {
-	    self.logger.info('rm');
+	    self.logger.info('rm: ' + host.intf.ip);
 	    return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
 	});
-	return Q.all([t1,t2,t3,t4,t5,t6]);
+	return Q.all([t1,t2,t3,t4,t5,t6])
+	    .catch(function(err) {
+		self.logger.error(err);
+	    });
     };
 
     SoftwareGenerator.prototype.compileBinaries = function ()
