@@ -11,58 +11,66 @@ define(['q'], function(Q) {
 		ip: ip,
 		stdout: ''
 	    };
-	    return new Promise(function(resolve, reject) {
-		var host = {
-		    server: {
-			host: ip,
-			port: 22,
-			userName: user.name,
-			privateKey: require('fs').readFileSync(user.key)
-		    },
-		    commands: cmds,
-		    idleTimeOut: 10000,
-		    msg: {
-			send: function( message ) {
-			    if (cb_message)
-				cb_message(message);
-			}
-		    },
-		    onCommandProcessing: function( command, response, sshObj, stream ) {
-			if (cb_processing)
-			    cb_processing(command, response);
-		    },
-		    onCommandComplete: function( command, response, sshObj ) {
-			if (cb_complete)
-			    cb_complete(command, response);
-		    },
-		    onCommandTimeout: function( command, response, sshObj, stream, connection) {
-			// pass through, we don't want to time out
-		    },
-		    onEnd: function( sessionText, sshObj ) {
-			var stdout = sessionText;
-			stdout = stdout.replace('Connected to '+ip,'');
-			stdout = stdout.replace(new RegExp(user.name + '@.+\$'), '');
-			output.stdout = stdout;
+	    
+	    var prevStr = '';
+
+	    var host = {
+		server: {
+		    host: ip,
+		    port: 22,
+		    userName: user.name,
+		    privateKey: require('fs').readFileSync(user.key)
+		},
+		commands: cmds,
+		idleTimeOut: 10000,
+		msg: {
+		    send: function( message ) {
+			if (cb_message)
+			    cb_message(message);
 		    }
-		};
-		var ssh = new ssh2shell(host);
-		/*
-		ssh.on ("error", function(err, type, close, cb) {
-		    reject(err + ' on ' + user.name + '@' + ip);
-		    if (cb_error)
-			cb_error(err, type, close, cb);
-		});
-		*/
-		ssh.on("close", function(hadError) {
-		    if (hadError) {
-			reject();
+		},
+		onCommandProcessing: function( command, response, sshObj, stream ) {
+		    var tmp = response;
+		    response = response.replace(prevStr,'');
+		    prevStr = tmp;
+		    if (cb_processing) {
+			process.stdout.write(response);
+			//cb_processing(command, response);
 		    }
-		    else {
-			resolve(output);
-		    }
-		});
-		ssh.connect();
+		},
+		onCommandComplete: function( command, response, sshObj ) {
+		    if (cb_complete)
+			cb_complete(command, response);
+		},
+		onCommandTimeout: function( command, response, sshObj, stream, connection) {
+		    // pass through, we don't want to time out
+		},
+		onEnd: function( sessionText, sshObj ) {
+		    var stdout = sessionText;
+		    stdout = stdout.replace('Connected to '+ip,'');
+		    stdout = stdout.replace(new RegExp(user.name + '@.+\$'), '');
+		    output.stdout = stdout;
+		}
+	    };
+	    var ssh = new ssh2shell(host);
+	    /*
+	      ssh.on ("error", function(err, type, close, cb) {
+	      reject(err + ' on ' + user.name + '@' + ip);
+	      if (cb_error)
+	      cb_error(err, type, close, cb);
+	      });
+	    */
+	    var deferred = Q.defer();
+	    ssh.on("close", function(hadError) {
+		if (hadError) {
+		    deferred.reject();
+		}
+		else {
+		    deferred.resolve(output);
+		}
 	    });
+	    ssh.connect();
+	    return deferred.promise;
 	},
 	parseMakePercentOutput: function(output) {
 	    var regex = /[0-9]+%/gm;
@@ -103,70 +111,56 @@ define(['q'], function(Q) {
 		username: user.name,
 		privateKey: require('fs').readFileSync(user.key),
 	    });
-	    return new Promise(function(resolve, reject) {
-		client.mkdir(dir, function(err) {
-		    if (err)
-			reject();
-		    else
-			resolve();
-		});
+	    var deferred = Q.defer();
+	    client.mkdir(dir, function(err) {
+		if (err)
+		    deferred.reject(err);
+		else
+		    deferred.resolve();
 	    });
+	    return deferred.promise;
 	},
 	copyToHost: function(from, to, ip, user) {
 	    var client = require('scp2');
-	    return new Promise(function(resolve, reject) {
-		client.scp(from, {
-		    host: ip,
-		    username: user.name,
-		    privateKey: require('fs').readFileSync(user.key),
-		    path: to
-		}, function(err) {
-		    if (err)
-			reject();
-		    else
-			resolve();
-		});
+	    
+	    var deferred = Q.defer();
+	    client.scp(from, {
+		host: ip,
+		username: user.name,
+		privateKey: require('fs').readFileSync(user.key),
+		path: to
+	    }, function(err) {
+		if (err)
+		    deferred.reject(err);
+		else
+		    deferred.resolve();
 	    });
+	    return deferred.promise;
 	},
 	copyFromHost: function(from, to, ip, user) {
-	    return new Promise(function(resolve, reject) {
-		var url = require('url'),
-		path = require('path'),
-		fs = require('fs'),
-		unzip = require('unzip'),
-		fstream = require('fstream'),
-		child_process = require('child_process');
+	    var url = require('url'),
+	    path = require('path'),
+	    fs = require('fs'),
+	    unzip = require('unzip'),
+	    fstream = require('fstream'),
+	    child_process = require('child_process');
+	    
+	    var local = to;
+	    var remote = user.name + '@' + ip + ':' + from;
 
-		var local = to;
-		var remote = user.name + '@' + ip + ':' + from;
+	    var scp = 'scp -o StrictHostKeyChecking=no -i ' + user.key + ' -r ' + remote + ' ' + local;
+	    
+	    var deferred = Q.defer();
 
-		var scp = 'scp -o StrictHostKeyChecking=no -i ' + user.key + ' -r ' + remote + ' ' + local;
-
-		var child = child_process.exec(scp, function(err, stdout, stderr) {
-		    if (err) {
-			reject(err);
-		    }
-		    else {
-			resolve('copied ' + remote + ' into ' + local);
-		    }
-		});
+	    var child = child_process.exec(scp, function(err, stdout, stderr) {
+		if (err) {
+		    deferred.reject(err);
+		}
+		else {
+		    deferred.resolve('copied ' + remote + ' into ' + local);
+		}
 	    });
-	    /*
-	    var client = require('scp2');
-	    return new Promise(function(resolve, reject) {
-		client.scp({
-		    host: ip,
-		    username: user.name,
-		    privateKey: require('fs').readFileSync(user.key),
-		    path: from
-		}, to, function(err) {
-		    if (err)
-			reject(err);
-		    else
-			resolve();
-		});
-	    });
-	    */
+	    return deferred.promise;
 	},
 	getPidOnHost: function(procName, ip, user, stdout_cb, stderr_cb) {
 	    var self = this;
@@ -178,43 +172,44 @@ define(['q'], function(Q) {
 		});
 	},
 	wgetAndUnzipLibrary: function(file_url, dir) {
-	    return new Promise(function(resolve, reject) {
-		var url = require('url'),
-		path = require('path'),
-		fs = require('fs'),
-		unzip = require('unzip'),
-		fstream = require('fstream'),
-		child_process = require('child_process');
-		// extract the file name
-		var file_name = url.parse(file_url).pathname.split('/').pop();
+	    var url = require('url'),
+	    path = require('path'),
+	    fs = require('fs'),
+	    unzip = require('unzip'),
+	    fstream = require('fstream'),
+	    child_process = require('child_process');
+	    // extract the file name
+	    var file_name = url.parse(file_url).pathname.split('/').pop();
 
-		var final_dir = path.join(process.cwd(), dir).toString();
-		var final_file = path.join(final_dir, file_name);
+	    var final_dir = path.join(process.cwd(), dir).toString();
+	    var final_file = path.join(final_dir, file_name);
 
-		// compose the wget command; -O is output file
-		var wget = 'wget --no-check-certificate -P ' + dir + ' ' + file_url;
+	    // compose the wget command; -O is output file
+	    var wget = 'wget --no-check-certificate -P ' + dir + ' ' + file_url;
 
-		// excute wget using child_process' exec function
-		var child = child_process.exec(wget, function(err, stdout, stderr) {
-		    if (err) {
-			reject(err);
+	    var deferred = Q.defer();
+
+	    // excute wget using child_process' exec function
+	    var child = child_process.exec(wget, function(err, stdout, stderr) {
+		if (err) {
+		    deferred.reject(err);
+		}
+		else {
+		    var fname = path.join(dir,file_name);
+		    var readStream = fs.createReadStream(fname);
+		    var writeStream = fstream.Writer(dir);
+		    if (readStream == undefined || writeStream == undefined) {
+			deferred.reject("Couldn't open " + dir + " or " + fname);
+			return;
 		    }
-		    else {
-			var fname = path.join(dir,file_name);
-			var readStream = fs.createReadStream(fname);
-			var writeStream = fstream.Writer(dir);
-			if (readStream == undefined || writeStream == undefined) {
-			    reject("Couldn't open " + dir + " or " + fname);
-			    return;
-			}
-			readStream
-			    .pipe(unzip.Parse())
-			    .pipe(writeStream);
-			fs.unlink(fname);
-			resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
-		    }
-		});
+		    readStream
+			.pipe(unzip.Parse())
+			.pipe(writeStream);
+		    fs.unlink(fname);
+		    deferred.resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
+		}
 	    });
+	    return deferred.promise;
 	}
     }
 });

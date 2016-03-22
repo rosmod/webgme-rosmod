@@ -403,9 +403,6 @@ define([
 			self.logger.error(e);
 			return false;
 		    })
-			.then(function() {
-			    return false;
-			})
 	    );
         }
 
@@ -431,77 +428,40 @@ define([
     SoftwareGenerator.prototype.compileOnHost = function (host) {
 	var self = this;
 	var path = require('path');
+	var mkdirp = require('mkdirp');
 
 	var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
-	return utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
-	    .then(function() {
-		self.logger.info('copying to host: ' + host.intf.ip);
-		return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
-	    })
-	    .then(function() {
-		// new compilation code
-		self.logger.info('compiling on host: ' + host.intf.ip);
-		var msgHandler = function(message) {
-		    self.logger.debug(JSON.stringify(message,null,2));
-		};
-		var sshError = function(err, type, close, cb) {
-		    self.logger.error('got sshError');
-		    //self.logger.error(type);
-		    //self.logger.error(err);
-		};
-		var parseOutput = function(cmd, resp) {
-		    /*
-		      self.logger.debug('processing command: '+cmd);
-		      self.logger.debug('output: '+ resp);
-		      var percents = utils.parseMakePercentOutput(resp);
-		      for (var p in percents) {
-		      self.logger.debug('compilation: '+percents[p]);
-		      }
-		      var errors = utils.parseMakeErrorOutput(resp);
-		      for (var e in errors) {
-		      self.logger.error('error in package: '+errors[e].packageName + 
-		      ': '+ errors[e].filename +
-		      ': '+ errors[e].line);
-		      }
-		    */
-		};
-		var commands = [
-		    'cd ' + compile_dir,
-		    'rm -rf bin',
-		    'source /opt/ros/indigo/setup.bash',
-		    'catkin_make -DNAMESPACE=rosmod',
-		    'mkdir bin',
-		    'cp devel/lib/*.so bin/.',
-		    'cp devel/lib/node/node_main bin/.',
-		    'rm -rf devel build'
-		];
-		return utils.executeOnHost(commands, host.intf.ip, 
-					   host.user, 
-					   msgHandler,
-					   null, 
-					   parseOutput,
-					   sshError);
-	    })
-	    .then(function(outputs) {
-		var archBinPath = path.join(self.gen_dir, 'bin' , host.host.architecture);
-		self.logger.debug('creating new bin folder: ' + archBinPath);
-		var mkdirp = require('mkdirp');
-		return mkdirp.sync(archBinPath);
-	    })
-	    .then(function() {
-		self.logger.info('copying back from host: ' + host.intf.ip);
-		return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
-					  path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
-					  host.intf.ip,
-					  host.user);
-	    })
-	    .then(function() {
-		self.logger.info('removing directories on host: ' + host.intf.ip);
-		return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
-	    })
-	    .then(function() {
-		self.logger.info('resolving!');
-	    });
+	var archBinPath = path.join(self.gen_dir, 'bin' , host.host.architecture);
+
+	self.logger.info('compiling into '+host.intf.ip+':'+compile_dir);
+	self.logger.info('copying into '+archBinPath);
+
+	var compile_commands = [
+	    'cd ' + compile_dir,
+	    'rm -rf bin',
+	    'source /opt/ros/indigo/setup.bash',
+	    'catkin_make -DNAMESPACE=rosmod',
+	    'mkdir bin',
+	    'cp devel/lib/*.so bin/.',
+	    'cp devel/lib/node/node_main bin/.',
+	    'rm -rf devel build'
+	];
+
+	// make the compile dir
+	return  utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
+	// copy the sources to remote
+	    .then(utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user))
+	// run the compile step
+	    .then(utils.executeOnHost(compile_commands, host.intf.ip, host.user, null, null, true))
+	// make the local binary folder for the architecture
+	    .then(mkdirp.sync(archBinPath))
+	// copy the compiled binaries from remote into the local bin folder
+	    .then(utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
+				     path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
+				     host.intf.ip,
+				     host.user))
+	// remove the remote folders
+	    .then(utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user));
     };
 
     SoftwareGenerator.prototype.compileBinaries = function ()
@@ -536,12 +496,10 @@ define([
 	    return self.compileOnHost(host);
 	});
 	
-	return Q.all(tasks);
-	/*
+	return Q.all(tasks)
 	    .then(function() {
 		self.createMessage(self.activeNode, 'Compiled binaries.');
 	    });
-	*/
     };
 			      
     SoftwareGenerator.prototype.createZip = function() {
