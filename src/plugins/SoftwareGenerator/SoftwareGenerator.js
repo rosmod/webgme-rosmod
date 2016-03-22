@@ -448,25 +448,43 @@ define([
 	];
 
 	// make the compile dir
-	return  utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
-	    .then(function() { 	// copy the sources to remote
-		return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
-	    })
-	    .then(function() {  // run the compile step
-		return utils.executeOnHost(compile_commands, host.intf.ip, host.user);
-	    })
-	    .then(function() {  // make the local binary folder for the architecture
-		mkdirp.sync(archBinPath);
-	    })
-	    .then(function() {  // copy the compiled binaries from remote into the local bin folder
-		return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
-				   path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
-				   host.intf.ip,
-				   host.user);
-	    })
-	    .then(function() {  // remove the remote folders
-		return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
-	    });
+	var t1 = new Promise(function(resolve,reject) {
+	    self.logger.info('mkdirRemote');
+	    utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
+		.then(function() {
+		    resolve();
+		});
+	});
+	// copy the sources to remote
+	var t2 = t1.then(function() {
+	    self.logger.info('copyToHost');
+	    return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
+	});
+	// run the compile step
+	var t3 = t2.then(function() {
+	    self.logger.info('compile');
+	    return utils.executeOnHost(compile_commands, host.intf.ip, host.user);
+	});
+	// make the local binary folder for the architecture
+	var t4 = t3.then(function() {
+	    self.logger.info('mkdir');
+	    mkdirp.sync(archBinPath);
+	    return true;
+	});
+	// copy the compiled binaries from remote into the local bin folder
+	var t5 = t4.then(function() {
+	    self.logger.info('copyFromHost');
+	    return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
+				      path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
+				      host.intf.ip,
+				      host.user);
+	});
+	// remove the remote folders
+	var t6 = t5.then(function() {
+	    self.logger.info('rm');
+	    return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
+	});
+	return Q.all([t1,t2,t3,t4,t5,t6]);
     };
 
     SoftwareGenerator.prototype.compileBinaries = function ()
