@@ -3,6 +3,7 @@
 define(['q'], function(Q) {
     'use strict';
     return {
+	trackedProcesses: ['catkin_make', 'node_main', 'roscore'],
 	executeOnHost: function(cmds, ip, user, cb_message, cb_complete, cb_processing, cb_error) {
 	    var self = this;
 	    var ssh2shell = require('ssh2shell');

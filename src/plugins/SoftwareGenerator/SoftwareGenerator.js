@@ -385,19 +385,24 @@ define([
 			}
 			self.logger.debug('host ' + host.name + ':' + host.os +
 					 ' has corret OS/arch');
-			return utils.getPidOnHost('catkin_make', intf.ip, user);
+			var tasks = utils.trackedProcesses.map(function(procName) {
+			    return utils.getPidOnHost('catkin_make', intf.ip, user);
+			});
+
+			return Q.all(tasks);
 		    })
-		    .then(function(output) {
-			var user = output.user;
-			if (output.stdout) {
-			    self.logger.info(intf.ip + ' is already running: ' + output.stdout);
-			    return false;
+		    .then(function(outputs) {
+			for (var o in outputs) {
+			    var output = outputs[o];
+			    if (output.stdout) {
+				self.logger.info(intf.ip + ' is already running: ' + output.stdout);
+				return false;
+			    }
 			}
-			else {
-			    self.hostsValidForCompilation[host.architecture]
-				.push({host:host, intf: intf, user: user});
-			    return true;
-			}
+			var user = outputs[0].user;
+			self.hostsValidForCompilation[host.architecture]
+			    .push({host:host, intf: intf, user: user});
+			return true;
 		    })
 		    .catch(function(e) {
 			self.logger.error(e);
