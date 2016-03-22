@@ -14,15 +14,19 @@ define(['q'], function(Q) {
 		    libraries: {}
 		},
 		systems: {},
-		deployments: {}
+		deployments: {},
+		experiments: {}
 	    };
 	    return self.core.loadSubTree(projectNode)
 		.then(function(nodes) {
 		    var messages = [],
 		    services = [],
 		    libraries = [],
+		    components = [],
 		    users = [],
-		    interfaces = [];
+		    interfaces = [],
+		    deployments = [],
+		    systems = [];
 		    for (var i=0;i<nodes.length; i+= 1) {
 			var node = nodes[i],
 			nodeName = self.core.getAttribute(node, 'name'),
@@ -82,6 +86,7 @@ define(['q'], function(Q) {
 				destruction: self.core.getAttribute(node, 'Destruction'),
 				members: self.core.getAttribute(node, 'Members')
 			    };
+			    components.push(node);
 			}
 			else if ( self.core.isTypeOf(node, META.Timer) ) {
 			    var pkgName = self.core.getAttribute(
@@ -157,6 +162,7 @@ define(['q'], function(Q) {
 				users: {},
 				links: {}
 			    };
+			    systems.push(node);
 			}
 			else if ( self.core.isTypeOf(node, META.Host) ) {
 			    self.model.systems[parentName]
@@ -204,13 +210,62 @@ define(['q'], function(Q) {
 				};
 			}
 			// RELATED TO DEPLOYMENTS:
+			else if ( self.core.isTypeOf(node, META.Deployment) ) {
+			    self.model.deployments[nodeName] = {
+				name: nodeName,
+				containers: {}
+			    };
+			    deployments.push(node);
+			}
+			else if ( self.core.isTypeOf(node, META.Container) ) {
+			    self.model.deployments[parentName]
+				.containers[nodeName] = {
+				    name: nodeName,
+				    nodes: {}
+				};
+			}
+			else if ( self.core.isTypeOf(node, META.Node) ) {
+			    var depName = self.core.getAttribute(self.core.getParent(parent), 'name');
+			    self.model.deployments[depName]
+				.containers[parentName]
+				.nodes[nodeName] = {
+				    name: nodeName,
+				    cmdLine: self.core.getAttribute(node, 'CMDLine'),
+				    priority: self.core.getAttribute(node, 'Priority'),
+				    compInstances: {}
+				};
+			}
+			else if ( self.core.isTypeOf(node, META['Component Instance']) ) {
+			    var container = self.core.getParent(parent);
+			    var containerName = self.core.getAttribute(container, 'name');
+			    var depName = self.core.getAttribute(self.core.getParent(container), 'name');
+			    self.model.deployments[depName]
+				.containers[containerName]
+				.nodes[parentName]
+				.compInstances = {
+				    name: nodeName,
+				    schedulingScheme: self.core.getAttribute(node, 'SchedulingScheme'),
+				    component: null
+				};
+			}
+			// RELATED TO EXPERIMENTS::
+			else if ( self.core.isTypeOf(node, META.Experiment) ) {
+			    self.model.experiments[nodeName] = {
+				name: nodeName,
+				system: null,
+				deployment: null
+			    };
+			}
 		    }
 		    return self.resolvePointers({
 			messages: messages,
 			services: services,
+			components: components,
 			libraries: libraries, 
 			interfaces: interfaces,
-			users: users
+			users: users,
+			deployments: deployments,
+			systems: systems
 		    });
 		})
 		.then(function() {
@@ -305,6 +360,30 @@ define(['q'], function(Q) {
 				    .hosts[dataRef.hostName]
 				    .interfaces[dataRef.interfaceName].ip = dataRef.ip;
 			    }
+			    // Relevant for Deployments 
+			    else if (dataRef.srcType == 'Component Instance') {
+				self.model
+				    .deployments[dataRef.deploymentName]
+				    .containers[dataRef.containerName]
+				    .nodes[dataRef.nodeName]
+				    .compInstances[dataRef.srcName].component = 
+				    self.model
+				    .software.packages[dataRef.pkgName]
+				    .components[dataRef.component];
+			    }
+			    // Relevant for Experiments
+			    else if (dataRef.srcType == 'Experiment' && dataRef.dstType == 'Deployment') {
+				self.model
+				    .experiments[dataRef.experimentName].deployment = 
+				    self.model
+				    .deployments[dataRef.deployment];
+			    }
+			    else if (dataRef.srcType == 'Experiment' && dataRef.dstType == 'System') {
+				self.model
+				    .experiments[dataRef.experimentName].system = 
+				    self.model
+				    .systems[dataRef.system];
+			    }
 
 			    // If the pointer should not be duplicated and has not been:
 			    if (test == -1 && type != -1) {
@@ -324,36 +403,49 @@ define(['q'], function(Q) {
 	    services = pointerDict.services,
 	    libraries = pointerDict.libraries,
 	    interfaces = pointerDict.interfaces,
-	    users = pointerDict.users;
+	    users = pointerDict.users,
+	    components = pointerDict.components,
+	    systems = pointerDict.systems,
+	    deployments = pointerDict.deployments;
 
 	    return self.core.loadCollection(messages[0], 'Message')
 		.then(function () {
-		    //self.logger.debug('iterating through messages');
-		    for (var i=0; i<messages.length; i++) {
-			refPromises.push(self.getMessagePointerData(messages[i]));
-		    }
-		}).then(function () {
-		    //self.logger.debug('iterating through services');
-		    for (var i=0; i<services.length; i++) {
-			refPromises.push(self.getServicePointerData(services[i]));
-		    }
-		}).then(function () {
-		    //self.logger.debug('iterating through libraries');
-		    for (var i=0; i<libraries.length; i++) {
-			refPromises.push(self.getLibraryPointerData(libraries[i]));
-		    }
-		}).then(function () {
-		    //self.logger.debug('iterating through interfaces');
-		    for (var i=0; i<interfaces.length; i++) {
-			refPromises.push(self.getInterfacePointerData(interfaces[i]));
-		    }
-		}).then(function () {
-		    //self.logger.debug('iterating through users');
-		    for (var i=0; i<users.length; i++) {
-			refPromises.push(self.getUserPointerData(users[i]));
-		    }
-		}).then(function () {
-		    return Q.all(refPromises);
+		    var tasks = [];  // uses concat to append the resultant array to tasks
+
+		    //self.logger.info('iterating through messages');
+		    tasks.concat(messages.map(function(obj) { 
+			return self.getMessagePointerData(obj);
+		    }));
+		    //self.logger.info('iterating through services');
+		    tasks.concat(services.map(function(obj) {
+			return self.getServicePointerData(obj);
+		    }));
+		    //self.logger.info('iterating through libraries');
+		    tasks.concat(libraries.map(function(obj) {
+			return self.getLibraryPointerData(obj);
+		    }));
+		    //self.logger.info('iterating through interfaces');
+		    tasks.concat(interfaces.map(function(obj) {
+			return self.getInterfacePointerData(obj);
+		    }));
+		    //self.logger.info('iterating through users');
+		    tasks.concat(users.map(function(obj) {
+			return self.getUserPointerData(obj);
+		    }));
+		    //self.logger.info('iterating through components');
+		    tasks.concat(components.map(function(obj) {
+			return self.getComponentPointerData(obj);
+		    }));
+		    //self.logger.info('iterating through systems');
+		    tasks.concat(systems.map(function(obj) {
+			return self.getSystemPointerData(obj);
+		    }));
+		    //self.logger.info('iterating through deployments');
+		    tasks.concat(deployments.map(function(obj) {
+			return self.getDeploymentPointerData(obj);
+		    }));
+
+		    return Q.all(tasks);
 		});
 	},
 
@@ -494,6 +586,85 @@ define(['q'], function(Q) {
 		);
 	    }
 	    return Q.all(userDataReferences);
-	}
+	},
+
+	getComponentPointerData: function (obj) {
+	    var self = this;
+	    var objName = self.core.getAttribute(obj, 'name');
+	    var pkgName = self.core.getAttribute(self.core.getParent(obj), 'name');
+
+	    return self.core.loadCollection(obj, 'Component')
+		.then(function (nodes) {
+		    var objReferences = [];
+		    //self.logger.info('Processing ' + nodes.length + ' nodes for component ' + objName);
+		    for (var i=0; i < nodes.length; i++) {
+			var baseObject = self.core.getBaseType(nodes[i]);
+			var baseType = self.core.getAttribute(baseObject, 'name');
+			var srcName = self.core.getAttribute(nodes[i], 'name');
+			var node = self.core.getParent(nodes[i]);
+			var nodeName = self.core.getAttribute(node, 'name');
+			var container = self.core.getParent(node);
+			var containerName = self.core.getAttribute(container, 'name');
+			var deployment = self.core.getParent(container);
+			var deploymentName = self.core.getAttribute(deployment, 'name');
+			objReferences.push({
+			    srcName: srcName,
+			    srcType: baseType,
+			    component: objName,
+			    pkgName: pkgName,
+			    deploymentName: deploymentName,
+			    containerName: containerName,
+			    nodeName: nodeName
+			});
+		    }
+		    return objReferences;
+		});
+	},
+
+	getSystemPointerData: function (obj) {
+	    var self = this;
+	    var objName = self.core.getAttribute(obj, 'name');
+
+	    return self.core.loadCollection(obj, 'System')
+		.then(function (nodes) {
+		    var objReferences = [];
+		    //self.logger.info('Processing ' + nodes.length + ' nodes for system ' + objName);
+		    for (var i=0; i < nodes.length; i++) {
+			var baseObject = self.core.getBaseType(nodes[i]);
+			var baseType = self.core.getAttribute(baseObject, 'name');
+			var experimentName = self.core.getAttribute(nodes[i], 'name');
+			objReferences.push({
+			    dstType: 'System',
+			    srcType: baseType,
+			    experimentName: experimentName,
+			    system: objName
+			});
+		    }
+		    return objReferences;
+		});
+	},
+
+	getDeploymentPointerData: function (obj) {
+	    var self = this;
+	    var objName = self.core.getAttribute(obj, 'name');
+
+	    return self.core.loadCollection(obj, 'Deployment')
+		.then(function (nodes) {
+		    var objReferences = [];
+		    //self.logger.info('Processing ' + nodes.length + ' nodes for deployment ' + objName);
+		    for (var i=0; i < nodes.length; i++) {
+			var baseObject = self.core.getBaseType(nodes[i]);
+			var baseType = self.core.getAttribute(baseObject, 'name');
+			var experimentName = self.core.getAttribute(nodes[i], 'name');
+			objReferences.push({
+			    dstType: 'Deployment',
+			    srcType: baseType,
+			    experimentName: experimentName,
+			    deployment: objName
+			});
+		    }
+		    return objReferences;
+		});
+	},
     }
 });

@@ -67,17 +67,6 @@ define([
     };
 
     /**
-     * Gets the configuration structure for the ObservationSelection.
-     * The ConfigurationStructure defines the configuration for the plugin
-     * and will be used to populate the GUI when invoking the plugin from webGME.
-     * @returns {object} The version of the plugin.
-     * @public
-     */
-    RunExperiment.prototype.getConfigStructure = function() {
-	return [];
-    };
-
-    /**
      * Main function for the plugin to execute. This will perform the execution.
      * Notes:
      * - Always log with the provided logger.[error,warning,info,debug].
@@ -89,38 +78,60 @@ define([
     RunExperiment.prototype.main = function (callback) {
         // Use self to access core, project, result, logger etc from PluginBase.
         // These are all instantiated at this point.
-        var self = this,
-            nodeObject;
+        var self = this;
 
         // Default fails
         self.result.success = false;
 
-        // Using the logger.
-        self.logger.debug('This is a debug message.');
-        self.logger.info('This is an info message.');
-        self.logger.warn('This is a warning message.');
-        self.logger.error('This is an error message.');
+        if (typeof WebGMEGlobal !== 'undefined') {
+            callback(new Error('Client-side execution is not supported'), self.result);
+            return;
+        }
+	
+        self.updateMETA(self.metaTypes);
 
-        // Using the coreAPI to make changes.
-
-        nodeObject = self.activeNode;
-
-        self.result.success = true;
-
-	callback(null, self.result);
-
-	/*
-        // This will save the changes. If you don't want to save;
-        // exclude self.save and call callback directly from this scope.
-        self.save('RunExperiment updated model.', function (err) {
-            if (err) {
-                callback(err, self.result);
-                return;
-            }
-            self.result.setSuccess(true);
-            callback(null, self.result);
-        });
-	*/
+	// the active node for this plugin is experiment -> experiments -> project
+	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
+	var projectName = self.core.getAttribute(projectNode, 'name');
+	self.logger.info('loading project: ' + projectName);
+	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
+	    .then(function(projectModel) {
+		self.projectModel = projectModel;
+		self.logger.info('parsed model!');
+		// map the containers to hosts (1-1)
+	    })
+	    .then(function() {
+		// generate xml files here
+		return
+	    })
+	    .then(function() {
+		// send the deployment + binaries off to hosts for execution
+		return
+	    })
+	    .then(function() {
+		// create experiment nodes in the model corresponding to created experiment mapping
+		return
+	    })
+	    .then(function() {
+		// This will save the changes. If you don't want to save;
+		// exclude self.save and call callback directly from this scope.
+		return; // self.save('RunExperiment updated model.');
+	    })
+	    .then(function (err) {
+		if (err) {
+		    callback(err, self.result);
+		    return;
+		}
+		self.result.setSuccess(true);
+		callback(null, self.result);
+	    })
+	    .catch(function(err) {
+        	self.logger.error(err);
+        	self.createMessage(self.activeNode, err, 'error');
+		self.result.setSuccess(false);
+		callback(err, self.result);
+	    })
+	    .done();
     };
 
     return RunExperiment;
