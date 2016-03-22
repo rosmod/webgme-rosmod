@@ -99,6 +99,11 @@ define(['q'], function(Q) {
 	    return output;
 	},
 	mkdirRemote: function(dir, ip, user) {
+	    var self = this;
+	    return self.executeOnHost(['mkdir -p ' + dir],
+				      ip,
+				      user);
+	    /*
 	    var client = require('scp2');
 	    client.defaults({
 		host: ip,
@@ -113,6 +118,7 @@ define(['q'], function(Q) {
 		    deferred.resolve();
 	    });
 	    return deferred.promise;
+	    */
 	},
 	copyToHost: function(from, to, ip, user) {
 	    var client = require('scp2');
