@@ -20,7 +20,7 @@ define(['js/PanelBase/PanelBaseWithHeader',
         var options = {};
         //set properties from options
         options[PanelBaseWithHeader.OPTIONS.LOGGER_INSTANCE_NAME] = 'RootVizPanel';
-        options[PanelBaseWithHeader.OPTIONS.FLOATING_TITLE] = true;
+        options[PanelBaseWithHeader.OPTIONS.FLOATING_TITLE] = false;
 
         //call parent's constructor
         PanelBaseWithHeader.apply(this, [options, layoutManager]);
