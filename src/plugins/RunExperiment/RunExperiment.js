@@ -7,10 +7,24 @@
 
 define([
     'plugin/PluginConfig',
-    'plugin/PluginBase'
+    'plugin/PluginBase',
+    'common/util/ejs', // for ejs templates
+    'common/util/xmljsonconverter', // used to save model as json
+    'plugin/RunExperiment/RunExperiment/Templates/Templates', // 
+    'rosmod/meta',
+    'rosmod/remote_utils',
+    'rosmod/modelLoader',
+    'q'
 ], function (
     PluginConfig,
-    PluginBase) {
+    PluginBase,
+    ejs,
+    Converter,
+    TEMPLATES,
+    MetaTypes,
+    utils,
+    loader,
+    Q) {
     'use strict';
 
     /**
@@ -23,6 +37,11 @@ define([
     var RunExperiment = function () {
         // Call base class' constructor.
         PluginBase.call(this);
+
+        this.metaTypes = MetaTypes;
+        this.FILES = {
+            'node_xml': 'node.xml.ejs'
+        };
     };
 
     // Prototypal inheritance from PluginBase.
@@ -48,6 +67,17 @@ define([
     };
 
     /**
+     * Gets the configuration structure for the ObservationSelection.
+     * The ConfigurationStructure defines the configuration for the plugin
+     * and will be used to populate the GUI when invoking the plugin from webGME.
+     * @returns {object} The version of the plugin.
+     * @public
+     */
+    RunExperiment.prototype.getConfigStructure = function() {
+	return [];
+    };
+
+    /**
      * Main function for the plugin to execute. This will perform the execution.
      * Notes:
      * - Always log with the provided logger.[error,warning,info,debug].
@@ -62,6 +92,8 @@ define([
         var self = this,
             nodeObject;
 
+        // Default fails
+        self.result.success = false;
 
         // Using the logger.
         self.logger.debug('This is a debug message.');
@@ -73,10 +105,11 @@ define([
 
         nodeObject = self.activeNode;
 
-        self.core.setAttribute(nodeObject, 'name', 'My new obj');
-        self.core.setRegistry(nodeObject, 'position', {x: 70, y: 70});
+        self.result.success = true;
 
+	callback(null, self.result);
 
+	/*
         // This will save the changes. If you don't want to save;
         // exclude self.save and call callback directly from this scope.
         self.save('RunExperiment updated model.', function (err) {
@@ -87,7 +120,7 @@ define([
             self.result.setSuccess(true);
             callback(null, self.result);
         });
-
+	*/
     };
 
     return RunExperiment;

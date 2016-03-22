@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<node name="Sensor_Node">
+  <library name="libKRPCI.so"/>
+  <component_instance name="sensor_i">
+    <library name="libsensor.so"/>
+    <scheduling_scheme setting="FIFO"/>
+    <numCompsToSync setting="4"/>
+    <syncTimeout setting="5.0"/>
+    <logging>
+      <is_periodic_logging setting="True"/>
+      <periodic_log_unit setting="1"/> 
+      <debug setting="True"/>
+      <info setting="True"/>
+      <warning setting="True"/>
+      <error setting="True"/>
+      <critical setting="True"/>
+    </logging>
+  </component_instance>
+</node>

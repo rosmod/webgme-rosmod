@@ -144,6 +144,7 @@ define([
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
 	self.hostsValidForCompilation = {}; // will be filled out by selectCompilationArchitectures
 
+	// the active node for this plugin is software -> project
 	var projectNode = self.core.getParent(self.activeNode);
 
       	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)

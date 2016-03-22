@@ -4109,7 +4109,8 @@
                 "position": {
                     "x": 1103,
                     "y": 417
-                }
+                },
+                "validPlugins": ""
             },
             "sets": {}
         },
@@ -6673,7 +6674,8 @@
                 "position": {
                     "x": 1309,
                     "y": 416
-                }
+                },
+                "validPlugins": "RunExperiment"
             },
             "sets": {}
         },
