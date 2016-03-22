@@ -85,12 +85,14 @@ define([
     };
 
     CodeMirrorVizWidget.prototype.removeNode = function (gmeId) {
+	return;
         var desc = this.nodes[gmeId];
         this._el.append('<div>Removing node "'+desc.name+'"</div>');
         delete this.nodes[gmeId];
     };
 
     CodeMirrorVizWidget.prototype.updateNode = function (desc) {
+	return;
         if (desc) {
             console.log('Updating node:', desc);
             this._el.append('<div>Updating node "'+desc.name+'"</div>');
