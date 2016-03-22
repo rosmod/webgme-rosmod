@@ -156,6 +156,9 @@ define([
 		return self.downloadLibraries();
 	    })
 	    .then(function () {
+		return self.generateCPN();
+	    })
+	    .then(function () {
 		return self.selectCompilationArchitectures();
 	    })
 	    .then(function () {
@@ -327,7 +330,26 @@ define([
 	    .then(function() {
 		self.createMessage(self.activeNode, 'Generated doxygen documentation.');
 	    });
-    }
+    };
+
+    SoftwareGenerator.prototype.generateCPN = function()
+    {
+	var self = this;
+	(function() {
+	    var path = require('path'),
+	    prefix = path.join(self.gen_dir);
+	    var promises = [];
+
+	    // Get the dummy cpn template
+	    var file_url = 'https://github.com/rosmod/rosmod-cpn/releases/download/v1.0.0/cpn.zip';
+	    var dir = prefix;
+	    promises.push(utils.wgetAndUnzipLibrary(file_url, dir));
+	    return Q.all(promises);
+	})()
+	.then(function() {
+	    self.createMessage(self.activeNode, 'Downloaded CPN template');
+	});
+    };
 
     SoftwareGenerator.prototype.getValidArchitectures = function() {
 	var self = this,
