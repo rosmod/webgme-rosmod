@@ -148,6 +148,7 @@ define([
 	var projectNode = self.core.getParent(self.activeNode);
 
 	loader.logger = self.logger;
+	utils.logger = self.logger;
       	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
   	    .then(function (projectModel) {
 		self.projectModel = projectModel;
@@ -162,7 +163,14 @@ define([
 	    .then(function () {
 		return self.selectCompilationArchitectures();
 	    })
-	    .then(function () {
+	    .then(function (validHostList) {
+		validHostList.map(function(obj) {
+		    var host = obj.host,
+		    intf = obj.intf,
+		    user = obj.user;
+		    self.hostsValidForCompilation[host.architecture]
+			.push({host:host, intf: intf, user: user});
+		});
 		return self.compileBinaries();
 	    })
 	    .then(function () {
@@ -369,75 +377,6 @@ define([
 	return validArchs;
     };
 
-    SoftwareGenerator.prototype.testConnectivity = function(host) {
-	var self = this,
-	ping = require('ping');
-	
-	var promises = [];
-	// test IP connectivity
-	for (var i in host.interfaces) {
-	    var intf = host.interfaces[i];
-	    promises.push(
-		ping.promise.probe(intf.ip)
-		    .then(function (res) { // {alive: bool, host: str, output: str}
-			if (!res.alive)
-			    throw new String(intf.ip + ' is not reachable!');
-			// test user connection (UN + Key)
-			var p = []
-			for (var u in host.users) {
-			    p.push(utils.executeOnHost(['echo "hello"'], intf.ip, host.users[u]));
-			}
-			return Q.all(p);
-		    })
-		    .then(function(outputs) {
-			// TODO: handle all the outputs (different users)
-			// TODO: make sure the host isn't running node_main, roscore, cmake, gcc/g+++, or catkin
-			var user = outputs[0].user;
-			return utils.executeOnHost(['uname -om'], intf.ip, user);
-		    })
-		    .then(function(output) {
-			var user = output.user;
-			var correctArch = output.stdout.indexOf(host.architecture) > -1;
-			var correctOS = output.stdout.indexOf(host.os) > -1;
-			if (!correctArch) {
-			    throw new String('host ' + host.name + ':' + host.architecture +
-					     ' has incorrect architecture: '+ output.stdout);
-			}
-			if (!correctOS) {
-			    throw new String('host ' + host.name + ':' + host.os +
-					     ' has incorrect OS: '+ output.stdout);
-			}
-			self.logger.debug('host ' + host.name + ':' + host.os +
-					 ' has corret OS/arch');
-			var tasks = utils.trackedProcesses.map(function(procName) {
-			    return utils.getPidOnHost('catkin_make', intf.ip, user);
-			});
-
-			return Q.all(tasks);
-		    })
-		    .then(function(outputs) {
-			for (var o in outputs) {
-			    var output = outputs[o];
-			    if (output.stdout) {
-				self.logger.info(intf.ip + ' is already running: ' + output.stdout);
-				return false;
-			    }
-			}
-			var user = outputs[0].user;
-			self.hostsValidForCompilation[host.architecture]
-			    .push({host:host, intf: intf, user: user});
-			return true;
-		    })
-		    .catch(function(e) {
-			self.logger.error(e);
-			return false;
-		    })
-	    );
-        }
-
-	return Q.all(promises);
-    };
-
     SoftwareGenerator.prototype.selectCompilationArchitectures = function() {
 	
 	var self = this;
@@ -448,10 +387,18 @@ define([
 	for (var arch in validArchitectures) {
 	    for (var hst in validArchitectures[arch]) {
 		var host = validArchitectures[arch][hst];
-		promises.push(self.testConnectivity(host));
+		promises.push(utils.getAvailability(host));
 	    }
 	}
-	return Q.all(promises);
+	return Q.all(promises)
+	    .then(function (nestedArr) {
+		var validHosts = [];
+		for (var i =0; i<nestedArr.length; i++) {
+		    if (nestedArr[i][0])
+			validHosts.push(nestedArr[i][0]);
+		}
+		return validHosts;
+	    });
     };
 
     SoftwareGenerator.prototype.compileOnHost = function (host) {

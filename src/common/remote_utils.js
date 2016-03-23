@@ -2,8 +2,94 @@
 
 define(['q'], function(Q) {
     'use strict';
+
     return {
 	trackedProcesses: ['catkin_make', 'node_main', 'roscore'],
+	testPing: function(ip) {
+	    var self = this;
+	    var ping = require('ping');
+	    return ping.promise.probe(ip)
+		.then(function (res) {
+		    if (!res.alive)
+			throw new String(ip + ' is not reachable.');
+		    return true;
+		});
+	},
+	testSSH: function(ip, user) {
+	    var self = this;
+	    return self.executeOnHost(['echo "hello"'], ip, user)
+		.then(function () {
+		    return true;
+		})
+		.catch(function (err) {
+		    throw new String(user.name + '@' + ip + ' not SSH-able: ' + err);
+		});
+	},
+	testArchOS: function(arch, os, ip, user) {
+	    var self = this;
+	    return self.executeOnHost(['uname -om'], ip, user)
+		.then(function (output) {
+		    var correctArch = output.stdout.indexOf(arch) > -1;
+		    var correctOS = output.stdout.indexOf(os) > -1;
+		    if (!correctArch) {
+			throw new String('host ' + host.name + ':' + host.architecture +
+					 ' has incorrect architecture: '+ output.stdout);
+		    }
+		    if (!correctOS) {
+			throw new String('host ' + host.name + ':' + host.os +
+					 ' has incorrect OS: '+ output.stdout);
+		    }
+		    return true;
+		});
+	},
+	isFree: function(ip, user) {
+	    var self = this;
+	    var tasks = self.trackedProcesses.map(function(procName) {
+		return self.getPidOnHost(procName, ip, user);
+	    });
+	    return Q.all(tasks)
+		.then(function(outputs) {
+		    outputs.forEach(function (output) {
+			if (output.stdout) {
+			    throw new String(ip + ' is already running: ' + output.stdout);
+			};
+		    });
+		    return true;
+		});
+	},
+	getAvailability: function(host) {
+	    var self = this;
+	    // test IP connectivity
+	    var tasks = Object.keys(host.interfaces).map(function(index) {
+		var intf = host.interfaces[index];
+		return self.testPing(intf.ip)
+		    .then(function() {
+			var userTasks = Object.keys(host.users).map(function(index) {
+			    var user = host.users[index];
+			    self.logger.info('testing ' + user.name + ' on ' + intf.ip);
+			    return self.testSSH(intf.ip, user)
+				.then(function() {
+				    return user;
+				});
+			});
+			return Q.any(userTasks);
+		    })
+		    .then(function(user) {
+			self.logger.info(intf.ip + ' got valid user: ' + user.name);
+			return self.testArchOS(host.architecture, host.os, intf.ip, user)
+			    .then(function() {
+				return self.isFree(intf.ip, user)
+			    })
+			    .then(function() {
+				return {host: host, intf:intf, user:user};
+			    });
+		    })
+		    .catch(function(err) {
+			self.logger.error(err);
+		    });
+	    });
+	    return Q.all(tasks);
+	},
 	executeOnHost: function(cmds, ip, user, cb_message, cb_complete, cb_processing, cb_error) {
 	    var self = this;
 	    var ssh2shell = require('ssh2shell');
@@ -104,22 +190,6 @@ define(['q'], function(Q) {
 	    return self.executeOnHost(['mkdir -p ' + dir],
 				      ip,
 				      user);
-	    /*
-	    var client = require('scp2');
-	    client.defaults({
-		host: ip,
-		username: user.name,
-		privateKey: require('fs').readFileSync(user.key),
-	    });
-	    var deferred = Q.defer();
-	    client.mkdir(dir, function(err) {
-		if (err)
-		    deferred.reject(err);
-		else
-		    deferred.resolve();
-	    });
-	    return deferred.promise;
-	    */
 	},
 	copyToHost: function(from, to, ip, user) {
 	    var client = require('scp2');
