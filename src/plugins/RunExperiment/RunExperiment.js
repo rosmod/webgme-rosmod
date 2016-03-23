@@ -99,21 +99,25 @@ define([
 		self.projectModel = projectModel;
 		self.logger.info('parsed model!');
 		// map the containers to hosts (1-1)
+		return self.mapContainersToHosts();
 	    })
 	    .then(function() {
 		// generate xml files here
-		return
+		self.logger.info('generating artifacts');
+		return self.generateArtifacts();
 	    })
 	    .then(function() {
 		// send the deployment + binaries off to hosts for execution
-		return
+		self.logger.info('deploying onto system');
+		return self.deployExperiment();
 	    })
 	    .then(function() {
 		// create experiment nodes in the model corresponding to created experiment mapping
-		return
+		return self.createModelArtifacts();
 	    })
 	    .then(function() {
 		// This will save the changes. If you don't want to save;
+		self.logger.info('saving updates to model');
 		// exclude self.save and call callback directly from this scope.
 		return; // self.save('RunExperiment updated model.');
 	    })
@@ -131,7 +135,95 @@ define([
 		self.result.setSuccess(false);
 		callback(err, self.result);
 	    })
-	    .done();
+		.done();
+    };
+
+    RunExperiment.prototype.mapContainersToHosts = function () {
+	var self = this;
+
+	var expName = self.core.getAttribute(self.activeNode, 'name');
+	var expPath = self.core.getPath(self.activeNode);
+	var selectedExperiment = self.projectModel.experiments[expName];
+	if ( expPath != selectedExperiment.path ) {
+	    throw new String("Experiments exist with the same name, can't properly resolve!");
+	}
+	self.logger.info(JSON.stringify(selectedExperiment, null, 2));
+	self.logger.info('Experiment mapping containers in ' + selectedExperiment.deployment.name +
+			 ' to hosts in '  + selectedExperiment.system.name);
+	var hosts = selectedExperiment.system.hosts;
+	var containers = selectedExperiment.deployment.containers;
+    };
+
+    RunExperiment.prototype.generateArtifacts = function () {
+	return;
+	/*
+	var path = require('path'),
+	filendir = require('filendir'),
+	filesToAdd = {},
+	prefix = 'src/';
+
+	var projectName = self.projectModel.name,
+
+        for (var pkg in self.projectModel.software.packages) {
+	    var pkgInfo = self.projectModel.software.packages[pkg],
+	    cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt',
+	    cmakeTemplate = TEMPLATES[self.FILES['cmakelists']];
+	    filesToAdd[cmakeFileName] = ejs.render(cmakeTemplate, {'pkgInfo':pkgInfo});
+
+	    var packageXMLFileName = prefix + pkgInfo.name + '/package.xml',
+	    packageXMLTemplate = TEMPLATES[self.FILES['package_xml']];
+	    filesToAdd[packageXMLFileName] = ejs.render(packageXMLTemplate, {'pkgInfo':pkgInfo});
+
+	    for (var cmp in pkgInfo.components) {
+		var compInfo = pkgInfo.components[cmp];
+		self.generateComponentFiles(filesToAdd, prefix, pkgInfo, compInfo);
+	    }
+
+	    for (var msg in pkgInfo.messages) {
+		var msgInfo = pkgInfo.messages[msg],
+		msgFileName = prefix + pkgInfo.name + '/msg/' + msgInfo.name + '.msg';
+		filesToAdd[msgFileName] = msgInfo.definition;
+	    }
+
+	    for (var srv in pkgInfo.services) {
+		var srvInfo = pkgInfo.services[srv],
+		srvFileName = prefix + pkgInfo.name + '/srv/' + srvInfo.name + '.srv';
+		filesToAdd[srvFileName] = srvInfo.definition;
+	    }
+	}
+
+	var promises = [];
+
+	return (function () {
+	    for (var f in filesToAdd) {
+		var fname = path.join(self.gen_dir, f),
+		data = filesToAdd[f];
+
+		promises.push(new Promise(function(resolve, reject) {
+		    filendir.writeFile(fname, data, function(err) {
+			if (err) {
+			    self.logger.error(err);
+			    reject(err);
+			}
+			else {
+			    resolve();
+			}
+		    });
+		}));
+	    }
+	    return Q.all(promises);
+	})()
+	    .then(function() {
+		self.logger.debug('generated artifacts.');
+		self.createMessage(self.activeNode, 'Generated artifacts.');
+	    })
+	*/
+    };
+
+    RunExperiment.prototype.deployExperiment = function () {
+    };
+
+    RunExperiment.prototype.createModelArtifacts = function () {
     };
 
     return RunExperiment;

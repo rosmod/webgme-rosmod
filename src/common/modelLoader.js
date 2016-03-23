@@ -36,6 +36,7 @@ define(['q'], function(Q) {
 			if ( self.core.isTypeOf(node, META.Package) ) {
 			    self.model.software.packages[nodeName] = {
 				name: nodeName,
+				path: self.core.getPath(node),
 				messages: {},
 				services: {},
 				components: {}
@@ -47,6 +48,7 @@ define(['q'], function(Q) {
 				inclDir = '../' + nodeName + '/include';
 			    self.model.software.libraries[nodeName] = {
 				name: nodeName,
+				path: self.core.getPath(node),
 				url: self.core.getAttribute(node, 'URL'),
 				linkLibs: self.core.getAttribute(node, 'Link Libraries'),
 				includeDirs: inclDir
@@ -56,6 +58,7 @@ define(['q'], function(Q) {
 			else if ( self.core.isTypeOf(node, META.Message) ) {
 			    self.model.software.packages[parentName].messages[nodeName] = {
 				name: nodeName,
+				path: self.core.getPath(node),
 				packageName: parentName,
 				definition: self.core.getAttribute(node, 'Definition')
 			    };
@@ -64,6 +67,7 @@ define(['q'], function(Q) {
 			else if ( self.core.isTypeOf(node, META.Service) ) {
 			    self.model.software.packages[parentName].services[nodeName] = {
 				name: nodeName,
+				path: self.core.getPath(node),
 				packageName: parentName,
 				definition: self.core.getAttribute(node, 'Definition')
 			    };
@@ -72,6 +76,7 @@ define(['q'], function(Q) {
 			else if ( self.core.isTypeOf(node, META.Component) ) {
 			    self.model.software.packages[parentName].components[nodeName] = {
 				name: nodeName,
+				path: self.core.getPath(node),
 				packageName: parentName,
 				requiredTypes: [],
 				requiredLibs: [],
@@ -95,6 +100,7 @@ define(['q'], function(Q) {
 				.components[parentName]
 				.timers[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    period: self.core.getAttribute(node, 'Period'),
 				    priority: self.core.getAttribute(node, 'Priority'),
 				    deadline: self.core.getAttribute(node, 'Deadline'),
@@ -108,6 +114,7 @@ define(['q'], function(Q) {
 				.components[parentName]
 				.publishers[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    topic: {},
 				    priority: self.core.getAttribute(node, 'Priority'),
 				    networkProfile: self.core.getAttribute(node, 'NetworkProfile')
@@ -120,6 +127,7 @@ define(['q'], function(Q) {
 				.components[parentName]
 				.subscribers[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    topic: {},
 				    priority: self.core.getAttribute(node, 'Priority'),
 				    networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
@@ -134,6 +142,7 @@ define(['q'], function(Q) {
 				.components[parentName]
 				.clients[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    service: {},
 				    priority: self.core.getAttribute(node, 'Priority'),
 				    networkProfile: self.core.getAttribute(node, 'NetworkProfile')
@@ -146,6 +155,7 @@ define(['q'], function(Q) {
 				.components[parentName]
 				.servers[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    service: {},
 				    priority: self.core.getAttribute(node, 'Priority'),
 				    networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
@@ -157,6 +167,7 @@ define(['q'], function(Q) {
 			else if ( self.core.isTypeOf(node, META.System) ) {
 			    self.model.systems[nodeName] = {
 				name: nodeName,
+				path: self.core.getPath(node),
 				hosts: {},
 				networks: {},
 				users: {},
@@ -168,6 +179,7 @@ define(['q'], function(Q) {
 			    self.model.systems[parentName]
 				.hosts[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    os: self.core.getAttribute(node, 'OS'),
 				    architecture: self.core.getAttribute(node, 'Architecture'),
 				    interfaces: {},
@@ -180,6 +192,7 @@ define(['q'], function(Q) {
 				.hosts[parentName]
 				.interfaces[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    ip: ''
 				};
 			    interfaces.push(node);
@@ -188,6 +201,7 @@ define(['q'], function(Q) {
 			    self.model.systems[parentName]
 				.networks[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    subnet: self.core.getAttribute(node, 'Subnet'),
 				    netmask: self.core.getAttribute(node, 'Netmask'),
 				    links: []
@@ -197,6 +211,7 @@ define(['q'], function(Q) {
 			    self.model.systems[parentName]
 				.users[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    directory: self.core.getAttribute(node, 'Directory'),
 				    key: self.core.getAttribute(node, 'Key')
 				};
@@ -206,6 +221,7 @@ define(['q'], function(Q) {
 			    self.model.systems[parentName]
 				.links[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    ip: self.core.getAttribute(node, 'IP')
 				};
 			}
@@ -213,6 +229,7 @@ define(['q'], function(Q) {
 			else if ( self.core.isTypeOf(node, META.Deployment) ) {
 			    self.model.deployments[nodeName] = {
 				name: nodeName,
+				path: self.core.getPath(node),
 				containers: {}
 			    };
 			    deployments.push(node);
@@ -221,6 +238,7 @@ define(['q'], function(Q) {
 			    self.model.deployments[parentName]
 				.containers[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    nodes: {}
 				};
 			}
@@ -230,6 +248,7 @@ define(['q'], function(Q) {
 				.containers[parentName]
 				.nodes[nodeName] = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    cmdLine: self.core.getAttribute(node, 'CMDLine'),
 				    priority: self.core.getAttribute(node, 'Priority'),
 				    compInstances: {}
@@ -244,6 +263,7 @@ define(['q'], function(Q) {
 				.nodes[parentName]
 				.compInstances = {
 				    name: nodeName,
+				    path: self.core.getPath(node),
 				    schedulingScheme: self.core.getAttribute(node, 'SchedulingScheme'),
 				    component: null
 				};
@@ -252,6 +272,7 @@ define(['q'], function(Q) {
 			else if ( self.core.isTypeOf(node, META.Experiment) ) {
 			    self.model.experiments[nodeName] = {
 				name: nodeName,
+				path: self.core.getPath(node),
 				system: null,
 				deployment: null
 			    };
@@ -277,6 +298,7 @@ define(['q'], function(Q) {
 	    
 	    return self.gatherReferences(pointerDict)
 		.then(function(retData) {
+		    self.logger.info('RETDATA: '+retData);
 		    for (var i=0; i < retData.length; i++) {
 			var subarr = retData[i];
 			for (var j=0; j < subarr.length; j++) {
@@ -408,45 +430,42 @@ define(['q'], function(Q) {
 	    systems = pointerDict.systems,
 	    deployments = pointerDict.deployments;
 
-	    return self.core.loadCollection(messages[0], 'Message')
-		.then(function () {
-		    var tasks = [];  // uses concat to append the resultant array to tasks
+	    var tasks = [];  // uses concat to append the resultant array to tasks
 
-		    //self.logger.info('iterating through messages');
-		    tasks.concat(messages.map(function(obj) { 
-			return self.getMessagePointerData(obj);
-		    }));
-		    //self.logger.info('iterating through services');
-		    tasks.concat(services.map(function(obj) {
-			return self.getServicePointerData(obj);
-		    }));
-		    //self.logger.info('iterating through libraries');
-		    tasks.concat(libraries.map(function(obj) {
-			return self.getLibraryPointerData(obj);
-		    }));
-		    //self.logger.info('iterating through interfaces');
-		    tasks.concat(interfaces.map(function(obj) {
-			return self.getInterfacePointerData(obj);
-		    }));
-		    //self.logger.info('iterating through users');
-		    tasks.concat(users.map(function(obj) {
-			return self.getUserPointerData(obj);
-		    }));
-		    //self.logger.info('iterating through components');
-		    tasks.concat(components.map(function(obj) {
-			return self.getComponentPointerData(obj);
-		    }));
-		    //self.logger.info('iterating through systems');
-		    tasks.concat(systems.map(function(obj) {
-			return self.getSystemPointerData(obj);
-		    }));
-		    //self.logger.info('iterating through deployments');
-		    tasks.concat(deployments.map(function(obj) {
-			return self.getDeploymentPointerData(obj);
-		    }));
+	    //self.logger.info('iterating through messages');
+	    tasks.concat(messages.map(function(obj) { 
+		return self.getMessagePointerData(obj);
+	    }));
+	    //self.logger.info('iterating through services');
+	    tasks.concat(services.map(function(obj) {
+		return self.getServicePointerData(obj);
+	    }));
+	    //self.logger.info('iterating through libraries');
+	    tasks.concat(libraries.map(function(obj) {
+		return self.getLibraryPointerData(obj);
+	    }));
+	    //self.logger.info('iterating through interfaces');
+	    tasks.concat(interfaces.map(function(obj) {
+		return self.getInterfacePointerData(obj);
+	    }));
+	    //self.logger.info('iterating through users');
+	    tasks.concat(users.map(function(obj) {
+		return self.getUserPointerData(obj);
+	    }));
+	    //self.logger.info('iterating through components');
+	    tasks.concat(components.map(function(obj) {
+		return self.getComponentPointerData(obj);
+	    }));
+	    //self.logger.info('iterating through systems');
+	    tasks.concat(systems.map(function(obj) {
+		return self.getSystemPointerData(obj);
+	    }));
+	    //self.logger.info('iterating through deployments');
+	    tasks.concat(deployments.map(function(obj) {
+		return self.getDeploymentPointerData(obj);
+	    }));
 
-		    return Q.all(tasks);
-		});
+	    return Q.all(tasks);
 	},
 
 	getMessagePointerData: function (msgObj) {

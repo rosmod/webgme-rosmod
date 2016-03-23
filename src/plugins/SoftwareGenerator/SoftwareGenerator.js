@@ -147,6 +147,7 @@ define([
 	// the active node for this plugin is software -> project
 	var projectNode = self.core.getParent(self.activeNode);
 
+	loader.logger = self.logger;
       	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
   	    .then(function (projectModel) {
 		self.projectModel = projectModel;
