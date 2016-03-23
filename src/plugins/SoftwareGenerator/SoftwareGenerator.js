@@ -80,6 +80,14 @@ define([
     SoftwareGenerator.prototype.getConfigStructure = function() {
         return [
             {
+                'name': 'generateCPN',
+                'displayName': 'Generate CPN',
+                'description': 'Enables generation of CPN-based timing analysis model.',
+                'value': true,
+                'valueType': 'boolean',
+                'readOnly': false
+            },
+            {
                 'name': 'compile',
                 'displayName': 'Compile Code',
                 'description': 'Turn off to just generate source files.',
@@ -138,11 +146,11 @@ define([
 
 	// Setting up variables that will be used by various functions of this plugin
 	self.gen_dir = path.join(process.cwd(), 'generated', self.project.projectId, self.branchName);
+	self.generateCPNAnalysis = currentConfig.generateCPN;
 	self.compileCode = currentConfig.compile;
 	self.generateDocs = currentConfig.generate_docs;
 	self.returnZip = currentConfig.returnZip;
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
-	self.hostsValidForCompilation = {}; // will be filled out by selectCompilationArchitectures
 
 	// the active node for this plugin is software -> project
 	var projectNode = self.core.getParent(self.activeNode);
@@ -161,17 +169,7 @@ define([
 		return self.generateCPN();
 	    })
 	    .then(function () {
-		return self.selectCompilationArchitectures();
-	    })
-	    .then(function (validHostList) {
-		validHostList.map(function(obj) {
-		    var host = obj.host,
-		    intf = obj.intf,
-		    user = obj.user;
-		    self.hostsValidForCompilation[host.architecture]
-			.push({host:host, intf: intf, user: user});
-		});
-		return self.compileBinaries();
+		return self.runCompilation();
 	    })
 	    .then(function () {
 		return self.generateDocumentation();
@@ -344,6 +342,13 @@ define([
     SoftwareGenerator.prototype.generateCPN = function()
     {
 	var self = this;
+	if (!self.generateCPNAnalysis) {
+	    var msg = 'Skipping CPN model generation.';
+	    self.logger.info(msg);
+            self.createMessage(self.activeNode, msg);
+	    return;
+	}
+
 	(function() {
 	    var path = require('path'),
 	    prefix = path.join(self.gen_dir);
@@ -369,7 +374,6 @@ define([
 		var host = system.hosts[hst];
 		if (validArchs[host.architecture] === undefined) {
 		    validArchs[host.architecture] = [];
-		    self.hostsValidForCompilation[host.architecture] = [];
 		}
 		validArchs[host.architecture].push(host);
 	    }
@@ -385,13 +389,19 @@ define([
 	var promises = []
 
 	var tasks = Object.keys(validArchitectures).map(function(index) {
-	    return utils.getAvailableHosts(validArchitectures[index]);
+	    return utils.getAvailableHosts(validArchitectures[index])
+		.then(function(hostArr) {
+		    var retObj = {};
+		    retObj[index] = hostArr;
+		    return retObj;
+		});
 	});
 	return Q.all(tasks)
 	    .then(function (nestedArr) {
-		var validHosts = [];
+		var validHosts = {};
 		nestedArr.forEach(function(subArr) {
-		    validHosts = validHosts.concat(subArr);
+		    var arch = Object.keys(subArr)[0];
+		    validHosts[arch] = subArr[arch];
 		});
 		return validHosts;
 	    });
@@ -462,7 +472,7 @@ define([
 	    });
     };
 
-    SoftwareGenerator.prototype.compileBinaries = function ()
+    SoftwareGenerator.prototype.runCompilation = function ()
     {
 	var self = this;
 
@@ -473,10 +483,20 @@ define([
 	    return;
 	}
 
+	var selectedHosts = [];
+	return self.selectCompilationArchitectures()
+	    .then(function(validHostList) {
+		return self.compileBinaries(validHostList);
+	    });
+    };
+
+    SoftwareGenerator.prototype.compileBinaries = function (validHostList)
+    {
+	var self = this;
 	var selectedHosts = []
 
-	for (var arch in self.hostsValidForCompilation) {
-	    var hosts = self.hostsValidForCompilation[arch];
+	for (var arch in validHostList) {
+	    var hosts = validHostList[arch];
 	    if (hosts.length) {
 		selectedHosts.push(hosts[0]);
 	    }
