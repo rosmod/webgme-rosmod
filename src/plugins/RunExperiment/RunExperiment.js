@@ -67,6 +67,26 @@ define([
     };
 
     /**
+     * Gets the configuration structure for the ObservationSelection.
+     * The ConfigurationStructure defines the configuration for the plugin
+     * and will be used to populate the GUI when invoking the plugin from webGME.
+     * @returns {object} The version of the plugin.
+     * @public
+     */
+    RunExperiment.prototype.getConfigStructure = function() {
+        return [
+	    {
+		'name': 'returnZip',
+		'displayName': 'Zip and return generated artifacts.',
+		'description': 'If true, it enables the client to download a zip of the artifacts.',
+		'value': false,
+		'valueType': 'boolean',
+		'readOnly': false
+	    }
+        ];
+    };
+
+    /**
      * Main function for the plugin to execute. This will perform the execution.
      * Notes:
      * - Always log with the provided logger.[error,warning,info,debug].
@@ -87,8 +107,15 @@ define([
             callback(new Error('Client-side execution is not supported'), self.result);
             return;
         }
-	
+
         self.updateMETA(self.metaTypes);
+
+	// What did the user select for our configuration?
+	var currentConfig = self.getCurrentConfig();
+	self.returnZip = currentConfig.returnZip;
+	
+	// will be filled out by the plugin
+	self.containerToHostMap = {};
 
 	loader.logger = self.logger;
 	utils.logger = self.logger;
@@ -96,12 +123,30 @@ define([
 	// the active node for this plugin is experiment -> experiments -> project
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
 	var projectName = self.core.getAttribute(projectNode, 'name');
+
+	var expName = self.core.getAttribute(self.activeNode, 'name');
+	var path = require('path');
+	self.gen_dir = path.join(process.cwd(), 
+				 'generated', 
+				 self.project.projectId, 
+				 self.branchName,
+				 'experiments', 
+				 expName,
+				 'xml');
+
 	self.logger.info('loading project: ' + projectName);
 	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
 	    .then(function(projectModel) {
 		self.projectModel = projectModel;
 		self.logger.info('parsed model!');
-		// map the containers to hosts (1-1)
+		// update the object's selectedExperiment variable
+		var expName = self.core.getAttribute(self.activeNode, 'name');
+		self.selectedExperiment = self.projectModel.experiments[expName];
+		// check to make sure we have the right experiment
+		var expPath = self.core.getPath(self.activeNode);
+		if ( expPath != self.selectedExperiment.path ) {
+		    throw new String("Experiments exist with the same name, can't properly resolve!");
+		}
 		return self.mapContainersToHosts();
 	    })
 	    .then(function() {
@@ -117,6 +162,9 @@ define([
 	    .then(function() {
 		// create experiment nodes in the model corresponding to created experiment mapping
 		return self.createModelArtifacts();
+	    })
+	    .then(function() {
+		return self.createZip();
 	    })
 	    .then(function() {
 		// This will save the changes. If you don't want to save;
@@ -144,21 +192,12 @@ define([
     RunExperiment.prototype.mapContainersToHosts = function () {
 	var self = this;
 
-	var expName = self.core.getAttribute(self.activeNode, 'name');
-	var expPath = self.core.getPath(self.activeNode);
-	var selectedExperiment = self.projectModel.experiments[expName];
+	self.logger.info('Experiment mapping containers in ' + self.selectedExperiment.deployment.name +
+			 ' to hosts in '  + self.selectedExperiment.system.name);
 
-	if ( expPath != selectedExperiment.path ) {
-	    throw new String("Experiments exist with the same name, can't properly resolve!");
-	}
-
-	self.logger.info('Experiment mapping containers in ' + selectedExperiment.deployment.name +
-			 ' to hosts in '  + selectedExperiment.system.name);
-
-	var containers = selectedExperiment.deployment.containers;
-	return utils.getAvailableHosts(selectedExperiment.system.hosts)
+	var containers = self.selectedExperiment.deployment.containers;
+	return utils.getAvailableHosts(self.selectedExperiment.system.hosts)
 	    .then(function(hosts) {
-		self.logger.info(JSON.stringify(hosts, null, 2));
 		var containerLength = Object.keys(containers).length;
 		self.logger.info( containerLength + ' mapping to ' + hosts.length);
 		if (hosts.length < containerLength) {
@@ -166,45 +205,31 @@ define([
 				     ' containers to ' + hosts.length +
 				     ' available hosts.');
 		}
+		var containerKeys = Object.keys(containers);
+		for (var i=0; i<containerLength; i++) {
+		    self.containerToHostMap[containerKeys[i]] = hosts[i];
+		}
 	    });
     };
 
     RunExperiment.prototype.generateArtifacts = function () {
-	/*
-	var path = require('path'),
-	filendir = require('filendir'),
-	filesToAdd = {},
-	prefix = 'src/';
+	var self = this;
+	var path = require('path');
+	var filendir = require('filendir');
+	var filesToAdd = {};
+	var prefix = '';
 
-	var projectName = self.projectModel.name,
+	var projectName = self.projectModel.name;
 
-        for (var pkg in self.projectModel.software.packages) {
-	    var pkgInfo = self.projectModel.software.packages[pkg],
-	    cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt',
-	    cmakeTemplate = TEMPLATES[self.FILES['cmakelists']];
-	    filesToAdd[cmakeFileName] = ejs.render(cmakeTemplate, {'pkgInfo':pkgInfo});
-
-	    var packageXMLFileName = prefix + pkgInfo.name + '/package.xml',
-	    packageXMLTemplate = TEMPLATES[self.FILES['package_xml']];
-	    filesToAdd[packageXMLFileName] = ejs.render(packageXMLTemplate, {'pkgInfo':pkgInfo});
-
-	    for (var cmp in pkgInfo.components) {
-		var compInfo = pkgInfo.components[cmp];
-		self.generateComponentFiles(filesToAdd, prefix, pkgInfo, compInfo);
-	    }
-
-	    for (var msg in pkgInfo.messages) {
-		var msgInfo = pkgInfo.messages[msg],
-		msgFileName = prefix + pkgInfo.name + '/msg/' + msgInfo.name + '.msg';
-		filesToAdd[msgFileName] = msgInfo.definition;
-	    }
-
-	    for (var srv in pkgInfo.services) {
-		var srvInfo = pkgInfo.services[srv],
-		srvFileName = prefix + pkgInfo.name + '/srv/' + srvInfo.name + '.srv';
-		filesToAdd[srvFileName] = srvInfo.definition;
-	    }
-	}
+	Object.keys(self.selectedExperiment.deployment.containers).map(function (index) {
+	    var container = self.selectedExperiment.deployment.containers[index];
+	    Object.keys(container.nodes).map(function(ni) {
+		var node = container.nodes[ni];
+		var nodeXMLName = prefix + node.name + '.xml';
+		var nodeXMLTemplate = TEMPLATES[self.FILES['node_xml']];
+		filesToAdd[nodeXMLName] = ejs.render(nodeXMLTemplate, {nodeInfo: node});
+	    });
+	});
 
 	var promises = [];
 
@@ -231,13 +256,63 @@ define([
 		self.logger.debug('generated artifacts.');
 		self.createMessage(self.activeNode, 'Generated artifacts.');
 	    })
-	*/
     };
 
     RunExperiment.prototype.deployExperiment = function () {
     };
 
     RunExperiment.prototype.createModelArtifacts = function () {
+    };
+			      
+    RunExperiment.prototype.createZip = function() {
+	var self = this;
+	
+	if (!self.returnZip) {
+            self.createMessage(self.activeNode, 'Skipping compression.');
+	    return;
+	}
+	
+	return new Promise(function(resolve, reject) {
+	    var zlib = require('zlib'),
+	    tar = require('tar'),
+	    fstream = require('fstream'),
+	    input = self.gen_dir;
+
+	    self.logger.info('zipping ' + input);
+
+	    var bufs = [];
+
+	    var packer = tar.Pack()
+		.on('error', function(e) { reject(e); });
+
+	    var gzipper = zlib.Gzip()
+		.on('error', function(e) { reject(e); })
+		.on('data', function(d) { bufs.push(d); })
+		.on('end', function() {
+		    self.logger.debug('gzip ended.');
+		    var buf = Buffer.concat(bufs);
+		    self.blobClient.putFile('artifacts.tar.gz',buf)
+			.then(function (hash) {
+			    self.result.addArtifact(hash);
+			    self.logger.info('compression complete');
+			    resolve();
+			})
+			.catch(function(err) {
+			    reject(err);
+			})
+			    .done();
+		});
+
+	    var reader = fstream.Reader({ 'path': input, 'type': 'Directory' })
+		.on('error', function(e) { reject(e); });
+
+	    reader
+		.pipe(packer)
+		.pipe(gzipper);
+	})
+	    .then(function() {
+		self.createMessage(self.activeNode, 'Created archive.');
+	    });
     };
 
     return RunExperiment;
