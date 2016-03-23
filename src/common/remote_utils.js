@@ -90,6 +90,22 @@ define(['q'], function(Q) {
 	    });
 	    return Q.all(tasks);
 	},
+	getAvailableHosts: function(hosts) {
+	    var self = this;
+	    var tasks = Object.keys(hosts).map(function(index) {
+		var host = hosts[index];
+		return self.getAvailability(host);
+	    });
+	    return Q.all(tasks)
+		.then(function(availArray) {
+		    var hostsUp = [];
+		    for (var i=0; i < availArray.length; i++) {
+			if (availArray[i][0])
+			    hostsUp.push(availArray[i][0]);
+		    }
+		    return hostsUp;
+		});
+	},
 	executeOnHost: function(cmds, ip, user, cb_message, cb_complete, cb_processing, cb_error) {
 	    var self = this;
 	    var ssh2shell = require('ssh2shell');

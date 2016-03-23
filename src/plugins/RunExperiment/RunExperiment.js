@@ -90,6 +90,9 @@ define([
 	
         self.updateMETA(self.metaTypes);
 
+	loader.logger = self.logger;
+	utils.logger = self.logger;
+
 	// the active node for this plugin is experiment -> experiments -> project
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
 	var projectName = self.core.getAttribute(projectNode, 'name');
@@ -144,13 +147,26 @@ define([
 	var expName = self.core.getAttribute(self.activeNode, 'name');
 	var expPath = self.core.getPath(self.activeNode);
 	var selectedExperiment = self.projectModel.experiments[expName];
+
 	if ( expPath != selectedExperiment.path ) {
 	    throw new String("Experiments exist with the same name, can't properly resolve!");
 	}
+
 	self.logger.info('Experiment mapping containers in ' + selectedExperiment.deployment.name +
 			 ' to hosts in '  + selectedExperiment.system.name);
-	var hosts = selectedExperiment.system.hosts;
+
 	var containers = selectedExperiment.deployment.containers;
+	return utils.getAvailableHosts(selectedExperiment.system.hosts)
+	    .then(function(hosts) {
+		self.logger.info(JSON.stringify(hosts, null, 2));
+		var containerLength = Object.keys(containers).length;
+		self.logger.info( containerLength + ' mapping to ' + hosts.length);
+		if (hosts.length < containerLength) {
+		    throw new String('Cannot map ' + containerLength +
+				     ' containers to ' + hosts.length +
+				     ' available hosts.');
+		}
+	    });
     };
 
     RunExperiment.prototype.generateArtifacts = function () {
