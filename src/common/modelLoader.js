@@ -261,7 +261,7 @@ define(['q'], function(Q) {
 			    self.model.deployments[depName]
 				.containers[containerName]
 				.nodes[parentName]
-				.compInstances = {
+				.compInstances[nodeName] = {
 				    name: nodeName,
 				    path: self.core.getPath(node),
 				    schedulingScheme: self.core.getAttribute(node, 'SchedulingScheme'),
@@ -298,7 +298,6 @@ define(['q'], function(Q) {
 	    
 	    return self.gatherReferences(pointerDict)
 		.then(function(retData) {
-		    self.logger.info('RETDATA: '+retData);
 		    for (var i=0; i < retData.length; i++) {
 			var subarr = retData[i];
 			for (var j=0; j < subarr.length; j++) {
@@ -419,7 +418,6 @@ define(['q'], function(Q) {
 	},
 	gatherReferences: function (pointerDict) {
 	    var self = this;
-	    var refPromises = [];
 	    
 	    var messages = pointerDict.messages,
 	    services = pointerDict.services,
@@ -430,42 +428,53 @@ define(['q'], function(Q) {
 	    systems = pointerDict.systems,
 	    deployments = pointerDict.deployments;
 
-	    var tasks = [];  // uses concat to append the resultant array to tasks
+	    var refPromises = [];
 
-	    //self.logger.info('iterating through messages');
-	    tasks.concat(messages.map(function(obj) { 
-		return self.getMessagePointerData(obj);
-	    }));
-	    //self.logger.info('iterating through services');
-	    tasks.concat(services.map(function(obj) {
-		return self.getServicePointerData(obj);
-	    }));
-	    //self.logger.info('iterating through libraries');
-	    tasks.concat(libraries.map(function(obj) {
-		return self.getLibraryPointerData(obj);
-	    }));
-	    //self.logger.info('iterating through interfaces');
-	    tasks.concat(interfaces.map(function(obj) {
-		return self.getInterfacePointerData(obj);
-	    }));
-	    //self.logger.info('iterating through users');
-	    tasks.concat(users.map(function(obj) {
-		return self.getUserPointerData(obj);
-	    }));
-	    //self.logger.info('iterating through components');
-	    tasks.concat(components.map(function(obj) {
-		return self.getComponentPointerData(obj);
-	    }));
-	    //self.logger.info('iterating through systems');
-	    tasks.concat(systems.map(function(obj) {
-		return self.getSystemPointerData(obj);
-	    }));
-	    //self.logger.info('iterating through deployments');
-	    tasks.concat(deployments.map(function(obj) {
-		return self.getDeploymentPointerData(obj);
-	    }));
-
-	    return Q.all(tasks);
+	    var first = new Promise(function (resolve, reject) {
+		//self.logger.debug('iterating through messages');
+		for (var i=0; i<messages.length; i++) {
+		    refPromises.push(self.getMessagePointerData(messages[i]));
+		}
+		resolve();
+	    });
+	    return first.then(function () {
+		//self.logger.debug('iterating through services');
+		for (var i=0; i<services.length; i++) {
+		    refPromises.push(self.getServicePointerData(services[i]));
+		}
+	    }).then(function () {
+		//self.logger.debug('iterating through libraries');
+		for (var i=0; i<libraries.length; i++) {
+		    refPromises.push(self.getLibraryPointerData(libraries[i]));
+		}
+	    }).then(function () {
+		//self.logger.debug('iterating through interfaces');
+		for (var i=0; i<interfaces.length; i++) {
+		    refPromises.push(self.getInterfacePointerData(interfaces[i]));
+		}
+	    }).then(function () {
+		//self.logger.debug('iterating through users');
+		for (var i=0; i<users.length; i++) {
+		    refPromises.push(self.getUserPointerData(users[i]));
+		}
+	    }).then(function () {
+		//self.logger.debug('iterating through components');
+		for (var i=0; i<components.length; i++) {
+		    refPromises.push(self.getComponentPointerData(components[i]));
+		}
+	    }).then(function () {
+		//self.logger.debug('iterating through systems');
+		for (var i=0; i<systems.length; i++) {
+		    refPromises.push(self.getSystemPointerData(systems[i]));
+		}
+	    }).then(function () {
+		//self.logger.debug('iterating through deployments');
+		for (var i=0; i<deployments.length; i++) {
+		    refPromises.push(self.getDeploymentPointerData(deployments[i]));
+		}
+	    }).then(function () {
+		return Q.all(refPromises);
+	    });
 	},
 
 	getMessagePointerData: function (msgObj) {

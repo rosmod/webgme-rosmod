@@ -147,7 +147,6 @@ define([
 	if ( expPath != selectedExperiment.path ) {
 	    throw new String("Experiments exist with the same name, can't properly resolve!");
 	}
-	self.logger.info(JSON.stringify(selectedExperiment, null, 2));
 	self.logger.info('Experiment mapping containers in ' + selectedExperiment.deployment.name +
 			 ' to hosts in '  + selectedExperiment.system.name);
 	var hosts = selectedExperiment.system.hosts;
@@ -155,7 +154,6 @@ define([
     };
 
     RunExperiment.prototype.generateArtifacts = function () {
-	return;
 	/*
 	var path = require('path'),
 	filendir = require('filendir'),
