@@ -384,19 +384,15 @@ define([
 	var validArchitectures = self.getValidArchitectures();
 	var promises = []
 
-	for (var arch in validArchitectures) {
-	    for (var hst in validArchitectures[arch]) {
-		var host = validArchitectures[arch][hst];
-		promises.push(utils.getAvailability(host));
-	    }
-	}
-	return Q.all(promises)
+	var tasks = Object.keys(validArchitectures).map(function(index) {
+	    return utils.getAvailableHosts(validArchitectures[index]);
+	});
+	return Q.all(tasks)
 	    .then(function (nestedArr) {
 		var validHosts = [];
-		for (var i =0; i<nestedArr.length; i++) {
-		    if (nestedArr[i][0])
-			validHosts.push(nestedArr[i][0]);
-		}
+		nestedArr.forEach(function(subArr) {
+		    validHosts = validHosts.concat(subArr);
+		});
 		return validHosts;
 	    });
     };
