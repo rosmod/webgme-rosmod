@@ -136,8 +136,11 @@ define(['q'], function(Q) {
 		    }
 		},
 		onCommandComplete: function( command, response, sshObj ) {
-		    if (cb_complete)
-			cb_complete(command, response);
+		    if (cb_complete) {
+			self.logger.info(command);
+			self.logger.info(response);
+			//cb_complete(command, response);
+		    }
 		},
 		onCommandTimeout: function( command, response, sshObj, stream, connection) {
 		    // pass through, we don't want to time out

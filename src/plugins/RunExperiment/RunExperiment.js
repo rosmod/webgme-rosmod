@@ -299,11 +299,28 @@ define([
 
     RunExperiment.prototype.startProcesses = function() {
 	var self = this;
+	var path = require('path');
 	var tasks = self.experiment.map(function(link) {
 	    var container = link[0];
 	    var host = link[1];
 	    var ip = host.intf.ip;
 	    var user = host.user;
+	    var deployment_dir = path.join(user.directory,
+					   'experiments',
+					   self.experimentName);
+	    var host_commands = [
+		'cd ' + deployment_dir,
+		'source /opt/ros/indigo/setup.bash',
+		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH'
+	    ];
+	    for (var n in container.nodes) {
+		host_commands.push('./node_main -config ' + 
+				   container.nodes[n].name + '.xml ' +
+				   container.nodes[n].cmdLine +
+				   ' &');
+	    }
+	    host_commands.push('sleep 30');
+	    return utils.executeOnHost(host_commands, ip, user,null, true);
 	});
 	return Q.all(tasks);
     };

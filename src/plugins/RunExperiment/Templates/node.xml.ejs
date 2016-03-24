@@ -1,14 +1,25 @@
 <?xml version="1.0"?>
-<node name="<%- nodeInfo.name -%>">
-<% for (var l in nodeInfo.requiredLibs) {  -%>
-<%   var lib = nodeInfo.requiredLibs[l]; -%>
-  <library name="lib<%- lib.name -%>.so"/>
-<% } -%>
-<% for (var c in nodeInfo.compInstances) {  -%>
-<%   var ci = nodeInfo.compInstances[c]; -%>
-  <component_instance name="<%- ci.name -%>">
-    <library name="lib<%- ci.component.name -%>.so"/>
-    <scheduling_scheme setting="<%- ci.schedulingScheme -%>"/>
+<node name="<%- nodeInfo.name %>">
+  <priority setting="<%- nodeInfo.priority %>"/>
+<% for (var l in nodeInfo.requiredLibs) {
+     var lib = nodeInfo.requiredLibs[l]; -%>
+  <library name="lib<%- lib.name %>.so"/>
+<%
+   } 
+-%>
+<% for (var c in nodeInfo.compInstances) {
+     var ci = nodeInfo.compInstances[c]; -%>
+  <component_instance name="<%- ci.name %>">
+    <library name="lib<%- ci.component.name %>.so"/>
+    <scheduling_scheme setting="<%- ci.schedulingScheme %>"/>
+    <numCompsToSync setting="1"/>
+    <syncTimeout setting="0.0"/>
+    <logging>
+      <is_periodic_logging setting="True"/>
+      <periodic_log_unit setting="1000"/>
+    </logging>    
   </component_instance>
-<% } -%>
+<% 
+   } 
+-%>
 </node>
