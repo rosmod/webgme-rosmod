@@ -381,7 +381,7 @@ define([
 	    var zlib = require('zlib'),
 	    tar = require('tar'),
 	    fstream = require('fstream'),
-	    input = self.gen_dir;
+	    input = self.xml_dir;
 
 	    self.logger.info('zipping ' + input);
 
