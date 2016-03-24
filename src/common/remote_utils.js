@@ -32,11 +32,11 @@ define(['q'], function(Q) {
 		    var correctArch = output.stdout.indexOf(arch) > -1;
 		    var correctOS = output.stdout.indexOf(os) > -1;
 		    if (!correctArch) {
-			throw new String('host ' + host.name + ':' + host.architecture +
+			throw new String('host ' + ip + ':' + arch +
 					 ' has incorrect architecture: '+ output.stdout);
 		    }
 		    if (!correctOS) {
-			throw new String('host ' + host.name + ':' + host.os +
+			throw new String('host ' + ip + ':' + os +
 					 ' has incorrect OS: '+ output.stdout);
 		    }
 		    return true;
