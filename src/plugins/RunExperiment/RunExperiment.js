@@ -115,7 +115,7 @@ define([
 	self.returnZip = currentConfig.returnZip;
 	
 	// will be filled out by the plugin
-	self.containerToHostMap = {};
+	self.experiment = [];
 
 	loader.logger = self.logger;
 	utils.logger = self.logger;
@@ -124,14 +124,15 @@ define([
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
 	var projectName = self.core.getAttribute(projectNode, 'name');
 
-	var expName = self.core.getAttribute(self.activeNode, 'name');
+	self.experimentName = self.core.getAttribute(self.activeNode, 'name');
 	var path = require('path');
-	self.gen_dir = path.join(process.cwd(), 
-				 'generated', 
-				 self.project.projectId, 
-				 self.branchName,
+	self.root_dir = path.join(process.cwd(), 
+				  'generated', 
+				  self.project.projectId, 
+				  self.branchName);
+	self.xml_dir = path.join(self.root_dir,
 				 'experiments', 
-				 expName,
+				 self.experimentName,
 				 'xml');
 
 	self.logger.info('loading project: ' + projectName);
@@ -140,8 +141,7 @@ define([
 		self.projectModel = projectModel;
 		self.logger.info('parsed model!');
 		// update the object's selectedExperiment variable
-		var expName = self.core.getAttribute(self.activeNode, 'name');
-		self.selectedExperiment = self.projectModel.experiments[expName];
+		self.selectedExperiment = self.projectModel.experiments[self.experimentName];
 		// check to make sure we have the right experiment
 		var expPath = self.core.getPath(self.activeNode);
 		if ( expPath != self.selectedExperiment.path ) {
@@ -207,7 +207,7 @@ define([
 		}
 		var containerKeys = Object.keys(containers);
 		for (var i=0; i<containerLength; i++) {
-		    self.containerToHostMap[containerKeys[i]] = hosts[i];
+		    self.experiment.push([containers[containerKeys[i]], hosts[i]]);
 		}
 	    });
     };
@@ -221,8 +221,8 @@ define([
 
 	var projectName = self.projectModel.name;
 
-	Object.keys(self.selectedExperiment.deployment.containers).map(function (index) {
-	    var container = self.selectedExperiment.deployment.containers[index];
+	self.experiment.map(function (containerToHostMap) {
+	    var container = containerToHostMap[0]; // container is [0], host is [1]
 	    Object.keys(container.nodes).map(function(ni) {
 		var node = container.nodes[ni];
 		node.requiredLibs = [];
@@ -234,7 +234,6 @@ define([
 			    node.requiredLibs.push(lib);
 		    }
 		}
-		self.logger.info(JSON.stringify(node.requiredLibs, null, 2));
 		var nodeXMLName = prefix + node.name + '.xml';
 		var nodeXMLTemplate = TEMPLATES[self.FILES['node_xml']];
 		filesToAdd[nodeXMLName] = ejs.render(nodeXMLTemplate, {nodeInfo: node});
@@ -245,7 +244,7 @@ define([
 
 	return (function () {
 	    for (var f in filesToAdd) {
-		var fname = path.join(self.gen_dir, f),
+		var fname = path.join(self.xml_dir, f),
 		data = filesToAdd[f];
 
 		promises.push(new Promise(function(resolve, reject) {
@@ -269,12 +268,58 @@ define([
     };
 
     RunExperiment.prototype.copyArtifactsToHosts = function () {
+	var self = this;
+	var path = require('path');
+	var tasks = self.experiment.map(function(link) {
+	    var container = link[0];
+	    var host = link[1];
+	    var ip = host.intf.ip;
+	    var user = host.user;
+	    var arch = host.host.architecture;
+	    var local_exe_dir = path.join(self.root_dir, 'bin', arch)
+	    var deployment_dir = path.join(user.directory,
+					   'experiments',
+					   self.experimentName);
+	    return utils.mkdirRemote(deployment_dir, ip, user)
+		.then(function() {
+		    return utils.copyToHost(local_exe_dir,
+					    deployment_dir,
+					    ip,
+					    user);
+		})
+		.then(function() {
+		    return utils.copyToHost(self.xml_dir,
+					    deployment_dir,
+					    ip,
+					    user);
+		});
+	});
+	return Q.all(tasks);
     };
 
     RunExperiment.prototype.startProcesses = function() {
+	var self = this;
+	var tasks = self.experiment.map(function(link) {
+	    var container = link[0];
+	    var host = link[1];
+	    var ip = host.intf.ip;
+	    var user = host.user;
+	});
+	return Q.all(tasks);
     };
 
     RunExperiment.prototype.deployExperiment = function () {
+	var self = this;
+	return self.copyArtifactsToHosts()
+	    .then(function () {
+		self.logger.info('Copied artifacts to hosts.');
+		return self.startProcesses();
+	    })
+	    .then(function() {
+		var msg = 'Successfully started experiment.';
+		self.logger.info(msg);
+		self.createMessage(self.activeNode, msg);
+	    })
     };
 
     RunExperiment.prototype.createModelArtifacts = function () {
