@@ -268,6 +268,12 @@ define([
 	    })
     };
 
+    RunExperiment.prototype.copyArtifactsToHosts = function () {
+    };
+
+    RunExperiment.prototype.startProcesses = function() {
+    };
+
     RunExperiment.prototype.deployExperiment = function () {
     };
 
