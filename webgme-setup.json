@@ -16,6 +16,10 @@
       "RunExperiment": {
         "src": "src\\plugins\\RunExperiment",
         "test": "test\\plugins\\RunExperiment"
+      },
+      "StopExperiment": {
+        "src": "src/plugins/StopExperiment",
+        "test": "test/plugins/StopExperiment"
       }
     },
     "addons": {
