@@ -42,12 +42,27 @@ define(['q'], function(Q) {
 				components: {}
 			    };
 			}
-			else if ( self.core.isTypeOf(node, META.Library) ) {
+			else if ( self.core.isTypeOf(node, META['Source Library']) ) {
 			    var inclDir = self.core.getAttribute(node, 'Include Directories');
 			    if (inclDir == undefined)
 				inclDir = '../' + nodeName + '/include';
 			    self.model.software.libraries[nodeName] = {
 				name: nodeName,
+				type: 'Source Library',
+				path: self.core.getPath(node),
+				url: self.core.getAttribute(node, 'URL'),
+				linkLibs: self.core.getAttribute(node, 'Link Libraries'),
+				includeDirs: inclDir
+			    };
+			    libraries.push(node);
+			}
+			else if ( self.core.isTypeOf(node, META['System Library']) ) {
+			    var inclDir = self.core.getAttribute(node, 'Include Directories');
+			    if (inclDir == undefined)
+				inclDir = '../' + nodeName + '/include';
+			    self.model.software.libraries[nodeName] = {
+				name: nodeName,
+				type: 'System Library',
 				path: self.core.getPath(node),
 				url: self.core.getAttribute(node, 'URL'),
 				linkLibs: self.core.getAttribute(node, 'Link Libraries'),

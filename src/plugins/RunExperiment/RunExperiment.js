@@ -225,6 +225,16 @@ define([
 	    var container = self.selectedExperiment.deployment.containers[index];
 	    Object.keys(container.nodes).map(function(ni) {
 		var node = container.nodes[ni];
+		node.requiredLibs = [];
+		for (var ci in node.compInstances) {
+		    var comp = node.compInstances[ci].component;
+		    for (var l in comp.requiredLibs) {
+			var lib = comp.requiredLibs[l];
+			if ( lib.type == 'Source Library' && node.requiredLibs.indexOf(lib) == -1 )
+			    node.requiredLibs.push(lib);
+		    }
+		}
+		self.logger.info(JSON.stringify(node.requiredLibs, null, 2));
 		var nodeXMLName = prefix + node.name + '.xml';
 		var nodeXMLTemplate = TEMPLATES[self.FILES['node_xml']];
 		filesToAdd[nodeXMLName] = ejs.render(nodeXMLTemplate, {nodeInfo: node});

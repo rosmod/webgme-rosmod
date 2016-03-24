@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <node name="<%- nodeInfo.name -%>">
-<% for (var c in nodeInfo.compInstances) { 
-     var ci = nodeInfo.compInstances[c]; -%>
-<%   for (var l in ci.component.libraries) { -%>
-  <library name="lib<%- ci.component.libraries[l].name -%>.so"/>
-<%   } -%>
+<% for (var l in nodeInfo.requiredLibs) {  -%>
+<%   var lib = nodeInfo.requiredLibs[l]; -%>
+  <library name="lib<%- lib.name -%>.so"/>
+<% } -%>
+<% for (var c in nodeInfo.compInstances) {  -%>
+<%   var ci = nodeInfo.compInstances[c]; -%>
   <component_instance name="<%- ci.name -%>">
     <library name="lib<%- ci.component.name -%>.so"/>
     <scheduling_scheme setting="<%- ci.schedulingScheme -%>"/>
