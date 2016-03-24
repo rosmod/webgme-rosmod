@@ -57,8 +57,10 @@ define(['q'], function(Q) {
 		    return true;
 		});
 	},
-	getAvailability: function(host) {
+	getAvailability: function(host, checkTasks) {
 	    var self = this;
+	    if (checkTasks === undefined)
+		checkTasks = true;
 	    // test IP connectivity
 	    var tasks = Object.keys(host.interfaces).map(function(index) {
 		var intf = host.interfaces[index];
@@ -78,7 +80,10 @@ define(['q'], function(Q) {
 			self.logger.info(intf.ip + ' got valid user: ' + user.name);
 			return self.testArchOS(host.architecture, host.os, intf.ip, user)
 			    .then(function() {
-				return self.isFree(intf.ip, user)
+				if (checkTasks)
+				    return self.isFree(intf.ip, user)
+				else
+				    return [];
 			    })
 			    .then(function() {
 				return {host: host, intf:intf, user:user};
@@ -90,11 +95,13 @@ define(['q'], function(Q) {
 	    });
 	    return Q.all(tasks);
 	},
-	getAvailableHosts: function(hosts) {
+	getAvailableHosts: function(hosts, checkTasks) {
 	    var self = this;
+	    if (checkTasks === undefined)
+		checkTasks = true;
 	    var tasks = Object.keys(hosts).map(function(index) {
 		var host = hosts[index];
-		return self.getAvailability(host);
+		return self.getAvailability(host, checkTasks);
 	    });
 	    return Q.all(tasks)
 		.then(function(availArray) {

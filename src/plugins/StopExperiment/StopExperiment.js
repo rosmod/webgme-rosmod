@@ -7,10 +7,18 @@
 
 define([
     'plugin/PluginConfig',
-    'plugin/PluginBase'
+    'plugin/PluginBase',
+    'rosmod/meta',
+    'rosmod/remote_utils',
+    'rosmod/modelLoader',
+    'q'
 ], function (
     PluginConfig,
-    PluginBase) {
+    PluginBase,
+    MetaTypes,
+    utils,
+    loader,
+    Q) {
     'use strict';
 
     /**
@@ -23,6 +31,8 @@ define([
     var StopExperiment = function () {
         // Call base class' constructor.
         PluginBase.call(this);
+
+        this.metaTypes = MetaTypes;
     };
 
     // Prototypal inheritance from PluginBase.
@@ -59,35 +69,77 @@ define([
     StopExperiment.prototype.main = function (callback) {
         // Use self to access core, project, result, logger etc from PluginBase.
         // These are all instantiated at this point.
-        var self = this,
-            nodeObject;
+        var self = this;
 
+        // Default fails
+        self.result.success = false;
 
-        // Using the logger.
-        self.logger.debug('This is a debug message.');
-        self.logger.info('This is an info message.');
-        self.logger.warn('This is a warning message.');
-        self.logger.error('This is an error message.');
+        if (typeof WebGMEGlobal !== 'undefined') {
+            callback(new Error('Client-side execution is not supported'), self.result);
+            return;
+        }
 
-        // Using the coreAPI to make changes.
+        self.updateMETA(self.metaTypes);
 
-        nodeObject = self.activeNode;
+	// will be filled out by the plugin
+	self.experiment = [];
+	self.rosCorePort = Math.floor((Math.random() * (65535-1024) + 1024));
+	self.rosCoreIp = '';
 
-        self.core.setAttribute(nodeObject, 'name', 'My new obj');
-        self.core.setRegistry(nodeObject, 'position', {x: 70, y: 70});
+	loader.logger = self.logger;
+	utils.logger = self.logger;
 
+	// the active node for this plugin is experiment -> experiments -> project
+	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
+	var projectName = self.core.getAttribute(projectNode, 'name');
 
-        // This will save the changes. If you don't want to save;
-        // exclude self.save and call callback directly from this scope.
-        self.save('StopExperiment updated model.', function (err) {
-            if (err) {
-                callback(err, self.result);
-                return;
-            }
-            self.result.setSuccess(true);
-            callback(null, self.result);
-        });
+	self.experimentName = self.core.getAttribute(self.activeNode, 'name');
 
+	self.logger.info('loading project: ' + projectName);
+	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
+	    .then(function(projectModel) {
+		self.projectModel = projectModel;
+		self.logger.info('parsed model!');
+		// update the object's selectedExperiment variable
+		self.selectedExperiment = self.projectModel.experiments[self.experimentName];
+		// check to make sure we have the right experiment
+		var expPath = self.core.getPath(self.activeNode);
+		if ( expPath != self.selectedExperiment.path ) {
+		    throw new String("Experiments exist with the same name, can't properly resolve!");
+		}
+		return self.killAll();
+	    })
+	    .then(function () {
+		var msg = 'Stopped roscore and node_main.';
+		self.logger.info(msg);
+		self.createMessage(self.activeNode, msg);
+		self.result.setSuccess(true);
+		callback(null, self.result);
+	    })
+	    .catch(function(err) {
+        	self.logger.error(err);
+        	self.createMessage(self.activeNode, err, 'error');
+		self.result.setSuccess(false);
+		callback(err, self.result);
+	    })
+		.done();
+    };
+
+    StopExperiment.prototype.killAll = function() {
+	var self = this;
+	return utils.getAvailableHosts(self.selectedExperiment.system.hosts, false)
+	    .then(function(hosts) {
+		var tasks = hosts.map(function(host) {
+		    var ip = host.intf.ip;
+		    var user = host.user;
+		    var host_commands = [
+			'pkill roscore',
+			'pkill node_main'
+		    ];
+		    return utils.executeOnHost(host_commands, ip, user);
+		});
+		return Q.all(tasks);
+	    });
     };
 
     return StopExperiment;

@@ -116,6 +116,8 @@ define([
 	
 	// will be filled out by the plugin
 	self.experiment = [];
+	self.rosCorePort = Math.floor((Math.random() * (65535-1024) + 1024));
+	self.rosCoreIp = '';
 
 	loader.logger = self.logger;
 	utils.logger = self.logger;
@@ -297,6 +299,26 @@ define([
 	return Q.all(tasks);
     };
 
+    RunExperiment.prototype.startRosCore = function() {
+	var self = this;
+	var path = require('path');
+	var link = self.experiment[0];
+	var container = link[0];
+	var host = link[1];
+	var ip = host.intf.ip;
+	self.rosCoreIp = ip;
+	var user = host.user;
+	var host_commands = [
+	    'source /opt/ros/indigo/setup.bash',
+	    'export ROS_IP='+ip,
+	    'export ROS_MASTER_URI=http://'+ip+':'+self.rosCorePort,
+	    'roscore --port=' + self.rosCorePort + ' &',
+	    'sleep 5'
+	];
+	self.logger.info('Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
+	return utils.executeOnHost(host_commands, ip, user,null, true);
+    };
+
     RunExperiment.prototype.startProcesses = function() {
 	var self = this;
 	var path = require('path');
@@ -311,7 +333,9 @@ define([
 	    var host_commands = [
 		'cd ' + deployment_dir,
 		'source /opt/ros/indigo/setup.bash',
-		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH'
+		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH',
+		'export ROS_IP='+ip,
+		'export ROS_MASTER_URI=http://'+self.rosCoreIp+':'+self.rosCorePort
 	    ];
 	    for (var n in container.nodes) {
 		host_commands.push('./node_main -config ' + 
@@ -319,7 +343,6 @@ define([
 				   container.nodes[n].cmdLine +
 				   ' &');
 	    }
-	    host_commands.push('sleep 30');
 	    return utils.executeOnHost(host_commands, ip, user,null, true);
 	});
 	return Q.all(tasks);
@@ -330,6 +353,10 @@ define([
 	return self.copyArtifactsToHosts()
 	    .then(function () {
 		self.logger.info('Copied artifacts to hosts.');
+		return self.startRosCore();
+	    })
+	    .then(function () {
+		self.logger.info('Started roscore.');
 		return self.startProcesses();
 	    })
 	    .then(function() {
