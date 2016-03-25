@@ -9,7 +9,7 @@ config.server.port = 80;
 
 // Authentication
 config.authentication.enable = true;
-config.authentication.allowGuests = false;
+//config.authentication.allowGuests = false;
 
 // Executors
 config.executor.enable = true;
