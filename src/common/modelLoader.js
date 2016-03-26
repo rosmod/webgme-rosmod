@@ -126,6 +126,7 @@ define(['q'], function(Q) {
 				.timers[nodeName] = {
 				    name: nodeName,
 				    path: self.core.getPath(node),
+				    abstractBusinessLogic: self.core.getAttribute(node, 'AbstractBusinessLogic'),
 				    period: self.core.getAttribute(node, 'Period'),
 				    priority: self.core.getAttribute(node, 'Priority'),
 				    deadline: self.core.getAttribute(node, 'Deadline'),
@@ -154,6 +155,7 @@ define(['q'], function(Q) {
 				    name: nodeName,
 				    path: self.core.getPath(node),
 				    topic: {},
+				    abstractBusinessLogic: self.core.getAttribute(node, 'AbstractBusinessLogic'),
 				    priority: self.core.getAttribute(node, 'Priority'),
 				    networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
 				    deadline: self.core.getAttribute(node, 'Deadline'),
@@ -182,6 +184,7 @@ define(['q'], function(Q) {
 				    name: nodeName,
 				    path: self.core.getPath(node),
 				    service: {},
+				    abstractBusinessLogic: self.core.getAttribute(node, 'AbstractBusinessLogic'),
 				    priority: self.core.getAttribute(node, 'Priority'),
 				    networkProfile: self.core.getAttribute(node, 'NetworkProfile'),
 				    deadline: self.core.getAttribute(node, 'Deadline'),
@@ -207,6 +210,7 @@ define(['q'], function(Q) {
 				    path: self.core.getPath(node),
 				    os: self.core.getAttribute(node, 'OS'),
 				    architecture: self.core.getAttribute(node, 'Architecture'),
+				    productName: self.core.getAttribute(node, 'Product Name'),
 				    capabilities: {},
 				    interfaces: {},
 				    users: {}
