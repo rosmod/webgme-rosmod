@@ -95,6 +95,7 @@ define(['q'], function(Q) {
 				packageName: parentName,
 				requiredTypes: [],
 				requiredLibs: [],
+				constraints: {},
 				timers: {},
 				publishers: {},
 				subscribers: {},
@@ -107,6 +108,15 @@ define(['q'], function(Q) {
 				members: self.core.getAttribute(node, 'Members')
 			    };
 			    components.push(node);
+			}
+			else if ( self.core.isTypeOf(node, META.Constraint) ) {
+			    var pkgName = self.core.getAttribute(
+				self.core.getParent(parent), 'name');
+			    self.model.software.packages[pkgName]
+				.components[parentName]
+				.constraints[nodeName] = {
+				    name: nodeName
+				};
 			}
 			else if ( self.core.isTypeOf(node, META.Timer) ) {
 			    var pkgName = self.core.getAttribute(
@@ -197,8 +207,17 @@ define(['q'], function(Q) {
 				    path: self.core.getPath(node),
 				    os: self.core.getAttribute(node, 'OS'),
 				    architecture: self.core.getAttribute(node, 'Architecture'),
+				    capabilities: {},
 				    interfaces: {},
 				    users: {}
+				};
+			}
+			else if ( self.core.isTypeOf(node, META.Constraint) ) {
+			    var systemName = self.core.getAttribute(self.core.getParent(parent), 'name');
+			    self.model.systems[systemName]
+				.hosts[parentName]
+				.capabilities[nodeName] = {
+				    name: nodeName
 				};
 			}
 			else if ( self.core.isTypeOf(node, META.Interface) ) {
