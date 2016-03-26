@@ -145,11 +145,14 @@ add_library(<%= pkgInfo.components[cmp].name %>
 target_link_libraries(<%= pkgInfo.components[cmp].name %>
                       ${catkin_LIBRARIES}
 <%
-  for (var i=0; i<pkgInfo.components[cmp].requiredLibs.length; i++) {
-    if ( pkgInfo.components[cmp].requiredLibs[i].linkLibs !== undefined ) { -%>
+  for (var i=0; i<pkgInfo.components[cmp].requiredLibs.length; i++) { -%>
+<%  if ( pkgInfo.components[cmp].requiredLibs[i].type == 'Source Library' ) { -%>
+		      <%= pkgInfo.components[cmp].requiredLibs[i].name %>
+<%  } -%>
+<%  if ( pkgInfo.components[cmp].requiredLibs[i].linkLibs !== undefined ) { -%>
 		      <%= pkgInfo.components[cmp].requiredLibs[i].linkLibs %>
-<%  } 
-  } -%>
+<%  } -%>
+<%} -%>
                       )
 add_dependencies(<%= pkgInfo.components[cmp].name %>
                  <%= pkgInfo.name %>_generate_messages_cpp
