@@ -171,11 +171,10 @@ define([
 	    .then(function() {
 		// This will save the changes. If you don't want to save;
 		self.logger.info('saving updates to model');
-		// exclude self.save and call callback directly from this scope.
-		return; // self.save('RunExperiment updated model.');
+		return self.save('RunExperiment updated model.');
 	    })
 	    .then(function (err) {
-		if (err) {
+		if (err.status != 'SYNCED') {
 		    callback(err, self.result);
 		    return;
 		}
@@ -367,6 +366,37 @@ define([
     };
 
     RunExperiment.prototype.createModelArtifacts = function () {
+	var self=this;
+	self.experiment.forEach(function(link) {
+	    var container = link[0];
+	    var host = link[1];
+	    // use self.core.createNode(parameters);
+	    //    parameters here has the following optional values:
+	    //       * parent (node)
+	    //       * base   (node) 
+	    //       * relid  (string)
+	    //       * guid   (GUID)
+
+	    // should probably set the meta type here to be containers/hosts/(links?)
+	    var cn = self.core.createNode({parent: self.activeNode});
+	    var hn = self.core.createNode({parent: self.activeNode});
+	    var ln = self.core.createNode({parent: self.activeNode});
+
+	    //self.logger.info(JSON.stringify(cn, null, 2));
+	    //self.logger.info(JSON.stringify(hn, null, 2));
+	    //self.logger.info(JSON.stringify(ln, null, 2));
+
+	    // use self.core.setAttribute(node, name, value);
+	    //    value here can be any valid JS object (even nested types);
+	    self.core.setAttribute(cn, 'name', container.name);
+	    self.core.setAttribute(hn, 'name', host.host.name);
+	    // optionally use self.core.setAttributeMeta(node, name, rule);
+	    //    rule here defines the 'type' of the attribute
+	    // use self.core.setPointer(node, name, target);
+	    self.core.setPointer(ln, 'src', cn);
+	    self.core.setPointer(ln, 'dst', hn);
+	    // optionally use self.core.setPointerMetaTarget(node, name, targe, min(opt), max(opt));
+	});
     };
 			      
     RunExperiment.prototype.createZip = function() {
