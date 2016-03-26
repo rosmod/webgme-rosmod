@@ -365,10 +365,6 @@ define([
 	});
     };
 
-    SoftwareGenerator.prototype.getDeviceType = function(host) {
-	return host.deviceId + '+' + host.architecture;
-    };
-
     SoftwareGenerator.prototype.getValidArchitectures = function() {
 	var self = this,
 	validArchs = {};
@@ -376,7 +372,7 @@ define([
 	    var system = self.projectModel.systems[sys];
 	    for (var hst in system.hosts) {
 		var host = system.hosts[hst];
-		var devName = self.getDeviceType(host);
+		var devName = utils.getDeviceType(host);
 		if (validArchs[devName] === undefined) {
 		    validArchs[devName] = [];
 		}

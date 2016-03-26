@@ -276,8 +276,8 @@ define([
 	    var host = link[1];
 	    var ip = host.intf.ip;
 	    var user = host.user;
-	    var arch = host.host.architecture;
-	    var local_exe_dir = path.join(self.root_dir, 'bin', arch)
+	    var devId = utils.getDeviceType(host.host);
+	    var local_exe_dir = path.join(self.root_dir, 'bin', devId)
 	    var deployment_dir = path.join(user.directory,
 					   'experiments',
 					   self.experimentName);

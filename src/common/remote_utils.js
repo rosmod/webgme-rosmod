@@ -5,6 +5,9 @@ define(['q'], function(Q) {
 
     return {
 	trackedProcesses: ['catkin_make', 'node_main', 'roscore'],
+	getDeviceType: function(host) {
+	    return host.deviceId + '+' + host.architecture;
+	},
 	testPing: function(ip) {
 	    var self = this;
 	    var ping = require('ping');
