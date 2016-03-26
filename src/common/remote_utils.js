@@ -42,6 +42,19 @@ define(['q'], function(Q) {
 		    return true;
 		});
 	},
+	testDeviceId: function(deviceId, deviceIdCommand, ip, user) {
+	    var self = this;
+	    var cmds = [deviceIdCommand];
+	    return self.executeOnHost(cmds, ip, user)
+		.then(function (output) {
+		    var correctDeviceId = output.stdout.indexOf(deviceId) > -1;
+		    if (!correctDeviceId) {
+			throw new String('host ' + ip + ':' + deviceId +
+					 ' has incorrect deviceId: '+ output.stdout);
+		    }
+		    return true;
+		});
+	},
 	isFree: function(ip, user) {
 	    var self = this;
 	    var tasks = self.trackedProcesses.map(function(procName) {
@@ -79,6 +92,9 @@ define(['q'], function(Q) {
 		    .then(function(user) {
 			self.logger.info(intf.ip + ' got valid user: ' + user.name);
 			return self.testArchOS(host.architecture, host.os, intf.ip, user)
+			    .then(function() {
+				return self.testDeviceId(host.deviceId, host.deviceIdCommand, intf.ip, user);
+			    })
 			    .then(function() {
 				if (checkTasks)
 				    return self.isFree(intf.ip, user)

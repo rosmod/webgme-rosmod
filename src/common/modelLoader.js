@@ -210,7 +210,8 @@ define(['q'], function(Q) {
 				    path: self.core.getPath(node),
 				    os: self.core.getAttribute(node, 'OS'),
 				    architecture: self.core.getAttribute(node, 'Architecture'),
-				    productName: self.core.getAttribute(node, 'Product Name'),
+				    deviceId: self.core.getAttribute(node, 'Device ID'),
+				    deviceIdCommand: self.core.getAttribute(node, 'Device ID Command'),
 				    capabilities: {},
 				    interfaces: {},
 				    users: {}
