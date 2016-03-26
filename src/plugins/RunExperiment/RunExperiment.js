@@ -337,7 +337,7 @@ define([
 		'export ROS_MASTER_URI=http://'+self.rosCoreIp+':'+self.rosCorePort
 	    ];
 	    for (var n in container.nodes) {
-		host_commands.push('./node_main -config ' + 
+		host_commands.push('DISPLAY=:0 ./node_main -config ' +
 				   container.nodes[n].name + '.xml ' +
 				   container.nodes[n].cmdLine +
 				   ' &');
