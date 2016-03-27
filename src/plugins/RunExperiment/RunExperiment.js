@@ -241,7 +241,7 @@ define([
 		    }
 		    if (!foundHost) {
 			throw new String('Cannot map ' + container.name + ' to any host; constraints: ' +
-					 container.constraints +
+					 JSON.stringify(container.constraints,null,2) +
 					 ' not met.');
 		    }
 		}
@@ -254,8 +254,10 @@ define([
 	    return false;
 	if (constraints == undefined)
 	    return true;
-	for (var i=0; i < constraints.length; i++) {
-	    if (capabilities.indexOf(constraints[i]) == -1) {
+	var capKeys = Object.keys(capabilities);
+	for (var c in constraints) {
+	    var constraint = constraints[c];
+	    if (capKeys.indexOf(constraint.name) == -1) {
 		return false;
 	    }
 	}
