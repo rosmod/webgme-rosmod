@@ -248,6 +248,10 @@ define([
 
     RunExperiment.prototype.capabilitiesMeetConstraints = function(capabilities, constraints) {
 	var self = this;
+	if (constraints != undefined && capabilities == undefined)
+	    return false;
+	if (constraints == undefined)
+	    return true;
 	for (var i=0; i < constraints.length; i++) {
 	    if (capabilities.indexOf(constraints[i]) == -1) {
 		return false;
