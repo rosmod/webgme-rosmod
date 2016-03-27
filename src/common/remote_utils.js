@@ -6,7 +6,7 @@ define(['q'], function(Q) {
     return {
 	trackedProcesses: ['catkin_make', 'node_main', 'roscore'],
 	sanitizePath: function(path) {
-	    return path.replace(/ /g, '\ ');
+	    return path.replace(/ /g, '\\ ');
 	},
 	getDeviceType: function(host) {
 	    return host.deviceId + '+' + host.architecture;
