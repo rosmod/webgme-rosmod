@@ -414,7 +414,7 @@ define([
 	var mkdirp = require('mkdirp');
 
 	var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
-	var archBinPath = path.join(self.gen_dir, 'bin' , host.host.architecture);
+	var archBinPath = path.join(self.gen_dir, 'bin' , utils.getDeviceType(host.host));
 
 	self.logger.info('compiling into '+host.intf.ip+':'+compile_dir);
 	self.logger.info('copying into '+archBinPath);
@@ -458,7 +458,7 @@ define([
 	var t5 = t4.then(function() {
 	    self.logger.info('copyFromHost: ' + host.intf.ip);
 	    return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
-				      path.join(self.gen_dir, 'bin', host.host.architecture) + '/.',
+				      archBinPath + '/.',
 				      host.intf.ip,
 				      host.user);
 	});
@@ -509,7 +509,7 @@ define([
 	}
 
 	var tasks = selectedHosts.map(function (host) {
-	    var msg = 'Compiling for ' + host.host.architecture + ' on ' + host.intf.ip;
+	    var msg = 'Compiling for ' + utils.getDeviceType(host.host) + ' on ' + host.intf.ip;
 	    self.logger.info(msg);
 	    self.createMessage(self.activeNode, msg);
 	    return self.compileOnHost(host);
