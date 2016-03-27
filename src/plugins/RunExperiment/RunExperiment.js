@@ -225,15 +225,15 @@ define([
 		    }
 		}
 		// Actually perform the mapping
-		for (var i=0; i<containerLength; i++) {
-		    var container = containers[containerKeys[i]];
+		for (var c in containers) {
+		    var container = containers[c];
 		    var constraints = container.constraints;
 		    var foundHost = false;
 		    for (var j=0; j<hosts.length; j++) {
 			var host = hosts[j];
-			var capabilities = host.capabilities;
+			var capabilities = host.host.capabilities;
 			if (self.capabilitiesMeetConstraints(capabilities, constraints)) {
-			    self.experiment.push(container, host);
+			    self.experiment.push([container, host]);
 			    hosts.splice(j,j);
 			    foundHost = true;
 			    break;
@@ -250,10 +250,12 @@ define([
 
     RunExperiment.prototype.capabilitiesMeetConstraints = function(capabilities, constraints) {
 	var self = this;
-	if (constraints != undefined && capabilities == undefined)
+	if (constraints != undefined && capabilities == undefined) {
 	    return false;
-	if (constraints == undefined)
+	}
+	if (constraints == undefined) {
 	    return true;
+	}
 	var capKeys = Object.keys(capabilities);
 	for (var c in constraints) {
 	    var constraint = constraints[c];

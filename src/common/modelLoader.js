@@ -217,7 +217,7 @@ define(['q'], function(Q) {
 				    users: {}
 				};
 			}
-			else if ( self.core.isTypeOf(node, META.Constraint) ) {
+			else if ( self.core.isTypeOf(node, META.Capability) ) {
 			    var systemName = self.core.getAttribute(self.core.getParent(parent), 'name');
 			    self.model.systems[systemName]
 				.hosts[parentName]

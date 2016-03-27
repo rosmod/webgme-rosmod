@@ -55,9 +55,9 @@
                         "a377ee64-9293-7b02-03c2-508ee3e4ed74": {}
                     },
                     "49725ce0-f096-ea93-a507-004673d77790": {
-                        "16eddbbf-1a44-1941-5bb8-c5c54853524c": {},
-                        "1d7b63f9-8842-d7b9-9993-3e8dcbf21149": {},
-                        "a2a738c8-d8d8-544d-8e99-af6fb4ac0ce9": {},
+                        "377b63f9-8842-d7b9-9993-3e8dcbf21149": {},
+                        "3ceddbbf-1a44-1941-5bb8-c5c54853524c": {},
+                        "88a738c8-d8d8-544d-8e99-af6fb4ac0ce9": {},
                         "ad77ee64-9293-7b02-03c2-508ee3e4ed74": {}
                     },
                     "5173ec58-cf6c-e536-1efc-d1cf17642062": {},
@@ -169,7 +169,11 @@
                         "c22d14c8-aee9-dece-1155-2553a795b2ef": {}
                     },
                     "b19a7df1-b77a-fea6-b7f9-4cf640560c39": {
-                        "51b3d75d-3340-147d-0d42-302ed11445ed": {}
+                        "16eddbbf-1a44-1941-5bb8-c5c54853524c": {},
+                        "1d7b63f9-8842-d7b9-9993-3e8dcbf21149": {},
+                        "51b3d75d-3340-147d-0d42-302ed11445ed": {},
+                        "8159a009-17e3-9429-a148-2855298043ab": {},
+                        "a2a738c8-d8d8-544d-8e99-af6fb4ac0ce9": {}
                     },
                     "b3357525-43a6-9058-d9f6-607e9275fb5e": {
                         "c02d14c8-aee9-dece-1155-2553a795b2ef": {}
@@ -323,6 +327,14 @@
                 },
                 "f92d7582-1476-efca-9f72-fa9e89ecea2d": {
                     "d244680c-8428-99b8-e7ab-efdf266bce4e": {}
+                },
+                "fbba517e-b661-4150-7ac7-703991335d49": {
+                    "168111db-9cbd-d8ad-822c-a158ba54d6c2": {},
+                    "375a44da-0d1c-6094-0944-874df50f457d": {},
+                    "4792f544-4cc0-dcf1-ef15-27eb38eafe36": {},
+                    "481446d4-302b-f508-7799-d0a685fefcba": {},
+                    "92ddf920-021b-89bc-7719-85efb7ff8d82": {},
+                    "bde6b9f8-8cdf-ea3f-daa0-9fd944c49706": {}
                 }
             },
             "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {
@@ -350,6 +362,19 @@
                         },
                         "9f6daefd-1b25-058a-8055-05542b526c4d": {
                             "6087f67e-3864-ba75-0403-6397272113c7": {}
+                        }
+                    }
+                },
+                "70d18f4f-4fd3-93ab-2cee-4b3ee9eb15aa": {
+                    "7319b18a-0191-fac7-5adc-5a69d8923560": {
+                        "0279cd67-ad61-ffcc-bae4-4bb12eb29a1f": {
+                            "bd23c0fe-46ec-dd96-7c4b-caf29aea91b5": {}
+                        },
+                        "40858310-dc22-860f-6923-b5f289843b98": {
+                            "e2d2f698-a3a6-2932-a096-2081d37c5566": {}
+                        },
+                        "a90503d5-379c-032d-afe8-67659c8f6f34": {
+                            "87e1db50-a6ca-af4a-1582-d61316ec7e8a": {}
                         }
                     }
                 }
@@ -436,6 +461,25 @@
                 "position": {
                     "x": 187,
                     "y": 174
+                }
+            },
+            "sets": {}
+        },
+        "0279cd67-ad61-ffcc-bae4-4bb12eb29a1f": {
+            "attributes": {
+                "CMDLine": "-detect",
+                "name": "detector"
+            },
+            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
+            "meta": {},
+            "parent": "7319b18a-0191-fac7-5adc-5a69d8923560",
+            "pointers": {
+                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
+            },
+            "registry": {
+                "position": {
+                    "x": 324,
+                    "y": 231
                 }
             },
             "sets": {}
@@ -1224,6 +1268,8 @@
         "04357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node20"
             },
@@ -1267,8 +1313,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 249,
-                    "y": 405
+                    "x": 42,
+                    "y": 326
                 }
             },
             "sets": {}
@@ -1313,6 +1359,8 @@
         "06357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node28"
             },
@@ -1403,8 +1451,8 @@
                 "Definitions": "",
                 "Destruction": "",
                 "Forwards": "#include <stdlib.h>\n#include \"bbbgpio/gpio.h\"\n#include \"bbbeqep/eqep.h\"",
-                "Initialization": "  paused = true;\n  lowerLimitReached = false;\n\n  // THESE NEED TO BE UPDATED\n  epsilon = 100;\n  motorForwardPin = 89; //86;  // connected to GPIO2_22, pin P8_27\n  motorBackwardPin = 88; //87; // connected to GPIO2_23, pin P8_29\n  lowerLimitSwitchPin = 65;       // connected to GPIO2_01, pin P8_18\n  \n  adcPin = 1;  // connected to ADC1, pin P9_40\n\n  // set up the pins to control the h-bridge\n  gpio_export(motorForwardPin);\n  gpio_export(motorBackwardPin);\n  gpio_export(lowerLimitSwitchPin);\n  gpio_set_dir(motorForwardPin,OUTPUT_PIN);\n  gpio_set_dir(motorBackwardPin,OUTPUT_PIN);\n  gpio_set_dir(lowerLimitSwitchPin,INPUT_PIN);\n  // set up the encoder module\n  vm_eqep_period = 1000000000L;\n  verticalMotoreQEP.initialize(\"/sys/devices/ocp.3/48302000.epwmss/48302180.eqep\", eQEP::eQEP_Mode_Absolute);\n  verticalMotoreQEP.set_period(vm_eqep_period);\n\n  // Command line args for radial goal\n  for (int i = 0; i < node_argc; i++)\n    {\n      if (!strcmp(node_argv[i], \"-unpaused\"))\n\t{\n\t  paused = false;\n\t}\n      if (!strcmp(node_argv[i], \"-v\"))\n\t{\n\t  verticalGoal = atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-e\"))\n\t{\n\t  epsilon = atoi(node_argv[i+1]);\n\t}\n    }\n\n  ROS_INFO(\"VERTICAL GOAL SET TO : %d\",verticalGoal);",
-                "Members": "  bool paused;\n  // epsion value for minimum actionable difference between goal and current\n  int epsilon;\n  // goal position for the vertical linear actuator\n  int verticalGoal;\n  // current position of the vertical linear actuator\n  int verticalCurrent;\n  // pin that motor forward is connected to\n  unsigned int motorForwardPin;\n  // pin that motor backward is connected to\n  unsigned int motorBackwardPin;\n  // pin that lower limit switch is connected to\n  unsigned int lowerLimitSwitchPin;\n  // state variable to keep track of whether we've reached the limit or not\n  bool lowerLimitReached;\n  // ADC the motor potentiometer is connected to (for the prototype)\n  int adcPin;\n  // enhanced Quadrature Encoder Pulse eQEP module for the vertical actuator\n  eQEP verticalMotoreQEP;\n  long vm_eqep_period;",
+                "Initialization": "paused = true;\nlowerLimitReached = false;\nupperLimitReached = false;\n\n// THESE NEED TO BE UPDATED\nepsilon = 100;\nmotorForwardPin = 89; //86;  // connected to GPIO2_22, pin P8_27\nmotorBackwardPin = 88; //87; // connected to GPIO2_23, pin P8_29\nlowerLimitSwitchPin = 65;       // connected to GPIO2_01, pin P8_18\n//upperLimitSwitchPin = YY; // FIND PIN NUMBER\n\nadcPin = 1;  // connected to ADC1, pin P9_40\n\n// set up the pins to control the h-bridge\ngpio_export(motorForwardPin);\ngpio_export(motorBackwardPin);\ngpio_export(lowerLimitSwitchPin);\ngpio_export(upperLimitSwitchPin);\ngpio_set_dir(motorForwardPin,OUTPUT_PIN);\ngpio_set_dir(motorBackwardPin,OUTPUT_PIN);\ngpio_set_dir(lowerLimitSwitchPin,INPUT_PIN);\ngpio_set_dir(upperLimitSwitchPin,INPUT_PIN);\n// set up the encoder module\nvm_eqep_period = 1000000000L;\nverticalMotoreQEP.initialize(\"/sys/devices/ocp.3/48302000.epwmss/48302180.eqep\", eQEP::eQEP_Mode_Absolute);\nverticalMotoreQEP.set_period(vm_eqep_period);\n\n// Command line args for radial goal\nfor (int i = 0; i < node_argc; i++)\n{\n  if (!strcmp(node_argv[i], \"-unpaused\"))\n  {\n    paused = false;\n  }\n  if (!strcmp(node_argv[i], \"-v\"))\n  {\n    verticalGoal = atoi(node_argv[i+1]);\n  }\n  if (!strcmp(node_argv[i], \"-e\"))\n  {\n    epsilon = atoi(node_argv[i+1]);\n  }\n}\n\nROS_INFO(\"VERTICAL GOAL SET TO : %d\",verticalGoal);",
+                "Members": "  bool paused;\n  // epsion value for minimum actionable difference between goal and current\n  int epsilon;\n  // goal position for the vertical linear actuator\n  int verticalGoal;\n  // current position of the vertical linear actuator\n  int verticalCurrent;\n  // pin that motor forward is connected to\n  unsigned int motorForwardPin;\n  // pin that motor backward is connected to\n  unsigned int motorBackwardPin;\n  // pin that lower limit switch is connected to\n  unsigned int lowerLimitSwitchPin;\n  // state variable to keep track of whether we've reached the limit or not\n  bool lowerLimitReached;\n  // pin that upper limit switch is connected to\n  unsigned int upperLimitSwitchPin;\n  // state variable to keep track of whether we've reached the upper limit or not\n  bool upperLimitReached;\n  // ADC the motor potentiometer is connected to (for the prototype)\n  int adcPin;\n  // enhanced Quadrature Encoder Pulse eQEP module for the vertical actuator\n  eQEP verticalMotoreQEP;\n  long vm_eqep_period;",
                 "name": "verticalController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
@@ -1464,6 +1512,8 @@
         },
         "0d357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node8"
             },
@@ -1554,6 +1604,8 @@
         },
         "0f357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node16"
             },
@@ -1808,20 +1860,33 @@
             },
             "sets": {}
         },
+        "168111db-9cbd-d8ad-822c-a158ba54d6c2": {
+            "attributes": {
+                "name": "imagingContainer"
+            },
+            "base": null,
+            "meta": {},
+            "parent": "fbba517e-b661-4150-7ac7-703991335d49",
+            "pointers": {
+                "base": null
+            },
+            "registry": {},
+            "sets": {}
+        },
         "16eddbbf-1a44-1941-5bb8-c5c54853524c": {
             "attributes": {
                 "name": "FastProcessor"
             },
             "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67",
             "meta": {},
-            "parent": "49725ce0-f096-ea93-a507-004673d77790",
+            "parent": "b19a7df1-b77a-fea6-b7f9-4cf640560c39",
             "pointers": {
                 "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67"
             },
             "registry": {
                 "position": {
-                    "x": 587,
-                    "y": 343
+                    "x": 331,
+                    "y": 372
                 }
             },
             "sets": {}
@@ -1926,14 +1991,14 @@
             },
             "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67",
             "meta": {},
-            "parent": "49725ce0-f096-ea93-a507-004673d77790",
+            "parent": "b19a7df1-b77a-fea6-b7f9-4cf640560c39",
             "pointers": {
                 "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67"
             },
             "registry": {
                 "position": {
-                    "x": 360,
-                    "y": 350
+                    "x": 101,
+                    "y": 382
                 }
             },
             "sets": {}
@@ -2018,6 +2083,8 @@
         "25357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node32"
             },
@@ -2152,6 +2219,8 @@
         "27357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node24"
             },
@@ -2242,6 +2311,8 @@
         },
         "2c357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node12"
             },
@@ -2343,6 +2414,8 @@
         },
         "2e357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node4"
             },
@@ -2555,6 +2628,37 @@
             },
             "sets": {}
         },
+        "375a44da-0d1c-6094-0944-874df50f457d": {
+            "attributes": {
+                "name": "JetsonTK1"
+            },
+            "base": null,
+            "meta": {},
+            "parent": "fbba517e-b661-4150-7ac7-703991335d49",
+            "pointers": {
+                "base": null
+            },
+            "registry": {},
+            "sets": {}
+        },
+        "377b63f9-8842-d7b9-9993-3e8dcbf21149": {
+            "attributes": {
+                "name": "PayloadBay"
+            },
+            "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67",
+            "meta": {},
+            "parent": "49725ce0-f096-ea93-a507-004673d77790",
+            "pointers": {
+                "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67"
+            },
+            "registry": {
+                "position": {
+                    "x": 101,
+                    "y": 382
+                }
+            },
+            "sets": {}
+        },
         "392d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
                 "name": "eth0"
@@ -2699,6 +2803,24 @@
             },
             "sets": {}
         },
+        "3ceddbbf-1a44-1941-5bb8-c5c54853524c": {
+            "attributes": {
+                "name": "FastProcessor"
+            },
+            "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67",
+            "meta": {},
+            "parent": "49725ce0-f096-ea93-a507-004673d77790",
+            "pointers": {
+                "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67"
+            },
+            "registry": {
+                "position": {
+                    "x": 331,
+                    "y": 372
+                }
+            },
+            "sets": {}
+        },
         "3f413882-9032-19b3-46d5-342f9f8538cf": {
             "attributes": {
                 "IP": "10.1.1.19"
@@ -2789,9 +2911,29 @@
             },
             "sets": {}
         },
+        "40858310-dc22-860f-6923-b5f289843b98": {
+            "attributes": {
+                "name": "userDisplay"
+            },
+            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
+            "meta": {},
+            "parent": "7319b18a-0191-fac7-5adc-5a69d8923560",
+            "pointers": {
+                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
+            },
+            "registry": {
+                "position": {
+                    "x": 333,
+                    "y": 377
+                }
+            },
+            "sets": {}
+        },
         "41357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node23"
             },
@@ -2825,6 +2967,8 @@
         "43357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node31"
             },
@@ -2965,7 +3109,8 @@
         "47725ce0-f096-ea93-a507-004673d77790": {
             "attributes": {
                 "Architecture": "armv7l",
-                "Product Name": "BeagleBone Black",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "name": "MotorControl"
             },
             "base": "ae4baea9-4feb-5630-81f3-085218530d89",
@@ -2995,6 +3140,24 @@
                 ]
             }
         },
+        "4792f544-4cc0-dcf1-ef15-27eb38eafe36": {
+            "attributes": {
+                "name": "JetsonTK1"
+            },
+            "base": null,
+            "meta": {},
+            "parent": "fbba517e-b661-4150-7ac7-703991335d49",
+            "pointers": {
+                "base": null
+            },
+            "registry": {
+                "position": {
+                    "x": 930,
+                    "y": 199
+                }
+            },
+            "sets": {}
+        },
         "47ab116f-f11c-a37a-8b11-291b91578348": {
             "attributes": {
                 "name": "AGSE"
@@ -3007,15 +3170,15 @@
             },
             "registry": {
                 "position": {
-                    "x": 146,
-                    "y": 140
+                    "x": 247,
+                    "y": 197
                 }
             },
             "sets": {}
         },
         "47fdb167-6041-cd46-fa83-f6fb651c652d": {
             "attributes": {
-                "Operation": "  if (req.update == true)\n    {\n      //      ROS_INFO(\"GOT NEW HEIGHT GOAL: %d\",(int)req.goal);\n      //      ROS_INFO(\"CURRENT HEIGHT: %d\",verticalCurrent);\n      verticalGoal = req.goal;\n    }\n  if (req.setZeroPosition == true)\n    {\n      ROS_INFO(\"ZEROED VERTICAL ENCODER\");\n      verticalMotoreQEP.set_position(0);\n    }\n  res.lowerLimitReached = lowerLimitReached;\n  res.upperLimitReached = false;\n  res.current = verticalCurrent;\n  return true;\n",
+                "Operation": "  if (req.update == true)\n    {\n      //      ROS_INFO(\"GOT NEW HEIGHT GOAL: %d\",(int)req.goal);\n      //      ROS_INFO(\"CURRENT HEIGHT: %d\",verticalCurrent);\n      verticalGoal = req.goal;\n    }\n  if (req.setZeroPosition == true)\n    {\n      ROS_INFO(\"ZEROED VERTICAL ENCODER\");\n      verticalMotoreQEP.set_position(0);\n    }\n  res.lowerLimitReached = lowerLimitReached;\n  res.upperLimitReached = upperLimitReached;\n  res.current = verticalCurrent;\n  return true;\n",
                 "name": "verticalPositionServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -3033,8 +3196,23 @@
             },
             "sets": {}
         },
+        "481446d4-302b-f508-7799-d0a685fefcba": {
+            "attributes": {},
+            "base": null,
+            "meta": {},
+            "parent": "fbba517e-b661-4150-7ac7-703991335d49",
+            "pointers": {
+                "base": null,
+                "dst": "375a44da-0d1c-6094-0944-874df50f457d",
+                "src": "168111db-9cbd-d8ad-822c-a158ba54d6c2"
+            },
+            "registry": {},
+            "sets": {}
+        },
         "48357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node3"
             },
@@ -3068,6 +3246,8 @@
         "49725ce0-f096-ea93-a507-004673d77790": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "NVIDIA Tegra",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "NVIDIA Tegra",
                 "name": "Jetson"
             },
@@ -3100,6 +3280,8 @@
         },
         "4a357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node11"
             },
@@ -3201,7 +3383,6 @@
         },
         "4d5526bf-5772-cc61-a03d-36ff99280a1f": {
             "attributes": {
-                "Link Libraries": "",
                 "URL": "https://github.com/rosmod/lib-aruco/files/170738/aruco.zip",
                 "name": "aruco"
             },
@@ -3749,6 +3930,8 @@
         "60357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node27"
             },
@@ -3820,6 +4003,8 @@
         "62357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node19"
             },
@@ -3952,6 +4137,8 @@
         },
         "69357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node15"
             },
@@ -4021,6 +4208,8 @@
         },
         "6b357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node7"
             },
@@ -4171,6 +4360,8 @@
         "6f725ce0-f096-ea93-a507-004673d77790": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "UserInput"
             },
@@ -4200,6 +4391,42 @@
                     }
                 ]
             }
+        },
+        "70d18f4f-4fd3-93ab-2cee-4b3ee9eb15aa": {
+            "attributes": {
+                "name": "JetsonDeployment"
+            },
+            "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3",
+            "meta": {},
+            "parent": "e95e44ec-0245-5b7d-1650-bfb4f10b941c",
+            "pointers": {
+                "base": "7c902cff-78a7-29da-9892-c0ecdc182ab3"
+            },
+            "registry": {
+                "position": {
+                    "x": 454,
+                    "y": 218
+                }
+            },
+            "sets": {}
+        },
+        "7319b18a-0191-fac7-5adc-5a69d8923560": {
+            "attributes": {
+                "name": "imagingContainer"
+            },
+            "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643",
+            "meta": {},
+            "parent": "70d18f4f-4fd3-93ab-2cee-4b3ee9eb15aa",
+            "pointers": {
+                "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643"
+            },
+            "registry": {
+                "position": {
+                    "x": 481,
+                    "y": 254
+                }
+            },
+            "sets": {}
         },
         "752d14c8-aee9-dece-1155-2553a795b2ef": {
             "attributes": {
@@ -4273,8 +4500,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 447,
-                    "y": 374
+                    "x": 242,
+                    "y": 296
                 }
             },
             "sets": {}
@@ -4295,8 +4522,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 927,
-                    "y": 207
+                    "x": 722,
+                    "y": 136
                 }
             },
             "sets": {
@@ -4548,15 +4775,14 @@
             },
             "registry": {
                 "position": {
-                    "x": 458,
-                    "y": 216
+                    "x": 252,
+                    "y": 146
                 }
             },
             "sets": {}
         },
         "7dd6c967-4043-a173-2548-d357b944b810": {
             "attributes": {
-                "Link Libraries": "",
                 "URL": "https://github.com/rosmod/lib-objecttracker/files/170732/ObjectTracker.zip",
                 "name": "objecttracker"
             },
@@ -4665,6 +4891,24 @@
                 "position": {
                     "x": 478,
                     "y": 424
+                }
+            },
+            "sets": {}
+        },
+        "8159a009-17e3-9429-a148-2855298043ab": {
+            "attributes": {
+                "name": "Camera"
+            },
+            "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67",
+            "meta": {},
+            "parent": "b19a7df1-b77a-fea6-b7f9-4cf640560c39",
+            "pointers": {
+                "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67"
+            },
+            "registry": {
+                "position": {
+                    "x": 492,
+                    "y": 272
                 }
             },
             "sets": {}
@@ -4781,7 +5025,7 @@
         },
         "874020d4-54d8-0c9b-0bda-18052dae44db": {
             "attributes": {
-                "Operation": "  if (!paused)\n    {\n      // read current value for radial position (encoder)\n      radialCurrent = radialMotoreQEP.get_position();\n      //ROS_INFO(\"Raidal Actuator Encoder Reading: %d\",radialCurrent);\n\n      unsigned int limitSwitchState = 0;\n      unsigned int backwardPinState = 0;\n      gpio_get_value(lowerLimitSwitchPin,&limitSwitchState);\n      gpio_get_value(motorBackwardPin,&backwardPinState);\n      if (backwardPinState && !limitSwitchState)\n\t{\n\t  lowerLimitReached = true;\n\t}\n      // update motor based on current value\n      if ( abs(radialGoal-radialCurrent) > epsilon ) // if there's significant reason to move\n\t{\n\t  if (radialGoal > radialCurrent) \n\t    {\n\t      lowerLimitReached = false;\n\t      gpio_set_value(motorBackwardPin,LOW);\n\t      gpio_set_value(motorForwardPin,HIGH);\n\t    }\n\t  else\n\t    {\n\t      gpio_set_value(motorForwardPin,LOW);\n\t      gpio_set_value(motorBackwardPin,HIGH);\n\t    }\n\t}\n      else\n\t{\n\t  gpio_set_value(motorForwardPin,LOW);\n\t  gpio_set_value(motorBackwardPin,LOW);\n\t}\n    }\n  else \n    {\n      gpio_set_value(motorForwardPin,LOW);\n      gpio_set_value(motorBackwardPin,LOW);      \n    }\n\n",
+                "Operation": "if (!paused)\n{\n  // read current value for radial position (encoder)\n  radialCurrent = radialMotoreQEP.get_position();\n  //ROS_INFO(\"Raidal Actuator Encoder Reading: %d\",radialCurrent);\n\n  unsigned int limitSwitchState = 0;\n  unsigned int backwardPinState = 0;\n  gpio_get_value(lowerLimitSwitchPin,&limitSwitchState);\n  gpio_get_value(motorBackwardPin,&backwardPinState);\n  if (backwardPinState && !limitSwitchState)\n  {\n    lowerLimitReached = true;\n  }\n\n  unsigned int upperLimitSwitchState = 0;\n  unsigned int forwardPinState = 0;\n  gpio_get_value(upperLimitSwitchPin, &upperLimitSwitchState);\n  gpio_get_value(motorForwardPin, &forwardPinState);\n  if (forwardPinState && !upperLimitSwitchState)\n  {\n    upperLimitReached = true;\n  }\n\n  // update motor based on current value\n  if ( abs(radialGoal-radialCurrent) > epsilon ) // if there's significant reason to move\n  {\n    if (radialGoal > radialCurrent) \n    {\n      lowerLimitReached = false;\n      gpio_set_value(motorBackwardPin,LOW);\n      gpio_set_value(motorForwardPin,HIGH);\n    }\n    else\n    {\n      upperLimitReached = false;\n      gpio_set_value(motorForwardPin,LOW);\n      gpio_set_value(motorBackwardPin,HIGH);\n    }\n  }\n  else\n  {\n    gpio_set_value(motorForwardPin,LOW);\n    gpio_set_value(motorBackwardPin,LOW);\n  }\n}\nelse \n{\n  gpio_set_value(motorForwardPin,LOW);\n  gpio_set_value(motorBackwardPin,LOW);      \n}\n\n",
                 "name": "radialPositionTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -4818,6 +5062,25 @@
             },
             "sets": {}
         },
+        "87e1db50-a6ca-af4a-1582-d61316ec7e8a": {
+            "attributes": {
+                "name": "imageSensor_i"
+            },
+            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
+            "meta": {},
+            "parent": "a90503d5-379c-032d-afe8-67659c8f6f34",
+            "pointers": {
+                "Component": "7599b53d-653a-1ff6-0d2a-c6a49dec721c",
+                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
+            },
+            "registry": {
+                "position": {
+                    "x": 174,
+                    "y": 304
+                }
+            },
+            "sets": {}
+        },
         "883f2275-89f3-3656-d28f-33178a9e6a8d": {
             "attributes": {
                 "IP": "10.1.1.23"
@@ -4834,6 +5097,24 @@
                 "position": {
                     "x": 310,
                     "y": 682
+                }
+            },
+            "sets": {}
+        },
+        "88a738c8-d8d8-544d-8e99-af6fb4ac0ce9": {
+            "attributes": {
+                "name": "Camera"
+            },
+            "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67",
+            "meta": {},
+            "parent": "49725ce0-f096-ea93-a507-004673d77790",
+            "pointers": {
+                "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67"
+            },
+            "registry": {
+                "position": {
+                    "x": 241,
+                    "y": 512
                 }
             },
             "sets": {}
@@ -5111,6 +5392,8 @@
         "90357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node29"
             },
@@ -5182,6 +5465,8 @@
         "92357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node21"
             },
@@ -5211,6 +5496,19 @@
                     }
                 ]
             }
+        },
+        "92ddf920-021b-89bc-7719-85efb7ff8d82": {
+            "attributes": {},
+            "base": null,
+            "meta": {},
+            "parent": "fbba517e-b661-4150-7ac7-703991335d49",
+            "pointers": {
+                "base": null,
+                "dst": "4792f544-4cc0-dcf1-ef15-27eb38eafe36",
+                "src": "bde6b9f8-8cdf-ea3f-daa0-9fd944c49706"
+            },
+            "registry": {},
+            "sets": {}
         },
         "93f48121-6fe3-48ed-0cdc-dc9db647b01a": {
             "attributes": {
@@ -5284,6 +5582,8 @@
         },
         "99357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node9"
             },
@@ -5336,7 +5636,8 @@
         },
         "9b357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
-                "Product Name": "BeagleBone Black",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "name": "Node1"
             },
             "base": "ae4baea9-4feb-5630-81f3-085218530d89",
@@ -5450,8 +5751,8 @@
                 "Definitions": "#include <stdlib.h>",
                 "Destruction": "",
                 "Forwards": "#include <stdlib.h>\n#include \"bbbgpio/gpio.h\"\n#include \"bbbeqep/eqep.h\"",
-                "Initialization": "  paused = true;\n  lowerLimitReached = false;\n\n  // THESE NEED TO BE UPDATED\n  epsilon = 100;\n  motorForwardPin = 87; //88;     // connected to GPIO2_24, pin P8_28\n  motorBackwardPin = 86; //89;    // connected to GPIO2_25, pin P8_30\n  lowerLimitSwitchPin = 27;       // connected to GPIO0_27, pin P8_17\n  \n  adcPin = 0;  // connected to ADC0, pin P9_39\n\n  // set up the pins to control the h-bridge\n  gpio_export(motorForwardPin);\n  gpio_export(motorBackwardPin);\n  gpio_export(lowerLimitSwitchPin);\n  gpio_set_dir(motorForwardPin,OUTPUT_PIN);\n  gpio_set_dir(motorBackwardPin,OUTPUT_PIN);\n  gpio_set_dir(lowerLimitSwitchPin,INPUT_PIN);\n  // set up the encoder module\n  rm_eqep_period = 1000000000L;\n  radialMotoreQEP.initialize(\"/sys/devices/ocp.3/48304000.epwmss/48304180.eqep\", eQEP::eQEP_Mode_Absolute);\n  radialMotoreQEP.set_period(rm_eqep_period);\n\n  // Command line args for radial goal\n  for (int i = 0; i < node_argc; i++)\n    {\n      if (!strcmp(node_argv[i], \"-unpaused\"))\n\t{\n\t  paused = false;\n\t}\n      if (!strcmp(node_argv[i], \"-r\"))\n\t{\n\t  radialGoal = atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-e\"))\n\t{\n\t  epsilon = atoi(node_argv[i+1]);\n\t}\n    }\n\n  ROS_INFO(\"RADIAL GOAL SET TO : %d\",radialGoal);\n\n",
-                "Members": "  // paused variable which is controlled by the pause switch\n  bool paused;\n  // epsion value for minimum actionable difference between goal and current\n  int epsilon;\n  // goal position for the radial linear actuator\n  int radialGoal;\n  // current position of the radial linear actuator\n  int radialCurrent;\n  // pin that motor forward is connected to\n  unsigned int motorForwardPin;\n  // pin that motor backward is connected to\n  unsigned int motorBackwardPin;\n  // pin that lowerLimitSwitch is connected to\n  unsigned int lowerLimitSwitchPin;\n  // state variable to keep track of whether we've reached the limit or not\n  bool lowerLimitReached;\n  // ADC the motor potentiometer is connected to (for the prototype)\n  int adcPin;\n  // enhanced quadrature encoder pulse module for the radial actuator\n  eQEP radialMotoreQEP;\n  long rm_eqep_period;",
+                "Initialization": "  paused = true;\n  lowerLimitReached = false;\n  upperLimitReached = false;\n\n  // THESE NEED TO BE UPDATED\n  epsilon = 100;\n  motorForwardPin = 87; //88;     // connected to GPIO2_24, pin P8_28\n  motorBackwardPin = 86; //89;    // connected to GPIO2_25, pin P8_30\n  lowerLimitSwitchPin = 27;       // connected to GPIO0_27, pin P8_17\n  //upperLimitSwitchPin = XX; // NEED TO FIND THIS PIN NUMBER\n  \n  adcPin = 0;  // connected to ADC0, pin P9_39\n\n  // set up the pins to control the h-bridge\n  gpio_export(motorForwardPin);\n  gpio_export(motorBackwardPin);\n  gpio_export(lowerLimitSwitchPin);\n  // gpio_export(upperLimitSwitchPin); // UNCOMMENT WHEN READY\n  gpio_set_dir(motorForwardPin,OUTPUT_PIN);\n  gpio_set_dir(motorBackwardPin,OUTPUT_PIN);\n  gpio_set_dir(lowerLimitSwitchPin,INPUT_PIN);\n  // gpio_set_dir(upperLimitSwitchPin, INPUT_PIN);\n  // set up the encoder module\n  rm_eqep_period = 1000000000L;\n  radialMotoreQEP.initialize(\"/sys/devices/ocp.3/48304000.epwmss/48304180.eqep\", eQEP::eQEP_Mode_Absolute);\n  radialMotoreQEP.set_period(rm_eqep_period);\n\n  // Command line args for radial goal\n  for (int i = 0; i < node_argc; i++)\n    {\n      if (!strcmp(node_argv[i], \"-unpaused\"))\n\t{\n\t  paused = false;\n\t}\n      if (!strcmp(node_argv[i], \"-r\"))\n\t{\n\t  radialGoal = atoi(node_argv[i+1]);\n\t}\n      if (!strcmp(node_argv[i], \"-e\"))\n\t{\n\t  epsilon = atoi(node_argv[i+1]);\n\t}\n    }\n\n  ROS_INFO(\"RADIAL GOAL SET TO : %d\",radialGoal);\n\n",
+                "Members": "  // paused variable which is controlled by the pause switch\n  bool paused;\n  // epsion value for minimum actionable difference between goal and current\n  int epsilon;\n  // goal position for the radial linear actuator\n  int radialGoal;\n  // current position of the radial linear actuator\n  int radialCurrent;\n  // pin that motor forward is connected to\n  unsigned int motorForwardPin;\n  // pin that motor backward is connected to\n  unsigned int motorBackwardPin;\n  // pin that lowerLimitSwitch is connected to\n  unsigned int lowerLimitSwitchPin;\n  // state variable to keep track of whether we've reached the limit or not\n  bool lowerLimitReached;\n  // pin that upperLimitSwitch is connected to\n  unsigned int upperLimitSwitchPin;\n  // state variable to keep track of whether we've reached the limit or not\n  bool upperLimitReached;\n  // ADC the motor potentiometer is connected to (for the prototype)\n  int adcPin;\n  // enhanced quadrature encoder pulse module for the radial actuator\n  eQEP radialMotoreQEP;\n  long rm_eqep_period;",
                 "name": "radialController"
             },
             "base": "5364e1ea-29d3-bc62-87fa-b5715ac58d86",
@@ -5537,26 +5838,26 @@
             },
             "registry": {
                 "position": {
-                    "x": 360,
-                    "y": 283
+                    "x": 464,
+                    "y": 201
                 }
             },
             "sets": {}
         },
         "a2a738c8-d8d8-544d-8e99-af6fb4ac0ce9": {
             "attributes": {
-                "name": "Camera"
+                "name": "TouchScreen"
             },
             "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67",
             "meta": {},
-            "parent": "49725ce0-f096-ea93-a507-004673d77790",
+            "parent": "b19a7df1-b77a-fea6-b7f9-4cf640560c39",
             "pointers": {
                 "base": "7f87eaf4-9384-0b11-2adc-17cd67165f67"
             },
             "registry": {
                 "position": {
-                    "x": 498,
-                    "y": 482
+                    "x": 241,
+                    "y": 512
                 }
             },
             "sets": {}
@@ -5737,6 +6038,25 @@
             },
             "sets": {}
         },
+        "a90503d5-379c-032d-afe8-67659c8f6f34": {
+            "attributes": {
+                "CMDLine": "-unpaused",
+                "name": "imager"
+            },
+            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
+            "meta": {},
+            "parent": "7319b18a-0191-fac7-5adc-5a69d8923560",
+            "pointers": {
+                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
+            },
+            "registry": {
+                "position": {
+                    "x": 314,
+                    "y": 304
+                }
+            },
+            "sets": {}
+        },
         "a9958819-7856-4774-1ef4-934c974095af": {
             "attributes": {
                 "Operation": "  if (req.update == true)\n    {\n      armRotationGoal = req.goal;\n    }\n  res.current = armRotationCurrent;\n  return true;",
@@ -5816,8 +6136,9 @@
         "ae4baea9-4feb-5630-81f3-085218530d89": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "",
+                "Device ID Command": "",
                 "OS": "Linux",
-                "Product Name": "",
                 "name": "Host"
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
@@ -5837,7 +6158,10 @@
                     ]
                 },
                 "attributes": {
-                    "Product Name": {
+                    "Device ID Command": {
+                        "type": "string"
+                    },
+                    "Device ID": {
                         "type": "string"
                     },
                     "Architecture": {
@@ -5888,8 +6212,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 735,
-                    "y": 345
+                    "x": 732,
+                    "y": 370
                 }
             },
             "sets": {}
@@ -5951,6 +6275,8 @@
         },
         "b1357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node17"
             },
@@ -5983,6 +6309,8 @@
         },
         "b19a7df1-b77a-fea6-b7f9-4cf640560c39": {
             "attributes": {
+                "Device ID": "NVIDIA Tegra",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "NVIDIA Tegra",
                 "name": "JetsonTK1"
             },
@@ -6052,6 +6380,8 @@
         "b3357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node25"
             },
@@ -6152,8 +6482,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 787,
-                    "y": 207
+                    "x": 582,
+                    "y": 136
                 }
             },
             "sets": {
@@ -6193,6 +6523,8 @@
         },
         "b8357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node5"
             },
@@ -6226,6 +6558,8 @@
         "ba0b9e89-2b1a-6163-aeac-8b1884e7638b": {
             "attributes": {
                 "Architecture": "x86_64",
+                "Device ID": "Supermicro Super Server",
+                "Device ID Command": "dmesg | grep 'DMI:'",
                 "Product Name": "Super Server",
                 "name": "Localhost"
             },
@@ -6258,6 +6592,8 @@
         },
         "ba357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node13"
             },
@@ -6310,7 +6646,7 @@
         },
         "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1": {
             "attributes": {
-                "Forwards": "#include <opencv/cv.h>\n#include <opencv/highgui.h>\nusing namespace cv;\n\n\n#include <opencv/cv.h>\n#include <opencv/highgui.h>\n\n#include <stdio.h>\n#include <stdarg.h>\n#include <ctime>\n\n#include <iostream>\n#include <fstream>\nusing namespace std;\nIplImage *DispImage;\nIplImage *Mode_1;    \nIplImage *Mode_2;    \nIplImage *Mode_3;    \nIplImage *Mode_4;    \n\nvoid cvShowManyImages(char* title, int nArgs, ...) {\n\n  // img - Used for getting the arguments \n  IplImage *img;\n\n  int size;\n  int i;\n  int m, n;\n  int x, y;\n\n  // w - Maximum number of images in a row \n  // h - Maximum number of images in a column \n  int w, h;\n\n  // scale - How much we have to resize the image\n  float scale;\n  int max;\n\n  // If the number of arguments is lesser than 0 or greater than 12\n  // return without displaying \n  if(nArgs <= 0) {\n    printf(\"Number of arguments too small....\\n\");\n    return;\n  }\n  else if(nArgs > 12) {\n    printf(\"Number of arguments too large....\\n\");\n    return;\n  }\n  \n  // Determine the size of the image, \n  // and the number of rows/cols \n  // from number of arguments \n  else if (nArgs == 1) {\n    w = h = 1;\n    size = 300;\n  }\n  else if (nArgs == 2) {\n    w = 2; h = 1;\n    size = 300;\n  }\n  else if (nArgs == 3 || nArgs == 4) {\n    w = 2; h = 2;\n    size = 400;\n  }\n  else if (nArgs == 5 || nArgs == 6) {\n    w = 3; h = 2;\n    size = 200;\n  }\n  else if (nArgs == 7 || nArgs == 8) {\n    w = 4; h = 2;\n    size = 200;\n  }\n  else {\n    w = 4; h = 3;\n    size = 150;\n  }\n\n  // Create a new 3 channel image\n  DispImage = cvCreateImage( cvSize(800, 480), 8, 3);\n  //  DispImage = cvCreateImage( cvSize(100 + size*w, 60 + size*h), 8, 3 );\n\n  // Used to get the arguments passed\n  va_list args;\n  va_start(args, nArgs);\n\n  // Loop for nArgs number of arguments\n  for (i = 0, m = 1, n = 1; i < nArgs; i++, m += 400) {\n    // Get the Pointer to the IplImage\n    img = va_arg(args, IplImage*);\n\n    // Check whether it is NULL or not\n    // If it is NULL, release the image, and return\n    if(img == 0) {\n      printf(\"Invalid arguments\");\n      cvReleaseImage(&DispImage);\n      return;\n    }\n\n    // Find the width and height of the image\n    x = img->width;\n    y = img->height;\n  \n    // Find whether height or width is greater in order to resize the image\n    max = (x > y)? x: y;\n\n    // Find the scaling factor to resize the image\n    scale = (float) ( (float) max / size );\n\n    // Used to Align the images\n    if( i % w == 0 && m!= 1) {\n      m = 1;\n      n+= 245;\n    }\n\n    // Set the image ROI to display the current image\n    cvSetImageROI(DispImage, cvRect(m, n, (int)( x/scale ), (int)( y/scale )));\n\n    // Resize the input image and copy the it to the Single Big Image\n    cvResize(img, DispImage);\n\n    // Reset the ROI in order to display the next image\n    cvResetImageROI(DispImage);\n  }\n\n  // Create a new window, and show the Single Big Image\n  cvNamedWindow( title, 1 );\n  cvSetWindowProperty(title, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n\n  \n  // Add font to image\n  CvFont sample_font = cvFontQt(\"Arial\", 24, cvScalar(255, 0, 0), CV_FONT_BLACK, CV_STYLE_NORMAL, 0);\n  CvFont sample_state = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_state_value = cvFontQt(\"Arial\", 16, cvScalar(0, 0, 255), CV_FONT_BLACK, CV_STYLE_NORMAL, 0);\n  CvFont sample_center = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_center_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_radius = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_radius_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_angle = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_angle_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_depth = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_depth_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n\n  CvFont pb_font = cvFontQt(\"Arial\", 24, cvScalar(255, 0, 0), CV_FONT_BLACK, CV_STYLE_NORMAL, 0);\n  CvFont pb_state = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_state_value = cvFontQt(\"Arial\", 16, cvScalar(0, 0, 255), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_center = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_radius = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_angle = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_depth = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n\n  // Sample Detection Text\n  cvAddText (DispImage, \"Sample Detection\", cvPoint(410, 40), &sample_font);\n  cvAddText (DispImage, \"Detection State       : \", cvPoint(410, 80), &sample_state);  \n  cvAddText (DispImage, \"Searching...\", cvPoint(650, 80), &sample_state_value);  \n  cvAddText (DispImage, \"Sample Angle φ      : \", cvPoint(410, 110), &sample_center);  \n  cvAddText (DispImage, \"Arm Radius r           : \", cvPoint(410, 140), &sample_radius);  \n  cvAddText (DispImage, \"Arm Orientation θ   : \", cvPoint(410, 170), &sample_angle);  \n  cvAddText (DispImage, \"Arm Depth z            : \", cvPoint(410, 200), &sample_depth);  \n\n  // Payload Bay Detection Text\n  cvAddText (DispImage, \"Payload Bay Detection\", cvPoint(410, 280), &pb_font);\n  cvAddText (DispImage, \"Detection State       : \", cvPoint(410, 320), &pb_state);  \n  cvAddText (DispImage, \"Searching...\", cvPoint(650, 320), &pb_state_value);  \n  cvAddText (DispImage, \"Bay Center O           : \", cvPoint(410, 350), &pb_center);  \n  cvAddText (DispImage, \"Arm Radius r           : \", cvPoint(410, 380), &pb_radius);  \n  cvAddText (DispImage, \"Arm Orientation θ   : \", cvPoint(410, 410), &pb_angle);  \n  cvAddText (DispImage, \"Arm Depth z            : \", cvPoint(410, 440), &pb_depth);  \n  /*\n  unsigned int microseconds = 3000000;\n\n  while(true) {\n  cvShowManyImages(\"UIP\", 4, img1, img2, img3, img4);\n  usleep(microseconds);\n  }\n  */\n\n   cvShowImage( title, DispImage);\n\n   //   cvShowImage(title, DispImage);\n   /*\n    cvWaitKey();\n   cvDestroyWindow(title);\n\n  // End the number of arguments\n   va_end(args);\n\n  // Release the Image Memory\n   cvReleaseImage(&DispImage);\n   */\n}\n",
+                "Forwards": "#include <opencv/cv.h>\n#include <opencv/highgui.h>\nusing namespace cv;\n\n\n#include <opencv/cv.h>\n#include <opencv/highgui.h>\n\n#include <stdio.h>\n#include <stdarg.h>\n#include <ctime>\n\n#include <iostream>\n#include <fstream>\nusing namespace std;\nIplImage *DispImage;\nIplImage *Mode_1;    \nIplImage *Mode_2;    \nIplImage *Mode_3;    \nIplImage *Mode_4;    \n/*\nvoid cvShowManyImages(char* title, int nArgs, ...) {\n\n  // img - Used for getting the arguments \n  IplImage *img;\n\n  int size;\n  int i;\n  int m, n;\n  int x, y;\n\n  // w - Maximum number of images in a row \n  // h - Maximum number of images in a column \n  int w, h;\n\n  // scale - How much we have to resize the image\n  float scale;\n  int max;\n\n  // If the number of arguments is lesser than 0 or greater than 12\n  // return without displaying \n  if(nArgs <= 0) {\n    printf(\"Number of arguments too small....\\n\");\n    return;\n  }\n  else if(nArgs > 12) {\n    printf(\"Number of arguments too large....\\n\");\n    return;\n  }\n  \n  // Determine the size of the image, \n  // and the number of rows/cols \n  // from number of arguments \n  else if (nArgs == 1) {\n    w = h = 1;\n    size = 300;\n  }\n  else if (nArgs == 2) {\n    w = 2; h = 1;\n    size = 300;\n  }\n  else if (nArgs == 3 || nArgs == 4) {\n    w = 2; h = 2;\n    size = 400;\n  }\n  else if (nArgs == 5 || nArgs == 6) {\n    w = 3; h = 2;\n    size = 200;\n  }\n  else if (nArgs == 7 || nArgs == 8) {\n    w = 4; h = 2;\n    size = 200;\n  }\n  else {\n    w = 4; h = 3;\n    size = 150;\n  }\n\n  // Create a new 3 channel image\n  DispImage = cvCreateImage( cvSize(800, 480), 8, 3);\n  //  DispImage = cvCreateImage( cvSize(100 + size*w, 60 + size*h), 8, 3 );\n\n  // Used to get the arguments passed\n  va_list args;\n  va_start(args, nArgs);\n\n  // Loop for nArgs number of arguments\n  for (i = 0, m = 1, n = 1; i < nArgs; i++, m += 400) {\n    // Get the Pointer to the IplImage\n    img = va_arg(args, IplImage*);\n\n    // Check whether it is NULL or not\n    // If it is NULL, release the image, and return\n    if(img == 0) {\n      printf(\"Invalid arguments\");\n      cvReleaseImage(&DispImage);\n      return;\n    }\n\n    // Find the width and height of the image\n    x = img->width;\n    y = img->height;\n  \n    // Find whether height or width is greater in order to resize the image\n    max = (x > y)? x: y;\n\n    // Find the scaling factor to resize the image\n    scale = (float) ( (float) max / size );\n\n    // Used to Align the images\n    if( i % w == 0 && m!= 1) {\n      m = 1;\n      n+= 245;\n    }\n\n    // Set the image ROI to display the current image\n    cvSetImageROI(DispImage, cvRect(m, n, (int)( x/scale ), (int)( y/scale )));\n\n    // Resize the input image and copy the it to the Single Big Image\n    cvResize(img, DispImage);\n\n    // Reset the ROI in order to display the next image\n    cvResetImageROI(DispImage);\n  }\n\n  // Create a new window, and show the Single Big Image\n  cvNamedWindow( title, 1 );\n  cvSetWindowProperty(title, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n\n  \n  // Add font to image\n  CvFont sample_font = cvFontQt(\"Arial\", 24, cvScalar(255, 0, 0), CV_FONT_BLACK, CV_STYLE_NORMAL, 0);\n  CvFont sample_state = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_state_value = cvFontQt(\"Arial\", 16, cvScalar(0, 0, 255), CV_FONT_BLACK, CV_STYLE_NORMAL, 0);\n  CvFont sample_center = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_center_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_radius = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_radius_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_angle = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_angle_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_depth = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont sample_depth_value = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n\n  CvFont pb_font = cvFontQt(\"Arial\", 24, cvScalar(255, 0, 0), CV_FONT_BLACK, CV_STYLE_NORMAL, 0);\n  CvFont pb_state = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_state_value = cvFontQt(\"Arial\", 16, cvScalar(0, 0, 255), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_center = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_radius = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_angle = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n  CvFont pb_depth = cvFontQt(\"Arial\", 16, cvScalarAll(0), CV_FONT_BOLD, CV_STYLE_NORMAL, 0);\n\n  // Sample Detection Text\n  cvAddText (DispImage, \"Sample Detection\", cvPoint(410, 40), &sample_font);\n  cvAddText (DispImage, \"Detection State       : \", cvPoint(410, 80), &sample_state);  \n  cvAddText (DispImage, \"Searching...\", cvPoint(650, 80), &sample_state_value);  \n  cvAddText (DispImage, \"Sample Angle φ      : \", cvPoint(410, 110), &sample_center);  \n  cvAddText (DispImage, \"Arm Radius r           : \", cvPoint(410, 140), &sample_radius);  \n  cvAddText (DispImage, \"Arm Orientation θ   : \", cvPoint(410, 170), &sample_angle);  \n  cvAddText (DispImage, \"Arm Depth z            : \", cvPoint(410, 200), &sample_depth);  \n\n  // Payload Bay Detection Text\n  cvAddText (DispImage, \"Payload Bay Detection\", cvPoint(410, 280), &pb_font);\n  cvAddText (DispImage, \"Detection State       : \", cvPoint(410, 320), &pb_state);  \n  cvAddText (DispImage, \"Searching...\", cvPoint(650, 320), &pb_state_value);  \n  cvAddText (DispImage, \"Bay Center O           : \", cvPoint(410, 350), &pb_center);  \n  cvAddText (DispImage, \"Arm Radius r           : \", cvPoint(410, 380), &pb_radius);  \n  cvAddText (DispImage, \"Arm Orientation θ   : \", cvPoint(410, 410), &pb_angle);  \n  cvAddText (DispImage, \"Arm Depth z            : \", cvPoint(410, 440), &pb_depth);  \n  /*\n  unsigned int microseconds = 3000000;\n\n  while(true) {\n  cvShowManyImages(\"UIP\", 4, img1, img2, img3, img4);\n  usleep(microseconds);\n  }\n  */\n\n   //cvShowImage( title, DispImage);\n\n   //   cvShowImage(title, DispImage);\n   /*\n    cvWaitKey();\n   cvDestroyWindow(title);\n\n  // End the number of arguments\n   va_end(args);\n\n  // Release the Image Memory\n   cvReleaseImage(&DispImage);\n}\n*/",
                 "Initialization": "  ROS_INFO(\"Initializing User Input Imager\");\n\n  //////////////////////////////////////////////\n  // UIP LCD SETUP\n  //////////////////////////////////////////////\n  \n  // The Four Images to show in UIP\n  //  top_right = cvLoadImage(\"/home/debian/Repositories/agse2015/code/UIP/input/white.png\");\n  //  bottom_right = cvLoadImage(\"/home/debian/Repositories/agse2015/code/UIP/input/white.png\");\n\n  key = 0;\n\n  Mode_1 = cvCreateImage( cvSize(800, 480), 8, 3);\n  Mode_2 = cvCreateImage( cvSize(800, 480), 8, 3);\n  Mode_3 = cvCreateImage( cvSize(800, 480), 8, 3);\n  Mode_4 = cvCreateImage( cvSize(800, 480), 8, 3);\n  processed_image = cvCreateImage(cvSize(1920, 1080), 8, 3);",
                 "Members": "  // Received Images\n  Mat pb_rawImage;\n  Mat pb_hsvImage;\n  Mat pb_gsImage;\n  Mat pb_bitwise;\n\n  Mat sample_rawImage;\n  Mat sample_hsvImage;\n  Mat sample_gsImage;\n  Mat sample_bitwise;\n\n  // Four Images to show in UIP\n  IplImage * top_left;\n  IplImage * top_right;\n  IplImage * bottom_left;\n  IplImage * bottom_right;\n\n  // Fullscreen single images\n  IplImage * camera_feed;\n  IplImage * processed_image;\n\n  // Keyboard interrupt\n  int key;",
                 "name": "userDisplay"
@@ -6323,8 +6659,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 637,
-                    "y": 207
+                    "x": 432,
+                    "y": 136
                 }
             },
             "sets": {
@@ -6380,6 +6716,43 @@
             },
             "sets": {}
         },
+        "bd23c0fe-46ec-dd96-7c4b-caf29aea91b5": {
+            "attributes": {
+                "name": "imageProcessor_i"
+            },
+            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
+            "meta": {},
+            "parent": "0279cd67-ad61-ffcc-bae4-4bb12eb29a1f",
+            "pointers": {
+                "Component": "b6a8c9f5-4472-8e3b-4035-f5e90fdac5bb",
+                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
+            },
+            "registry": {
+                "position": {
+                    "x": 401,
+                    "y": 326
+                }
+            },
+            "sets": {}
+        },
+        "bde6b9f8-8cdf-ea3f-daa0-9fd944c49706": {
+            "attributes": {
+                "name": "imagingContainer"
+            },
+            "base": null,
+            "meta": {},
+            "parent": "fbba517e-b661-4150-7ac7-703991335d49",
+            "pointers": {
+                "base": null
+            },
+            "registry": {
+                "position": {
+                    "x": 660,
+                    "y": 204
+                }
+            },
+            "sets": {}
+        },
         "be322214-eb0a-d368-3f0d-a6bc0da030c5": {
             "attributes": {
                 "name": "Camera"
@@ -6411,8 +6784,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 447,
-                    "y": 530
+                    "x": 242,
+                    "y": 456
                 }
             },
             "sets": {}
@@ -6684,7 +7057,7 @@
         },
         "c4d02e7c-c012-94dc-0e24-d04b2752434b": {
             "attributes": {
-                "Operation": "  if (!paused)\n    {\n      // read current value for vertical position (encoder)\n      verticalCurrent = verticalMotoreQEP.get_position();\n      //ROS_INFO(\"Vertical Actuator Encoder Reading: %d\",verticalCurrent);\n\n      unsigned int limitSwitchState = 0;\n      unsigned int backwardPinState = 0;\n      gpio_get_value(lowerLimitSwitchPin,&limitSwitchState);\n      gpio_get_value(motorBackwardPin,&backwardPinState);\n      if (backwardPinState && !limitSwitchState)\n\t{\n\t  lowerLimitReached = true;\n\t}\n      // update motor based on current value\n      if ( abs(verticalGoal-verticalCurrent) > epsilon ) // if there's significant reason to move\n\t{\n\t  if (verticalGoal > verticalCurrent) \n\t    {\n\t      lowerLimitReached = false;\n\t      gpio_set_value(motorBackwardPin,LOW);\n\t      gpio_set_value(motorForwardPin,HIGH);\n\t    }\n\t  else\n\t    {\n\t      gpio_set_value(motorForwardPin,LOW);\n\t      gpio_set_value(motorBackwardPin,HIGH);\n\t    }\n\t}\n      else\n\t{\n\t  gpio_set_value(motorForwardPin,LOW);\n\t  gpio_set_value(motorBackwardPin,LOW);\n\t}\n    }\n  else \n    {\n      gpio_set_value(motorForwardPin,LOW);\n      gpio_set_value(motorBackwardPin,LOW);      \n    }\n",
+                "Operation": "if (!paused)\n{\n  // read current value for vertical position (encoder)\n  verticalCurrent = verticalMotoreQEP.get_position();\n  //ROS_INFO(\"Vertical Actuator Encoder Reading: %d\",verticalCurrent);\n\n  unsigned int limitSwitchState = 0;\n  unsigned int backwardPinState = 0;\n  gpio_get_value(lowerLimitSwitchPin,&limitSwitchState);\n  gpio_get_value(motorBackwardPin,&backwardPinState);\n  if (backwardPinState && !limitSwitchState)\n  {\n    lowerLimitReached = true;\n  }\n\n  unsigned int upperLimitSwitchState = 0;\n  unsigned int forwardPinState = 0;\n  gpio_get_value(upperLimitSwitchPin, &upperLimitSwitchState);\n  gpio_get_value(motorForwardPin, &forwardPinState);\n  if (forwardPinState && !upperLimitSwitchState)\n  {\n    upperLimitReached = true;\n  }\n\n  // update motor based on current value\n  if ( abs(verticalGoal-verticalCurrent) > epsilon ) // if there's significant reason to move\n  {\n    if (verticalGoal > verticalCurrent) \n    {\n      lowerLimitReached = false;\n      gpio_set_value(motorBackwardPin,LOW);\n      gpio_set_value(motorForwardPin,HIGH);\n    }\n    else\n    {\n      upperLimitReached = false;\n      gpio_set_value(motorForwardPin,LOW);\n      gpio_set_value(motorBackwardPin,HIGH);\n    }\n  }\n  else\n  {\n    gpio_set_value(motorForwardPin,LOW);\n    gpio_set_value(motorBackwardPin,LOW);\n  }\n}\nelse \n{\n  gpio_set_value(motorForwardPin,LOW);\n  gpio_set_value(motorBackwardPin,LOW);      \n}\n",
                 "name": "verticalPositionTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -6719,7 +7092,7 @@
         },
         "c8645e9e-668a-d508-45ff-0920ef6a39a8": {
             "attributes": {
-                "Operation": "    if (req.update == true)\n    {\n      //      ROS_INFO(\"GOT NEW RADIAL GOAL: %d\",(int)req.goal);\n      //      ROS_INFO(\"CURRENT RADIUS: %d\",radialCurrent);\n      radialGoal = req.goal;\n    }\n  if (req.setZeroPosition == true)\n    {\n      ROS_INFO(\"ZEROED RADIAL ENCODER\");\n      radialMotoreQEP.set_position(0);\n    }\n  res.lowerLimitReached = lowerLimitReached;\n  res.upperLimitReached = false;\n  res.current = radialCurrent;\n  return true;",
+                "Operation": "    if (req.update == true)\n    {\n      //      ROS_INFO(\"GOT NEW RADIAL GOAL: %d\",(int)req.goal);\n      //      ROS_INFO(\"CURRENT RADIUS: %d\",radialCurrent);\n      radialGoal = req.goal;\n    }\n  if (req.setZeroPosition == true)\n    {\n      ROS_INFO(\"ZEROED RADIAL ENCODER\");\n      radialMotoreQEP.set_position(0);\n    }\n  res.lowerLimitReached = lowerLimitReached;\n  res.upperLimitReached = upperLimitReached;\n  res.current = radialCurrent;\n  return true;",
                 "name": "radialPositionServer"
             },
             "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
@@ -6844,8 +7217,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 254,
-                    "y": 232
+                    "x": 42,
+                    "y": 156
                 }
             },
             "sets": {}
@@ -6869,6 +7242,8 @@
         "d5357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node26"
             },
@@ -6921,6 +7296,8 @@
         "d7357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node18"
             },
@@ -7065,6 +7442,8 @@
         },
         "dc357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node14"
             },
@@ -7116,6 +7495,8 @@
         },
         "de357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node6"
             },
@@ -7220,6 +7601,25 @@
                 "position": {
                     "x": 272,
                     "y": 300
+                }
+            },
+            "sets": {}
+        },
+        "e2d2f698-a3a6-2932-a096-2081d37c5566": {
+            "attributes": {
+                "name": "userDisplay_i"
+            },
+            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
+            "meta": {},
+            "parent": "40858310-dc22-860f-6923-b5f289843b98",
+            "pointers": {
+                "Component": "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1",
+                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
+            },
+            "registry": {
+                "position": {
+                    "x": 223,
+                    "y": 254
                 }
             },
             "sets": {}
@@ -7630,6 +8030,8 @@
         "f4357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node22"
             },
@@ -7683,6 +8085,8 @@
         "f6357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
                 "Architecture": "armv7l",
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node30"
             },
@@ -7753,8 +8157,30 @@
             },
             "sets": {}
         },
+        "fbba517e-b661-4150-7ac7-703991335d49": {
+            "attributes": {
+                "name": "JetsonExperiment"
+            },
+            "base": "e9857a0d-db6e-8197-12f8-76b4ef60b107",
+            "meta": {},
+            "parent": "a0aedc6c-26be-58cb-4c99-7cb20a0772ce",
+            "pointers": {
+                "Deployment": "70d18f4f-4fd3-93ab-2cee-4b3ee9eb15aa",
+                "System": "c120272d-4798-3401-9087-d53be13fa646",
+                "base": "e9857a0d-db6e-8197-12f8-76b4ef60b107"
+            },
+            "registry": {
+                "position": {
+                    "x": 322,
+                    "y": 325
+                }
+            },
+            "sets": {}
+        },
         "fd357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node2"
             },
@@ -7839,6 +8265,8 @@
         },
         "ff357525-43a6-9058-d9f6-607e9275fb5e": {
             "attributes": {
+                "Device ID": "BeagleBone Black",
+                "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "Node10"
             },
@@ -7874,6 +8302,7 @@
         "000e696a-b922-ec04-d0bf-b3eeb74660c9": "T",
         "0066ce30-e372-bb27-23c3-219c7d934553": "2",
         "024964e5-fa2e-785e-fe9f-0eba2f263e8d": "C",
+        "0279cd67-ad61-ffcc-bae4-4bb12eb29a1f": "r",
         "030622c4-50cc-32b0-031c-28be37569518": "T",
         "03d36072-9e09-7866-cb4e-d0a36ff825f6": null,
         "04357525-43a6-9058-d9f6-607e9275fb5e": "F",
@@ -7901,6 +8330,7 @@
         "12a356d3-8ec8-dd52-0801-686fb2299ef2": "UT",
         "132d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "13476356-59e6-ee3c-2834-6fe453f1fd92": "r",
+        "168111db-9cbd-d8ad-822c-a158ba54d6c2": "q",
         "16eddbbf-1a44-1941-5bb8-c5c54853524c": "L",
         "182d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "183b7c25-179d-e884-f133-0024a5db330e": "f",
@@ -7935,6 +8365,8 @@
         "34b22029-292d-bf37-d953-d91dedab2436": "Z",
         "35cb9167-ab2a-9164-a638-972a058f218c": "c",
         "36d534c1-207e-1c52-5336-c74ff256793f": "b",
+        "375a44da-0d1c-6094-0944-874df50f457d": "V",
+        "377b63f9-8842-d7b9-9993-3e8dcbf21149": "n",
         "392d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "392df0a9-2024-1951-0eee-7ad4fd710834": "0",
         "3a2d0cfd-09a0-b53f-418f-75c3587283bb": "u",
@@ -7943,9 +8375,11 @@
         "3b2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "3b52cac4-09c7-6e5d-9d78-656955adb4f1": "Y",
         "3b80f4eb-1dea-2d26-2dfd-1e735a3e739b": "i",
+        "3ceddbbf-1a44-1941-5bb8-c5c54853524c": "L",
         "3f413882-9032-19b3-46d5-342f9f8538cf": "JG",
         "40634285-7f30-4d56-3e22-6047fe32f0d7": "q",
         "407b4c7e-9826-6855-d391-df7e96c3e73b": "C",
+        "40858310-dc22-860f-6923-b5f289843b98": "Y",
         "41357525-43a6-9058-d9f6-607e9275fb5e": "k",
         "43357525-43a6-9058-d9f6-607e9275fb5e": "R",
         "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9": "W",
@@ -7954,8 +8388,10 @@
         "453ca24e-7880-8749-b62d-a3d9717d32ad": "A",
         "4585b7fc-307e-c80c-ada2-02a2845c404d": "W",
         "47725ce0-f096-ea93-a507-004673d77790": "u",
+        "4792f544-4cc0-dcf1-ef15-27eb38eafe36": "M",
         "47ab116f-f11c-a37a-8b11-291b91578348": "O",
         "47fdb167-6041-cd46-fa83-f6fb651c652d": "3",
+        "481446d4-302b-f508-7799-d0a685fefcba": "H",
         "48357525-43a6-9058-d9f6-607e9275fb5e": "q",
         "49725ce0-f096-ea93-a507-004673d77790": "x",
         "4a357525-43a6-9058-d9f6-607e9275fb5e": "L",
@@ -8002,6 +8438,8 @@
         "6e77078a-7ffc-3881-d2b3-469431fa7020": "F",
         "6eee186c-a14e-3be3-d7b1-7fa840843c05": "K",
         "6f725ce0-f096-ea93-a507-004673d77790": "X",
+        "70d18f4f-4fd3-93ab-2cee-4b3ee9eb15aa": "K",
+        "7319b18a-0191-fac7-5adc-5a69d8923560": "f",
         "752d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "7575417a-f5cb-d71e-d261-752e90aee4c3": "L",
         "75973fe4-d007-56ab-2df2-483fac45138c": "w",
@@ -8024,6 +8462,7 @@
         "7ec97e63-8e60-b0c0-8e25-eec82cec64be": "8",
         "7eea081c-beab-287a-1aed-46821198b17c": "J",
         "7f87eaf4-9384-0b11-2adc-17cd67165f67": "u",
+        "8159a009-17e3-9429-a148-2855298043ab": "P",
         "83f33549-7a85-a619-35b2-b18209fdda9d": "r",
         "84f4223f-5696-75ae-9190-d695085aea4d": "Y",
         "852d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -8032,7 +8471,9 @@
         "872d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "874020d4-54d8-0c9b-0bda-18052dae44db": "r",
         "87dd799d-18a6-52e6-4fea-8bbf6167a7ef": "r",
+        "87e1db50-a6ca-af4a-1582-d61316ec7e8a": "A",
         "883f2275-89f3-3656-d28f-33178a9e6a8d": "O",
+        "88a738c8-d8d8-544d-8e99-af6fb4ac0ce9": "C",
         "8a20c8ac-2b78-609a-aebe-175f8964c890": "m",
         "8a2db9d2-9f61-b011-d312-834e06e5c9f5": "Z",
         "8b09d959-de28-8c9d-a7b9-61cecb79295d": "D",
@@ -8050,6 +8491,7 @@
         "9109804a-d102-0849-9ad7-b2411f3ce732": "y",
         "91a8d92d-2273-9fb3-06a3-4b92bb19b395": "G",
         "92357525-43a6-9058-d9f6-607e9275fb5e": "S",
+        "92ddf920-021b-89bc-7719-85efb7ff8d82": "p",
         "93f48121-6fe3-48ed-0cdc-dc9db647b01a": "u",
         "94dc4ba7-0a9c-f078-310f-cf1f2bf7bbe7": "4",
         "984baea9-4feb-5630-81f3-085218530d89": "s",
@@ -8071,6 +8513,7 @@
         "a62d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "a755c03e-6812-2249-d918-920af2dea6b1": "h",
         "a83b8adb-232e-4f68-ca06-3ee2c728765b": "h",
+        "a90503d5-379c-032d-afe8-67659c8f6f34": "l",
         "a9958819-7856-4774-1ef4-934c974095af": "O",
         "ad2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "ad688a62-aeb6-e1e6-31a2-573db6aee77c": "v",
@@ -8094,6 +8537,8 @@
         "ba80db39-e4f4-0e84-a57a-02abf337529e": "9",
         "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1": "D",
         "bb78a93d-3334-5b32-877a-deaf1f11fe23": "Z",
+        "bd23c0fe-46ec-dd96-7c4b-caf29aea91b5": "w",
+        "bde6b9f8-8cdf-ea3f-daa0-9fd944c49706": "F",
         "be322214-eb0a-d368-3f0d-a6bc0da030c5": "Z",
         "bf3c5759-8b0e-c5a7-7666-e3d42038bc48": "e",
         "c02d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -8131,6 +8576,7 @@
         "df437d49-a83e-6944-62ed-52fd3dcf806d": "U",
         "e12d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "e25ad296-2547-7c6a-ad35-e79b3d417157": "Z",
+        "e2d2f698-a3a6-2932-a096-2081d37c5566": "R",
         "e32d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "e39976a0-d7e4-d8bc-38ec-d4e3f58c3b41": "A",
         "e3cd1771-47f7-af5e-11bf-1016427c49fb": "B",
@@ -8154,6 +8600,7 @@
         "f6357525-43a6-9058-d9f6-607e9275fb5e": "0D",
         "f92d7582-1476-efca-9f72-fa9e89ecea2d": "S",
         "fbb9e11b-926b-10de-58e9-a161fe9deec9": "I",
+        "fbba517e-b661-4150-7ac7-703991335d49": "Q",
         "fd357525-43a6-9058-d9f6-607e9275fb5e": "a",
         "fe2f7057-8238-2032-4e6b-3012e0a4ea85": "r",
         "ff038fbb-6658-4ff3-0bce-d0b26e5a494b": "h",

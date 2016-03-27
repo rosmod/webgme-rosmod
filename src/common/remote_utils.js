@@ -251,8 +251,8 @@ define(['q'], function(Q) {
 	copyToHost: function(from, to, ip, user) {
 	    var self = this;
 	    var client = require('scp2');
-	    from = self.sanitizePath(from);
-	    to = self.sanitizePath(to);
+	    //from = self.sanitizePath(from);
+	    //to = self.sanitizePath(to);
 	    var deferred = Q.defer();
 	    client.scp(from, {
 		host: ip,
