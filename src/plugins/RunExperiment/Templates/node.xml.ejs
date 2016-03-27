@@ -1,12 +1,6 @@
 <?xml version="1.0"?>
 <node name="<%- nodeInfo.name %>">
   <priority setting="<%- nodeInfo.priority %>"/>
-<% for (var l in nodeInfo.requiredLibs) {
-     var lib = nodeInfo.requiredLibs[l]; -%>
-  <library name="lib<%- lib.name %>.so"/>
-<%
-   } 
--%>
 <% for (var c in nodeInfo.compInstances) {
      var ci = nodeInfo.compInstances[c]; -%>
   <component_instance name="<%- ci.name %>">
