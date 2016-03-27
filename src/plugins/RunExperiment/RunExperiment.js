@@ -240,7 +240,9 @@ define([
 			}
 		    }
 		    if (!foundHost) {
-			throw new String('Cannot map ' + container.name + ' to any host; constraints not met.');
+			throw new String('Cannot map ' + container.name + ' to any host; constraints: ' +
+					 container.constraints +
+					 ' not met.');
 		    }
 		}
 	    });
