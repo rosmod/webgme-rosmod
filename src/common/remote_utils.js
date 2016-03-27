@@ -5,8 +5,11 @@ define(['q'], function(Q) {
 
     return {
 	trackedProcesses: ['catkin_make', 'node_main', 'roscore'],
+	sanitizePath: function(path) {
+	    return path.replace(/ /g, '\ ');
+	},
 	getDeviceType: function(host) {
-	    return (host.deviceId + '+' + host.architecture).replace(' ', '\\ ');
+	    return host.deviceId + '+' + host.architecture;
 	},
 	range: function(lowEnd,highEnd) {
 	    var arr = [],
@@ -240,13 +243,16 @@ define(['q'], function(Q) {
 	},
 	mkdirRemote: function(dir, ip, user) {
 	    var self = this;
+	    dir = self.sanitizePath(dir);
 	    return self.executeOnHost(['mkdir -p ' + dir],
 				      ip,
 				      user);
 	},
 	copyToHost: function(from, to, ip, user) {
+	    var self = this;
 	    var client = require('scp2');
-	    
+	    from = self.sanitizePath(from);
+	    to = self.sanitizePath(to);
 	    var deferred = Q.defer();
 	    client.scp(from, {
 		host: ip,
@@ -262,7 +268,10 @@ define(['q'], function(Q) {
 	    return deferred.promise;
 	},
 	copyFromHost: function(from, to, ip, user) {
+	    var self = this;
 	    var url = require('url'),
+	    from = self.sanitizePath(from);
+	    to = self.sanitizePath(to);
 	    path = require('path'),
 	    fs = require('fs'),
 	    unzip = require('unzip'),
@@ -297,6 +306,7 @@ define(['q'], function(Q) {
 	},
 	wgetAndUnzipLibrary: function(file_url, dir) {
 	    var url = require('url'),
+	    dir = self.sanitizePath(dir);
 	    path = require('path'),
 	    fs = require('fs'),
 	    unzip = require('unzip'),
