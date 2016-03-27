@@ -6,7 +6,7 @@ define(['q'], function(Q) {
     return {
 	trackedProcesses: ['catkin_make', 'node_main', 'roscore'],
 	getDeviceType: function(host) {
-	    return host.deviceId + '+' + host.architecture;
+	    return (host.deviceId + '+' + host.architecture).replace(' ', '\\ ');
 	},
 	range: function(lowEnd,highEnd) {
 	    var arr = [],
