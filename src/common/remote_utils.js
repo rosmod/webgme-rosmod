@@ -305,7 +305,7 @@ define(['q'], function(Q) {
 		});
 	},
 	wgetAndUnzipLibrary: function(file_url, dir) {
-	    var self = this,
+	    var self = this;
 	    var url = require('url'),
 	    path = require('path'),
 	    fs = require('fs'),
