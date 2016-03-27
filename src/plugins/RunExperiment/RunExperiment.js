@@ -207,10 +207,53 @@ define([
 				     ' available hosts.');
 		}
 		var containerKeys = Object.keys(containers);
+		// figure out which containers have which constraints;
+		for (var c in containers) {
+		    var container = containers[c];
+		    container.constraints = [];
+		    for (var n in container.nodes) {
+			var node = container.nodes[n];
+			for (var ci in node.compInstances) {
+			    var comp = node.compInstances[ci].component;
+			    for (var co in comp.constraints) {
+				var constraint = comp.constraints[co];
+				if (container.constraints.indexOf(constraint) == -1) {
+				    container.constraints.push(constraint);
+				}
+			    }
+			}
+		    }
+		}
+		// Actually perform the mapping
 		for (var i=0; i<containerLength; i++) {
-		    self.experiment.push([containers[containerKeys[i]], hosts[i]]);
+		    var container = containers[containerKeys[i]];
+		    var constraints = container.constraints;
+		    var foundHost = false;
+		    for (var j=0; j<hosts.length; j++) {
+			var host = hosts[j];
+			var capabilities = host.capabilities;
+			if (self.capabilitiesMeetConstraints(capabilities, constraints)) {
+			    self.experiment.push(container, host);
+			    hosts.splice(j,j);
+			    foundHost = true;
+			    break;
+			}
+		    }
+		    if (!foundHost) {
+			throw new String('Cannot map ' + container.name + ' to any host; constraints not met.');
+		    }
 		}
 	    });
+    };
+
+    RunExperiment.prototype.capabilitiesMeetConstraints = function(capabilities, constraints) {
+	var self = this;
+	for (var i=0; i < constraints.length; i++) {
+	    if (capabilities.indexOf(constraints[i]) == -1) {
+		return false;
+	    }
+	}
+	return true;
     };
 
     RunExperiment.prototype.generateArtifacts = function () {

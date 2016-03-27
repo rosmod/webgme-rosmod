@@ -8,6 +8,14 @@ define(['q'], function(Q) {
 	getDeviceType: function(host) {
 	    return host.deviceId + '+' + host.architecture;
 	},
+	range: function(lowEnd,highEnd) {
+	    var arr = [],
+	    c = highEnd - lowEnd + 1;
+	    while ( c-- ) {
+		arr[c] = highEnd--
+	    }
+	    return arr;
+	},
 	testPing: function(ip) {
 	    var self = this;
 	    var ping = require('ping');
