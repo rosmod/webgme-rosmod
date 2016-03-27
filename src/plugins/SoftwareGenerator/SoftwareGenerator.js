@@ -286,7 +286,7 @@ define([
 	    var promises = [];
 
 	    // Get the required node executable
-	    var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.1-beta/rosmod-node.zip';
+	    var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.2/rosmod-node.zip';
 	    var dir = prefix;
 	    promises.push(utils.wgetAndUnzipLibrary(file_url, dir));
 
