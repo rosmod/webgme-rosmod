@@ -269,9 +269,9 @@ define(['q'], function(Q) {
 	},
 	copyFromHost: function(from, to, ip, user) {
 	    var self = this;
-	    var url = require('url'),
 	    from = self.sanitizePath(from);
 	    to = self.sanitizePath(to);
+	    var url = require('url'),
 	    path = require('path'),
 	    fs = require('fs'),
 	    unzip = require('unzip'),
@@ -305,13 +305,14 @@ define(['q'], function(Q) {
 		});
 	},
 	wgetAndUnzipLibrary: function(file_url, dir) {
+	    var self = this,
 	    var url = require('url'),
-	    dir = self.sanitizePath(dir);
 	    path = require('path'),
 	    fs = require('fs'),
 	    unzip = require('unzip'),
 	    fstream = require('fstream'),
 	    child_process = require('child_process');
+	    dir = self.sanitizePath(dir);
 	    // extract the file name
 	    var file_name = url.parse(file_url).pathname.split('/').pop();
 
