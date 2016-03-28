@@ -58,6 +58,26 @@ define([
     };
 
     /**
+     * Gets the configuration structure for the ObservationSelection.
+     * The ConfigurationStructure defines the configuration for the plugin
+     * and will be used to populate the GUI when invoking the plugin from webGME.
+     * @returns {object} The version of the plugin.
+     * @public
+     */
+    StopExperiment.prototype.getConfigStructure = function() {
+        return [
+	    {
+		'name': 'returnZip',
+		'displayName': 'Zip and return generated experiment logs.',
+		'description': 'If true, it enables the client to download a zip of the experiment outputs.',
+		'value': false,
+		'valueType': 'boolean',
+		'readOnly': false
+	    }
+        ];
+    };
+
+    /**
      * Main function for the plugin to execute. This will perform the execution.
      * Notes:
      * - Always log with the provided logger.[error,warning,info,debug].
@@ -81,7 +101,12 @@ define([
 
         self.updateMETA(self.metaTypes);
 
+	// What did the user select for our configuration?
+	var currentConfig = self.getCurrentConfig();
+	self.returnZip = currentConfig.returnZip;
+
 	// will be filled out by the plugin
+	self.activeHosts = [];
 	self.experiment = [];
 	self.rosCorePort = Math.floor((Math.random() * (65535-1024) + 1024));
 	self.rosCoreIp = '';
@@ -94,6 +119,16 @@ define([
 	var projectName = self.core.getAttribute(projectNode, 'name');
 
 	self.experimentName = self.core.getAttribute(self.activeNode, 'name');
+	var path = require('path');
+	self.root_dir = path.join(process.cwd(), 
+				  'generated', 
+				  self.project.projectId, 
+				  self.branchName);
+	self.exp_dir = path.join(self.root_dir,
+				 'experiments', 
+				 self.experimentName);
+	self.xml_dir = path.join(self.exp_dir,
+				 'xml');
 
 	self.logger.info('loading project: ' + projectName);
 	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
@@ -107,12 +142,34 @@ define([
 		if ( expPath != self.selectedExperiment.path ) {
 		    throw new String("Experiments exist with the same name, can't properly resolve!");
 		}
-		return self.killAll();
+		return self.getActiveHosts();
 	    })
-	    .then(function () {
-		var msg = 'Stopped roscore and node_main.';
-		self.logger.info(msg);
-		self.createMessage(self.activeNode, msg);
+	    .then(function (ah) {
+		self.activeHosts = ah;
+		return self.killAllActiveHosts();
+	    })
+	    .then(function() {
+		return self.copyLogs();
+	    })
+	    .then(function() {
+		return self.createResults();
+	    })
+	    .then(function() {
+		return self.cleanupExperiment();
+	    })
+	    .then(function() {
+		return self.createZip();
+	    })
+	    .then(function() {
+		// This will save the changes. If you don't want to save;
+		self.logger.info('saving updates to model');
+		return self.save('StopExperiment updated model.');
+	    })
+	    .then(function (err) {
+		if (err.status != 'SYNCED') {
+		    callback(err, self.result);
+		    return;
+		}
 		self.result.setSuccess(true);
 		callback(null, self.result);
 	    })
@@ -125,20 +182,145 @@ define([
 		.done();
     };
 
-    StopExperiment.prototype.killAll = function() {
+    StopExperiment.prototype.getActiveHosts = function() {
 	var self = this;
-	return utils.getAvailableHosts(self.selectedExperiment.system.hosts, false)
-	    .then(function(hosts) {
-		var tasks = hosts.map(function(host) {
-		    var ip = host.intf.ip;
-		    var user = host.user;
-		    var host_commands = [
-			'pkill roscore',
-			'pkill node_main'
-		    ];
-		    return utils.executeOnHost(host_commands, ip, user);
+	return self.core.loadSubTree(self.activeNode)
+	    .then(function (nodes) {
+		var ah = [];
+		for (var i=0; i<nodes.length; i++) {
+		    var node = nodes[i],
+		    nodeName = self.core.getAttribute(node, 'name'),
+		    type = self.core.getAttribute(node, 'type');
+		    if (type == 'Host') {
+			var host = self.core.getAttribute(node, 'Host'),
+			user = self.core.getAttribute(node, 'User'),
+			intf = self.core.getAttribute(node, 'Interface');
+			ah.push({host:host, user:user, intf:intf});
+			self.core.deleteNode(node);
+		    }
+		    else if (type == 'Container') {
+			self.core.deleteNode(node);
+		    }
+		    else if (type == 'Association') {
+			self.core.deleteNode(node);
+		    }
+		    else if (type != undefined) {
+			self.core.deleteNode(node);
+		    }
+		}
+		return ah;
+	    });
+    };
+
+    StopExperiment.prototype.killAllActiveHosts = function() {
+	var self = this;
+	if (self.activeHosts.length == 0)
+	    throw new String('No actively deployed experiment!');
+	var tasks = self.activeHosts.map(function(host) {
+	    var ip = host.intf.ip;
+	    var user = host.user;
+	    var host_commands = [
+		'pkill roscore',
+		'pkill node_main'
+	    ];
+	    self.logger.info('stopping processes on: '+ user.name + '@' + ip);
+	    return utils.executeOnHost(host_commands, ip, user);
+	});
+	return Q.all(tasks);
+    };
+
+    StopExperiment.prototype.copyLogs = function() {
+	var self = this;
+	var path = require('path');
+	var localDir = path.join(self.exp_dir, 'results');
+	var mkdirp = require('mkdirp');
+	mkdirp.sync(localDir);
+	var tasks = self.activeHosts.map(function(host) {
+	    var ip = host.intf.ip;
+	    var user = host.user;
+	    var remoteDir = path.join(user.directory,
+				 'experiments',
+				 self.experimentName);
+	    self.logger.info('Copying experiment data from ' + ip);
+	    return utils.copyFromHost(remoteDir + '/*.log', localDir + '/.', ip, user)
+		.catch(function(err) {
+		    throw new String('No logs found on: '+ip);
 		});
-		return Q.all(tasks);
+	});
+	return Q.all(tasks);
+    };
+
+    StopExperiment.prototype.createResults = function() {
+	var self = this;
+	var resultsNode = self.META['Results'];
+	var rn = self.core.createNode({parent: self.activeNode, base: resultsNode});
+	var d = new Date();
+	self.core.setAttribute(rn, 'name', 'Results-'+d.toUTCString());
+    };
+
+    StopExperiment.prototype.cleanupExperiment = function() {
+	var self = this;
+	var path = require('path');
+	var tasks = self.activeHosts.map(function(host) {
+	    var ip = host.intf.ip;
+	    var user = host.user;
+	    var remoteDir = path.join(user.directory,
+				 'experiments',
+				 self.experimentName);
+	    self.logger.info('Removing experiment data on ' + ip);
+	    return utils.executeOnHost(['rm -rf ' + remoteDir], ip, user);
+	});
+	return Q.all(tasks);
+    };
+    
+    StopExperiment.prototype.createZip = function() {
+	var self = this;
+	
+	if (!self.returnZip) {
+            self.createMessage(self.activeNode, 'Skipping compression.');
+	    return;
+	}
+	
+	return new Promise(function(resolve, reject) {
+	    var zlib = require('zlib'),
+	    tar = require('tar'),
+	    fstream = require('fstream'),
+	    input = self.exp_dir;
+
+	    self.logger.info('zipping ' + input);
+
+	    var bufs = [];
+
+	    var packer = tar.Pack()
+		.on('error', function(e) { reject(e); });
+
+	    var gzipper = zlib.Gzip()
+		.on('error', function(e) { reject(e); })
+		.on('data', function(d) { bufs.push(d); })
+		.on('end', function() {
+		    self.logger.debug('gzip ended.');
+		    var buf = Buffer.concat(bufs);
+		    self.blobClient.putFile('artifacts.tar.gz',buf)
+			.then(function (hash) {
+			    self.result.addArtifact(hash);
+			    self.logger.info('compression complete');
+			    resolve();
+			})
+			.catch(function(err) {
+			    reject(err);
+			})
+			    .done();
+		});
+
+	    var reader = fstream.Reader({ 'path': input, 'type': 'Directory' })
+		.on('error', function(e) { reject(e); });
+
+	    reader
+		.pipe(packer)
+		.pipe(gzipper);
+	})
+	    .then(function() {
+		self.createMessage(self.activeNode, 'Created archive.');
 	    });
     };
 

@@ -365,7 +365,7 @@ define([
 	    'export ROS_IP='+ip,
 	    'export ROS_MASTER_URI=http://'+ip+':'+self.rosCorePort,
 	    'roscore --port=' + self.rosCorePort + ' &',
-	    'sleep 5'
+	    'sleep 3'
 	];
 	self.logger.info('Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
 	return utils.executeOnHost(host_commands, ip, user,null, true);
@@ -420,6 +420,9 @@ define([
 
     RunExperiment.prototype.createModelArtifacts = function () {
 	var self=this;
+	var metaNodes = self.core.getAllMetaNodes(self.activeNode);
+	var fcoNode = self.core.getBaseRoot(self.activeNode);
+
 	self.experiment.forEach(function(link) {
 	    var container = link[0];
 	    var host = link[1];
@@ -431,9 +434,9 @@ define([
 	    //       * guid   (GUID)
 
 	    // should probably set the meta type here to be containers/hosts/(links?)
-	    var cn = self.core.createNode({parent: self.activeNode});
-	    var hn = self.core.createNode({parent: self.activeNode});
-	    var ln = self.core.createNode({parent: self.activeNode});
+	    var cn = self.core.createNode({parent: self.activeNode, base: fcoNode});
+	    var hn = self.core.createNode({parent: self.activeNode, base: fcoNode});
+	    var ln = self.core.createNode({parent: self.activeNode, base: fcoNode});
 
 	    //self.logger.info(JSON.stringify(cn, null, 2));
 	    //self.logger.info(JSON.stringify(hn, null, 2));
@@ -442,7 +445,14 @@ define([
 	    // use self.core.setAttribute(node, name, value);
 	    //    value here can be any valid JS object (even nested types);
 	    self.core.setAttribute(cn, 'name', container.name);
+	    self.core.setAttribute(cn, 'type', 'Container');
 	    self.core.setAttribute(hn, 'name', host.host.name);
+	    self.core.setAttribute(hn, 'type', 'Host');
+	    self.core.setAttribute(hn, 'Host', host.host);
+	    self.core.setAttribute(hn, 'User', host.user);
+	    self.core.setAttribute(hn, 'Interface', host.intf);
+	    self.core.setAttribute(ln, 'name', 'MapsTo');
+	    self.core.setAttribute(ln, 'type', 'Association');
 	    // optionally use self.core.setAttributeMeta(node, name, rule);
 	    //    rule here defines the 'type' of the attribute
 	    // use self.core.setPointer(node, name, target);
