@@ -309,29 +309,38 @@ define([
     {
 	var self = this;
 	if (!self.generateDocs) {
-            self.createMessage(self.activeNode, 'Skipping documentation generation.');
+	    var msg = 'Skipping documentation generation.'
+	    self.logger.info(msg);
+            self.createMessage(self.activeNode, msg);
 	    return;
 	}
+	var msg = 'Generating documentation.'
+	self.logger.info(msg);
+        //self.createMessage(self.activeNode, msg);
 	return new Promise(function(resolve, reject) {
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
 
 	    terminal.stdout.on('data', function (data) {});
 
-	    terminal.stderr.on('data', function (data) {});
+	    terminal.stderr.on('data', function (error) {
+	    });
 
 	    terminal.on('exit', function (code) {
-		self.logger.debug('child process exited with code ' + code);
-		if (code == 0)
+		self.logger.debug('document generation:: child process exited with code ' + code);
+		if (code == 0) {
 		    resolve(code);
-		else
-		    reject('child process exited with code ' + code);
+		}
+		else {
+		    var procStderr;
+		    reject('document generation:: child process exited with code ' + code);
+		}
 	    });
 
 	    setTimeout(function() {
 		self.logger.debug('Sending stdin to terminal');
 		terminal.stdin.write('doxygen doxygen_config\n');
 		terminal.stdin.write('make -C ./doc/latex/ pdf\n');
-		terminal.stdin.write('cp ./doc/latex/refman.pdf ' + self.projectModel.name  + '.pdf');
+		terminal.stdin.write('mv ./doc/latex/refman.pdf ' + utils.sanitizePath(self.projectModel.name) + '.pdf');
 		self.logger.debug('Ending terminal session');
 		terminal.stdin.end();
 	    }, 1000);
