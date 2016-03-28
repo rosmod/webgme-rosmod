@@ -327,7 +327,7 @@ define(['q'], function(Q) {
 	    // excute wget using child_process' exec function
 	    var child = child_process.exec(wget, function(err, stdout, stderr) {
 		if (err) {
-		    deferred.reject(err);
+		    deferred.reject("Couldn't download " + file_url + ', please check address and connection.');
 		}
 		else {
 		    var fname = path.join(dir,file_name);
@@ -335,13 +335,14 @@ define(['q'], function(Q) {
 		    var writeStream = fstream.Writer(dir);
 		    if (readStream == undefined || writeStream == undefined) {
 			deferred.reject("Couldn't open " + dir + " or " + fname);
-			return;
 		    }
-		    readStream
-			.pipe(unzip.Parse())
-			.pipe(writeStream);
-		    fs.unlink(fname);
-		    deferred.resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
+		    else {
+			readStream
+			    .pipe(unzip.Parse())
+			    .pipe(writeStream);
+			fs.unlink(fname);
+			deferred.resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
+		    }
 		}
 	    });
 	    return deferred.promise;

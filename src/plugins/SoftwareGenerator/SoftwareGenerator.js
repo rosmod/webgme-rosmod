@@ -280,27 +280,29 @@ define([
     SoftwareGenerator.prototype.downloadLibraries = function ()
     {
 	var self = this;
-	(function() {
-	    var path = require('path'),
-	    prefix = path.join(self.gen_dir, 'src');
-	    var promises = [];
+	var path = require('path'),
+	prefix = path.join(self.gen_dir, 'src');
 
-	    // Get the required node executable
-	    var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.2/rosmod-node.zip';
-	    var dir = prefix;
-	    promises.push(utils.wgetAndUnzipLibrary(file_url, dir));
+	// Get the required node executable
+	var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.2/rosmod-node.zip';
+	var dir = prefix;
 
-	    // Get all the software libraries
-	    for (var lib in self.projectModel.software.libraries) {
-		file_url = self.projectModel.software.libraries[lib].url;
-		if (file_url !== undefined)
-		    promises.push(utils.wgetAndUnzipLibrary(file_url, dir));
+	var libraries = self.projectModel.software.libraries;
+	var nodeLib = {url:file_url};
+	libraries['rosmod-actor'] = nodeLib;
+
+	var libKeys = Object.keys(libraries);
+	var tasks = libKeys.map(function(libKey) {
+	    var lib = libraries[libKey];
+	    if (lib.url) {
+		return utils.wgetAndUnzipLibrary(lib.url, dir);
 	    }
-	    return Q.all(promises);
-	})()
-	.then(function() {
-	    self.createMessage(self.activeNode, 'Downloaded libraries.');
-	})
+	    else {
+		return [];
+	    }
+	});
+
+	return Q.all(tasks);
     };
 
     SoftwareGenerator.prototype.generateDocumentation = function () 
