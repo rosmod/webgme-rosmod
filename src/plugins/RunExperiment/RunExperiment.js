@@ -152,6 +152,11 @@ define([
 		return self.mapContainersToHosts();
 	    })
 	    .then(function() {
+		// check for binaries
+		self.logger.info('checking for binaries');
+		return self.checkBinaries();
+	    })
+	    .then(function() {
 		// generate xml files here
 		self.logger.info('generating artifacts');
 		return self.generateArtifacts();
@@ -264,6 +269,26 @@ define([
 	    }
 	}
 	return true;
+    };
+
+    RunExperiment.prototype.checkBinaries = function() {
+	var self = this;
+	var path = require('path');
+	var fs = require('fs');
+	var platforms = [];
+	self.experiment.map(function (containerToHostMap) {
+	    var host = containerToHostMap[1];
+	    var devType = utils.getDeviceType(host.host);
+	    if (platforms.indexOf(devType) == -1)
+		platforms.push(devType);
+	});
+	var tasks = platforms.map(function (platform) {
+	    var platformBinPath = path.join(self.root_dir,
+					    'bin',
+					    platform);
+	    fs.accessSync(platformBinPath);
+	});
+	return Q.all(tasks);
     };
 
     RunExperiment.prototype.generateArtifacts = function () {
