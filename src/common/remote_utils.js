@@ -174,7 +174,7 @@ define(['q'], function(Q) {
 		},
 		onCommandComplete: function( command, response, sshObj ) {
 		    if (cb_complete) {
-			self.logger.info(command);
+			//self.logger.info(command);
 			self.logger.info(response);
 			//cb_complete(command, response);
 		    }
@@ -191,13 +191,16 @@ define(['q'], function(Q) {
 	    };
 	    var deferred = Q.defer();
 	    var ssh = new ssh2shell(host);
-	    /*
 	    ssh.on ("error", function(err, type, close, cb) {
-		deferred.reject('error on ' + user.name + '@' + ip + ': ' + err);
+		var msg = 'error on ' + user.name + '@' + ip + ': ' + err;
+		//deferred.reject(msg);
+		self.logger.error(msg);
+		self.logger.error('  type:  '+ type);
+		self.logger.error('  close: '+ close);
+		self.logger.error('  cb:    '+ cb);
 		if (cb_error)
 		    cb_error(err, type, close, cb);
 	    });
-	    */
 	    ssh.on("close", function(hadError) {
 		if (hadError) {
 		    deferred.reject();

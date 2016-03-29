@@ -389,7 +389,7 @@ define([
 	    'source /opt/ros/indigo/setup.bash',
 	    'export ROS_IP='+ip,
 	    'export ROS_MASTER_URI=http://'+ip+':'+self.rosCorePort,
-	    'roscore --port=' + self.rosCorePort + ' &',
+	    'roscore --port=' + self.rosCorePort + ' &!',
 	    'sleep 3'
 	];
 	self.logger.info('Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
@@ -412,16 +412,17 @@ define([
 		'source /opt/ros/indigo/setup.bash',
 		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH',
 		'export ROS_IP='+ip,
-		'export ROS_MASTER_URI=http://'+self.rosCoreIp+':'+self.rosCorePort
+		'export ROS_MASTER_URI=http://'+self.rosCoreIp+':'+self.rosCorePort,
+		'export DISPLAY=:0'
 	    ];
 	    for (var n in container.nodes) {
 		host_commands.push('DISPLAY=:0 ./node_main -config ' +
 				   container.nodes[n].name + '.xml ' +
 				   container.nodes[n].cmdLine +
-				   ' &');
+				   ' &!');
 	    }
-	    host_commands.push('sleep 3');
-	    return utils.executeOnHost(host_commands, ip, user);
+	    host_commands.push('sleep 10');
+	    return utils.executeOnHost(host_commands, ip, user, null, true);
 	});
 	return Q.all(tasks);
     };
