@@ -268,7 +268,7 @@ for (var tmr in compInfo.timers){
   callback_options.alias = "<%- compInfo.timers[tmr].name %>_operation";
   callback_options.priority = <%- compInfo.timers[tmr].priority %>;
   callback_options.deadline.sec = <%- Math.floor(compInfo.timers[tmr].deadline) %>;
-  callback_options.deadline.nsec = <%- compInfo.timers[tmr].priority % 1 %>;
+  callback_options.deadline.nsec = <%- compInfo.timers[tmr].deadline % 1 %>;
 #endif
   timer_options = 
     NAMESPACE::TimerOptions
