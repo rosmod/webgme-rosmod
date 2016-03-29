@@ -304,6 +304,7 @@ define(['q'], function(Q) {
 				    name: nodeName,
 				    path: self.core.getPath(node),
 				    schedulingScheme: self.core.getAttribute(node, 'SchedulingScheme'),
+				    loggingUnit: self.core.getAttribute(node, 'LoggingUnit'),
 				    component: null
 				};
 			}
