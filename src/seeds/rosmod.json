@@ -173,30 +173,24 @@
                 "d5367025-51d7-5b40-bcc6-664ee22902e4": {}
             },
             "a0aedc6c-26be-58cb-4c99-7cb20a0772ce": {
-                "85d9ad56-d852-2316-034e-0e72370fe2fe": {}
+                "85d9ad56-d852-2316-034e-0e72370fe2fe": {
+                    "ab65b14a-64fa-0053-5283-6c826721aaf7": {},
+                    "d0a8cd56-02e4-20fd-905d-685e4d864e1f": {}
+                }
             },
             "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {
                 "453ca24e-7880-8749-b62d-a3d9717d32ad": {
                     "4e2629ce-7551-79a8-56db-4301eddbe42e": {
-                        "0e6f535c-bdf0-daf5-e8ec-ab89ed8ec01a": {
+                        "11170bd2-3a8f-afc2-f083-45a97cae8f55": {
                             "0a75ba60-561b-1bc0-38a2-26b4c5c674ec": {},
                             "c1328142-ec82-959b-ae84-569e6cc5e2e2": {}
                         }
                     },
-                    "849f4381-3a25-785b-0879-6679c1a35d01": {
-                        "76fde469-0d84-3f58-8b96-4615b9e144c6": {
-                            "0c5f4401-5567-4758-ac79-3ed3d1f23710": {},
-                            "785805b7-7a1b-93a3-871c-1efd332a9f34": {},
-                            "aeefcdb6-820e-8070-9545-0d6c7bcca99f": {}
-                        }
-                    },
                     "f2b573aa-ef21-47c7-f9e6-03819089756a": {
-                        "7f4aaacd-bfca-3ede-67a3-92e41b22205b": {
+                        "cec02638-168a-7475-a86d-25e6ccbdf6c3": {
+                            "60cf9cf5-9571-b89c-204e-f580a6a0222b": {},
                             "748a00b8-a568-2e2d-d7d5-4fe5e7dc1eeb": {},
                             "cdd0cce5-6bb4-c477-c989-eafd00dbb0db": {}
-                        },
-                        "cec02638-168a-7475-a86d-25e6ccbdf6c3": {
-                            "60cf9cf5-9571-b89c-204e-f580a6a0222b": {}
                         }
                     }
                 }
@@ -1850,15 +1844,15 @@
             },
             "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
             "meta": {},
-            "parent": "0e6f535c-bdf0-daf5-e8ec-ab89ed8ec01a",
+            "parent": "11170bd2-3a8f-afc2-f083-45a97cae8f55",
             "pointers": {
                 "Component": "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1",
                 "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
             },
             "registry": {
                 "position": {
-                    "x": 391,
-                    "y": 312
+                    "x": 113,
+                    "y": 196
                 }
             },
             "sets": {}
@@ -1954,25 +1948,6 @@
             },
             "sets": {}
         },
-        "0c5f4401-5567-4758-ac79-3ed3d1f23710": {
-            "attributes": {
-                "name": "radialController_i"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "76fde469-0d84-3f58-8b96-4615b9e144c6",
-            "pointers": {
-                "Component": "9ec1ad14-ca6f-6895-63a1-6c501f97a49a",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 529,
-                    "y": 224
-                }
-            },
-            "sets": {}
-        },
         "0cbdf953-6bb8-6384-8815-3855181b7deb": {
             "attributes": {
                 "name": "FastProcessor"
@@ -2012,8 +1987,9 @@
         },
         "0dad946f-7b49-ccba-aff2-c85e58b60ea7": {
             "attributes": {
+                "Deadline": 0.25,
                 "Operation": "  if (!paused) \n    {\n\n      int pos; // temp value to store position from servo\n    \n      // ARM SERVO \n      dynamixel.setPosition(&serialPort, armServoID, Dynamixel::angleToPos_28T(armRotationGoal));\n      pos = dynamixel.getPosition(&serialPort, armServoID);\n      //      ROS_INFO(\"Arm base servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      armRotationCurrent = Dynamixel::posToAngle_28T(pos);\n\n      // GRIPPER ROTATION SERVO\n      dynamixel.setPosition(&serialPort, gripperRotationID, Dynamixel::angleToPos(gripperRotationGoal));\n      pos = dynamixel.getPosition(&serialPort, gripperRotationID);\n      //      ROS_INFO(\"Gripper rotation servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      gripperRotationCurrent = Dynamixel::posToAngle(pos);\n    \n      // GRIPPER POSITION SERVO\n      dynamixel.setPosition(&serialPort, gripperPositionID, Dynamixel::angleToPos(gripperPosGoal));\n      pos = dynamixel.getPosition(&serialPort, gripperPositionID);\n      //      ROS_INFO(\"Gripper position servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      gripperPosCurrent = Dynamixel::posToAngle(pos);\n    }\n  else \n    {\n      int pos; // temp value to store position from servo\n    \n      // ARM SERVO \n      pos = dynamixel.getPosition(&serialPort, armServoID);\n      //      ROS_INFO(\"Arm base servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      armRotationCurrent = Dynamixel::posToAngle_28T(pos);\n\n      // GRIPPER ROTATION SERVO\n      pos = dynamixel.getPosition(&serialPort, gripperRotationID);\n      //      ROS_INFO(\"Gripper rotation servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      gripperRotationCurrent = Dynamixel::posToAngle(pos);\n    \n      // GRIPPER POSITION SERVO\n      pos = dynamixel.getPosition(&serialPort, gripperPositionID);\n      //      ROS_INFO(\"Gripper position servo angle: %f\\n\",Dynamixel::posToAngle(pos));\n      gripperPosCurrent = Dynamixel::posToAngle(pos);\n    }",
-                "Period": 0,
+                "Period": 0.25,
                 "name": "servoTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -2083,24 +2059,6 @@
                 ]
             }
         },
-        "0e6f535c-bdf0-daf5-e8ec-ab89ed8ec01a": {
-            "attributes": {
-                "name": "UserInteraction"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "4e2629ce-7551-79a8-56db-4301eddbe42e",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 386,
-                    "y": 246
-                }
-            },
-            "sets": {}
-        },
         "0ecb9167-ab2a-9164-a638-972a058f218c": {
             "attributes": {
                 "Definition": "float32 r\nfloat32 theta\nfloat32 z",
@@ -2150,21 +2108,21 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "AbstractBusinessLogic": {
+                    "Operation": {
                         "type": "string"
+                    },
+                    "Period": {
+                        "type": "float"
+                    },
+                    "Deadline": {
+                        "type": "float"
                     },
                     "Priority": {
                         "type": "integer",
                         "min": 1,
                         "max": 99
                     },
-                    "Deadline": {
-                        "type": "float"
-                    },
-                    "Period": {
-                        "type": "float"
-                    },
-                    "Operation": {
+                    "AbstractBusinessLogic": {
                         "type": "string"
                     }
                 }
@@ -2270,6 +2228,25 @@
                 "position": {
                     "x": 1063,
                     "y": 50
+                }
+            },
+            "sets": {}
+        },
+        "11170bd2-3a8f-afc2-f083-45a97cae8f55": {
+            "attributes": {
+                "Priority": 99,
+                "name": "UserDisplay"
+            },
+            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
+            "meta": {},
+            "parent": "4e2629ce-7551-79a8-56db-4301eddbe42e",
+            "pointers": {
+                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
+            },
+            "registry": {
+                "position": {
+                    "x": 156,
+                    "y": 238
                 }
             },
             "sets": {}
@@ -3103,7 +3080,7 @@
         },
         "296d633b-35b8-77d3-eadf-d49fc03b8301": {
             "attributes": {
-                "IP": "10.1.1.1"
+                "IP": "10.1.1.2"
             },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
@@ -3676,10 +3653,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Netmask": {
+                    "Subnet": {
                         "type": "string"
                     },
-                    "Subnet": {
+                    "Netmask": {
                         "type": "string"
                     }
                 }
@@ -4083,14 +4060,14 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "AbstractBusinessLogic": {
-                        "type": "string"
+                    "Deadline": {
+                        "type": "float"
                     },
                     "Operation": {
                         "type": "string"
                     },
-                    "Deadline": {
-                        "type": "float"
+                    "AbstractBusinessLogic": {
+                        "type": "string"
                     }
                 },
                 "pointers": {
@@ -4363,7 +4340,7 @@
         "47725ce0-f096-ea93-a507-004673d77790": {
             "attributes": {
                 "Architecture": "armv7l",
-                "Device ID": "BeagleBone Black",
+                "Device ID": "BeagleBone",
                 "Device ID Command": "cat /proc/device-tree/model",
                 "name": "MotorControl"
             },
@@ -4509,11 +4486,11 @@
                 "Users": [
                     {
                         "attributes": {},
-                        "guid": "99ea1844-3957-5ba6-7fa8-df10bec27d3e",
+                        "guid": "d782b608-6786-9f32-8141-4e616f54c23c",
                         "registry": {
                             "position": {
-                                "x": 681,
-                                "y": 227
+                                "x": 355,
+                                "y": 296
                             }
                         }
                     }
@@ -4784,7 +4761,7 @@
         },
         "5173ec58-cf6c-e536-1efc-d1cf17642062": {
             "attributes": {
-                "IP": "10.1.1.3"
+                "IP": "10.1.1.1"
             },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
@@ -4885,19 +4862,19 @@
                     ]
                 },
                 "attributes": {
-                    "Definitions": {
-                        "type": "string"
-                    },
-                    "Destruction": {
-                        "type": "string"
-                    },
-                    "Forwards": {
+                    "Members": {
                         "type": "string"
                     },
                     "Initialization": {
                         "type": "string"
                     },
-                    "Members": {
+                    "Forwards": {
+                        "type": "string"
+                    },
+                    "Destruction": {
+                        "type": "string"
+                    },
+                    "Definitions": {
                         "type": "string"
                     }
                 },
@@ -6133,7 +6110,7 @@
         "6f725ce0-f096-ea93-a507-004673d77790": {
             "attributes": {
                 "Architecture": "armv7l",
-                "Device ID": "BeagleBone Black",
+                "Device ID": "BeagleBone",
                 "Device ID Command": "cat /proc/device-tree/model",
                 "Product Name": "BeagleBone Black",
                 "name": "UserInput"
@@ -6284,15 +6261,15 @@
             },
             "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
             "meta": {},
-            "parent": "7f4aaacd-bfca-3ede-67a3-92e41b22205b",
+            "parent": "cec02638-168a-7475-a86d-25e6ccbdf6c3",
             "pointers": {
                 "Component": "b6a8c9f5-4472-8e3b-4035-f5e90fdac5bb",
                 "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
             },
             "registry": {
                 "position": {
-                    "x": 520,
-                    "y": 262
+                    "x": 798,
+                    "y": 205
                 }
             },
             "sets": {}
@@ -6335,12 +6312,12 @@
                     ]
                 },
                 "attributes": {
+                    "CMDLine": {
+                        "type": "string"
+                    },
                     "Priority": {
                         "type": "integer",
                         "max": 99
-                    },
-                    "CMDLine": {
-                        "type": "string"
                     }
                 }
             },
@@ -6521,24 +6498,6 @@
             },
             "sets": {}
         },
-        "76fde469-0d84-3f58-8b96-4615b9e144c6": {
-            "attributes": {
-                "name": "MotorController"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "849f4381-3a25-785b-0879-6679c1a35d01",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 257,
-                    "y": 175
-                }
-            },
-            "sets": {}
-        },
         "7781e7ee-ca18-2432-2180-4dadebfe0def": {
             "attributes": {
                 "name": "Deployments"
@@ -6555,25 +6514,6 @@
                 "position": {
                     "x": 150,
                     "y": 348
-                }
-            },
-            "sets": {}
-        },
-        "785805b7-7a1b-93a3-871c-1efd332a9f34": {
-            "attributes": {
-                "name": "rotationController_i"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "76fde469-0d84-3f58-8b96-4615b9e144c6",
-            "pointers": {
-                "Component": "b2e7d5ea-aee1-a65f-0c05-8ab227b5be8f",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 527,
-                    "y": 362
                 }
             },
             "sets": {}
@@ -6982,24 +6922,6 @@
                 ]
             }
         },
-        "7f4aaacd-bfca-3ede-67a3-92e41b22205b": {
-            "attributes": {
-                "name": "Imaging"
-            },
-            "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
-            "meta": {},
-            "parent": "f2b573aa-ef21-47c7-f9e6-03819089756a",
-            "pointers": {
-                "base": "7575417a-f5cb-d71e-d261-752e90aee4c3"
-            },
-            "registry": {
-                "position": {
-                    "x": 439,
-                    "y": 240
-                }
-            },
-            "sets": {}
-        },
         "7f565890-f2e8-9603-9e7f-c368d3b74a85": {
             "attributes": {
                 "name": "tlc_set_ryg_state_server"
@@ -7190,24 +7112,6 @@
                 ]
             }
         },
-        "849f4381-3a25-785b-0879-6679c1a35d01": {
-            "attributes": {
-                "name": "MotorContainer"
-            },
-            "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643",
-            "meta": {},
-            "parent": "453ca24e-7880-8749-b62d-a3d9717d32ad",
-            "pointers": {
-                "base": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643"
-            },
-            "registry": {
-                "position": {
-                    "x": 231,
-                    "y": 114
-                }
-            },
-            "sets": {}
-        },
         "84f4223f-5696-75ae-9190-d695085aea4d": {
             "attributes": {
                 "name": "payloadBayStatePublisher"
@@ -7359,7 +7263,9 @@
         },
         "874020d4-54d8-0c9b-0bda-18052dae44db": {
             "attributes": {
-                "Operation": "if (!paused)\n{\n  // read current value for radial position (encoder)\n  radialCurrent = radialMotoreQEP.get_position();\n  //ROS_INFO(\"Raidal Actuator Encoder Reading: %d\",radialCurrent);\n\n  static unsigned int prevRadialCurrent = radialCurrent + 100;\n\n  unsigned int limitSwitchState = 0;\n  unsigned int backwardPinState = 0;\n  //gpio_get_value(lowerLimitSwitchPin,&limitSwitchState);\n  gpio_get_value(motorBackwardPin,&backwardPinState);\n  if (backwardPinState && (prevRadialCurrent == radialCurrent))\n  {\n    lowerLimitReached = true;\n  }\n\n  unsigned int upperLimitSwitchState = 0;\n  unsigned int forwardPinState = 0;\n  //gpio_get_value(upperLimitSwitchPin, &upperLimitSwitchState);\n  gpio_get_value(motorForwardPin, &forwardPinState);\n  if (forwardPinState && (prevRadialCurrent == radialCurrent))\n  {\n    upperLimitReached = true;\n  }\n\n  pervRadialCurrent = radialCurrent;\n\n  // update motor based on current value\n  if ( abs(radialGoal-radialCurrent) > epsilon ) // if there's significant reason to move\n  {\n    if (radialGoal > radialCurrent) \n    {\n      lowerLimitReached = false;\n      gpio_set_value(motorBackwardPin,LOW);\n      gpio_set_value(motorForwardPin,HIGH);\n    }\n    else\n    {\n      upperLimitReached = false;\n      gpio_set_value(motorForwardPin,LOW);\n      gpio_set_value(motorBackwardPin,HIGH);\n    }\n  }\n  else\n  {\n    gpio_set_value(motorForwardPin,LOW);\n    gpio_set_value(motorBackwardPin,LOW);\n  }\n}\nelse \n{\n  gpio_set_value(motorForwardPin,LOW);\n  gpio_set_value(motorBackwardPin,LOW);      \n}\n\n",
+                "Deadline": 0.01,
+                "Operation": "if (!paused)\n{\n  // read current value for radial position (encoder)\n  radialCurrent = radialMotoreQEP.get_position();\n  //ROS_INFO(\"Raidal Actuator Encoder Reading: %d\",radialCurrent);\n\n  static unsigned int prevRadialCurrent = radialCurrent + 100;\n\n  unsigned int limitSwitchState = 0;\n  unsigned int backwardPinState = 0;\n  //gpio_get_value(lowerLimitSwitchPin,&limitSwitchState);\n  gpio_get_value(motorBackwardPin,&backwardPinState);\n  if (backwardPinState && (prevRadialCurrent == radialCurrent))\n  {\n    lowerLimitReached = true;\n  }\n\n  unsigned int upperLimitSwitchState = 0;\n  unsigned int forwardPinState = 0;\n  //gpio_get_value(upperLimitSwitchPin, &upperLimitSwitchState);\n  gpio_get_value(motorForwardPin, &forwardPinState);\n  if (forwardPinState && (prevRadialCurrent == radialCurrent))\n  {\n    upperLimitReached = true;\n  }\n\n  prevRadialCurrent = radialCurrent;\n\n  // update motor based on current value\n  if ( abs(radialGoal-radialCurrent) > epsilon ) // if there's significant reason to move\n  {\n    if (radialGoal > radialCurrent) \n    {\n      lowerLimitReached = false;\n      gpio_set_value(motorBackwardPin,LOW);\n      gpio_set_value(motorForwardPin,HIGH);\n    }\n    else\n    {\n      upperLimitReached = false;\n      gpio_set_value(motorForwardPin,LOW);\n      gpio_set_value(motorBackwardPin,HIGH);\n    }\n  }\n  else\n  {\n    gpio_set_value(motorForwardPin,LOW);\n    gpio_set_value(motorBackwardPin,LOW);\n  }\n}\nelse \n{\n  gpio_set_value(motorForwardPin,LOW);\n  gpio_set_value(motorBackwardPin,LOW);      \n}\n\n",
+                "Period": 0.01,
                 "name": "radialPositionTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -7975,7 +7881,9 @@
         },
         "94dc4ba7-0a9c-f078-310f-cf1f2bf7bbe7": {
             "attributes": {
+                "Deadline": 0.5,
                 "Operation": "image_processor::captureImage arg;\nMat camera_feed;\n\nif (this->captureImageClient.call(arg)) {\n\n  ROS_INFO(\"Capture Image Client Call Successful; Height: %d, Width: %d \", arg.response.height, arg.response.width);\n\n  camera_feed = Mat(arg.response.height, \n                    arg.response.width, \n                    CV_8UC3, \n                    arg.response.imgVector.data());\n\n  // Mat to IplImage *\n  IplImage ipltemp = camera_feed;\n  cvCopy(&ipltemp, processed_image);\n  cvResize(processed_image, Mode_1);\n  cvShowImage( \"UIP\", Mode_1);\n  cvNamedWindow( \"UIP\", 1 );\n  cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n}\n\nkey = 0;\nkey = cvWaitKey(1);\n\n// RAW CAMERA FEED\nif (key == 65361) {\n  ROS_INFO(\"Mode 1 Activated\");\n  cvShowImage( \"UIP\", Mode_1);\n}\n/*\n  // SAMPLE PROCESSED IMAGE\n  else if (key == 65363) {\n    ROS_INFO(\"Mode 2 Activated\");\n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(sample_rawImage.cols, sample_rawImage.rows), 8, 3);\n    IplImage ipltemp = sample_rawImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_2);\n    cvShowImage( \"UIP\", Mode_2);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n\n  }\n\n  else if (key == 65362) {\n\n    ROS_INFO(\"Mode 3 Activated\");\n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(pb_rawImage.cols, pb_rawImage.rows), 8, 3);\n    IplImage ipltemp = pb_rawImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_3);\n    cvShowImage( \"UIP\", Mode_3);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n  }\n\n  else if (key == 65364) {\n\n    ROS_INFO(\"Mode 4 Activated\"); \n\n    // Mat to IplImage *\n    processed_image = cvCreateImage(cvSize(pb_gsImage.cols, pb_gsImage.rows), 8, 3);\n    IplImage ipltemp = pb_gsImage;\n    cvCopy(&ipltemp, processed_image);\n\n    cvResize(processed_image, Mode_4);\n    cvShowImage( \"UIP\", Mode_4);\n    cvNamedWindow( \"UIP\", 1 );\n    cvSetWindowProperty(\"UIP\", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);\n    key = 0;\n  }\n\n  else if (key == 13) {\n\n    ROS_INFO(\"Mode 5 Activated\");\n    cvShowManyImages(\"UIP\", 4, top_left, top_right, bottom_left, bottom_right);\n    key = 0;\n  }\n  */\nelse {\n  ROS_INFO(\"No Mode Activated\");\n  cvShowImage( \"UIP\", Mode_1);\n}\n",
+                "Period": 0.5,
                 "name": "userDisplayTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -8092,10 +8000,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Directory": {
+                    "Key": {
                         "type": "string"
                     },
-                    "Key": {
+                    "Directory": {
                         "type": "string"
                     }
                 }
@@ -8118,7 +8026,7 @@
             "attributes": {
                 "Directory": "/home/debian",
                 "Key": "/home/jeb/.ssh/id_rsa_jetsontk1",
-                "name": "debian"
+                "name": "root"
             },
             "base": "984baea9-4feb-5630-81f3-085218530d89",
             "meta": {},
@@ -8196,10 +8104,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "NetworkProfile": {
+                    "IP": {
                         "type": "string"
                     },
-                    "IP": {
+                    "NetworkProfile": {
                         "type": "string"
                     }
                 },
@@ -8462,7 +8370,7 @@
         },
         "a40d3a67-e6b2-043a-c7e3-3041d1475d11": {
             "attributes": {
-                "IP": "10.1.1.2"
+                "IP": "10.1.1.3"
             },
             "base": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
             "meta": {},
@@ -8628,7 +8536,9 @@
         },
         "a755c03e-6812-2249-d918-920af2dea6b1": {
             "attributes": {
+                "Deadline": 0.2,
                 "Operation": "if (!paused)\n{\n  UpdateSensorData();\n  switch (currentState)\n  {\n    case INIT:\n    Init_StateFunc();\n    break;\n    case FINDING_PB:\n    if ( CheckGoals() )\n      Finding_PB_StateFunc();\n    UpdateArmPosition();\n    break;\n    case OPENING_PB:\n    Opening_PB_StateFunc();\n    UpdateArmPosition();\n    break;\n    case FINDING_SAMPLE:\n    if ( CheckGoals() )\n      Finding_Sample_StateFunc();\n    UpdateArmPosition();\n    break;\n    case GRABBING_SAMPLE:\n    if ( CheckGoals() )\n      Grabbing_Sample_StateFunc();\n    UpdateArmPosition();\n    break;\n    case CARRYING_SAMPLE:\n    if ( CheckGoals() )\n      Carrying_Sample_StateFunc();\n    UpdateArmPosition();\n    break;\n    case INSERTING_SAMPLE:\n    if ( CheckGoals() )\n      Inserting_Sample_StateFunc();\n    UpdateArmPosition();\n    break;\n    case CLOSING_PB:\n    if ( CheckGoals() )\n      Closing_PB_StateFunc();\n    UpdateArmPosition();\n    break;\n    case MOVING_AWAY:\n    if ( CheckGoals() )\n      Moving_Away_StateFunc();\n    UpdateArmPosition();\n    break;\n    default:\n    break;\n  }\n  if ( stateChanged )\n  {\n    PrintCurrentState();\n    stateChanged = false;\n  }\n  sampleStatePublisher.publish(sample);\n  payloadBayStatePublisher.publish(payloadBay);\n  arm.state = currentState;\n  armStatePublisher.publish(arm);\n  if ( usingSerialPort )\n  {\n    char buffer[20];\n    if ( payloadBayOpened )\n    {\n      sprintf(buffer,\"%s\",openPayloadBayString);\n    }\n    else\n    {\n      sprintf(buffer,\"%s\",closePayloadBayString);\n    }\n    serialPort.sendArray((unsigned char *)buffer,strlen(buffer));\n  }\n}\n",
+                "Period": 0.2,
                 "name": "armTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -8723,6 +8633,19 @@
                     "y": 458
                 }
             },
+            "sets": {}
+        },
+        "ab65b14a-64fa-0053-5283-6c826721aaf7": {
+            "attributes": {
+                "name": "Results-Tue, 29 Mar 2016 02:45:54 GMT"
+            },
+            "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
+            "meta": {},
+            "parent": "85d9ad56-d852-2316-034e-0e72370fe2fe",
+            "pointers": {
+                "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705"
+            },
+            "registry": {},
             "sets": {}
         },
         "ac2d14c8-aee9-dece-1155-2553a795b2ef": {
@@ -8872,16 +8795,16 @@
                     ]
                 },
                 "attributes": {
-                    "Device ID Command": {
-                        "type": "string"
-                    },
-                    "Device ID": {
+                    "OS": {
                         "type": "string"
                     },
                     "Architecture": {
                         "type": "string"
                     },
-                    "OS": {
+                    "Device ID": {
+                        "type": "string"
+                    },
+                    "Device ID Command": {
                         "type": "string"
                     }
                 },
@@ -8913,25 +8836,6 @@
             "sets": {
                 "Users": []
             }
-        },
-        "aeefcdb6-820e-8070-9545-0d6c7bcca99f": {
-            "attributes": {
-                "name": "verticalController_i"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "76fde469-0d84-3f58-8b96-4615b9e144c6",
-            "pointers": {
-                "Component": "0a064327-011a-e497-672b-785e37ff448a",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 534,
-                    "y": 289
-                }
-            },
-            "sets": {}
         },
         "af09d959-de28-8c9d-a7b9-61cecb79295d": {
             "attributes": {
@@ -9616,7 +9520,9 @@
         },
         "c0742d5e-657f-56c8-fa2f-38560878df39": {
             "attributes": {
+                "Deadline": 0.1,
                 "Operation": "if (noGPIO == false) {\n\n  // Business Logic for userInputTimer\n  // HANDLE MISSILE SWITCHES HERE\n  unsigned int previousSwitchState = pauseSwitchState;\n  gpio_get_value(pauseSwitchPin, &pauseSwitchState);\n  //  ROS_INFO(\"Pause Switch State: %d\", pauseSwitchState);\n\n  high_level_controller::controlInputs control;\n\n  if ( previousSwitchState != pauseSwitchState )\n  {\n    paused = (pauseSwitchState == HIGH) ? true : false;\n    if (paused) {\n      ROS_INFO(\"Pausing the system!\");\n    }\n    else {\n      ROS_INFO(\"Unpausing the system!\");\n    }\n  }\n  previousSwitchState = haltSwitchState;\n  gpio_get_value(haltSwitchPin, &haltSwitchState);\n  if ( previousSwitchState != haltSwitchState )\n  {\n    halted = (haltSwitchState == HIGH) ? true : false;\n    if (halted) {\n      ROS_INFO(\"Halting the system!\");\n    }\n    else {\n      ROS_INFO(\"Un-halting the system!\");\n    }\n  }\n  previousSwitchState = manualSwitchState;\n  gpio_get_value(manualSwitchPin, &manualSwitchState);\n  if ( previousSwitchState != manualSwitchState )\n  {\n    manual= (manualSwitchState == HIGH) ? true : false;\n    if (manual) {\n      ROS_INFO(\"Switching the system to manual!\");\n    }\n    else {\n      ROS_INFO(\"Switching the system to automatic!\");\n    }\n  }\n  control.paused = paused;\n  control.stop = halted;\n  control.manual = manual;\n  controlInputsPublisher.publish(control);\n\n  // HANDLE LED OUTPUTS HERE\n  static int currentPauseLEDBlinkDelay = 0;\n  static int currentSampleLEDBlinkDelay = 0;\n  static int currentBayLEDBlinkDelay = 0;\n\n  if (paused)\n  {\n    gpio_set_value(pauseLED, HIGH);\n  }\n  else\n  {\n    if (currentPauseLEDBlinkDelay++ < pauseLEDBlinkDelay)\n      gpio_set_value(pauseLED,LOW);\n    else\n    {\n      gpio_set_value(pauseLED,HIGH);\n      currentPauseLEDBlinkDelay = 0;\n    }\n  }\n\n  if (halted) {\n    gpio_set_value(alarmLED, HIGH);\n  }\n  else {\n    gpio_set_value(alarmLED, LOW);\n  }\n\n  switch (arm.state) {\n    case 0:\n    // INIT\n    gpio_set_value(initLED[0], HIGH);\n    break;\n    case 1:\n    // OPENING_PB\n    gpio_set_value(initLED[0], LOW); // Switch OFF Blue\n    gpio_set_value(initLED[1], HIGH); // Switch ON Green\n    gpio_set_value(bayLED[0], LOW); // Switch OFF Blue\n    //    gpio_set_value(bayLED[1], HIGH); // Switch ON Green    \n    break;\n    case 2:\n    // FINDING_SAMPLE\n    gpio_set_value(sampleLED[0], HIGH); // Switch ON Blue\n    break;\n    case 3:\n    // FINDING_PB\n    gpio_set_value(bayLED[0], HIGH); // Blue\n\n    // Blink Sample LED Green\n    gpio_set_value(sampleLED[0], LOW); // Switch ON Blue\n    if (currentSampleLEDBlinkDelay++ < sampleLEDBlinkDelay)\n      gpio_set_value(sampleLED[1], LOW);\n    else\n    {\n      gpio_set_value(sampleLED[1], HIGH);\n      currentSampleLEDBlinkDelay = 0;\n    }\n    break;\n    case 4:\n    // GRABBING_SAMPLE\n    gpio_set_value(sampleLED[0], LOW); // Switch OFF Blue\n    gpio_set_value(sampleLED[1], HIGH); // Switch ON Green    \n\n    // Blink Payload Bay LED Gree\n    gpio_set_value(bayLED[0], LOW); // Switch OFF Blue\n    if (currentBayLEDBlinkDelay++ < bayLEDBlinkDelay)\n      gpio_set_value(bayLED[1], LOW);\n    else\n    {\n      gpio_set_value(bayLED[1], HIGH);\n      currentBayLEDBlinkDelay = 0;\n    }\n    break;\n    case 5:\n    gpio_set_value(bayLED[1], HIGH);\n    gpio_set_value(sampleLED[1], HIGH);\n    break;\n    default:\n    break;\n  }\n}\n",
+                "Period": 0.1,
                 "name": "userInputTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -9677,15 +9583,15 @@
             },
             "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
             "meta": {},
-            "parent": "0e6f535c-bdf0-daf5-e8ec-ab89ed8ec01a",
+            "parent": "11170bd2-3a8f-afc2-f083-45a97cae8f55",
             "pointers": {
                 "Component": "51321b06-2a7b-eebe-187b-a68c11e80b87",
                 "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
             },
             "registry": {
                 "position": {
-                    "x": 390,
-                    "y": 235
+                    "x": 664,
+                    "y": 191
                 }
             },
             "sets": {}
@@ -9734,10 +9640,10 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "AbstractBusinessLogic": {
+                    "Operation": {
                         "type": "string"
                     },
-                    "Operation": {
+                    "AbstractBusinessLogic": {
                         "type": "string"
                     }
                 },
@@ -9914,7 +9820,9 @@
         },
         "c4d02e7c-c012-94dc-0e24-d04b2752434b": {
             "attributes": {
+                "Deadline": 0.01,
                 "Operation": "if (!paused)\n{\n  // read current value for vertical position (encoder)\n  verticalCurrent = verticalMotoreQEP.get_position();\n  //ROS_INFO(\"Vertical Actuator Encoder Reading: %d\",verticalCurrent);\n\n  static unsigned int prevVerticalCurrent = verticalCurrent + 100;\n\n  unsigned int limitSwitchState = 0;\n  unsigned int backwardPinState = 0;\n  //gpio_get_value(lowerLimitSwitchPin,&limitSwitchState);\n  gpio_get_value(motorBackwardPin,&backwardPinState);\n  if (backwardPinState && (prevVerticalCurrent == verticalCurrent))\n  {\n    lowerLimitReached = true;\n  }\n\n  unsigned int upperLimitSwitchState = 0;\n  unsigned int forwardPinState = 0;\n  //gpio_get_value(upperLimitSwitchPin, &upperLimitSwitchState);\n  gpio_get_value(motorForwardPin, &forwardPinState);\n  if (forwardPinState && (prevVerticalCurrent == verticalCurrent))\n  {\n    upperLimitReached = true;\n  }\n\n  prevVerticalCurrent = verticalCurrent;\n\n  // update motor based on current value\n  if ( abs(verticalGoal-verticalCurrent) > epsilon ) // if there's significant reason to move\n  {\n    if (verticalGoal > verticalCurrent) \n    {\n      lowerLimitReached = false;\n      gpio_set_value(motorBackwardPin,LOW);\n      gpio_set_value(motorForwardPin,HIGH);\n    }\n    else\n    {\n      upperLimitReached = false;\n      gpio_set_value(motorForwardPin,LOW);\n      gpio_set_value(motorBackwardPin,HIGH);\n    }\n  }\n  else\n  {\n    gpio_set_value(motorForwardPin,LOW);\n    gpio_set_value(motorBackwardPin,LOW);\n  }\n}\nelse \n{\n  gpio_set_value(motorForwardPin,LOW);\n  gpio_set_value(motorBackwardPin,LOW);      \n}\n",
+                "Period": 0.01,
                 "name": "verticalPositionTimer"
             },
             "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
@@ -10266,15 +10174,15 @@
             },
             "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
             "meta": {},
-            "parent": "7f4aaacd-bfca-3ede-67a3-92e41b22205b",
+            "parent": "cec02638-168a-7475-a86d-25e6ccbdf6c3",
             "pointers": {
                 "Component": "7599b53d-653a-1ff6-0d2a-c6a49dec721c",
                 "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
             },
             "registry": {
                 "position": {
-                    "x": 520,
-                    "y": 332
+                    "x": 493,
+                    "y": 83
                 }
             },
             "sets": {}
@@ -10299,6 +10207,7 @@
         },
         "cec02638-168a-7475-a86d-25e6ccbdf6c3": {
             "attributes": {
+                "Priority": 99,
                 "name": "MasterControlProgram"
             },
             "base": "7575417a-f5cb-d71e-d261-752e90aee4c3",
@@ -10309,8 +10218,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 444,
-                    "y": 305
+                    "x": 169,
+                    "y": 213
                 }
             },
             "sets": {}
@@ -10360,6 +10269,19 @@
                     "y": 538
                 }
             },
+            "sets": {}
+        },
+        "d0a8cd56-02e4-20fd-905d-685e4d864e1f": {
+            "attributes": {
+                "name": "Results-Tue, 29 Mar 2016 02:50:15 GMT"
+            },
+            "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
+            "meta": {},
+            "parent": "85d9ad56-d852-2316-034e-0e72370fe2fe",
+            "pointers": {
+                "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705"
+            },
+            "registry": {},
             "sets": {}
         },
         "d1b3d75d-3340-147d-0d42-302ed11445ed": {
@@ -10624,7 +10546,7 @@
             "attributes": {
                 "Directory": "/home/ubuntu",
                 "Key": "/home/jeb/.ssh/id_rsa_jetsontk1",
-                "name": "ubuntu"
+                "name": "root"
             },
             "base": "984baea9-4feb-5630-81f3-085218530d89",
             "meta": {},
@@ -10689,15 +10611,15 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Deadline": {
-                        "type": "float"
+                    "Priority": {
+                        "type": "integer",
+                        "max": 99
                     },
                     "NetworkProfile": {
                         "type": "string"
                     },
-                    "Priority": {
-                        "type": "integer",
-                        "max": 99
+                    "Deadline": {
+                        "type": "float"
                     }
                 }
             },
@@ -11475,13 +11397,13 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Authors": {
+                    "Brief": {
                         "type": "string"
                     },
                     "Detailed": {
                         "type": "string"
                     },
-                    "Brief": {
+                    "Authors": {
                         "type": "string"
                     }
                 }
@@ -12036,13 +11958,11 @@
         "0c2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "0c357525-43a6-9058-d9f6-607e9275fb5e": "g",
         "0c5166ed-ded6-b1af-279f-ba01d0aff3fc": "G",
-        "0c5f4401-5567-4758-ac79-3ed3d1f23710": "A",
         "0cbdf953-6bb8-6384-8815-3855181b7deb": "b",
         "0d2eb402-7bcc-e574-5ca1-3fc060668d16": "s",
         "0dad946f-7b49-ccba-aff2-c85e58b60ea7": "3",
         "0e2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "0e357525-43a6-9058-d9f6-607e9275fb5e": "c",
-        "0e6f535c-bdf0-daf5-e8ec-ab89ed8ec01a": "r",
         "0ecb9167-ab2a-9164-a638-972a058f218c": "u",
         "0efa5f96-1a20-d716-2400-b65695efddc2": "l",
         "0f474808-eadf-a345-7ee9-7279326aab1e": "l",
@@ -12050,6 +11970,7 @@
         "102d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "10357525-43a6-9058-d9f6-607e9275fb5e": "d",
         "1109804a-d102-0849-9ad7-b2411f3ce732": "y",
+        "11170bd2-3a8f-afc2-f083-45a97cae8f55": "E",
         "11aa8166-89d9-0008-646c-9c5fc6816600": "T",
         "11c26da0-dda2-d00c-dc36-f53c52c3fc62": "w",
         "11cb9167-ab2a-9164-a638-972a058f218c": "A",
@@ -12231,9 +12152,7 @@
         "76357525-43a6-9058-d9f6-607e9275fb5e": "0D",
         "76688a62-aeb6-e1e6-31a2-573db6aee77c": "v",
         "769c7992-7dd1-3447-3e3c-953fd7e158d4": "1",
-        "76fde469-0d84-3f58-8b96-4615b9e144c6": "E",
         "7781e7ee-ca18-2432-2180-4dadebfe0def": "W",
-        "785805b7-7a1b-93a3-871c-1efd332a9f34": "w",
         "785e5f71-efc3-31c4-9abb-007f66e5c455": "C",
         "78617d39-7d27-d9f9-b421-7b8621f0380c": "T",
         "7872a299-e792-9e38-e1fb-b559cba64896": "u",
@@ -12253,7 +12172,6 @@
         "7f038fbb-6658-4ff3-0bce-d0b26e5a494b": "h",
         "7f2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "7f357525-43a6-9058-d9f6-607e9275fb5e": "l",
-        "7f4aaacd-bfca-3ede-67a3-92e41b22205b": "T",
         "7f565890-f2e8-9603-9e7f-c368d3b74a85": "y",
         "7f87eaf4-9384-0b11-2adc-17cd67165f67": "u",
         "7f99bce0-b81f-4174-e079-30f52124b130": "0",
@@ -12263,7 +12181,6 @@
         "83f33549-7a85-a619-35b2-b18209fdda9d": "r",
         "842d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "84357525-43a6-9058-d9f6-607e9275fb5e": "F",
-        "849f4381-3a25-785b-0879-6679c1a35d01": "e",
         "84f4223f-5696-75ae-9190-d695085aea4d": "Y",
         "85d9ad56-d852-2316-034e-0e72370fe2fe": "T",
         "8606e25c-e343-ca10-804b-c2abc522d12d": "c",
@@ -12330,13 +12247,13 @@
         "a83b8adb-232e-4f68-ca06-3ee2c728765b": "h",
         "a9958819-7856-4774-1ef4-934c974095af": "O",
         "aa9e3c41-c7b7-836b-887d-7a23cdcad4ea": "i",
+        "ab65b14a-64fa-0053-5283-6c826721aaf7": "l",
         "ac2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "ac357525-43a6-9058-d9f6-607e9275fb5e": "0",
         "ad77ee64-9293-7b02-03c2-508ee3e4ed74": "s",
         "ae2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "ae357525-43a6-9058-d9f6-607e9275fb5e": "X",
         "ae4baea9-4feb-5630-81f3-085218530d89": "m",
-        "aeefcdb6-820e-8070-9545-0d6c7bcca99f": "P",
         "af09d959-de28-8c9d-a7b9-61cecb79295d": "D",
         "afbea575-9aba-7f9a-5b4b-c49faec32cde": "Y",
         "b02d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -12398,6 +12315,7 @@
         "cec02638-168a-7475-a86d-25e6ccbdf6c3": "6",
         "cf130061-8b9f-0389-c288-ad2d46eeab44": "3s",
         "cf2109f7-7027-451c-095f-c0bc64833ba9": "I",
+        "d0a8cd56-02e4-20fd-905d-685e4d864e1f": "b",
         "d1b3d75d-3340-147d-0d42-302ed11445ed": "V",
         "d2401091-4e08-04c7-a9a2-d668fb6ea4df": "4",
         "d3a4d1ca-aef0-e101-62cf-11cb27684473": "z",

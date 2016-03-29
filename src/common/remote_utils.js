@@ -191,11 +191,13 @@ define(['q'], function(Q) {
 	    };
 	    var deferred = Q.defer();
 	    var ssh = new ssh2shell(host);
+	    /*
 	    ssh.on ("error", function(err, type, close, cb) {
 		deferred.reject('error on ' + user.name + '@' + ip + ': ' + err);
 		if (cb_error)
 		    cb_error(err, type, close, cb);
 	    });
+	    */
 	    ssh.on("close", function(hadError) {
 		if (hadError) {
 		    deferred.reject();

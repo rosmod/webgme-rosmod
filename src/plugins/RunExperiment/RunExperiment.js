@@ -393,7 +393,7 @@ define([
 	    'sleep 3'
 	];
 	self.logger.info('Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
-	return utils.executeOnHost(host_commands, ip, user,null, true);
+	return utils.executeOnHost(host_commands, ip, user);
     };
 
     RunExperiment.prototype.startProcesses = function() {
@@ -420,7 +420,8 @@ define([
 				   container.nodes[n].cmdLine +
 				   ' &');
 	    }
-	    return utils.executeOnHost(host_commands, ip, user,null, true);
+	    host_commands.push('sleep 3');
+	    return utils.executeOnHost(host_commands, ip, user);
 	});
 	return Q.all(tasks);
     };
