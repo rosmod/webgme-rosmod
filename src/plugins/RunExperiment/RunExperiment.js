@@ -413,15 +413,15 @@ define([
 		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH',
 		'export ROS_IP='+ip,
 		'export ROS_MASTER_URI=http://'+self.rosCoreIp+':'+self.rosCorePort,
-		'export DISPLAY=:0'
+		'export DISPLAY=:0.0'
 	    ];
 	    for (var n in container.nodes) {
-		host_commands.push('DISPLAY=:0 ./node_main -config ' +
+		host_commands.push('DISPLAY=:0.0 ./node_main -config ' +
 				   container.nodes[n].name + '.xml ' +
 				   container.nodes[n].cmdLine +
 				   ' &!');
 	    }
-	    host_commands.push('sleep 10');
+	    //host_commands.push('sleep 10');
 	    return utils.executeOnHost(host_commands, ip, user, null, true);
 	});
 	return Q.all(tasks);
