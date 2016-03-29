@@ -278,7 +278,11 @@ for (var tmr in compInfo.timers){
 #ifdef USE_ROSMOD     
      callback_options,
 #endif 
+     <% if ( compInfo.timers[tmr].period == 0 ) { -%>
+     true,
+     <% } else { -%>
      false,
+     <% } -%>
      false);
   this-><%- compInfo.timers[tmr].name %> = nh.createTimer(timer_options);
   this-><%- compInfo.timers[tmr].name %>.stop();
