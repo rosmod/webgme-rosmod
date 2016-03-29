@@ -272,7 +272,7 @@ for (var tmr in compInfo.timers){
 #endif
   timer_options = 
     NAMESPACE::TimerOptions
-    (ros::Duration(5.0),
+    (ros::Duration(<%- compInfo.timers[tmr].period %>),
      boost::bind(&<%- compInfo.name %>::<%- compInfo.timers[tmr].name %>_operation, this, _1),
      &this->comp_queue,
 #ifdef USE_ROSMOD     
