@@ -126,6 +126,7 @@
                         "c8645e9e-668a-d508-45ff-0920ef6a39a8": {}
                     },
                     "b2e7d5ea-aee1-a65f-0c05-8ab227b5be8f": {
+                        "041411d9-c09b-055c-7bf6-5a552b7bd904": {},
                         "0dad946f-7b49-ccba-aff2-c85e58b60ea7": {},
                         "0fcb231b-5691-e46c-f01d-092e2b33b066": {},
                         "4fc00747-714d-4832-998f-c520d0d3edfc": {},
@@ -174,9 +175,16 @@
             },
             "a0aedc6c-26be-58cb-4c99-7cb20a0772ce": {
                 "85d9ad56-d852-2316-034e-0e72370fe2fe": {
+                    "594b0440-0065-ff4a-d2ff-04029f1acfe9": {},
+                    "62f0da09-e579-4e90-502c-a9674d5dd835": {},
+                    "833ecb43-3866-a6ec-3e15-9864730ecadf": {},
+                    "96853fc7-00d1-9682-af0c-504692dc4673": {},
                     "ab65b14a-64fa-0053-5283-6c826721aaf7": {},
                     "b0bfe0c4-fa1c-d481-b4eb-9f6a9f3940fb": {},
-                    "d0a8cd56-02e4-20fd-905d-685e4d864e1f": {}
+                    "bab89af2-8845-025a-15ee-dc466b0def50": {},
+                    "d0a8cd56-02e4-20fd-905d-685e4d864e1f": {},
+                    "d2278846-dee8-37ac-3ab8-9a4d640235c1": {},
+                    "eae4898d-481e-e5f5-48c7-afd1ba257214": {}
                 }
             },
             "e95e44ec-0245-5b7d-1650-bfb4f10b941c": {
@@ -189,7 +197,6 @@
                     },
                     "f2b573aa-ef21-47c7-f9e6-03819089756a": {
                         "cec02638-168a-7475-a86d-25e6ccbdf6c3": {
-                            "60cf9cf5-9571-b89c-204e-f580a6a0222b": {},
                             "748a00b8-a568-2e2d-d7d5-4fe5e7dc1eeb": {},
                             "cdd0cce5-6bb4-c477-c989-eafd00dbb0db": {}
                         }
@@ -1469,6 +1476,26 @@
                     }
                 ]
             }
+        },
+        "041411d9-c09b-055c-7bf6-5a552b7bd904": {
+            "attributes": {
+                "Operation": "paused = received_data->paused;",
+                "name": "controlInputsSubscriber"
+            },
+            "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
+            "meta": {},
+            "parent": "b2e7d5ea-aee1-a65f-0c05-8ab227b5be8f",
+            "pointers": {
+                "Message": "1f0e696a-b922-ec04-d0bf-b3eeb74660c9",
+                "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5"
+            },
+            "registry": {
+                "position": {
+                    "x": 630,
+                    "y": 128
+                }
+            },
+            "sets": {}
         },
         "043de1ab-0b51-afeb-be5f-a5a167b3a363": {
             "attributes": {
@@ -5062,6 +5089,19 @@
             },
             "sets": {}
         },
+        "594b0440-0065-ff4a-d2ff-04029f1acfe9": {
+            "attributes": {
+                "name": "Results-Tue, 29 Mar 2016 14:12:21 GMT"
+            },
+            "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
+            "meta": {},
+            "parent": "85d9ad56-d852-2316-034e-0e72370fe2fe",
+            "pointers": {
+                "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705"
+            },
+            "registry": {},
+            "sets": {}
+        },
         "59840467-5067-c904-927d-9106c7fcf63e": {
             "attributes": {
                 "Definition": "string intersection_name\n---\nstring ryg_state",
@@ -5104,7 +5144,7 @@
         "5a1725b5-953f-cbf1-d72d-4897c4d55c11": {
             "attributes": {
                 "Deadline": 0.01,
-                "Operation": "    paused = received_data->paused;\n    ROS_INFO( paused ? \"Image Processor paused!\" : \"Image Processor Unpaused\" );",
+                "Operation": "paused = received_data->paused;\n",
                 "name": "controlInputsSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
@@ -5486,25 +5526,6 @@
                 "Libraries": []
             }
         },
-        "60cf9cf5-9571-b89c-204e-f580a6a0222b": {
-            "attributes": {
-                "name": "armController_i"
-            },
-            "base": "6e77078a-7ffc-3881-d2b3-469431fa7020",
-            "meta": {},
-            "parent": "cec02638-168a-7475-a86d-25e6ccbdf6c3",
-            "pointers": {
-                "Component": "8c0974bd-12e4-dc59-4d43-7982b534b262",
-                "base": "6e77078a-7ffc-3881-d2b3-469431fa7020"
-            },
-            "registry": {
-                "position": {
-                    "x": 161,
-                    "y": 197
-                }
-            },
-            "sets": {}
-        },
         "610b9e89-2b1a-6163-aeac-8b1884e7638b": {
             "attributes": {
                 "Architecture": "x86_64",
@@ -5610,6 +5631,19 @@
                     "y": 682
                 }
             },
+            "sets": {}
+        },
+        "62f0da09-e579-4e90-502c-a9674d5dd835": {
+            "attributes": {
+                "name": "Results-Tue, 29 Mar 2016 14:17:28 GMT"
+            },
+            "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
+            "meta": {},
+            "parent": "85d9ad56-d852-2316-034e-0e72370fe2fe",
+            "pointers": {
+                "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705"
+            },
+            "registry": {},
             "sets": {}
         },
         "632d14c8-aee9-dece-1155-2553a795b2ef": {
@@ -7034,6 +7068,19 @@
             },
             "sets": {}
         },
+        "833ecb43-3866-a6ec-3e15-9864730ecadf": {
+            "attributes": {
+                "name": "Results-Tue, 29 Mar 2016 14:09:17 GMT"
+            },
+            "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
+            "meta": {},
+            "parent": "85d9ad56-d852-2316-034e-0e72370fe2fe",
+            "pointers": {
+                "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705"
+            },
+            "registry": {},
+            "sets": {}
+        },
         "83498ae1-32e6-cfe9-b1c2-eda44387bf15": {
             "attributes": {
                 "Deadline": 3,
@@ -7914,6 +7961,19 @@
                     "y": 298
                 }
             },
+            "sets": {}
+        },
+        "96853fc7-00d1-9682-af0c-504692dc4673": {
+            "attributes": {
+                "name": "Results-Tue, 29 Mar 2016 14:04:34 GMT"
+            },
+            "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
+            "meta": {},
+            "parent": "85d9ad56-d852-2316-034e-0e72370fe2fe",
+            "pointers": {
+                "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705"
+            },
+            "registry": {},
             "sets": {}
         },
         "96eddbbf-1a44-1941-5bb8-c5c54853524c": {
@@ -9360,6 +9420,19 @@
                 ]
             }
         },
+        "bab89af2-8845-025a-15ee-dc466b0def50": {
+            "attributes": {
+                "name": "Results-Tue, 29 Mar 2016 14:01:36 GMT"
+            },
+            "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
+            "meta": {},
+            "parent": "85d9ad56-d852-2316-034e-0e72370fe2fe",
+            "pointers": {
+                "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705"
+            },
+            "registry": {},
+            "sets": {}
+        },
         "bb248922-f473-bc97-d362-1d9cb0a32efd": {
             "attributes": {
                 "IP": "10.1.1.101"
@@ -9572,7 +9645,7 @@
         "c093774a-c2a4-bf78-3180-5f6f82ed8cf5": {
             "attributes": {
                 "Deadline": 0.01,
-                "Operation": "  paused = received_data->paused;\n  ROS_INFO( paused ? \"Image Sensor paused!\" : \"Image Sensor Unpaused!\" );",
+                "Operation": "paused = received_data->paused;\n",
                 "name": "controlInputsSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
@@ -10332,6 +10405,19 @@
                     "y": 285
                 }
             },
+            "sets": {}
+        },
+        "d2278846-dee8-37ac-3ab8-9a4d640235c1": {
+            "attributes": {
+                "name": "Results-Tue, 29 Mar 2016 14:13:52 GMT"
+            },
+            "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
+            "meta": {},
+            "parent": "85d9ad56-d852-2316-034e-0e72370fe2fe",
+            "pointers": {
+                "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705"
+            },
+            "registry": {},
             "sets": {}
         },
         "d2401091-4e08-04c7-a9a2-d668fb6ea4df": {
@@ -11293,6 +11379,19 @@
             },
             "sets": {}
         },
+        "eae4898d-481e-e5f5-48c7-afd1ba257214": {
+            "attributes": {
+                "name": "Results-Tue, 29 Mar 2016 14:15:44 GMT"
+            },
+            "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
+            "meta": {},
+            "parent": "85d9ad56-d852-2316-034e-0e72370fe2fe",
+            "pointers": {
+                "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705"
+            },
+            "registry": {},
+            "sets": {}
+        },
         "eb266241-f732-e42a-f6d9-d422565a6fb6": {
             "attributes": {},
             "base": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9",
@@ -11971,6 +12070,7 @@
         "0159a009-17e3-9429-a148-2855298043ab": "P",
         "029b77d9-0121-d873-f4c7-784bd7690980": "w",
         "03d36072-9e09-7866-cb4e-d0a36ff825f6": null,
+        "041411d9-c09b-055c-7bf6-5a552b7bd904": "f",
         "043de1ab-0b51-afeb-be5f-a5a167b3a363": "g",
         "04fdc95b-f567-260d-dc01-d41068d3367b": "N",
         "052d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -12126,6 +12226,7 @@
         "572d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "57357525-43a6-9058-d9f6-607e9275fb5e": "g",
         "575166ed-ded6-b1af-279f-ba01d0aff3fc": "G",
+        "594b0440-0065-ff4a-d2ff-04029f1acfe9": "o",
         "59840467-5067-c904-927d-9106c7fcf63e": "7",
         "599b77d9-0121-d873-f4c7-784bd7690980": "w",
         "5a1725b5-953f-cbf1-d72d-4897c4d55c11": "A",
@@ -12144,11 +12245,11 @@
         "5e83cbf0-920c-87f3-0cb3-ee0b467285be": "U",
         "5fa73dfc-a08d-9aa3-cb07-c7869fccd187": "5",
         "600a5661-a018-0fb9-97e9-e55d150102b0": "5",
-        "60cf9cf5-9571-b89c-204e-f580a6a0222b": "C",
         "610b9e89-2b1a-6163-aeac-8b1884e7638b": "B",
         "612d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "61357525-43a6-9058-d9f6-607e9275fb5e": "QQ",
         "6180db39-e4f4-0e84-a57a-02abf337529e": "9",
+        "62f0da09-e579-4e90-502c-a9674d5dd835": "L",
         "632d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "63357525-43a6-9058-d9f6-607e9275fb5e": "A",
         "63cd1771-47f7-af5e-11bf-1016427c49fb": "B",
@@ -12211,6 +12312,7 @@
         "7f99bce0-b81f-4174-e079-30f52124b130": "0",
         "7fa3211d-4379-d33e-a070-7c38f71754ea": "Vg",
         "830622c4-50cc-32b0-031c-28be37569518": "T",
+        "833ecb43-3866-a6ec-3e15-9864730ecadf": "p",
         "83498ae1-32e6-cfe9-b1c2-eda44387bf15": "G",
         "83f33549-7a85-a619-35b2-b18209fdda9d": "r",
         "842d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -12251,6 +12353,7 @@
         "93f48121-6fe3-48ed-0cdc-dc9db647b01a": "u",
         "94130061-8b9f-0389-c288-ad2d46eeab44": "3s",
         "94dc4ba7-0a9c-f078-310f-cf1f2bf7bbe7": "4",
+        "96853fc7-00d1-9682-af0c-504692dc4673": "A",
         "96eddbbf-1a44-1941-5bb8-c5c54853524c": "L",
         "982d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "98357525-43a6-9058-d9f6-607e9275fb5e": "R",
@@ -12308,6 +12411,7 @@
         "b9a5ee12-0099-f1cf-e967-67d5b90d820e": "c",
         "ba079c2a-ac35-0bd7-692d-c5c528c26779": "1",
         "ba9a6737-e51e-c4f1-fdb6-d96dd86bd2d1": "D",
+        "bab89af2-8845-025a-15ee-dc466b0def50": "P",
         "bb248922-f473-bc97-d362-1d9cb0a32efd": "J",
         "bb2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "bb357525-43a6-9058-d9f6-607e9275fb5e": "3",
@@ -12352,6 +12456,7 @@
         "cf2109f7-7027-451c-095f-c0bc64833ba9": "I",
         "d0a8cd56-02e4-20fd-905d-685e4d864e1f": "b",
         "d1b3d75d-3340-147d-0d42-302ed11445ed": "V",
+        "d2278846-dee8-37ac-3ab8-9a4d640235c1": "V",
         "d2401091-4e08-04c7-a9a2-d668fb6ea4df": "4",
         "d3a4d1ca-aef0-e101-62cf-11cb27684473": "z",
         "d42d14c8-aee9-dece-1155-2553a795b2ef": "3",
@@ -12392,6 +12497,7 @@
         "e9857a0d-db6e-8197-12f8-76b4ef60b107": "9",
         "e9e6a6ea-9cd5-fb73-ff8f-803b2d3492e6": "Sw",
         "ea09804a-d102-0849-9ad7-b2411f3ce732": "5",
+        "eae4898d-481e-e5f5-48c7-afd1ba257214": "I",
         "eb266241-f732-e42a-f6d9-d422565a6fb6": "0",
         "eb2d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "eb357525-43a6-9058-d9f6-607e9275fb5e": "E",
