@@ -163,7 +163,7 @@ for (var srv in compInfo.servers) {
   callback_options.alias = "<%- compInfo.servers[srv].name %>_operation";
   callback_options.priority = <%- compInfo.servers[srv].priority %>;
   callback_options.deadline.sec =<%- Math.floor(compInfo.servers[srv].deadline) %>;
-  callback_options.deadline.nsec = <%- compInfo.servers[srv].deadline % 1 %>;
+  callback_options.deadline.nsec = <%- Math.floor((compInfo.servers[srv].deadline % 1) * 1000000000) %>;
 #endif    
   advertiseName = "<%- compInfo.servers[srv].service.name %>";
   if (config.portGroupMap.find("<%- compInfo.servers[srv].name %>") != config.portGroupMap.end())
@@ -216,7 +216,7 @@ for (var sub in compInfo.subscribers) {
   callback_options.alias = "<%- compInfo.subscribers[sub].name %>_operation";
   callback_options.priority = <%- compInfo.subscribers[sub].priority %>;
   callback_options.deadline.sec = <%- Math.floor(compInfo.subscribers[sub].deadline) %>;
-  callback_options.deadline.nsec = <%- compInfo.subscribers[sub].deadline % 1 %>;
+  callback_options.deadline.nsec = <%- Math.floor((compInfo.subscribers[sub].deadline % 1) * 1000000000) %>;
 #endif  
   advertiseName = "<%- compInfo.subscribers[sub].topic.name %>";
   if (config.portGroupMap.find("<%- compInfo.subscribers[sub].name %>") != config.portGroupMap.end())
@@ -268,7 +268,7 @@ for (var tmr in compInfo.timers){
   callback_options.alias = "<%- compInfo.timers[tmr].name %>_operation";
   callback_options.priority = <%- compInfo.timers[tmr].priority %>;
   callback_options.deadline.sec = <%- Math.floor(compInfo.timers[tmr].deadline) %>;
-  callback_options.deadline.nsec = <%- compInfo.timers[tmr].deadline % 1 %>;
+  callback_options.deadline.nsec = <%- Math.floor((compInfo.timers[tmr].deadline % 1) * 1000000000) %>;
 #endif
   timer_options = 
     NAMESPACE::TimerOptions
