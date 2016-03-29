@@ -175,6 +175,7 @@
             "a0aedc6c-26be-58cb-4c99-7cb20a0772ce": {
                 "85d9ad56-d852-2316-034e-0e72370fe2fe": {
                     "ab65b14a-64fa-0053-5283-6c826721aaf7": {},
+                    "b0bfe0c4-fa1c-d481-b4eb-9f6a9f3940fb": {},
                     "d0a8cd56-02e4-20fd-905d-685e4d864e1f": {}
                 }
             },
@@ -2253,6 +2254,7 @@
         },
         "11aa8166-89d9-0008-646c-9c5fc6816600": {
             "attributes": {
+                "Deadline": 0.1,
                 "Operation": "  payloadBay.pos = received_data->pos;\n  payloadBay.orientation = received_data->orientation;",
                 "name": "payloadBayStateSub"
             },
@@ -3230,6 +3232,7 @@
         },
         "2df2dde5-9823-c603-092a-f1fc1f28ca14": {
             "attributes": {
+                "Deadline": 0.1,
                 "Operation": "arm.state = received_data->state;",
                 "name": "armStateMessage"
             },
@@ -4391,6 +4394,7 @@
         },
         "47fdb167-6041-cd46-fa83-f6fb651c652d": {
             "attributes": {
+                "Deadline": 0.01,
                 "Operation": "  if (req.update == true)\n    {\n      //      ROS_INFO(\"GOT NEW HEIGHT GOAL: %d\",(int)req.goal);\n      //      ROS_INFO(\"CURRENT HEIGHT: %d\",verticalCurrent);\n      verticalGoal = req.goal;\n    }\n  if (req.setZeroPosition == true)\n    {\n      ROS_INFO(\"ZEROED VERTICAL ENCODER\");\n      verticalMotoreQEP.set_position(0);\n    }\n  res.lowerLimitReached = lowerLimitReached;\n  res.upperLimitReached = upperLimitReached;\n  res.current = verticalCurrent;\n  return true;\n",
                 "name": "verticalPositionServer"
             },
@@ -4602,6 +4606,7 @@
         },
         "4d04c2a5-a077-dbc9-bb12-690bb10fffc9": {
             "attributes": {
+                "Deadline": 0.01,
                 "name": "payloadBayStateSusbcriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
@@ -4658,6 +4663,7 @@
         },
         "4fc00747-714d-4832-998f-c520d0d3edfc": {
             "attributes": {
+                "Deadline": 0.01,
                 "Operation": "  if (req.update == true)\n    {\n      gripperPosGoal = req.goal;\n    }\n  res.current = gripperPosCurrent;\n  return true;",
                 "name": "gripperPositionServer"
             },
@@ -5097,6 +5103,7 @@
         },
         "5a1725b5-953f-cbf1-d72d-4897c4d55c11": {
             "attributes": {
+                "Deadline": 0.01,
                 "Operation": "    paused = received_data->paused;\n    ROS_INFO( paused ? \"Image Processor paused!\" : \"Image Processor Unpaused\" );",
                 "name": "controlInputsSubscriber"
             },
@@ -5135,6 +5142,7 @@
         },
         "5a606d01-44cd-486e-3400-45b5dc693198": {
             "attributes": {
+                "Deadline": 0.5,
                 "Operation": "  pb_rawImage = Mat(received_data->height, \n\t\t    received_data->width, \n\t\t    CV_8UC3, \n\t\t    const_cast<unsigned char*>(received_data->rawImgVector.data()));\n\n  pb_hsvImage = Mat(received_data->height, \n\t\t    received_data->width, \n\t\t    CV_8UC3, \n\t\t    const_cast<unsigned char*>(received_data->hsvThreshImgVector.data()));\n\n  pb_gsImage = Mat(received_data->height, \n\t\t   received_data->width, \n\t\t   CV_8UC3, \n\t\t   const_cast<unsigned char*>(received_data->gsThreshImgVector.data()));\n  \n  pb_bitwise = Mat(received_data->height, \n\t\t   received_data->width, \n\t\t   CV_8UC3, \n\t\t   const_cast<unsigned char*>(received_data->bitwiseAndImgVector.data()));\n\n  bottom_left = cvCreateImage(cvSize(pb_rawImage.cols, pb_rawImage.rows), 8, 3);\n  IplImage ipltemp = pb_rawImage;\n  cvCopy(&ipltemp, bottom_left);",
                 "name": "payloadBayDetectionImagesSubscriber"
             },
@@ -5320,6 +5328,7 @@
         },
         "5e29f1d2-99a8-9559-faff-e924a9c5e677": {
             "attributes": {
+                "Deadline": 1,
                 "Operation": "if (!paused)\n{\n  image_processor::captureImage arg;\n  if (this->captureImageClient.call(arg)) {\n    //\tROS_INFO(\"Image width: %d, height: %d, size: %d\", \n    //\t arg.response.width,\n    //\t arg.response.height,\n    //\t arg.response.imgVector.size());\n    Mat image = Mat( arg.response.height, \n                    arg.response.width, \n                    CV_8UC3, \n                    arg.response.imgVector.data());\n    Mat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n    // NEED TO GET RETURN VALUES ABOUT DETECTED PAYLOAD BAY HERE\n    DetectedObject payloadBay =\n      payloadBayDetector.run(image,detectedObjectsMask,\"autonomous_PB\"); \n    ROS_INFO(\"PayloadBay: %d, (%f,%f), %f\",payloadBay.state, payloadBay.x, payloadBay.y, payloadBay.angle);\n    cv::imwrite(\"PayloadBay-01-Raw.png\", image+detectedObjectsMask);\n    if ( payloadBay.x >= 0 && payloadBay.x <= arg.response.width &&\n        payloadBay.y >= 0 && payloadBay.y <= arg.response.height )\n    {\n      res.status = payloadBay.state;\n      res.x = payloadBay.x - arg.response.width / 2;   // convert [0,w] -> [-w/2,w/2]\n      res.y = payloadBay.y - arg.response.height / 2;  // convert [0,h] -> [-h/2,h/2]\n      res.angle = payloadBay.angle;\n    }\n    else\n      res.status = HIDDEN;\n    return true;\n  }\n  else {\n    ROS_INFO(\"ERROR: Client call failed; couldn't get image.\");\n  }\n}\nreturn false;\n",
                 "name": "payloadBayStateFromImageServer"
             },
@@ -5490,8 +5499,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 453,
-                    "y": 243
+                    "x": 161,
+                    "y": 197
                 }
             },
             "sets": {}
@@ -5715,6 +5724,7 @@
         },
         "6815fb72-468f-ef04-95a9-117eb05569de": {
             "attributes": {
+                "Deadline": 0.01,
                 "Operation": "  if (req.update == true)\n    {\n      gripperRotationGoal = req.goal;\n    }\n  res.current = gripperRotationCurrent;\n  return true;",
                 "name": "gripperRotationServer"
             },
@@ -5788,6 +5798,7 @@
         },
         "692c4cbd-629c-8265-5d80-9b1dd5103c39": {
             "attributes": {
+                "Deadline": 0.1,
                 "Operation": "  sample.pos = received_data->pos;\n  sample.orientation = received_data->orientation;",
                 "name": "sampleStateSub"
             },
@@ -6268,8 +6279,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 798,
-                    "y": 205
+                    "x": 161,
+                    "y": 91
                 }
             },
             "sets": {}
@@ -6480,6 +6491,7 @@
         },
         "769c7992-7dd1-3447-3e3c-953fd7e158d4": {
             "attributes": {
+                "Deadline": 0.5,
                 "Operation": "    if (!paused)\n    {\n      // Business Logic for captureImage_server Server providing captureImage Service\n      fd_set                          fds;\n      struct timeval                  tv;\n      enum v4l2_buf_type              type;\n      int                             r;\n\n      for (int i = 0; i < n_buffers; ++i) {\n\tCLEAR(buf);\n\tbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n\tbuf.memory = V4L2_MEMORY_MMAP;\n\tbuf.index = i;\n\txioctl(videoFD, VIDIOC_QBUF, &buf);\n      }\n      type = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n\n      xioctl(videoFD, VIDIOC_STREAMON, &type);\n      do {\n\tFD_ZERO(&fds);\n\tFD_SET(videoFD, &fds);\n\n\t/* Timeout. */\n\ttv.tv_sec = 2;\n\ttv.tv_usec = 0;\n\n\tr = select(videoFD + 1, &fds, NULL, NULL, &tv);\n      } while ((r == -1 && (errno = EINTR)));\n      if (r == -1) {\n\tperror(\"select\");\n\treturn false;\n      }\n\n      CLEAR(buf);\n      buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n      buf.memory = V4L2_MEMORY_MMAP;\n      xioctl(videoFD, VIDIOC_DQBUF, &buf);\n\n      //fwrite(buffers[buf.index].start, buf.bytesused, 1, fout);\n\n      type = V4L2_BUF_TYPE_VIDEO_CAPTURE;\n      xioctl(videoFD, VIDIOC_STREAMOFF, &type);\n\n      res.imgVector.reserve(buf.bytesused);\n      std::copy(&((unsigned char *)buffers[buf.index].start)[0],\n\t\t&((unsigned char *)buffers[buf.index].start)[0] + buf.bytesused,\n\t\tback_inserter(res.imgVector));\n      res.width = width;\n      res.height = height;\n\t\t\n      return true;\n    }\n  return false;\n",
                 "name": "captureImageServer"
             },
@@ -6539,6 +6551,7 @@
         },
         "78617d39-7d27-d9f9-b421-7b8621f0380c": {
             "attributes": {
+                "Deadline": 0.01,
                 "Operation": "paused = received_data->paused;",
                 "name": "controlInputsSusbcriber"
             },
@@ -6551,8 +6564,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 382,
-                    "y": 359
+                    "x": 379,
+                    "y": 360
                 }
             },
             "sets": {}
@@ -6832,6 +6845,7 @@
         },
         "7eea081c-beab-287a-1aed-46821198b17c": {
             "attributes": {
+                "Deadline": 0.01,
                 "Operation": "paused = received_data->paused;",
                 "name": "controlInputsSubscriber"
             },
@@ -7603,6 +7617,7 @@
         },
         "8ff74691-1535-f037-068b-52df355dd0bd": {
             "attributes": {
+                "Deadline": 0.5,
                 "Operation": "  sample_rawImage = Mat(received_data->height, \n\t\t\treceived_data->width, \n\t\t\tCV_8UC3, \n\t\t\tconst_cast<unsigned char*>(received_data->rawImgVector.data()));\n\n  sample_hsvImage = Mat(received_data->height, \n\t\t\treceived_data->width, \n\t\t\tCV_8UC3, \n\t\t\tconst_cast<unsigned char*>(received_data->hsvThreshImgVector.data()));\n\n  sample_gsImage = Mat(received_data->height, \n\t\t       received_data->width, \n\t\t       CV_8UC3, \n\t\t       const_cast<unsigned char*>(received_data->gsThreshImgVector.data()));\n  \n  sample_bitwise = Mat(received_data->height, \n\t\t       received_data->width, \n\t\t       CV_8UC3, \n\t\t       const_cast<unsigned char*>(received_data->bitwiseAndImgVector.data()));\n\n  top_left = cvCreateImage(cvSize(sample_rawImage.cols, sample_rawImage.rows), 8, 3);\n  IplImage ipltemp = sample_rawImage;\n  cvCopy(&ipltemp, top_left);",
                 "name": "sampleDetectionImagesSubscriber"
             },
@@ -7841,6 +7856,7 @@
         },
         "93f48121-6fe3-48ed-0cdc-dc9db647b01a": {
             "attributes": {
+                "Deadline": 1,
                 "Operation": "if (!paused)\n{\n  image_processor::captureImage arg;\n  if (this->captureImageClient.call(arg)) {\n    //\tROS_INFO(\"Image width: %d, height: %d, size: %d\", \n    //\t\t arg.response.width,\n    //\t\t arg.response.height,\n    //\t\t arg.response.imgVector.size());\n    Mat image = Mat( arg.response.height, \n                    arg.response.width, \n                    CV_8UC3, \n                    arg.response.imgVector.data());\n    Mat detectedObjectsMask = Mat::zeros(image.size(), CV_8UC3);\n    // NEED TO GET RETURN VALUES ABOUT DETECTED SAMPLE HERE\n    DetectedObject sample =\n      sampleDetector.run(image,detectedObjectsMask,\"autonomous_S\"); \n    //\tROS_INFO(\"Sample: %d, (%f,%f), %f\",sample.state, sample.x, sample.y, sample.angle);\n    cv::imwrite(\"Sample-01-Raw.png\", image+detectedObjectsMask);\n    cv::Mat sample_detected_image = image + detectedObjectsMask; \n    if ( sample.x >= 0 && sample.x <= arg.response.width &&\n        sample.y >= 0 && sample.y <= arg.response.height )\n    {\n      res.status = sample.state;\n      res.x = sample.x - arg.response.width / 2;   // convert [0,w] -> [-w/2,w/2]\n      res.y = sample.y - arg.response.height / 2;  // convert [0,h] -> [-h/2,h/2]\n      res.angle = sample.angle;\n    }\n    else\n      res.status = HIDDEN;\n    return true;\n  }\n  else {\n    ROS_INFO(\"ERROR: Client call failed; couldn't get image.\");\n  }\n}\nreturn false;\n",
                 "name": "sampleStateFromImageServer"
             },
@@ -8601,6 +8617,7 @@
         },
         "a9958819-7856-4774-1ef4-934c974095af": {
             "attributes": {
+                "Deadline": 0.01,
                 "Operation": "  if (req.update == true)\n    {\n      armRotationGoal = req.goal;\n    }\n  res.current = armRotationCurrent;\n  return true;",
                 "name": "armRotationServer"
             },
@@ -8926,6 +8943,19 @@
                 ]
             }
         },
+        "b0bfe0c4-fa1c-d481-b4eb-9f6a9f3940fb": {
+            "attributes": {
+                "name": "Results-Tue, 29 Mar 2016 13:32:35 GMT"
+            },
+            "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
+            "meta": {},
+            "parent": "85d9ad56-d852-2316-034e-0e72370fe2fe",
+            "pointers": {
+                "base": "6426cc7b-5cb2-d3a7-0790-58b46d29b705"
+            },
+            "registry": {},
+            "sets": {}
+        },
         "b109804a-d102-0849-9ad7-b2411f3ce732": {
             "attributes": {
                 "Directory": "/home/debian",
@@ -9036,7 +9066,7 @@
             "registry": {
                 "position": {
                     "x": 489,
-                    "y": 467
+                    "y": 470
                 }
             },
             "sets": {
@@ -9541,6 +9571,7 @@
         },
         "c093774a-c2a4-bf78-3180-5f6f82ed8cf5": {
             "attributes": {
+                "Deadline": 0.01,
                 "Operation": "  paused = received_data->paused;\n  ROS_INFO( paused ? \"Image Sensor paused!\" : \"Image Sensor Unpaused!\" );",
                 "name": "controlInputsSubscriber"
             },
@@ -9590,8 +9621,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 664,
-                    "y": 191
+                    "x": 110,
+                    "y": 250
                 }
             },
             "sets": {}
@@ -9833,8 +9864,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 383,
-                    "y": 447
+                    "x": 381,
+                    "y": 450
                 }
             },
             "sets": {}
@@ -9988,6 +10019,7 @@
         },
         "c8645e9e-668a-d508-45ff-0920ef6a39a8": {
             "attributes": {
+                "Deadline": 0.01,
                 "Operation": "    if (req.update == true)\n    {\n      //      ROS_INFO(\"GOT NEW RADIAL GOAL: %d\",(int)req.goal);\n      //      ROS_INFO(\"CURRENT RADIUS: %d\",radialCurrent);\n      radialGoal = req.goal;\n    }\n  if (req.setZeroPosition == true)\n    {\n      ROS_INFO(\"ZEROED RADIAL ENCODER\");\n      radialMotoreQEP.set_position(0);\n    }\n  res.lowerLimitReached = lowerLimitReached;\n  res.upperLimitReached = upperLimitReached;\n  res.current = radialCurrent;\n  return true;",
                 "name": "radialPositionServer"
             },
@@ -10181,8 +10213,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 493,
-                    "y": 83
+                    "x": 158,
+                    "y": 138
                 }
             },
             "sets": {}
@@ -11351,6 +11383,7 @@
         },
         "ecde4aa3-106a-f888-fe6b-473f56ac2d21": {
             "attributes": {
+                "Deadline": 0.01,
                 "name": "sampleStateSubscriber"
             },
             "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
@@ -11469,8 +11502,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 230,
-                    "y": 184
+                    "x": 231,
+                    "y": 180
                 }
             },
             "sets": {}
@@ -11529,6 +11562,7 @@
         },
         "f5b6be0c-b866-ac8f-c0e9-38e8c3cba2de": {
             "attributes": {
+                "Deadline": 0.1,
                 "Operation": "paused = received_data->paused;",
                 "name": "controlInputsSubscriber"
             },
@@ -12258,6 +12292,7 @@
         "afbea575-9aba-7f9a-5b4b-c49faec32cde": "Y",
         "b02d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "b0357525-43a6-9058-d9f6-607e9275fb5e": "E",
+        "b0bfe0c4-fa1c-d481-b4eb-9f6a9f3940fb": "0",
         "b109804a-d102-0849-9ad7-b2411f3ce732": "5",
         "b22d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "b2357525-43a6-9058-d9f6-607e9275fb5e": "I",
