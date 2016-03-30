@@ -192,6 +192,7 @@ for (var clt in compInfo.clients) {
   if (config.portGroupMap.find("<%- compInfo.clients[clt].name %>") != config.portGroupMap.end())
     advertiseName += "_" + config.portGroupMap["<%- compInfo.clients[clt].name %>"];
   this-><%- compInfo.clients[clt].name %> = nh.serviceClient<<%- compInfo.clients[clt].service.packageName %>::<%- compInfo.clients[clt].service.name %>>(advertiseName.c_str(), true); 
+  this-><%- compInfo.clients[clt].name %>.waitForExistence();
 <%
 }
 -%>
