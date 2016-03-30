@@ -389,7 +389,7 @@ define([
 	    'source /opt/ros/indigo/setup.bash',
 	    'export ROS_IP='+ip,
 	    'export ROS_MASTER_URI=http://'+ip+':'+self.rosCorePort,
-	    'roscore --port=' + self.rosCorePort + ' &!',
+	    'roscore --port=' + self.rosCorePort + ' &',
 	    'sleep 10'
 	];
 	self.logger.info('Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
@@ -419,7 +419,7 @@ define([
 		host_commands.push('DISPLAY=:0.0 ./node_main -config ' +
 				   container.nodes[n].name + '.xml ' +
 				   container.nodes[n].cmdLine +
-				   ' &!');
+				   ' &');
 	    }
 	    host_commands.push('sleep 10');
 	    return utils.executeOnHost(host_commands, ip, user, null, true);
