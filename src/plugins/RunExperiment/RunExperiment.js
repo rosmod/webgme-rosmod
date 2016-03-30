@@ -390,10 +390,10 @@ define([
 	    'export ROS_IP='+ip,
 	    'export ROS_MASTER_URI=http://'+ip+':'+self.rosCorePort,
 	    'roscore --port=' + self.rosCorePort + ' &!',
-	    'sleep 3'
+	    'sleep 10'
 	];
 	self.logger.info('Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
-	return utils.executeOnHost(host_commands, ip, user);
+	return utils.executeOnHost(host_commands, ip, user, null, true);
     };
 
     RunExperiment.prototype.startProcesses = function() {
@@ -421,7 +421,7 @@ define([
 				   container.nodes[n].cmdLine +
 				   ' &!');
 	    }
-	    //host_commands.push('sleep 10');
+	    host_commands.push('sleep 10');
 	    return utils.executeOnHost(host_commands, ip, user, null, true);
 	});
 	return Q.all(tasks);
