@@ -114,6 +114,21 @@ define([
         ];
     };
 
+    SoftwareGenerator.prototype.notify = function(level, msg) {
+	var self = this;
+	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
+	if (level=='error')
+	    self.logger.error(msg);
+	else if (level=='debug')
+	    self.logger.debug(msg);
+	else if (level=='info')
+	    self.logger.info(msg);
+	else if (level=='warning')
+	    self.logger.warn(msg);
+	self.createMessage(self.activeNode, msg, level);
+	self.sendNotification(prefix+msg);
+    };
+
     /**
      * Main function for the plugin to execute. This will perform the execution.
      * Notes:
@@ -154,6 +169,7 @@ define([
 
 	// the active node for this plugin is software -> project
 	var projectNode = self.core.getParent(self.activeNode);
+	self.projectName = self.core.getAttribute(projectNode);
 
 	loader.logger = self.logger;
 	utils.logger = self.logger;
@@ -206,11 +222,10 @@ define([
             pluginVersion: self.getVersion()
         }, null, 2);
 
-	var projectName = self.projectModel.name,
-	    doxygenConfigName = '/doxygen_config',
+	var doxygenConfigName = '/doxygen_config',
 	    doxygenTemplate = TEMPLATES[self.FILES['doxygen_config']];
 	filesToAdd[doxygenConfigName] = ejs.render(doxygenTemplate, 
-						   {'projectName': projectName});
+						   {'projectName': self.projectName});
 
         for (var pkg in self.projectModel.software.packages) {
 	    var pkgInfo = self.projectModel.software.packages[pkg],
@@ -262,8 +277,8 @@ define([
 	    return Q.all(promises);
 	})()
 	    .then(function() {
-		self.logger.debug('generated artifacts.');
-		self.createMessage(self.activeNode, 'Generated artifacts.');
+		var msg = 'Generated artifacts.';
+		self.notify('info', msg);
 	    })
     };
 
@@ -310,12 +325,11 @@ define([
 	var self = this;
 	if (!self.generateDocs) {
 	    var msg = 'Skipping documentation generation.'
-	    self.logger.info(msg);
-            self.createMessage(self.activeNode, msg);
+	    self.notify('info', msg);
 	    return;
 	}
 	var msg = 'Generating documentation.'
-	self.logger.info(msg);
+	self.notify('info', msg);
         //self.createMessage(self.activeNode, msg);
 	return new Promise(function(resolve, reject) {
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
@@ -326,7 +340,7 @@ define([
 	    });
 
 	    terminal.on('exit', function (code) {
-		self.logger.debug('document generation:: child process exited with code ' + code);
+		//self.logger.debug('document generation:: child process exited with code ' + code);
 		if (code == 0) {
 		    resolve(code);
 		}
@@ -337,16 +351,16 @@ define([
 	    });
 
 	    setTimeout(function() {
-		self.logger.debug('Sending stdin to terminal');
+		//self.logger.debug('Sending stdin to terminal');
 		terminal.stdin.write('doxygen doxygen_config\n');
 		terminal.stdin.write('make -C ./doc/latex/ pdf\n');
 		terminal.stdin.write('mv ./doc/latex/refman.pdf ' + utils.sanitizePath(self.projectModel.name) + '.pdf');
-		self.logger.debug('Ending terminal session');
+		//self.logger.debug('Ending terminal session');
 		terminal.stdin.end();
 	    }, 1000);
 	})
 	    .then(function() {
-		self.createMessage(self.activeNode, 'Generated doxygen documentation.');
+		self.notify('info', 'Generated doxygen documentation.');
 	    });
     };
 
@@ -355,8 +369,7 @@ define([
 	var self = this;
 	if (!self.generateCPNAnalysis) {
 	    var msg = 'Skipping CPN model generation.';
-	    self.logger.info(msg);
-            self.createMessage(self.activeNode, msg);
+	    self.notify('info', msg);
 	    return;
 	}
 
@@ -427,9 +440,6 @@ define([
 	var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
 	var archBinPath = path.join(self.gen_dir, 'bin' , utils.getDeviceType(host.host));
 
-	self.logger.info('compiling into '+host.intf.ip+':'+compile_dir);
-	self.logger.info('copying into '+archBinPath);
-
 	var compile_commands = [
 	    'cd ' + compile_dir,
 	    'rm -rf bin',
@@ -443,7 +453,7 @@ define([
 
 	// make the compile dir
 	var t1 = new Promise(function(resolve,reject) {
-	    self.logger.info('mkdirRemote: ' + host.intf.ip);
+	    self.notify('info', 'making compilation directory on: ' + host.intf.ip);
 	    utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
 		.then(function() {
 		    resolve();
@@ -451,23 +461,36 @@ define([
 	});
 	// copy the sources to remote
 	var t2 = t1.then(function() {
-	    self.logger.info('copyToHost: ' + host.intf.ip);
+	    self.notify('info', 'copying compilation sources to: ' + host.intf.ip);
 	    return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
 	});
 	// run the compile step
 	var t3 = t2.then(function() {
-	    self.logger.info('compile: ' + host.intf.ip);
-	    return utils.executeOnHost(compile_commands, host.intf.ip, host.user);
+	    self.notify('info', 'compiling on: ' + host.intf.ip + ' into '+compile_dir);
+	    return utils.executeOnHost(compile_commands, host.intf.ip, host.user)
+		.catch(function(err) {
+		    var compileErrors = utils.parseMakeErrorOutput(
+			err,
+			compile_dir + '/src/'
+		    );
+		    compileErrors.map(function(compileError) {
+			var msg = 'Build Error:: ' + compileError.packageName + ':' +
+			    compileError.fileName + ':' + 
+			    compileError.line + ':' + compileError.column + ':\n\t' +
+			    compileError.text + '\n';
+			self.createMessage(null, msg);
+		    });
+		    throw new String('Compilation failed on ' + host.intf.ip);
+		});
 	});
 	// make the local binary folder for the architecture
 	var t4 = t3.then(function() {
-	    self.logger.info('mkdir: ' + host.intf.ip);
 	    mkdirp.sync(archBinPath);
 	    return true;
 	});
 	// copy the compiled binaries from remote into the local bin folder
 	var t5 = t4.then(function() {
-	    self.logger.info('copyFromHost: ' + host.intf.ip);
+	    self.notify('info', 'copying from ' + host.intf.ip + ' into local storage.');
 	    return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
 				      archBinPath + '/.',
 				      host.intf.ip,
@@ -475,12 +498,13 @@ define([
 	});
 	// remove the remote folders
 	var t6 = t5.then(function() {
-	    self.logger.info('rm: ' + host.intf.ip);
+	    self.notify('info', 'removing compilation artifacts off: ' + host.intf.ip);
 	    return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
 	});
 	return Q.all([t1,t2,t3,t4,t5,t6])
 	    .catch(function(err) {
-		self.logger.error(err);
+		self.notify('error', err);
+		throw err;
 	    });
     };
 
@@ -490,8 +514,7 @@ define([
 
 	if (!self.compileCode) {
 	    var msg = 'Skipping compilation.';
-	    self.logger.info(msg);
-            self.createMessage(self.activeNode, msg);
+	    self.notify('info', msg);
 	    return;
 	}
 
@@ -514,15 +537,13 @@ define([
 	    }
 	    else {
 		var msg = 'No hosts could be found for compilation on ' + arch;
-		self.logger.info(msg);
-		self.createMessage(self.activeNode, msg);
+		self.notify('warning', msg);
 	    }
 	}
 
 	var tasks = selectedHosts.map(function (host) {
 	    var msg = 'Compiling for ' + utils.getDeviceType(host.host) + ' on ' + host.intf.ip;
-	    self.logger.info(msg);
-	    self.createMessage(self.activeNode, msg);
+	    self.notify('info', msg);
 	    return self.compileOnHost(host);
 	});
 	
@@ -536,9 +557,11 @@ define([
 	var self = this;
 	
 	if (!self.returnZip) {
-            self.createMessage(self.activeNode, 'Skipping compression.');
+            self.notify('info', 'Skipping compression.');
 	    return;
 	}
+
+	self.notify('info', 'Starting compression.');
 	
 	return new Promise(function(resolve, reject) {
 	    var zlib = require('zlib'),
@@ -546,10 +569,7 @@ define([
 	    fstream = require('fstream'),
 	    input = self.gen_dir;
 
-	    self.logger.info('zipping ' + input);
-
 	    var bufs = [];
-
 	    var packer = tar.Pack()
 		.on('error', function(e) { reject(e); });
 
@@ -557,12 +577,10 @@ define([
 		.on('error', function(e) { reject(e); })
 		.on('data', function(d) { bufs.push(d); })
 		.on('end', function() {
-		    self.logger.debug('gzip ended.');
 		    var buf = Buffer.concat(bufs);
 		    self.blobClient.putFile('artifacts.tar.gz',buf)
 			.then(function (hash) {
 			    self.result.addArtifact(hash);
-			    self.logger.info('compression complete');
 			    resolve();
 			})
 			.catch(function(err) {
@@ -579,7 +597,7 @@ define([
 		.pipe(gzipper);
 	})
 	    .then(function() {
-		self.createMessage(self.activeNode, 'Created archive.');
+		self.notify('info', 'Created archive.');
 	    });
     };
 

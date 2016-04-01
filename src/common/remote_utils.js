@@ -143,73 +143,54 @@ define(['q'], function(Q) {
 		    return hostsUp;
 		});
 	},
-	executeOnHost: function(cmds, ip, user, cb_message, cb_complete, cb_processing, cb_error) {
+	executeOnHost: function(cmds, ip, user) {
 	    var self = this;
-	    var ssh2shell = require('ssh2shell');
+	    var Client = require('ssh2').Client;
+
+	    var deferred = Q.defer();
 	    var output = {
 		user: user,
 		ip: ip,
+		returnCode: -1,
+		signal: undefined,
 		stdout: ''
 	    };
-	    
-	    var host = {
-		server: {
-		    host: ip,
-		    port: 22,
-		    userName: user.name,
-		    privateKey: require('fs').readFileSync(user.key)
-		},
-		commands: cmds,
-		idleTimeOut: 10000,
-		msg: {
-		    send: function( message ) {
-			if (cb_message)
-			    cb_message(message);
+
+	    var remote_stdout = '';
+	    cmds.push('exit\n');
+	    var cmdString = cmds.join('\n');
+	    var conn = new Client();
+	    conn.on('ready', function() {
+		//self.logger.info('Client :: ready');
+
+		conn.exec(cmdString, function(err, stream) {
+		    if (err) { 
+			var msg = 'SSH2 Exec error: ' + err;
+			throw new String(msg);
 		    }
-		},
-		onCommandProcessing: function( command, response, sshObj, stream ) {
-		    if (cb_processing) {
-			cb_processing(command, response);
-		    }
-		},
-		onCommandComplete: function( command, response, sshObj ) {
-		    if (cb_complete) {
-			//self.logger.info(command);
-			self.logger.info(response);
-			//cb_complete(command, response);
-		    }
-		},
-		onCommandTimeout: function( command, response, sshObj, stream, connection) {
-		    // pass through, we don't want to time out
-		},
-		onEnd: function( sessionText, sshObj ) {
-		    var stdout = sessionText;
-		    stdout = stdout.replace('Connected to '+ip,'');
-		    stdout = stdout.replace(new RegExp(user.name + '@.+\$'), '');
-		    output.stdout = stdout;
-		}
-	    };
-	    var deferred = Q.defer();
-	    var ssh = new ssh2shell(host);
-	    ssh.on ("error", function(err, type, close, cb) {
-		var msg = 'error on ' + user.name + '@' + ip + ': ' + err;
-		//deferred.reject(msg);
-		self.logger.error(msg);
-		self.logger.error('  type:  '+ type);
-		self.logger.error('  close: '+ close);
-		self.logger.error('  cb:    '+ cb);
-		if (cb_error)
-		    cb_error(err, type, close, cb);
+		    stream.on('close', function(code, signal) {
+			conn.end();
+			output.returnCode = code;
+			output.signal = signal;
+			output.stdout = remote_stdout.replace(new RegExp(user.name + '@.+\$'), '');
+			cmds.map(function(cmd) {
+			    output.stdout = remote_stdout.replace(new RegExp(cmd), '');
+			});
+			deferred.resolve(output);
+		    }).on('data', function(data) {
+			remote_stdout += data;
+		    }).stderr.on('data', function(data) {
+			var msg = 'STDERR: ' + data;
+			conn.end();
+			deferred.reject(msg);
+		    });
+		})
+	    }).connect({
+		host: ip,
+		port: 22,
+		username: user.name,
+		privateKey: require('fs').readFileSync(user.key)
 	    });
-	    ssh.on("close", function(hadError) {
-		if (hadError) {
-		    deferred.reject();
-		}
-		else {
-		    deferred.resolve(output);
-		}
-	    });
-	    ssh.connect();
 	    return deferred.promise;
 	},
 	parseMakePercentOutput: function(output) {
@@ -222,19 +203,24 @@ define(['q'], function(Q) {
 	    }
 	    return retVals;
 	},
-	parseMakeErrorOutput: function(output) {
+	parseMakeErrorOutput: function(output, replaceDir) {
 	    var regex = /([^:^\n]+):(\d+):(\d+):\s(\w+\s*\w*):\s(.+)\n(\s+)(.*)\s+\^+/gm;
 	    var match = null;
 	    var retVals = [];
 	    while (match = regex.exec(output)) {
+		var baseName = match[1].replace(replaceDir, ''),
+		packageName = baseName.split('/')[0],
+		fileName = baseName.split('/').slice(-1)[0],
+		column = parseInt(match[3]),
+		codeWhitespace = match[6];
 		retVals.push({
-		    filename:       match[1].replace(self.gen_dir + '/src/', ''),
-		    packageName:    filename.split('/')[0],
+		    fileName:       fileName,
+		    packageName:    packageName,
 		    line:           parseInt(match[2]),
-		    column:         parseInt(match[3]),
+		    column:         column,
 		    type:           match[4],
 		    text:           match[5],
-		    codeWhitespace: match[6],
+		    codeWhitespace: codeWhitespace,
 		    code:           match[7],
 		    adjustedColumn: column - codeWhitespace.length
 		});
