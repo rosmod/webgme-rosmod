@@ -11,7 +11,7 @@ Software Integrated Systems (ISIS), on which we run resilient,
 distributed CPS research.  Please note that guest accounts are not
 allowed to run any processes on the cluster (such as compilation or
 experiment deployments), but are allowed to create models and
-downloaded the generated artifacts from those models (such as code
+download the generated artifacts from those models (such as code
 source and deployment files).
 
 Documentation for ROSMOD-GUI can be found here:
