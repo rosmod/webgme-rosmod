@@ -131,7 +131,8 @@ define([
 	self.root_dir = path.join(process.cwd(), 
 				  'generated', 
 				  self.project.projectId, 
-				  self.branchName);
+				  self.branchName,
+				  projectName);
 	self.xml_dir = path.join(self.root_dir,
 				 'experiments', 
 				 self.experimentName,
@@ -229,6 +230,44 @@ define([
 			}
 		    }
 		}
+		/*
+		// Sort containers by decreasing number of constraints
+		var sortedContainers = [];
+		for (var c in containers) {
+		    var container = containers[c];
+		    var length = container.constraints.length;
+		    if (sortedContainers[length]) {
+			sortedContainers[length].push(container);
+		    }
+		    else {
+			sortedContainers[length] = [];
+			sortedContainers[length].push(container);
+		    }
+		}
+		// Actually perform the mapping
+		for (var cList in sortedContainers) {
+		    for (var c in sortedContainers[cList]) {
+			var container = sortedContainers[cList][c];
+			var constraints = container.constraints;
+			var foundHost = false;
+			for (var j=0; j<hosts.length; j++) {
+			    var host = hosts[j];
+			    var capabilities = host.host.capabilities;
+			    if (self.capabilitiesMeetConstraints(capabilities, constraints)) {
+				self.experiment.push([container, host]);
+				hosts.splice(j,j);
+				foundHost = true;
+				break;
+			    }
+			}
+			if (!foundHost) {
+			    throw new String('Cannot map ' + container.name + ' to any host; constraints: ' +
+					     JSON.stringify(container.constraints,null,2) +
+					     ' not met.');
+			}
+		    }
+		}
+		*/
 		// Actually perform the mapping
 		for (var c in containers) {
 		    var container = containers[c];
@@ -389,11 +428,15 @@ define([
 	    'source /opt/ros/indigo/setup.bash',
 	    'export ROS_IP='+ip,
 	    'export ROS_MASTER_URI=http://'+ip+':'+self.rosCorePort,
-	    'roscore --port=' + self.rosCorePort + ' &',
-	    'sleep 10'
+	    'roscore --port=' + self.rosCorePort + ' &'
 	];
+	host_commands.push('sleep 10');
 	self.logger.info('Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
-	return utils.executeOnHost(host_commands, ip, user, null, true);
+	return utils.executeOnHost(host_commands, ip, user)
+	    .then(function() {
+		self.logger.info('executed roscore!');
+		return [];
+	    });
     };
 
     RunExperiment.prototype.startProcesses = function() {
@@ -421,8 +464,9 @@ define([
 				   container.nodes[n].cmdLine +
 				   ' &');
 	    }
-	    host_commands.push('sleep 10');
-	    return utils.executeOnHost(host_commands, ip, user, null, true);
+	    //host_commands.push('sleep 10');
+	    self.logger.info('starting binaries.');
+	    return utils.executeOnHost(host_commands, ip, user);
 	});
 	return Q.all(tasks);
     };

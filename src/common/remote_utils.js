@@ -163,27 +163,31 @@ define(['q'], function(Q) {
 	    conn.on('ready', function() {
 		//self.logger.info('Client :: ready');
 
-		conn.exec(cmdString, function(err, stream) {
+		conn.shell(function(err, stream) {
 		    if (err) { 
 			var msg = 'SSH2 Exec error: ' + err;
 			throw new String(msg);
 		    }
 		    stream.on('close', function(code, signal) {
+			//self.logger.info('stream closed.');
 			conn.end();
 			output.returnCode = code;
 			output.signal = signal;
-			output.stdout = remote_stdout.replace(new RegExp(user.name + '@.+\$'), '');
-			cmds.map(function(cmd) {
-			    output.stdout = remote_stdout.replace(new RegExp(cmd), '');
-			});
+			output.stdout = remote_stdout.replace(new RegExp(user.name + '@.+\$','gi'), '');
+			for (var c in cmds) {
+			    output.stdout = output.stdout.replace(new RegExp(cmds[c], 'gi'), '');
+			}
+			//self.logger.info(output.stdout);
 			deferred.resolve(output);
 		    }).on('data', function(data) {
 			remote_stdout += data;
+			//self.logger.info('STDOUT:: ' + data);
 		    }).stderr.on('data', function(data) {
 			var msg = 'STDERR: ' + data;
 			conn.end();
 			deferred.reject(msg);
 		    });
+		    stream.end(cmdString);
 		})
 	    }).connect({
 		host: ip,
@@ -289,7 +293,7 @@ define(['q'], function(Q) {
 	    var cmd = 'ps aux | grep -v grep | grep ' + procName;
 	    return self.executeOnHost([cmd], ip, user)
 		.then(function(output) {
-		    output.stdout = output.stdout.replace(cmd, '').match(procName);
+		    output.stdout = output.stdout.match(procName);
 		    return output;
 		});
 	},
