@@ -301,35 +301,32 @@ define(['q'], function(Q) {
 	    unzip = require('unzip'),
 	    fstream = require('fstream'),
 	    child_process = require('child_process');
-	    dir = self.sanitizePath(dir);
+	    var sanitized_dir = self.sanitizePath(dir);
 	    // extract the file name
 	    var file_name = url.parse(file_url).pathname.split('/').pop();
-
-	    var final_dir = path.join(process.cwd(), dir).toString();
-	    var final_file = path.join(final_dir, file_name);
+	    var final_file = path.join(dir, file_name);
 
 	    // compose the wget command; -O is output file
-	    var wget = 'wget --no-check-certificate -P ' + dir + ' ' + file_url;
+	    var wget = 'wget --no-check-certificate -P ' + sanitized_dir + ' ' + file_url;
 
 	    var deferred = Q.defer();
 
 	    // excute wget using child_process' exec function
 	    var child = child_process.exec(wget, function(err, stdout, stderr) {
 		if (err) {
-		    deferred.reject("Couldn't download " + file_url + ', please check address and connection.');
+		    deferred.reject("Couldn't download " + file_url + ' :: ' + stderr);
 		}
 		else {
-		    var fname = path.join(dir,file_name);
-		    var readStream = fs.createReadStream(fname);
+		    var readStream = fs.createReadStream(final_file);
 		    var writeStream = fstream.Writer(dir);
 		    if (readStream == undefined || writeStream == undefined) {
-			deferred.reject("Couldn't open " + dir + " or " + fname);
+			deferred.reject("Couldn't open " + dir + " or " + final_file);
 		    }
 		    else {
 			readStream
 			    .pipe(unzip.Parse())
 			    .pipe(writeStream);
-			fs.unlink(fname);
+			fs.unlink(final_file);
 			deferred.resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
 		    }
 		}

@@ -159,17 +159,21 @@ define([
 
 	var path = require('path');
 
+	// the active node for this plugin is software -> project
+	var projectNode = self.core.getParent(self.activeNode);
+	self.projectName = self.core.getAttribute(projectNode, 'name');
+
 	// Setting up variables that will be used by various functions of this plugin
-	self.gen_dir = path.join(process.cwd(), 'generated', self.project.projectId, self.branchName);
+	self.gen_dir = path.join(process.cwd(),
+				 'generated',
+				 self.project.projectId,
+				 self.branchName,
+				 self.projectName);
 	self.generateCPNAnalysis = currentConfig.generateCPN;
 	self.compileCode = currentConfig.compile;
 	self.generateDocs = currentConfig.generate_docs;
 	self.returnZip = currentConfig.returnZip;
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
-
-	// the active node for this plugin is software -> project
-	var projectNode = self.core.getParent(self.activeNode);
-	self.projectName = self.core.getAttribute(projectNode);
 
 	loader.logger = self.logger;
 	utils.logger = self.logger;
@@ -198,8 +202,7 @@ define([
         	callback(null, self.result);
 	    })
 	    .catch(function (err) {
-        	self.logger.error(err);
-        	self.createMessage(self.activeNode, err, 'error');
+		self.notify('error', err);
         	self.result.setSuccess(false);
         	callback(err, self.result);
 	    })
@@ -311,9 +314,6 @@ define([
 	    var lib = libraries[libKey];
 	    if (lib.url) {
 		return utils.wgetAndUnzipLibrary(lib.url, dir);
-	    }
-	    else {
-		return [];
 	    }
 	});
 
