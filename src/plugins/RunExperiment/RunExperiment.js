@@ -212,7 +212,7 @@ define([
 				     ' containers to ' + hosts.length +
 				     ' available hosts.');
 		}
-		var containerKeys = Object.keys(containers);
+		var sortedContainers = [];
 		// figure out which containers have which constraints;
 		for (var c in containers) {
 		    var container = containers[c];
@@ -229,48 +229,14 @@ define([
 			    }
 			}
 		    }
+		    sortedContainers.push(container);
 		}
-		/*
 		// Sort containers by decreasing number of constraints
-		var sortedContainers = [];
-		for (var c in containers) {
-		    var container = containers[c];
-		    var length = container.constraints.length;
-		    if (sortedContainers[length]) {
-			sortedContainers[length].push(container);
-		    }
-		    else {
-			sortedContainers[length] = [];
-			sortedContainers[length].push(container);
-		    }
-		}
+		// sort function :  < 0 -> a < b ; = 0 -> a==b ; > 0 -> b < a
+		sortedContainers.sort(function(a,b){ return b.constraints.length - a.constraints.length});
 		// Actually perform the mapping
-		for (var cList in sortedContainers) {
-		    for (var c in sortedContainers[cList]) {
-			var container = sortedContainers[cList][c];
-			var constraints = container.constraints;
-			var foundHost = false;
-			for (var j=0; j<hosts.length; j++) {
-			    var host = hosts[j];
-			    var capabilities = host.host.capabilities;
-			    if (self.capabilitiesMeetConstraints(capabilities, constraints)) {
-				self.experiment.push([container, host]);
-				hosts.splice(j,j);
-				foundHost = true;
-				break;
-			    }
-			}
-			if (!foundHost) {
-			    throw new String('Cannot map ' + container.name + ' to any host; constraints: ' +
-					     JSON.stringify(container.constraints,null,2) +
-					     ' not met.');
-			}
-		    }
-		}
-		*/
-		// Actually perform the mapping
-		for (var c in containers) {
-		    var container = containers[c];
+		for (var c in sortedContainers) {
+		    var container = sortedContainers[c];
 		    var constraints = container.constraints;
 		    var foundHost = false;
 		    for (var j=0; j<hosts.length; j++) {
