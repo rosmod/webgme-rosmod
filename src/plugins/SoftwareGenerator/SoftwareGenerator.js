@@ -391,10 +391,87 @@ define([
 		    self.createMessage(self.activeNode, 'Parsing Deployment: ' + dpl_model.name);
 		    var timer_tokens = '1`[\n';
 		    var clock_tokens = '1`[\n';
-		    var interaction_tokens = "";
+		    var interaction_tokens = '1`[\n';
 		    var component_thread_tokens = '1`[\n';
 		    var message_queue_tokens = '1`[\n';
 		    var hardware_num = 1
+
+		    var msg_map = {};
+		    var srv_map = {};
+		    var component_hardware_map = {};
+
+		    for (var c in dpl_model.containers) {
+			var container = dpl_model.containers[c];
+			for (var n in container.nodes) {
+			    var node = container.nodes[n];
+			    for (var ci in node.compInstances) {
+				var compInstance = node.compInstances[ci];
+				var component = compInstance.component;
+				component_hardware_map[component.name] = "CPU_" + hardware_num;
+			    }
+			}
+			hardware_num += 1;
+		    }
+		    hardware_num = 1;
+		    for (var c in dpl_model.containers) {
+			var container = dpl_model.containers[c];
+			for (var n in container.nodes) {
+			    var node = container.nodes[n];
+			    for (var ci in node.compInstances) {
+				var compInstance = node.compInstances[ci];
+				var component = compInstance.component;
+				for (var p in component.publishers) {
+				    var publisher = component.publishers[p];
+				    publisher.component = component.name;
+				    var msg = publisher.topic.name;
+				    if (!msg_map[msg]) {
+					msg_map[msg] = {
+					    publishers: [],
+					    subscribers: []
+					};
+				    }
+				    msg_map[msg].publishers.push(publisher);
+				}
+				for (var s in component.subscribers) {
+				    var subscriber = component.subscribers[s];
+				    subscriber.component = component.name;
+				    var msg = subscriber.topic.name;
+				    if (!msg_map[msg]) {
+					msg_map[msg] = {
+					    publishers: [],
+					    subscribers: []
+					};
+				    }
+				    msg_map[msg].subscribers.push(subscriber);
+				}
+				for (var c in component.clients) {
+				    var client = component.clients[c];
+				    client.component = component.name;
+				    var srv = client.service.name;
+				    if (!srv_map[srv]) {
+					srv_map[srv] = {
+					    clients : [],
+					    servers : []
+					};
+				    }
+				    srv_map[srv].clients.push(client);
+				}
+				for (var s in component.servers) {
+				    var server = component.servers[s];
+				    server.component = component.name;
+				    var srv = server.service.name;
+				    if (!srv_map[srv]) {
+					srv_map[srv] = {
+					    clients : [],
+					    servers : []
+					};
+				    }
+				    srv_map[srv].servers.push(server);
+				}
+			    }
+			}
+		    }
+
 		    for (var c in dpl_model.containers) {
 			var container = dpl_model.containers[c];
 
@@ -455,6 +532,38 @@ define([
 					
 				}
 
+				for (var p in component.publishers) {
+				    var publisher = component.publishers[p];
+				    var topic = publisher.topic.name;
+				    var subscribers = msg_map[topic].subscribers;
+				    for (var s in subscribers) {
+					var subscriber = subscribers[s];
+					if (interaction_tokens != '1`[\n') {
+					    interaction_tokens += ',\n';
+					}
+					interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
+					    '", port="' + publisher.name + '", operation={node="' + component_hardware_map[subscriber.component] + '", component="' + 
+					    subscriber.component + '", operation="' + subscriber.name + '_operation", priority=' + subscriber.priority + ', deadline=' + 
+					    subscriber.deadline * 1000000 + ', enqueue_time=0, steps=[]}}';
+				    }
+				}
+
+				for (var c in component.clients) {
+				    var client = component.clients[c];
+				    var service = client.service.name;
+				    var servers = srv_map[service].servers;
+				    for (var s in servers) {
+					var server = servers[s];
+					if (interaction_tokens != '1`[\n') {
+					    interaction_tokens += ',\n';
+					}
+					interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
+					    '", port="' + client.name + '", operation={node="' + component_hardware_map[server.component] + '", component="' + 
+					    server.component + '", operation="' + server.name + '_operation", priority=' + server.priority + ', deadline=' + 
+					    server.deadline * 1000000 + ', enqueue_time=0, steps=[]}}';
+				    }
+				}
+
 			    }
 			}
 			component_thread_tokens += ']}';
@@ -463,12 +572,10 @@ define([
 		    }
 		    clock_tokens += '\n]';
 		    timer_tokens += '\n]';
+		    interaction_tokens += '\n]';
 		    component_thread_tokens += '\n]';
 		    message_queue_tokens += '\n]';
-		    self.notify('info', clock_tokens);
-		    self.notify('info', timer_tokens);	    
-		    self.notify('info', component_thread_tokens);
-		    self.notify('info', message_queue_tokens);
+		    self.notify('info', interaction_tokens);
 		}
 	    });
     };
