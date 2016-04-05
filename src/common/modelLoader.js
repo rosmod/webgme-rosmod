@@ -203,7 +203,8 @@ define(['q'], function(Q) {
 			    };
 			    systems.push(node);
 			}
-			else if ( self.core.isTypeOf(node, META.Host) ) {
+			else if ( self.core.isTypeOf(node, META.Host) && 
+				  self.core.isTypeOf(parent, META.System) ) {
 			    self.model.systems[parentName]
 				.hosts[nodeName] = {
 				    name: nodeName,
@@ -273,7 +274,8 @@ define(['q'], function(Q) {
 			    };
 			    deployments.push(node);
 			}
-			else if ( self.core.isTypeOf(node, META.Container) ) {
+			else if ( self.core.isTypeOf(node, META.Container) &&
+				  self.core.isTypeOf(parent, META.Deployment) ) {
 			    self.model.deployments[parentName]
 				.containers[nodeName] = {
 				    name: nodeName,

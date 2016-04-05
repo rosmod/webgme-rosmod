@@ -131,19 +131,7 @@ define([
 				 'xml');
 
 	self.logger.info('loading project: ' + projectName);
-	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
-	    .then(function(projectModel) {
-		self.projectModel = projectModel;
-		self.logger.info('parsed model!');
-		// update the object's selectedExperiment variable
-		self.selectedExperiment = self.projectModel.experiments[self.experimentName];
-		// check to make sure we have the right experiment
-		var expPath = self.core.getPath(self.activeNode);
-		if ( expPath != self.selectedExperiment.path ) {
-		    throw new String("Experiments exist with the same name, can't properly resolve!");
-		}
-		return self.getActiveHosts();
-	    })
+	return self.getActiveHosts()
 	    .then(function (ah) {
 		self.activeHosts = ah;
 		return self.killAllActiveHosts();
