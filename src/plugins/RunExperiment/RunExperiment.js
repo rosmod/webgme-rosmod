@@ -471,9 +471,15 @@ define([
 	    //       * guid   (GUID)
 
 	    // should probably set the meta type here to be containers/hosts/(links?)
-	    var cn = self.core.createNode({parent: self.activeNode, base: fcoNode});
-	    var hn = self.core.createNode({parent: self.activeNode, base: fcoNode});
-	    var ln = self.core.createNode({parent: self.activeNode, base: fcoNode});
+	    var cn = self.core.createNode(
+		{parent: self.activeNode, base: self.META.Container}
+	    );
+	    var hn = self.core.createNode(
+		{parent: self.activeNode, base: self.META.Host}
+	    );
+	    var ln = self.core.createNode(
+		{parent: self.activeNode, base: fcoNode}
+	    );
 
 	    //self.logger.info(JSON.stringify(cn, null, 2));
 	    //self.logger.info(JSON.stringify(hn, null, 2));
