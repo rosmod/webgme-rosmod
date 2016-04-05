@@ -44,7 +44,8 @@ define([
             'component_hpp': 'component.hpp.ejs',
             'cmakelists': 'CMakeLists.txt.ejs',
             'package_xml': 'package_xml.ejs',
-	    'doxygen_config': 'doxygen_config.ejs'
+	    'doxygen_config': 'doxygen_config.ejs',
+	    'cpn': 'cpn.ejs'
         };
     };
 
@@ -628,9 +629,13 @@ define([
 						if (interaction_tokens.slice(-1) != '[')
 						    interaction_tokens += ', ';
 						interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
-					    }
+					    }					    
 					    result = re.exec(server.abstractBusinessLogic);
 					}
+					var n = interaction_tokens.lastIndexOf("unblk=[]");
+					interaction_tokens = interaction_tokens.slice(0, n) + interaction_tokens.slice(n).replace("unblk=[]", 'unblk=[{node="CPU_' +  
+																  hardware_num.toString() + '", component="' + 
+																  component.name  + '", port="' + client.name  + '"}]');
 					interaction_tokens += ']}}';
 				    }
 				}
@@ -646,8 +651,14 @@ define([
 		    interaction_tokens += '\n]';
 		    component_thread_tokens += '\n]';
 		    message_queue_tokens += '\n]';
-		    self.notify('info', timer_tokens);
-		    self.notify('info', interaction_tokens);
+
+		    var cpn = prefix + 'cpn/' + dpl_model.name + '_Analysis_Model.cpn',
+		    cpnTemplate = TEMPLATES[self.FILES['cpn']];
+		    filesToAdd[cpn] = ejs.render(cpnTemplate, {'clock_tokens' : clock_tokens, 
+							       'timer_tokens' : timer_tokens,
+							       'interaction_tokens' : interaction_tokens,
+							       'component_thread_tokens' : component_thread_tokens,
+							       'message_queue_tokens' : message_queue_tokens});
 		}
 	    });
     };
