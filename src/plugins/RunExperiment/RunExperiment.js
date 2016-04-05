@@ -244,7 +244,7 @@ define([
 			var capabilities = host.host.capabilities;
 			if (self.capabilitiesMeetConstraints(capabilities, constraints)) {
 			    self.experiment.push([container, host]);
-			    hosts.splice(j,j);
+			    hosts.splice(j,1);
 			    foundHost = true;
 			    break;
 			}
