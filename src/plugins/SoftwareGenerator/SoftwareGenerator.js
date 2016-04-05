@@ -91,7 +91,7 @@ define([
                 'name': 'compile',
                 'displayName': 'Compile Code',
                 'description': 'Turn off to just generate source files.',
-                'value': true,
+                'value': false,
                 'valueType': 'boolean',
                 'readOnly': false
             },
@@ -99,7 +99,7 @@ define([
 		'name': 'generate_docs',
 		'displayName': 'Generate Doxygen Docs',
 		'description': 'Turn off to ignorre doc generation.',
-		'value': true,
+		'value': false,
 		'valueType': 'boolean',
 		'readOnly': false
 	    },
@@ -107,7 +107,7 @@ define([
 		'name': 'returnZip',
 		'displayName': 'Zip and return generated artifacts.',
 		'description': 'If true, it enables the client to download a zip of the artifacts.',
-		'value': false,
+		'value': true,
 		'valueType': 'boolean',
 		'readOnly': false
 	    }
@@ -386,6 +386,46 @@ define([
 	})()
 	.then(function() {
 	    self.createMessage(self.activeNode, 'Downloaded CPN template');
+	    self.createMessage(self.activeNode, self.projectModel.deployments);
+	    for (var dpl in self.projectModel.deployments) {
+		var dpl_model = self.projectModel.deployments[dpl]; 
+		self.createMessage(self.activeNode, 'Parsing Deployment: ' + dpl_model.name);
+		var timer_tokens = "1`[";
+		var clock_tokens = '1`[';
+		var interaction_tokens = "";
+		var component_thread_tokens = "";
+		var message_queue_tokens = "";
+		var hardware_num = 1
+		for (var c in dpl_model.containers) {
+		    var container = dpl_model.containers[c];
+		    self.createMessage(self.activeNode, 'Container: ' + container.name);
+		    if (clock_tokens != '1`[') {
+			clock_tokens += ', ';
+			}
+		    clock_tokens += '{node="CPU_' + hardware_num.toString() 
+			+ '", value=0, next_tick=4000}';
+		    self.createMessage(self.activeNodes, 'Clock Tokens: ' + clock_tokens);
+		    for (var n in container.nodes) {
+			var node = container.nodes[n];
+			self.createMessage(self.activeNode, 'Node: ' + node.name);
+			var node_priority = node.priority;
+			self.createMessage(self.activeNode, 'Node Priority: ' + node_priority);
+			for (var ci in node.compInstances) {
+			    var compInstance = node.compInstances[ci];
+			    var component = compInstance.component;
+			    self.createMessage(self.activeNode, component.name);
+			}
+	// 1`[{node=&quot;BBB_111&quot;, period=100000, offset=0, 		
+	// operation={node=&quot;BBB_111&quot;, component=&quot;Component_1&quot;, operation=&quot;Timer_1_operation&quot;, priority=50, deadline=200000, enqueue_time=0,
+        // steps=[{kind=&quot;LOCAL&quot;, port=&quot;LOCAL&quot;, unblk=[], exec_time=0, 
+			// duration=231000}]}}]
+			
+		    }
+		    hardware_num += 1
+		}
+		clock_tokens += ']';
+		self.createMessage(self.activeNode, clock_tokens);
+	    }
 	});
     };
 
