@@ -373,60 +373,104 @@ define([
 	    return;
 	}
 
-	(function() {
-	    var path = require('path'),
-	    prefix = path.join(self.gen_dir);
-	    var promises = [];
+	var msg = 'Generating CPN Model.';
+	self.notify('info',msg);
 
-	    // Get the dummy cpn template
-	    var file_url = 'https://github.com/rosmod/rosmod-cpn/releases/download/v1.0.0/cpn.zip';
-	    var dir = prefix;
-	    promises.push(utils.wgetAndUnzipLibrary(file_url, dir));
-	    return Q.all(promises);
-	})()
-	.then(function() {
-	    self.createMessage(self.activeNode, 'Downloaded CPN template');
-	    self.createMessage(self.activeNode, self.projectModel.deployments);
-	    for (var dpl in self.projectModel.deployments) {
-		var dpl_model = self.projectModel.deployments[dpl]; 
-		self.createMessage(self.activeNode, 'Parsing Deployment: ' + dpl_model.name);
-		var timer_tokens = "1`[";
-		var clock_tokens = '1`[';
-		var interaction_tokens = "";
-		var component_thread_tokens = "";
-		var message_queue_tokens = "";
-		var hardware_num = 1
-		for (var c in dpl_model.containers) {
-		    var container = dpl_model.containers[c];
-		    self.createMessage(self.activeNode, 'Container: ' + container.name);
-		    if (clock_tokens != '1`[') {
-			clock_tokens += ', ';
+	var path = require('path'),
+	prefix = path.join(self.gen_dir);
+	var promises = [];
+
+	// Get the dummy cpn template
+	var file_url = 'https://github.com/rosmod/rosmod-cpn/releases/download/v1.0.0/cpn.zip';
+	var dir = prefix;
+	return utils.wgetAndUnzipLibrary(file_url, dir)
+	    .then(function() {
+		self.createMessage(self.activeNode, 'Downloaded CPN template');
+		for (var dpl in self.projectModel.deployments) {
+		    var dpl_model = self.projectModel.deployments[dpl]; 
+		    self.createMessage(self.activeNode, 'Parsing Deployment: ' + dpl_model.name);
+		    var timer_tokens = '1`[\n';
+		    var clock_tokens = '1`[\n';
+		    var interaction_tokens = "";
+		    var component_thread_tokens = '1`[\n';
+		    var message_queue_tokens = '1`[\n';
+		    var hardware_num = 1
+		    for (var c in dpl_model.containers) {
+			var container = dpl_model.containers[c];
+
+			// Clock Tokens check
+			if (clock_tokens != '1`[\n') {
+			    clock_tokens += ',\n';
 			}
-		    clock_tokens += '{node="CPU_' + hardware_num.toString() 
-			+ '", value=0, next_tick=4000}';
-		    self.createMessage(self.activeNodes, 'Clock Tokens: ' + clock_tokens);
-		    for (var n in container.nodes) {
-			var node = container.nodes[n];
-			self.createMessage(self.activeNode, 'Node: ' + node.name);
-			var node_priority = node.priority;
-			self.createMessage(self.activeNode, 'Node Priority: ' + node_priority);
-			for (var ci in node.compInstances) {
-			    var compInstance = node.compInstances[ci];
-			    var component = compInstance.component;
-			    self.createMessage(self.activeNode, component.name);
+			clock_tokens += '{node="CPU_' + hardware_num.toString() 
+			    + '", value=0, next_tick=4000}';
+
+			// Component Thread Tokens check
+			if (component_thread_tokens != '1`[\n') {
+			    component_thread_tokens += ',\n';
 			}
-	// 1`[{node=&quot;BBB_111&quot;, period=100000, offset=0, 		
-	// operation={node=&quot;BBB_111&quot;, component=&quot;Component_1&quot;, operation=&quot;Timer_1_operation&quot;, priority=50, deadline=200000, enqueue_time=0,
-        // steps=[{kind=&quot;LOCAL&quot;, port=&quot;LOCAL&quot;, unblk=[], exec_time=0, 
-			// duration=231000}]}}]
+			component_thread_tokens += '{node="CPU_' + hardware_num.toString() + '", threads=[';
+
+			// Component Message Queue Tokens check
+			if (message_queue_tokens != '1`[\n') {
+			    message_queue_tokens += ',\n';
+			    }
+			// 1`[{node=&quot;BBB_111&quot;, cmql=[{component=&quot;Component_1&quot;, scheme=PFIFO, queue=[]}]}]
+			message_queue_tokens += '{node="CPU_' + hardware_num.toString() + '", cmql=[';
 			
+			for (var n in container.nodes) {
+			    var node = container.nodes[n];
+			    var node_priority = node.priority;
+
+			    for (var ci in node.compInstances) {
+				var compInstance = node.compInstances[ci];
+				var component = compInstance.component;
+				if (component_thread_tokens.slice(-1) != '[')
+				    component_thread_tokens += ', ';
+				component_thread_tokens += '{node="CPU_' + hardware_num.toString() + 
+				    '", component="' + component.name + '", priority=' + node_priority + ', operation=[]}';
+
+				if (message_queue_tokens.slice(-1) != '[')
+				    message_queue_tokens += ', ';
+				message_queue_tokens += '{component="' + component.name 
+				    + '", scheme=' + compInstance.schedulingScheme + ', queue=[]}';
+			    }
+
+			    for (var ci in node.compInstances) {
+				var compInstance = node.compInstances[ci];
+				var component = compInstance.component;
+
+				for (var t in component.timers) {
+				    var timer = component.timers[t];
+				    // Timer Tokens check
+				    if (timer_tokens != '1`[\n') {
+					timer_tokens += ',\n';
+				    }
+				    timer_tokens += '{node="CPU_' + hardware_num.toString() + 
+					'", period=' + timer.period * 1000000 + ', offset=0, operation=' +
+					'{node="CPU_' + hardware_num.toString() + '", component="' +
+					component.name + '", operation="' + timer.name + '_operation"' + 
+					', priority=' + timer.priority + ', deadline=' + 
+					timer.deadline * 1000000 + ', enqueue_time=0, steps=[]}}';
+					
+				}
+
+			    }
+			}
+			component_thread_tokens += ']}';
+			message_queue_tokens += ']}';
+			hardware_num += 1
 		    }
-		    hardware_num += 1
+		    clock_tokens += '\n]';
+		    timer_tokens += '\n]';
+		    component_thread_tokens += '\n]';
+		    message_queue_tokens += '\n]';
+		    self.notify('info', clock_tokens);
+		    self.notify('info', timer_tokens);	    
+		    self.notify('info', component_thread_tokens);
+		    self.notify('info', message_queue_tokens);
 		}
-		clock_tokens += ']';
-		self.createMessage(self.activeNode, clock_tokens);
-	    }
-	});
+	    });
     };
 
     SoftwareGenerator.prototype.getValidArchitectures = function() {
