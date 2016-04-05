@@ -37,6 +37,7 @@ define([
 		'Destruction':'Destruction',
 	    },
 	    'Port': {
+		'AbstractBusinessLogic': 'AbstractBusinessLogic',
 		'Operation':'Operation'
 	    }
 	};
