@@ -386,7 +386,6 @@ define([
 	return utils.wgetAndUnzipLibrary(file_url, dir)
 	    .then(function() {
 		self.createMessage(self.activeNode, 'Downloaded CPN template');
-		self.createMessage(self.activeNode, self.projectModel.deployments);
 		for (var dpl in self.projectModel.deployments) {
 		    var dpl_model = self.projectModel.deployments[dpl]; 
 		    self.createMessage(self.activeNode, 'Parsing Deployment: ' + dpl_model.name);
@@ -398,7 +397,6 @@ define([
 		    var hardware_num = 1
 		    for (var c in dpl_model.containers) {
 			var container = dpl_model.containers[c];
-			self.createMessage(self.activeNode, 'Container: ' + container.name);
 
 			// Clock Tokens check
 			if (clock_tokens != '1`[\n') {
@@ -407,7 +405,6 @@ define([
 			clock_tokens += '{node="CPU_' + hardware_num.toString() 
 			    + '", value=0, next_tick=4000}';
 
-			self.createMessage(self.activeNodes, 'Clock Tokens: ' + clock_tokens);
 			// Component Thread Tokens check
 			if (component_thread_tokens != '1`[\n') {
 			    component_thread_tokens += ',\n';
@@ -423,9 +420,7 @@ define([
 			
 			for (var n in container.nodes) {
 			    var node = container.nodes[n];
-			    self.createMessage(self.activeNode, 'Node: ' + node.name);
 			    var node_priority = node.priority;
-			    self.createMessage(self.activeNode, 'Node Priority:' + node_priority);
 
 			    for (var ci in node.compInstances) {
 				var compInstance = node.compInstances[ci];
@@ -452,11 +447,11 @@ define([
 					timer_tokens += ',\n';
 				    }
 				    timer_tokens += '{node="CPU_' + hardware_num.toString() + 
-					'", period=' + timer.period + ', offset=0, operation=' +
-					'{node="CPU_' + hardware_num.toString() + '", component=' +
-					component.name + ', operation=' + timer.name + '_operation' + 
+					'", period=' + timer.period * 1000000 + ', offset=0, operation=' +
+					'{node="CPU_' + hardware_num.toString() + '", component="' +
+					component.name + '", operation="' + timer.name + '_operation"' + 
 					', priority=' + timer.priority + ', deadline=' + 
-					timer.deadline + ', enqueue_time=0, steps=[]}}';
+					timer.deadline * 1000000 + ', enqueue_time=0, steps=[]}}';
 					
 				}
 
