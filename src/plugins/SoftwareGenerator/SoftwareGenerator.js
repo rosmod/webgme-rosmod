@@ -528,7 +528,31 @@ define([
 					'{node="CPU_' + hardware_num.toString() + '", component="' +
 					component.name + '", operation="' + timer.name + '_operation"' + 
 					', priority=' + timer.priority + ', deadline=' + 
-					timer.deadline * 1000000 + ', enqueue_time=0, steps=[]}}';
+					timer.deadline * 1000000 + ', enqueue_time=0, steps=[';
+				    var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
+				    var result = re.exec(timer.abstractBusinessLogic);
+				    while(result != null) {
+					var port_type = result[1];
+					var wcet = 0;
+					if (port_type == "LOCAL") {
+					    var wcet = result[2];
+					    if (timer_tokens.slice(-1) != '[')
+						timer_tokens += ', ';
+					    timer_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], exec_time=0, duration=' + wcet * 1000000 + '}';
+					}
+					else if (port_type == "RMI") {
+					    if (timer_tokens.slice(-1) != '[')
+						timer_tokens += ', ';
+					    timer_tokens += '{kind="CLIENT", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
+					}
+					else if (port_type == "PUBLISH") {
+					    if (timer_tokens.slice(-1) != '[')
+						timer_tokens += ', ';
+					    timer_tokens += '{kind="PUBLISHER", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
+					}
+					result = re.exec(timer.abstractBusinessLogic);
+				    }
+				    timer_tokens += ']}}';
 				}
 
 				for (var p in component.publishers) {
@@ -543,7 +567,31 @@ define([
 					interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
 					    '", port="' + publisher.name + '", operation={node="' + component_hardware_map[subscriber.component] + '", component="' + 
 					    subscriber.component + '", operation="' + subscriber.name + '_operation", priority=' + subscriber.priority + ', deadline=' + 
-					    subscriber.deadline * 1000000 + ', enqueue_time=0, steps=[]}}';
+					    subscriber.deadline * 1000000 + ', enqueue_time=0, steps=[';
+					var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
+					var result = re.exec(subscriber.abstractBusinessLogic);
+					while(result != null) {
+					    var port_type = result[1];
+					    var wcet = 0;
+					    if (port_type == "LOCAL") {
+						var wcet = result[2];
+						if (interaction_tokens.slice(-1) != '[')
+						    interaction_tokens += ', ';
+						interaction_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], exec_time=0, duration=' + wcet * 1000000 + '}';
+					    }
+					    else if (port_type == "RMI") {
+						if (interaction_tokens.slice(-1) != '[')
+						    interaction_tokens += ', ';
+						interaction_tokens += '{kind="CLIENT", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
+					    }
+					    else if (port_type == "PUBLISH") {
+						if (interaction_tokens.slice(-1) != '[')
+						    interaction_tokens += ', ';
+						interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
+					    }
+					    result = re.exec(subscriber.abstractBusinessLogic);
+					}
+					interaction_tokens += ']}}';
 				    }
 				}
 
@@ -559,7 +607,31 @@ define([
 					interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
 					    '", port="' + client.name + '", operation={node="' + component_hardware_map[server.component] + '", component="' + 
 					    server.component + '", operation="' + server.name + '_operation", priority=' + server.priority + ', deadline=' + 
-					    server.deadline * 1000000 + ', enqueue_time=0, steps=[]}}';
+					    server.deadline * 1000000 + ', enqueue_time=0, steps=[';
+					var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
+					var result = re.exec(server.abstractBusinessLogic);
+					while(result != null) {
+					    var port_type = result[1];
+					    var wcet = 0;
+					    if (port_type == "LOCAL") {
+						var wcet = result[2];
+						if (interaction_tokens.slice(-1) != '[')
+						    interaction_tokens += ', ';
+						interaction_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], exec_time=0, duration=' + wcet * 1000000 + '}';
+					    }
+					    else if (port_type == "RMI") {
+						if (interaction_tokens.slice(-1) != '[')
+						    interaction_tokens += ', ';
+						interaction_tokens += '{kind="CLIENT", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
+					    }
+					    else if (port_type == "PUBLISH") {
+						if (interaction_tokens.slice(-1) != '[')
+						    interaction_tokens += ', ';
+						interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
+					    }
+					    result = re.exec(server.abstractBusinessLogic);
+					}
+					interaction_tokens += ']}}';
 				    }
 				}
 
@@ -574,6 +646,7 @@ define([
 		    interaction_tokens += '\n]';
 		    component_thread_tokens += '\n]';
 		    message_queue_tokens += '\n]';
+		    self.notify('info', timer_tokens);
 		    self.notify('info', interaction_tokens);
 		}
 	    });
