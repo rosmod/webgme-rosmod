@@ -367,7 +367,8 @@ define([
 
     SoftwareGenerator.prototype.generateCPN = function()
     {
-	var self = this;
+	var self = this,
+	filesToAdd = {};
 	if (!self.generateCPNAnalysis) {
 	    var msg = 'Skipping CPN model generation.';
 	    self.notify('info', msg);
