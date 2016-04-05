@@ -529,7 +529,6 @@ define([
 					component.name + '", operation="' + timer.name + '_operation"' + 
 					', priority=' + timer.priority + ', deadline=' + 
 					timer.deadline * 1000000 + ', enqueue_time=0, steps=[]}}';
-					
 				}
 
 				for (var p in component.publishers) {
