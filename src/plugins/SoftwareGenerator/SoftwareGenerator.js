@@ -653,15 +653,41 @@ define([
 		    component_thread_tokens += '\n]';
 		    message_queue_tokens += '\n]';
 
-		    var cpn = prefix + 'cpn/' + dpl_model.name + '_Analysis_Model.cpn',
+		    var cpn = 'cpn/' + dpl_model.name + '_Analysis_Model.cpn',
 		    cpnTemplate = TEMPLATES[self.FILES['cpn']];
+		    self.notify('info', cpn);
 		    filesToAdd[cpn] = ejs.render(cpnTemplate, {'clock_tokens' : clock_tokens, 
 							       'timer_tokens' : timer_tokens,
 							       'interaction_tokens' : interaction_tokens,
 							       'component_thread_tokens' : component_thread_tokens,
 							       'message_queue_tokens' : message_queue_tokens});
 		}
-	    });
+	    })
+	    .then(function() {
+		var filendir = require('filendir');
+		var fileKeys = Object.keys(filesToAdd);
+		var tasks = fileKeys.map(function(key) {
+		    var fname = path.join(self.gen_dir, key),
+		    data = filesToAdd[key];
+
+		    return new Promise(function(resolve, reject) {
+			filendir.writeFile(fname, data, function(err) {
+			    if (err) {
+				self.logger.error(err);
+				reject(err);
+			    }
+			    else {
+				resolve();
+			    }
+			});
+		    });
+		});
+		return Q.all(tasks);
+	    })
+	    .then(function() {
+		var msg = 'Generated CPN';
+		self.notify('info', msg);
+	    })
     };
 
     SoftwareGenerator.prototype.getValidArchitectures = function() {
