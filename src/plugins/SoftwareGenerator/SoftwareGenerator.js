@@ -394,7 +394,7 @@ define([
 		    var clock_tokens = '1`[\n';
 		    var interaction_tokens = "";
 		    var component_thread_tokens = '1`[\n';
-		    var message_queue_tokens = "";
+		    var message_queue_tokens = '1`[\n';
 		    var hardware_num = 1
 		    for (var c in dpl_model.containers) {
 			var container = dpl_model.containers[c];
@@ -410,10 +410,16 @@ define([
 			self.createMessage(self.activeNodes, 'Clock Tokens: ' + clock_tokens);
 			// Component Thread Tokens check
 			if (component_thread_tokens != '1`[\n') {
-			    component_thread_tokens += ',\n'
+			    component_thread_tokens += ',\n';
 			}
-			// {node=&quot;BBB_111&quot;, threads=[{node=&quot;BBB_111&quot;, component=&quot;Component_1&quot;, priority=50, operation=[]}]
 			component_thread_tokens += '{node="CPU_' + hardware_num.toString() + '", threads=[';
+
+			// Component Message Queue Tokens check
+			if (message_queue_tokens != '1`[\n') {
+			    message_queue_tokens += ',\n';
+			    }
+			// 1`[{node=&quot;BBB_111&quot;, cmql=[{component=&quot;Component_1&quot;, scheme=PFIFO, queue=[]}]}]
+			message_queue_tokens += '{node="CPU_' + hardware_num.toString() + '", cmql=[';
 			
 			for (var n in container.nodes) {
 			    var node = container.nodes[n];
@@ -428,6 +434,11 @@ define([
 				    component_thread_tokens += ', ';
 				component_thread_tokens += '{node="CPU_' + hardware_num.toString() + 
 				    '", component="' + component.name + '", priority=' + node_priority + ', operation=[]}';
+
+				if (message_queue_tokens.slice(-1) != '[')
+				    message_queue_tokens += ', ';
+				message_queue_tokens += '{component="' + component.name 
+				    + '", scheme=' + compInstance.schedulingScheme + ', queue=[]}';
 			    }
 
 			    for (var ci in node.compInstances) {
@@ -451,15 +462,18 @@ define([
 
 			    }
 			}
-			component_thread_tokens += ']';
+			component_thread_tokens += ']}';
+			message_queue_tokens += ']}';
 			hardware_num += 1
 		    }
 		    clock_tokens += '\n]';
 		    timer_tokens += '\n]';
 		    component_thread_tokens += '\n]';
+		    message_queue_tokens += '\n]';
 		    self.notify('info', clock_tokens);
 		    self.notify('info', timer_tokens);	    
 		    self.notify('info', component_thread_tokens);
+		    self.notify('info', message_queue_tokens);
 		}
 	    });
     };
