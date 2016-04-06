@@ -143,7 +143,7 @@ define(['q'], function(Q) {
 		    return hostsUp;
 		});
 	},
-	executeOnHost: function(cmds, ip, user) {
+	executeOnHost: function(cmds, ip, user, stderrCB) {
 	    var self = this;
 	    var Client = require('ssh2').Client;
 
@@ -153,10 +153,76 @@ define(['q'], function(Q) {
 		ip: ip,
 		returnCode: -1,
 		signal: undefined,
-		stdout: ''
+		stdout: '',
+		stderr: ''
+	    };
+
+	    if ( stderrCB == undefined ) {
+		stderrCB = function(data) {
+		    return true;
+		};
+	    }
+
+	    var remote_stdout = '';
+	    var remote_stderr = '';
+	    cmds.push('exit\n');
+	    var cmdString = cmds.join('\n');
+	    var conn = new Client();
+	    conn.on('ready', function() {
+		//self.logger.info('Client :: ready');
+
+		conn.exec(cmdString, function(err, stream) {
+		    if (err) { 
+			var msg = 'SSH2 Exec error: ' + err;
+			throw new String(msg);
+		    }
+		    stream.on('close', function(code, signal) {
+			//self.logger.info('stream closed.');
+			conn.end();
+			output.returnCode = code;
+			output.signal = signal;
+			output.stdout = remote_stdout.replace(new RegExp(user.name + '@.+\$','gi'), '');
+			for (var c in cmds) {
+			    output.stdout = output.stdout.replace(new RegExp(cmds[c], 'gi'), '');
+			}
+			output.stderr = remote_stderr;
+			//self.logger.info(output.stdout);
+			deferred.resolve(output);
+		    }).stdout.on('data', function(data) {
+			remote_stdout += data;
+			//self.logger.info('STDOUT:: ' + data);
+		    }).stderr.on('data', function(data) {
+			remote_stderr += data;
+			if (stderrCB(data)) {
+			    conn.end();
+			    deferred.reject(data);
+			}
+		    });
+		})
+	    }).connect({
+		host: ip,
+		port: 22,
+		username: user.name,
+		privateKey: require('fs').readFileSync(user.key)
+	    });
+	    return deferred.promise;
+	},
+	deployOnHost: function(cmds, ip, user) {
+	    var self = this;
+	    var Client = require('ssh2').Client;
+
+	    var deferred = Q.defer();
+	    var output = {
+		user: user,
+		ip: ip,
+		returnCode: -1,
+		signal: undefined,
+		stdout: '',
+		stderr: ''
 	    };
 
 	    var remote_stdout = '';
+	    var remote_stderr = '';
 	    cmds.push('exit\n');
 	    var cmdString = cmds.join('\n');
 	    var conn = new Client();
@@ -177,15 +243,16 @@ define(['q'], function(Q) {
 			for (var c in cmds) {
 			    output.stdout = output.stdout.replace(new RegExp(cmds[c], 'gi'), '');
 			}
+			output.stderr = remote_stderr;
 			//self.logger.info(output.stdout);
 			deferred.resolve(output);
-		    }).on('data', function(data) {
+		    }).stdout.on('data', function(data) {
 			remote_stdout += data;
 			//self.logger.info('STDOUT:: ' + data);
 		    }).stderr.on('data', function(data) {
-			var msg = 'STDERR: ' + data;
+			remote_stderr += data;
 			conn.end();
-			deferred.reject(msg);
+			deferred.reject(data);
 		    });
 		    stream.end(cmdString);
 		})
@@ -330,7 +397,7 @@ define(['q'], function(Q) {
 			readStream
 			    .pipe(unzip.Parse())
 			    .pipe(writeStream);
-			fs.unlink(final_file);
+			fs.unlinkSync(final_file);
 			deferred.resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
 		    }
 		}

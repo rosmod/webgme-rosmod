@@ -253,8 +253,7 @@ define([
 	    var ip = host.intf.ip;
 	    var user = host.user;
 	    var remoteDir = path.join(user.directory,
-				 'experiments',
-				 self.experimentName);
+				      'experiments');
 	    self.logger.info('Removing experiment data on ' + ip);
 	    return utils.executeOnHost(['rm -rf ' + remoteDir], ip, user);
 	});
