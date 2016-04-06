@@ -1,0 +1,32 @@
+{
+  "name": "flot",
+  "version": "0.8.0-alpha",
+  "main": "jquery.flot.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "devDependencies": {
+    "jshint": "0.9.1"
+  },
+  "_id": "flot@0.8.0-alpha",
+  "description": "## About ##",
+  "dist": {
+    "shasum": "9cbbc7147c10a47d2549db90bd2987ec1ba784ba",
+    "tarball": "https://registry.npmjs.org/flot/-/flot-0.8.0-alpha.tgz"
+  },
+  "_from": "flot@0.8.0-alpha",
+  "_npmVersion": "1.2.11",
+  "_npmUser": {
+    "name": "shtylman",
+    "email": "shtylman@gmail.com"
+  },
+  "maintainers": [
+    {
+      "name": "shtylman",
+      "email": "shtylman@gmail.com"
+    }
+  ],
+  "directories": {},
+  "_shasum": "9cbbc7147c10a47d2549db90bd2987ec1ba784ba",
+  "_resolved": "https://registry.npmjs.org/flot/-/flot-0.8.0-alpha.tgz"
+}

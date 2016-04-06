@@ -77,6 +77,21 @@ define([
         ];
     };
 
+    StopExperiment.prototype.notify = function(level, msg) {
+	var self = this;
+	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
+	if (level=='error')
+	    self.logger.error(msg);
+	else if (level=='debug')
+	    self.logger.debug(msg);
+	else if (level=='info')
+	    self.logger.info(msg);
+	else if (level=='warning')
+	    self.logger.warn(msg);
+	self.createMessage(self.activeNode, msg, level);
+	self.sendNotification(prefix+msg);
+    };
+
     /**
      * Main function for the plugin to execute. This will perform the execution.
      * Notes:
@@ -123,7 +138,8 @@ define([
 	self.root_dir = path.join(process.cwd(), 
 				  'generated', 
 				  self.project.projectId, 
-				  self.branchName);
+				  self.branchName,
+				  projectName);
 	self.exp_dir = path.join(self.root_dir,
 				 'experiments', 
 				 self.experimentName);
@@ -240,8 +256,17 @@ define([
 
     StopExperiment.prototype.createResults = function() {
 	var self = this;
+	var path = require('path');
+	var fs = require('fs');
 	var resultsNode = self.META['Results'];
+	var localDir = path.join(self.exp_dir, 'results');
+	var logs = fs.readdirSync(localDir);
 	var rn = self.core.createNode({parent: self.activeNode, base: resultsNode});
+	logs.map(function(log) {
+	    self.notify('info', log);
+	    self.core.setAttribute(rn, log.split('/').slice(-1)[0].replace(/\./g, '_'), 
+				   fs.readFileSync(localDir + '/' + log, 'utf8'));   
+	});
 	var d = new Date();
 	self.core.setAttribute(rn, 'name', 'Results-'+d.toUTCString());
     };

@@ -95,11 +95,17 @@ define(['js/Constants',
                 'name': undefined,
                 'childrenIds': undefined,
                 'parentId': undefined,
-                'isConnection': false
+                'isConnection': false,
+		'attributes': {}
             };
 
             objDescriptor.id = nodeObj.getId();
             objDescriptor.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name);
+	    var attribute_names = nodeObj.getAttributeNames();
+	    attribute_names.map(function(attribute) {
+		if (attribute != "name")
+		    objDescriptor.attributes[attribute] = nodeObj.getAttribute(attribute);
+	    });
             objDescriptor.childrenIds = nodeObj.getChildrenIds();
             objDescriptor.childrenNum = objDescriptor.childrenIds.length;
             objDescriptor.parentId = nodeObj.getParentId();
