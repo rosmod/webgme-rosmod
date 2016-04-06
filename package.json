@@ -8,6 +8,7 @@
   "version": "1.0.0",
   "dependencies": {
     "filendir": "1.x.x",
+    "flot": "^0.8.0-alpha",
     "fs": "0.0.2",
     "fstream": "1.0.x",
     "memory-streams": "^0.1.0",
