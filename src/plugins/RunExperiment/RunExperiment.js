@@ -472,6 +472,11 @@ define([
 	var metaNodes = self.core.getAllMetaNodes(self.activeNode);
 	var fcoNode = self.core.getBaseRoot(self.activeNode);
 
+	var containerX = 100;
+	var hostX = 200;
+
+	var rowY = 50;
+
 	self.experiment.forEach(function(link) {
 	    var container = link[0];
 	    var host = link[1];
@@ -492,6 +497,11 @@ define([
 	    var ln = self.core.createNode(
 		{parent: self.activeNode, base: fcoNode}
 	    );
+
+	    self.core.setRegistry(cn, 'position', {x: containerX, y:rowY});
+	    self.core.setRegistry(hn, 'position', {x: hostX, y:rowY});
+
+	    rowY += 100;
 
 	    //self.logger.info(JSON.stringify(cn, null, 2));
 	    //self.logger.info(JSON.stringify(hn, null, 2));
