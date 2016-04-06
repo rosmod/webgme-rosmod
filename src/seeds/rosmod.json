@@ -1249,6 +1249,7 @@
                 "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293"
             },
             "registry": {
+                "SVGIcon": "svgs/publisher.svg",
                 "isAbstract": false,
                 "position": {
                     "x": 25,
@@ -3315,8 +3316,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 579,
-                    "y": 287
+                    "x": 612,
+                    "y": 134
                 }
             },
             "sets": {}
@@ -3525,8 +3526,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 226,
-                    "y": 170
+                    "x": 230,
+                    "y": 166
                 }
             },
             "sets": {}
@@ -4336,7 +4337,7 @@
             "registry": {
                 "position": {
                     "x": 335,
-                    "y": 386
+                    "y": 366
                 }
             },
             "sets": {}
@@ -4465,8 +4466,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 278,
-                    "y": 130
+                    "x": 153,
+                    "y": 161
                 }
             },
             "sets": {}
@@ -6120,8 +6121,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 439,
-                    "y": 287
+                    "x": 441,
+                    "y": 131
                 }
             },
             "sets": {}
@@ -7417,7 +7418,8 @@
                 "position": {
                     "x": 1103,
                     "y": 337
-                }
+                },
+                "validPlugins": ""
             },
             "sets": {}
         },
@@ -9995,7 +9997,8 @@
                 "position": {
                     "x": 1284,
                     "y": 556
-                }
+                },
+                "validVisualizers": "ModelEditor SetEditor ResultsViz"
             },
             "sets": {}
         },
@@ -11108,6 +11111,7 @@
         },
         "712ce26f-b4f1-3e8d-ada9-82dd09bb8510": {
             "attributes": {
+                "AbstractBusinessLogic": "LOCAL 6;",
                 "Operation": "boost::random::mt19937 rng;\nboost::random::uniform_int_distribution<> loop_iteration_random(7200000, 12000000);\nint loop_max = loop_iteration_random(rng);\n\n// Business Logic for server_port_operation                                                                                           \nres.result = pow(req.base, req.exponent);\nfor(int i=0; i < loop_max; i++) {\n  double result = 0.0;\n  double x = 41865185131.214415;\n  double y = 562056205.1515;\n  result = x*y;\n}\n",
                 "name": "server_port"
             },
@@ -12155,6 +12159,7 @@
         },
         "7eea081c-beab-287a-1aed-46821198b17c": {
             "attributes": {
+                "AbstractBusinessLogic": "",
                 "Deadline": 1,
                 "Operation": "paused = received_data->paused;",
                 "name": "controlInputsSubscriber"
@@ -12481,8 +12486,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 608,
-                    "y": 219
+                    "x": 218,
+                    "y": 222
                 }
             },
             "sets": {}
@@ -12586,6 +12591,7 @@
         },
         "83498ae1-32e6-cfe9-b1c2-eda44387bf15": {
             "attributes": {
+                "AbstractBusinessLogic": "LOCAL 3;\nRMI client_port;",
                 "Deadline": 3,
                 "Operation": "boost::random::mt19937 rng;\nboost::random::uniform_int_distribution<> loop_iteration_random(2520000, 4200000);\nint loop_max = loop_iteration_random(rng);\n\n// Business Logic for client_timer_operation                                                                                          \nfor(int i=0; i < loop_max; i++) {\n  double result = 0.0;\n  double x = 41865185131.214415;\n  double y = 562056205.1515;\n  result = x*y;\n}\nclient_server_package::Power power_function;\npower_function.request.base = float(rand() % 10);\npower_function.request.exponent = float(rand() % 10);\nlogger->log(\"INFO\", \"Client::Client Timer::Sending Request to calculate %f ^ %f\",\n            power_function.request.base,\n            power_function.request.exponent);\n#ifdef USE_ROSMOD\ncomp_queue.ROSMOD_LOGGER->log(\"DEBUG\", \"BEFORE CLIENT CALL\");\n#endif\nif (client_port.call(power_function))\n  logger->log(\"INFO\",\n              \"Client::Client Timer::Server Response - %f\", power_function.response.result);\nelse {\n  logger->log(\"ERROR\", \"Client::Client Timer::Failed to invoke Server Operation\");\n  client_port.waitForExistence(ros::Duration(-1));\n}\n#ifdef USE_ROSMOD\ncomp_queue.ROSMOD_LOGGER->log(\"DEBUG\", \"CLIENT CALL COMPLETED\");\n#endif\n",
                 "Period": 5,
@@ -12901,6 +12907,7 @@
         },
         "874020d4-54d8-0c9b-0bda-18052dae44db": {
             "attributes": {
+                "AbstractBusinessLogic": "LOCAL 3;\nLOCAL 5;",
                 "Deadline": 1,
                 "Operation": "if (!paused)\n{\n  // read current value for radial position (encoder)\n  radialCurrent = radialMotoreQEP.get_position();\n  static unsigned int prevRadialCurrent = radialCurrent + 100;\n\n  unsigned int limitSwitchState = 0;\n  unsigned int backwardPinState = 0;\n  //gpio_get_value(lowerLimitSwitchPin,&limitSwitchState);\n  gpio_get_value(motorBackwardPin,&backwardPinState);\n  if (backwardPinState && (prevRadialCurrent == radialCurrent))\n  {\n    lowerLimitReached = true;\n  }\n\n  unsigned int upperLimitSwitchState = 0;\n  unsigned int forwardPinState = 0;\n  //gpio_get_value(upperLimitSwitchPin, &upperLimitSwitchState);\n  gpio_get_value(motorForwardPin, &forwardPinState);\n  if (forwardPinState && (prevRadialCurrent == radialCurrent))\n  {\n    upperLimitReached = true;\n  }\n\n  prevRadialCurrent = radialCurrent;\n  comp_queue.ROSMOD_LOGGER->log(\"CPN\", \"001::In radialPositionTimer setting GPIO\");\n\n  // update motor based on current value\n  if ( abs(radialGoal-radialCurrent) > epsilon ) // if there's significant reason to move\n  {\n    if (radialGoal > radialCurrent) \n    {\n      lowerLimitReached = false;\n      gpio_set_value(motorBackwardPin,LOW);\n      gpio_set_value(motorForwardPin,HIGH);\n    }\n    else\n    {\n      upperLimitReached = false;\n      gpio_set_value(motorForwardPin,LOW);\n      gpio_set_value(motorBackwardPin,HIGH);\n    }\n  }\n  else\n  {\n    gpio_set_value(motorForwardPin,LOW);\n    gpio_set_value(motorBackwardPin,LOW);\n  }\n}\nelse \n{\n  gpio_set_value(motorForwardPin,LOW);\n  gpio_set_value(motorBackwardPin,LOW);      \n}\n\n",
                 "Period": 0.04,
@@ -13173,8 +13180,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 159,
-                    "y": 105
+                    "x": 161,
+                    "y": 100
                 }
             },
             "sets": {}
@@ -13843,8 +13850,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 188,
-                    "y": 341
+                    "x": 230,
+                    "y": 390
                 }
             },
             "sets": {}
@@ -15650,8 +15657,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 439,
-                    "y": 387
+                    "x": 609,
+                    "y": 357
                 }
             },
             "sets": {}
@@ -17457,6 +17464,7 @@
                 "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293"
             },
             "registry": {
+                "SVGIcon": "svgs/mailbox3.svg",
                 "decorator": "CodeEditorDecorator",
                 "isAbstract": false,
                 "position": {
@@ -17963,8 +17971,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 534,
-                    "y": 282
+                    "x": 180,
+                    "y": 268
                 }
             },
             "sets": {}
@@ -18127,7 +18135,7 @@
             },
             "registry": {
                 "position": {
-                    "x": 320,
+                    "x": 321,
                     "y": 250
                 }
             },
@@ -19479,8 +19487,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 299,
-                    "y": 287
+                    "x": 200,
+                    "y": 184
                 }
             },
             "sets": {}
@@ -19582,8 +19590,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 321,
-                    "y": 201
+                    "x": 315,
+                    "y": 200
                 }
             },
             "sets": {}
@@ -20644,8 +20652,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 180,
-                    "y": 222
+                    "x": 95,
+                    "y": 221
                 }
             },
             "sets": {}
@@ -21008,8 +21016,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 434,
-                    "y": 298
+                    "x": 99,
+                    "y": 235
                 }
             },
             "sets": {}
