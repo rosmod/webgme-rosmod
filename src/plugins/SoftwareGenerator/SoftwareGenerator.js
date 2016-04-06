@@ -737,8 +737,10 @@ define([
 	var self = this;
 	var path = require('path');
 	var mkdirp = require('mkdirp');
+	var child_process = require('child_process');
 
-	var compile_dir = path.join(host.user.directory,'compilation',self.project.projectId, self.branchName);
+	var base_compile_dir = path.join(host.user.directory, 'compilation');
+	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
 	var archBinPath = path.join(self.gen_dir, 'bin' , utils.getDeviceType(host.host));
 
 	var compile_commands = [
@@ -751,6 +753,8 @@ define([
 	    'cp devel/lib/node/node_main bin/.',
 	    'rm -rf devel build'
 	];
+
+	child_process.execSync('rm -rf ' + utils.sanitizePath(archBinPath));
 
 	// make the compile dir
 	var t1 = new Promise(function(resolve,reject) {
@@ -767,11 +771,10 @@ define([
 	});
 	// run the compile step
 	var t3 = t2.then(function() {
-	    self.notify('info', 'compiling on: ' + host.intf.ip + ' into '+compile_dir);
-	    return utils.executeOnHost(compile_commands, host.intf.ip, host.user)
-		.catch(function(err) {
+	    var stderrCB = function(data) {
+		if ( data.indexOf('error:') > -1 ) {
 		    var compileErrors = utils.parseMakeErrorOutput(
-			err,
+			data,
 			compile_dir + '/src/'
 		    );
 		    compileErrors.map(function(compileError) {
@@ -779,8 +782,28 @@ define([
 			    compileError.fileName + ':' + 
 			    compileError.line + ':' + compileError.column + ':\n\t' +
 			    compileError.text + '\n';
-			self.createMessage(null, msg);
+			self.notify('error', msg);
 		    });
+		    return true;
+		}
+		else {
+		    var compileErrors = utils.parseMakeErrorOutput(
+			data,
+			compile_dir + '/src/'
+		    );
+		    compileErrors.map(function(compileError) {
+			var msg = 'Build Warning:: ' + compileError.packageName + ':' +
+			    compileError.fileName + ':' + 
+			    compileError.line + ':' + compileError.column + ':\n\t' +
+			    compileError.text + '\n';
+			self.notify('warning', msg);
+		    });
+		    return false;
+		}
+	    };
+	    self.notify('info', 'compiling on: ' + host.intf.ip + ' into '+compile_dir);
+	    return utils.executeOnHost(compile_commands, host.intf.ip, host.user, stderrCB)
+		.catch(function(err) {
 		    throw new String('Compilation failed on ' + host.intf.ip);
 		});
 	});
@@ -800,12 +823,16 @@ define([
 	// remove the remote folders
 	var t6 = t5.then(function() {
 	    self.notify('info', 'removing compilation artifacts off: ' + host.intf.ip);
-	    return utils.executeOnHost(['rm -rf ' + compile_dir], host.intf.ip, host.user);
+	    return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.ip, host.user);
 	});
 	return Q.all([t1,t2,t3,t4,t5,t6])
 	    .catch(function(err) {
-		self.notify('error', err);
-		throw err;
+		child_process.execSync('rm -rf ' + utils.sanitizePath(archBinPath));
+		self.notify('info', 'removing compilation artifacts off: ' + host.intf.ip);
+		return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.ip, host.user)
+		    .then(function() {
+			throw err;
+		    });
 	    });
     };
 
@@ -819,7 +846,6 @@ define([
 	    return;
 	}
 
-	var selectedHosts = [];
 	return self.selectCompilationArchitectures()
 	    .then(function(validHostList) {
 		return self.compileBinaries(validHostList);

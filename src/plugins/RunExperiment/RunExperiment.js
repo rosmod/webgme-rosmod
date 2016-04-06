@@ -86,6 +86,21 @@ define([
         ];
     };
 
+    RunExperiment.prototype.notify = function(level, msg) {
+	var self = this;
+	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
+	if (level=='error')
+	    self.logger.error(msg);
+	else if (level=='debug')
+	    self.logger.debug(msg);
+	else if (level=='info')
+	    self.logger.info(msg);
+	else if (level=='warning')
+	    self.logger.warn(msg);
+	self.createMessage(self.activeNode, msg, level);
+	self.sendNotification(prefix+msg);
+    };
+
     /**
      * Main function for the plugin to execute. This will perform the execution.
      * Notes:
@@ -138,11 +153,11 @@ define([
 				 self.experimentName,
 				 'xml');
 
-	self.logger.info('loading project: ' + projectName);
+	//self.logger.info('loading project: ' + projectName);
 	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
 	    .then(function(projectModel) {
 		self.projectModel = projectModel;
-		self.logger.info('parsed model!');
+		//self.logger.info('parsed model!');
 		// update the object's selectedExperiment variable
 		self.selectedExperiment = self.projectModel.experiments[self.experimentName];
 		// check to make sure we have the right experiment
@@ -154,17 +169,17 @@ define([
 	    })
 	    .then(function() {
 		// check for binaries
-		self.logger.info('checking for binaries');
+		self.notify('info','checking for binaries');
 		return self.checkBinaries();
 	    })
 	    .then(function() {
 		// generate xml files here
-		self.logger.info('generating artifacts');
+		self.notify('info','generating artifacts');
 		return self.generateArtifacts();
 	    })
 	    .then(function() {
 		// send the deployment + binaries off to hosts for execution
-		self.logger.info('deploying onto system');
+		self.notify('info','deploying onto system');
 		return self.deployExperiment();
 	    })
 	    .then(function() {
@@ -176,7 +191,7 @@ define([
 	    })
 	    .then(function() {
 		// This will save the changes. If you don't want to save;
-		self.logger.info('saving updates to model');
+		self.notify('info','saving updates to model');
 		return self.save('RunExperiment updated model.');
 	    })
 	    .then(function (err) {
@@ -188,8 +203,7 @@ define([
 		callback(null, self.result);
 	    })
 	    .catch(function(err) {
-        	self.logger.error(err);
-        	self.createMessage(self.activeNode, err, 'error');
+        	self.notify('error', err);
 		self.result.setSuccess(false);
 		callback(err, self.result);
 	    })
@@ -199,14 +213,14 @@ define([
     RunExperiment.prototype.mapContainersToHosts = function () {
 	var self = this;
 
-	self.logger.info('Experiment mapping containers in ' + self.selectedExperiment.deployment.name +
+	self.notify('info','Experiment mapping containers in ' + self.selectedExperiment.deployment.name +
 			 ' to hosts in '  + self.selectedExperiment.system.name);
 
 	var containers = self.selectedExperiment.deployment.containers;
 	return utils.getAvailableHosts(self.selectedExperiment.system.hosts)
 	    .then(function(hosts) {
 		var containerLength = Object.keys(containers).length;
-		self.logger.info( containerLength + ' mapping to ' + hosts.length);
+		self.notify('info', containerLength + ' mapping to ' + hosts.length);
 		if (hosts.length < containerLength) {
 		    throw new String('Cannot map ' + containerLength +
 				     ' containers to ' + hosts.length +
@@ -291,7 +305,12 @@ define([
 	    var platformBinPath = path.join(self.root_dir,
 					    'bin',
 					    platform);
-	    fs.accessSync(platformBinPath);
+	    try {
+		fs.accessSync(platformBinPath);
+	    }
+	    catch (err) {
+		throw new String(platform + ' does not have compiled binaries!');
+	    }
 	});
 	return Q.all(tasks);
     };
@@ -334,7 +353,6 @@ define([
 		promises.push(new Promise(function(resolve, reject) {
 		    filendir.writeFile(fname, data, function(err) {
 			if (err) {
-			    self.logger.error(err);
 			    reject(err);
 			}
 			else {
@@ -346,8 +364,7 @@ define([
 	    return Q.all(promises);
 	})()
 	    .then(function() {
-		self.logger.debug('generated artifacts.');
-		self.createMessage(self.activeNode, 'Generated artifacts.');
+		self.notify('info', 'Generated artifacts.');
 	    })
     };
 
@@ -397,12 +414,8 @@ define([
 	    'roscore --port=' + self.rosCorePort + ' &'
 	];
 	host_commands.push('sleep 10');
-	self.logger.info('Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
-	return utils.executeOnHost(host_commands, ip, user)
-	    .then(function() {
-		self.logger.info('executed roscore!');
-		return [];
-	    });
+	self.notify('info','Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
+	return utils.deployOnHost(host_commands, ip, user);
     };
 
     RunExperiment.prototype.startProcesses = function() {
@@ -431,8 +444,8 @@ define([
 				   ' &');
 	    }
 	    //host_commands.push('sleep 10');
-	    self.logger.info('starting binaries.');
-	    return utils.executeOnHost(host_commands, ip, user);
+	    self.notify('info','starting binaries.');
+	    return utils.deployOnHost(host_commands, ip, user);
 	});
 	return Q.all(tasks);
     };
@@ -441,17 +454,16 @@ define([
 	var self = this;
 	return self.copyArtifactsToHosts()
 	    .then(function () {
-		self.logger.info('Copied artifacts to hosts.');
+		self.notify('info','Copied artifacts to hosts.');
 		return self.startRosCore();
 	    })
 	    .then(function () {
-		self.logger.info('Started roscore.');
+		self.notify('info','Started roscore.');
 		return self.startProcesses();
 	    })
 	    .then(function() {
 		var msg = 'Successfully started experiment.';
-		self.logger.info(msg);
-		self.createMessage(self.activeNode, msg);
+		self.notify('info', msg);
 	    })
     };
 
@@ -509,7 +521,7 @@ define([
 	var self = this;
 	
 	if (!self.returnZip) {
-            self.createMessage(self.activeNode, 'Skipping compression.');
+            self.notify('info', 'Skipping compression.');
 	    return;
 	}
 	
@@ -552,7 +564,7 @@ define([
 		.pipe(gzipper);
 	})
 	    .then(function() {
-		self.createMessage(self.activeNode, 'Created archive.');
+		self.notify('info', 'Created archive.');
 	    });
     };
 
