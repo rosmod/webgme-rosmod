@@ -67,7 +67,7 @@ define([
 		//this._el.append(tmp);
 		var p = document.createElement('div');
 		p.id = "log_plot_" + a;
-		p.style = 'width:1300px;height:500px';
+		p.style = 'width:1300px;height:300px';
 		var re = /ROSMOD::(\w+)::([\d]*)::([\w]+ ?)*::Alias=(\w+); (?:(?:[\w=;, ]*Enqueue Time)|(?:Completion Time)) sec=(\d*), nsec=(\d*)/gi;
 		var result = re.exec(desc.attributes[a]);
 		var log_data = {};
@@ -99,11 +99,6 @@ define([
 		    result = re.exec(desc.attributes[a]);
 		}
 		var d1 = [];
-		/*
-		for (var i = 0; i < 14; i += 0.5) {
-		    d1.push([i, Math.sin(i)]);
-		}
-		*/
 		var aliases = Object.keys(log_data);
 		aliases.map(function(alias) {
 		    d1.push(log_data[alias].data);
