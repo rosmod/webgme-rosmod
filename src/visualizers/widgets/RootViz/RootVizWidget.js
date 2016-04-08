@@ -54,7 +54,9 @@ define([
 	    projectHtml,
 	    panelId,
 	    title,
-	    description,
+	    authors,
+	    brief,
+	    detailed,
 	    htmlId,
 	    html;
 
@@ -63,11 +65,15 @@ define([
 
 		title = desc.name;
 		panelId = title.replace(/ /g,'-');
-		description = desc.detailed;
+		authors = desc.authors;
+		brief = desc.brief;
+		detailed = desc.detailed;
 		projectHtml = ejs.render(TEMPLATES['Project.html.ejs'], {
 		    id: panelId,
 		    title: title,
-		    description: description
+		    authors: authors,
+		    brief: brief,
+		    detailed: detailed
 		});
 
 		column.append(projectHtml);

@@ -105,8 +105,8 @@ define(['js/Constants',
 
             objDescriptor.id = nodeObj.getId();
             objDescriptor.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name);
-	    objDescriptor.brief = nodeObj.getAttribute('Brief');
-	    objDescriptor.detailed = nodeObj.getAttribute('Detailed');
+	    objDescriptor.brief = nodeObj.getAttribute('Brief Description');
+	    objDescriptor.detailed = nodeObj.getAttribute('Detailed Description');
 	    objDescriptor.authors = nodeObj.getAttribute('Authors');
 	    objDescriptor.meta = metaName;
             objDescriptor.childrenIds = nodeObj.getChildrenIds();
