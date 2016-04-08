@@ -30,6 +30,9 @@
     "decorators": {
       "CodeEditorDecorator": {
         "src": "src\\decorators\\CodeEditorDecorator"
+      },
+      "DocumentDecorator": {
+        "src": "src/decorators/DocumentDecorator"
       }
     },
     "visualizers": {
