@@ -1302,8 +1302,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 162.66666666666666,
-                    "y": 214.66666666666666
+                    "x": 360,
+                    "y": 293
                 }
             },
             "sets": {}
@@ -1904,8 +1904,8 @@
                         "guid": "0066ce30-e372-bb27-23c3-219c7d934553",
                         "registry": {
                             "position": {
-                                "x": 8,
-                                "y": 966
+                                "x": 137,
+                                "y": 972
                             }
                         }
                     },
@@ -1914,8 +1914,8 @@
                         "guid": "0f474808-eadf-a345-7ee9-7279326aab1e",
                         "registry": {
                             "position": {
-                                "x": 328,
-                                "y": 776
+                                "x": 457,
+                                "y": 782
                             }
                         }
                     },
@@ -1924,8 +1924,8 @@
                         "guid": "11c26da0-dda2-d00c-dc36-f53c52c3fc62",
                         "registry": {
                             "position": {
-                                "x": 333,
-                                "y": 485
+                                "x": 396,
+                                "y": 474
                             }
                         }
                     },
@@ -1944,8 +1944,8 @@
                         "guid": "27271a90-b612-119a-4451-26b58c0a84b2",
                         "registry": {
                             "position": {
-                                "x": 71,
-                                "y": 584
+                                "x": 144,
+                                "y": 718
                             }
                         }
                     },
@@ -1954,8 +1954,8 @@
                         "guid": "36d534c1-207e-1c52-5336-c74ff256793f",
                         "registry": {
                             "position": {
-                                "x": 535,
-                                "y": 461
+                                "x": 705,
+                                "y": 451
                             }
                         }
                     },
@@ -1964,7 +1964,7 @@
                         "guid": "40634285-7f30-4d56-3e22-6047fe32f0d7",
                         "registry": {
                             "position": {
-                                "x": 347,
+                                "x": 477,
                                 "y": 972
                             }
                         }
@@ -1974,8 +1974,8 @@
                         "guid": "43ac0a99-4f0a-0ef0-40cc-e8e6cf6dd5f9",
                         "registry": {
                             "position": {
-                                "x": 647,
-                                "y": 175
+                                "x": 1045,
+                                "y": 191
                             }
                         }
                     },
@@ -1984,8 +1984,8 @@
                         "guid": "4a9f26bd-4fd6-acb3-0f4e-093cb9a34643",
                         "registry": {
                             "position": {
-                                "x": 801,
-                                "y": 423
+                                "x": 1135,
+                                "y": 401
                             }
                         }
                     },
@@ -2004,8 +2004,8 @@
                         "guid": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
                         "registry": {
                             "position": {
-                                "x": 249,
-                                "y": 969
+                                "x": 377,
+                                "y": 972
                             }
                         }
                     },
@@ -2024,7 +2024,7 @@
                         "guid": "6426cc7b-5cb2-d3a7-0790-58b46d29b705",
                         "registry": {
                             "position": {
-                                "x": 816,
+                                "x": 1334,
                                 "y": 317
                             }
                         }
@@ -2034,8 +2034,8 @@
                         "guid": "6e77078a-7ffc-3881-d2b3-469431fa7020",
                         "registry": {
                             "position": {
-                                "x": 802,
-                                "y": 621
+                                "x": 1135,
+                                "y": 601
                             }
                         }
                     },
@@ -2044,8 +2044,8 @@
                         "guid": "6eee186c-a14e-3be3-d7b1-7fa840843c05",
                         "registry": {
                             "position": {
-                                "x": 489,
-                                "y": 197
+                                "x": 685,
+                                "y": 191
                             }
                         }
                     },
@@ -2054,8 +2054,8 @@
                         "guid": "7575417a-f5cb-d71e-d261-752e90aee4c3",
                         "registry": {
                             "position": {
-                                "x": 800,
-                                "y": 510
+                                "x": 1135,
+                                "y": 491
                             }
                         }
                     },
@@ -2064,8 +2064,8 @@
                         "guid": "7c1c46d5-6a72-04fe-3c55-b5e32645a94b",
                         "registry": {
                             "position": {
-                                "x": 456,
-                                "y": 781
+                                "x": 374,
+                                "y": 618
                             }
                         }
                     },
@@ -2074,8 +2074,8 @@
                         "guid": "7c902cff-78a7-29da-9892-c0ecdc182ab3",
                         "registry": {
                             "position": {
-                                "x": 677,
-                                "y": 314
+                                "x": 1085,
+                                "y": 291
                             }
                         }
                     },
@@ -2084,8 +2084,8 @@
                         "guid": "7f87eaf4-9384-0b11-2adc-17cd67165f67",
                         "registry": {
                             "position": {
-                                "x": 704,
-                                "y": 811
+                                "x": 875,
+                                "y": 801
                             }
                         }
                     },
@@ -2094,8 +2094,8 @@
                         "guid": "984baea9-4feb-5630-81f3-085218530d89",
                         "registry": {
                             "position": {
-                                "x": 652,
-                                "y": 448
+                                "x": 905,
+                                "y": 441
                             }
                         }
                     },
@@ -2104,8 +2104,8 @@
                         "guid": "9c50fc4a-3e84-5cb0-812e-59460da120f2",
                         "registry": {
                             "position": {
-                                "x": 526,
-                                "y": 657
+                                "x": 705,
+                                "y": 651
                             }
                         }
                     },
@@ -2124,8 +2124,8 @@
                         "guid": "ae4baea9-4feb-5630-81f3-085218530d89",
                         "registry": {
                             "position": {
-                                "x": 672,
-                                "y": 662
+                                "x": 885,
+                                "y": 611
                             }
                         }
                     },
@@ -2134,8 +2134,8 @@
                         "guid": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
                         "registry": {
                             "position": {
-                                "x": 108,
-                                "y": 970
+                                "x": 237,
+                                "y": 972
                             }
                         }
                     },
@@ -2144,8 +2144,8 @@
                         "guid": "c2c96bb1-7afb-202f-aab6-2a75a33ffd0a",
                         "registry": {
                             "position": {
-                                "x": 365,
-                                "y": 618
+                                "x": 515,
+                                "y": 600
                             }
                         }
                     },
@@ -2154,8 +2154,8 @@
                         "guid": "cf2109f7-7027-451c-095f-c0bc64833ba9",
                         "registry": {
                             "position": {
-                                "x": 11,
-                                "y": 464
+                                "x": 9,
+                                "y": 646
                             }
                         }
                     },
@@ -2164,8 +2164,8 @@
                         "guid": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
                         "registry": {
                             "position": {
-                                "x": 178,
-                                "y": 776
+                                "x": 307,
+                                "y": 782
                             }
                         }
                     },
@@ -2174,8 +2174,8 @@
                         "guid": "df437d49-a83e-6944-62ed-52fd3dcf806d",
                         "registry": {
                             "position": {
-                                "x": 506,
-                                "y": 323
+                                "x": 685,
+                                "y": 311
                             }
                         }
                     },
@@ -2184,8 +2184,8 @@
                         "guid": "e400d5b7-c955-fc81-382e-2c414b44fc20",
                         "registry": {
                             "position": {
-                                "x": 594,
-                                "y": 810
+                                "x": 765,
+                                "y": 801
                             }
                         }
                     },
@@ -2194,8 +2194,8 @@
                         "guid": "e4236ea7-bd34-9066-b116-da90faa42f94",
                         "registry": {
                             "position": {
-                                "x": 352,
-                                "y": 351
+                                "x": 498,
+                                "y": 331
                             }
                         }
                     },
@@ -2204,8 +2204,8 @@
                         "guid": "e9857a0d-db6e-8197-12f8-76b4ef60b107",
                         "registry": {
                             "position": {
-                                "x": 799,
-                                "y": 157
+                                "x": 1297,
+                                "y": 174
                             }
                         }
                     },
@@ -2224,8 +2224,8 @@
                         "guid": "fe2f7057-8238-2032-4e6b-3012e0a4ea85",
                         "registry": {
                             "position": {
-                                "x": 729,
-                                "y": 59
+                                "x": 1199,
+                                "y": 60
                             }
                         }
                     }
@@ -2247,8 +2247,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 228,
-                    "y": 120
+                    "x": 765,
+                    "y": 141
                 }
             },
             "sets": {}
@@ -2482,8 +2482,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 162,
-                    "y": 210
+                    "x": 554,
+                    "y": 202
                 }
             },
             "sets": {}
@@ -3198,8 +3198,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 96,
-                    "y": 310
+                    "x": 759,
+                    "y": 259
                 }
             },
             "sets": {}
@@ -3470,8 +3470,8 @@
             },
             "registry": {
                 "position": {
-                    "x": -6,
-                    "y": 486
+                    "x": 550,
+                    "y": 240
                 }
             },
             "sets": {}
@@ -3598,8 +3598,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 159,
-                    "y": 240
+                    "x": 160,
+                    "y": 239
                 }
             },
             "sets": {}
@@ -6443,8 +6443,8 @@
         "382cdf03-fa45-48d2-1f64-c6191413c703": {
             "attributes": {
                 "Authors": "Pranav Srinivas Kumar",
-                "Brief": "A three component sample that integrates all standard features of ROSMOD: timers & interaction patterns",
-                "Detailed": "A three component sample that integrates all standard features of ROSMOD: timers & interaction patterns. Component interact via publish-subscribe and client-server style patterns and are periodically triggered by timers. By enforcing different component scheduling schemes, interasting execution results are observed. ",
+                "Brief Description": "A three component sample that integrates all standard features of ROSMOD: timers & interaction patterns",
+                "Detailed Description": "A three component sample that integrates all standard features of ROSMOD: timers & interaction patterns. Component interact via publish-subscribe and client-server style patterns and are periodically triggered by timers. By enforcing different component scheduling schemes, interasting execution results are observed. ",
                 "name": "Integration Test"
             },
             "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
@@ -6916,8 +6916,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 163,
-                    "y": 280
+                    "x": 357,
+                    "y": 295
                 }
             },
             "sets": {}
@@ -7184,7 +7184,8 @@
                 "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293"
             },
             "registry": {
-                "decorator": "CodeEditorDecorator",
+                "SVGIcon": "svgs/server.svg",
+                "decorator": "SVGDecorator",
                 "isAbstract": false,
                 "position": {
                     "x": 413,
@@ -7629,8 +7630,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 210,
-                    "y": 269
+                    "x": 215,
+                    "y": 266
                 }
             },
             "sets": {}
@@ -8041,6 +8042,8 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/container.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 1083,
                     "y": 507
@@ -8346,8 +8349,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 231,
-                    "y": 257
+                    "x": 550,
+                    "y": 269
                 }
             },
             "sets": {}
@@ -8401,8 +8404,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 52,
-                    "y": 190
+                    "x": 159,
+                    "y": 325
                 }
             },
             "sets": {}
@@ -9417,6 +9420,8 @@
                 "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293"
             },
             "registry": {
+                "SVGIcon": "svgs/client.svg",
+                "decorator": "SVGDecorator",
                 "isAbstract": false,
                 "position": {
                     "x": 283,
@@ -10323,8 +10328,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 228,
-                    "y": 196
+                    "x": 159,
+                    "y": 225
                 }
             },
             "sets": {}
@@ -10923,6 +10928,8 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/component_instance.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 1083,
                     "y": 607
@@ -11178,8 +11185,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 229,
-                    "y": 330
+                    "x": 333,
+                    "y": 350
                 }
             },
             "sets": {}
@@ -11479,6 +11486,8 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/node.svg",
+                "decorator": "SVGDecorator",
                 "position": {
                     "x": 1083,
                     "y": 557
@@ -13189,7 +13198,7 @@
         "8bc323b4-a4eb-abcd-b7a2-f710630dce1c": {
             "attributes": {
                 "Authors": "Pranav Srinivas Kumar, William Emfinger",
-                "Detailed": "This is the Vanderbilt Aerospace Design Lab's (VADL) Autonomous Ground Support Equipment (AGSE) robot code which performed a simulated Mars Sample Recovery (MSR) mission by autonomously finding and placing a Martian sample into a rocket before launch.  This project contains the software model, hardware model, and algorithms for the AGSE.",
+                "Detailed Description": "This is the Vanderbilt Aerospace Design Lab's (VADL) Autonomous Ground Support Equipment (AGSE) robot code which performed a simulated Mars Sample Recovery (MSR) mission by autonomously finding and placing a Martian sample into a rocket before launch.  This project contains the software model, hardware model, and algorithms for the AGSE.",
                 "name": "AGSE"
             },
             "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
@@ -15018,7 +15027,7 @@
         },
         "a361e083-c5a2-be94-f0c4-e157912d2d77": {
             "attributes": {
-                "Detailed": "Simple Client Server example demonstrating how to define and use ROS services in a software model.",
+                "Detailed Description": "Simple Client Server example demonstrating how to define and use ROS services in a software model.",
                 "name": "Client Server"
             },
             "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
@@ -15568,8 +15577,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 36,
-                    "y": 112
+                    "x": 174,
+                    "y": 116
                 }
             },
             "sets": {}
@@ -16282,8 +16291,8 @@
         "b2d83f79-6f62-206e-7170-332de3abb97f": {
             "attributes": {
                 "Authors": "Pranav Srinivas Kumar",
-                "Brief": "A simple publish-susbcribe example",
-                "Detailed": "A periodically triggered Publisher component messages a remote subscriber. The subscriber receives this message and saves it.",
+                "Brief Description": "A simple publish-susbcribe example",
+                "Detailed Description": "A periodically triggered Publisher component messages a remote subscriber. The subscriber receives this message and saves it.",
                 "name": "Publish Subscribe"
             },
             "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
@@ -17485,8 +17494,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 110,
-                    "y": 250
+                    "x": 363,
+                    "y": 247
                 }
             },
             "sets": {}
@@ -18618,8 +18627,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 158,
-                    "y": 138
+                    "x": 495,
+                    "y": 154
                 }
             },
             "sets": {}
@@ -19500,8 +19509,8 @@
         "d9ade406-9b22-f7cd-af0b-7b67752062e8": {
             "attributes": {
                 "Authors": "Pranav Srinivas Kumar",
-                "Brief": "Five periodic timers in a single component",
-                "Detailed": "A single time-triggered component contains five periodic timers with varying frequencies and priorities. This project tests ROSMOD's PFIFO scheduling scheme with multiple mixed-criticality timers.",
+                "Brief Description": "Five periodic timers in a single component",
+                "Detailed Description": "A single time-triggered component contains five periodic timers with varying frequencies and priorities. This project tests ROSMOD's PFIFO scheduling scheme with multiple mixed-criticality timers.",
                 "name": "Periodic Timer"
             },
             "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
@@ -21886,7 +21895,7 @@
         "fbb9e11b-926b-10de-58e9-a161fe9deec9": {
             "attributes": {
                 "Authors": "William Emfinger",
-                "Detailed": "This project contains the code and models for network traffic light controllers which receive sensor data from inductive loop sensors and send actuator commands to traffic lights based on their control logic and parameters.  These sensors and actuators (as well as the actual cars in the traffic network) are simulated using the Simulation of Urban Mobility (SUMO) simulator.  This code uses the TraCIAPI in lib-sumo to send and receive data to/from the simulation.",
+                "Detailed Description": "This project contains the code and models for network traffic light controllers which receive sensor data from inductive loop sensors and send actuator commands to traffic lights based on their control logic and parameters.  These sensors and actuators (as well as the actual cars in the traffic network) are simulated using the Simulation of Urban Mobility (SUMO) simulator.  This code uses the TraCIAPI in lib-sumo to send and receive data to/from the simulation.",
                 "name": "Traffic Light Controller"
             },
             "base": "a83b8adb-232e-4f68-ca06-3ee2c728765b",
@@ -22223,6 +22232,7 @@
                 "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045"
             },
             "registry": {
+                "SVGIcon": "svgs/documentation.svg",
                 "decorator": "DocumentDecorator",
                 "position": {
                     "x": 100,
