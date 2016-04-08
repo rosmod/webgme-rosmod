@@ -6,6 +6,12 @@ define(['js/util',
 	'rosmod/Libs/cm/lib/codemirror', 'rosmod/Libs/cm/mode/clike/clike',
 	'rosmod/Libs/cm/keymap/emacs', 'rosmod/Libs/cm/keymap/sublime', 'rosmod/Libs/cm/keymap/vim',
 	'rosmod/Libs/cm/addon/display/fullscreen',
+	'rosmod/Libs/cm/addon/fold/foldcode',
+	'rosmod/Libs/cm/addon/fold/foldgutter',
+	'rosmod/Libs/cm/addon/fold/brace-fold',
+	'rosmod/Libs/cm/addon/fold/xml-fold',
+	'rosmod/Libs/cm/addon/fold/markdown-fold',
+	'rosmod/Libs/cm/addon/fold/comment-fold',
 	'text!./DocumentEditorDialog.html',
 	'css!./DocumentEditorDialog.css',
 	'css!rosmod/Libs/cm/addon/display/fullscreen.css',
@@ -54,12 +60,15 @@ define(['js/util',
 	'css!rosmod/Libs/cm/theme/xq-dark.css',
 	'css!rosmod/Libs/cm/theme/xq-light.css',
 	'css!rosmod/Libs/cm/theme/yeti.css',
-	'css!rosmod/Libs/cm/theme/zenburn.css'],
+	'css!rosmod/Libs/cm/theme/zenburn.css',
+	'css!rosmod/Libs/cm/addon/fold/foldgutter'],
     function(Util,
              CodeMirror,
 	     CodeMirrorModeClike,
 	     CodeMirrorEmacsKeymap, CodeMirrorSublimeKeymap, CodeMirrorVimKeymap,
-	     CodeMirrorFullScreen,
+	     CodeMirrorFullScreen, CodeMirrorFoldCode, CodeMirrorFoldGutter,
+	     CodeMirrorBraceFold, CodeMirrorXMLFold, CodeMirrorMarkdownFold, 
+	     CodeMirrorCommentFold,
              DocumentEditorDialogTemplate){
         'use strict';
 	
@@ -90,7 +99,9 @@ define(['js/util',
 		path: 'rosmod/Libs/cm/lib/',
 		theme: 'default',
 		fullscreen: false,
-		mode: {name:'text/x-c++src', useCPP:true}
+		mode: {name:'text/x-c++src', useCPP:true},
+		foldGutter: true,
+		gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
 	    };
 	    this.editor = new CodeMirror.fromTextArea(
 		this._codearea.get(0),
@@ -102,8 +113,13 @@ define(['js/util',
 		},
 		'Esc': function(cm) {
 		    cm.setOption('fullScreen', false);
+		},
+		"Ctrl-Q": function(cm){ 
+		    cm.foldCode(cm.getCursor()); 
 		}
 	    });
+
+	    this.editor.foldCode(CodeMirror.Pos(0, 0));
 
 	    // THEME SELECT
 	    var editor = this.editor;
