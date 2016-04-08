@@ -3419,7 +3419,10 @@
                     "AbstractBusinessLogic": {
                         "type": "string"
                     }
-                }
+                },
+                "mixins": [
+                    "eecf10d5-1ea4-b2f5-5342-4b3dc960899c"
+                ]
             },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
             "pointers": {
@@ -7170,7 +7173,10 @@
                         "max": 1,
                         "min": 1
                     }
-                }
+                },
+                "mixins": [
+                    "eecf10d5-1ea4-b2f5-5342-4b3dc960899c"
+                ]
             },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
             "pointers": {
@@ -17568,7 +17574,10 @@
                         "max": 1,
                         "min": 1
                     }
-                }
+                },
+                "mixins": [
+                    "eecf10d5-1ea4-b2f5-5342-4b3dc960899c"
+                ]
             },
             "parent": "2e129f64-d002-cefe-20f8-256883f4b003",
             "pointers": {
@@ -21045,17 +21054,17 @@
         "eecf10d5-1ea4-b2f5-5342-4b3dc960899c": {
             "attributes": {
                 "Authors": "",
-                "Brief": "",
-                "Detailed": "",
+                "Brief Description": "",
+                "Detailed Description": "",
                 "name": "Code Documentation"
             },
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Detailed": {
+                    "Detailed Description": {
                         "type": "string"
                     },
-                    "Brief": {
+                    "Brief Description": {
                         "type": "string"
                     },
                     "Authors": {
