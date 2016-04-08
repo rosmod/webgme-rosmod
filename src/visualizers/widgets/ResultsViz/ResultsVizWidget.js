@@ -60,8 +60,9 @@ define([
             }
    
 	    for (var a in desc.attributes) {
-		var tmp1 = document.createElement('h3');
+		var tmp1 = document.createElement('h6');
 		tmp1.innerHTML = a;
+		var linebreak = document.createElement("br");
 		//var tmp = document.createElement('div');
 		//tmp.innerHTML = desc.attributes[a];
 		//this._el.append(tmp);
@@ -71,6 +72,10 @@ define([
 		var re = /ROSMOD::(\w+)::([\d]*)::([\w]+ ?)*::Alias=(\w+); (?:(?:[\w=;, ]*Enqueue Time)|(?:Completion Time)) sec=(\d*), nsec=(\d*)/gi;
 		var result = re.exec(desc.attributes[a]);
 		var log_data = {};
+		var first_time = 0.0;
+		var max_exec_time = 0.0;
+		if (result != null)
+		    var first_time = parseInt(result[5]) + result[6]/1000000000.0;
 		while(result != null) {
 		    var alias = result[4];
 		    if (!log_data[alias]) {
@@ -81,6 +86,8 @@ define([
 		    if (result[3] == "ENQUEUE") {
 			var enqueue_time = parseInt(result[5]) + result[6]/1000000000.0;
 			log_data[alias].enqueue_time = enqueue_time;
+			if (first_time == 0.0)
+			    first_time = enqueue_time;
 		    }
 		    else if (result[3] == "COMPLETED") {
 			var completion_time = parseInt(result[5]) + result[6]/1000000000.0;
@@ -89,10 +96,16 @@ define([
 		    if ( log_data[alias].completion_time && log_data[alias].enqueue_time ) {
 			var exec_time = log_data[alias].completion_time - 
 			    log_data[alias].enqueue_time;
-			log_data[alias].data.push([log_data[alias].enqueue_time, 0]);
-			log_data[alias].data.push([log_data[alias].enqueue_time, exec_time]);
-			log_data[alias].data.push([log_data[alias].completion_time, exec_time]);
-			log_data[alias].data.push([log_data[alias].completion_time, 0]);
+			if (exec_time > max_exec_time)
+			    max_exec_time = exec_time;
+			log_data[alias].data.push([log_data[alias].enqueue_time - first_time, 
+						   0]);
+			log_data[alias].data.push([log_data[alias].enqueue_time - first_time, 
+						   exec_time]);
+			log_data[alias].data.push([log_data[alias].completion_time - first_time, 
+						   exec_time]);
+			log_data[alias].data.push([log_data[alias].completion_time - first_time, 
+						   0]);
 			log_data[alias].enqueue_time = undefined;
 			log_data[alias].completion_time = undefined;
 		    }
@@ -103,10 +116,44 @@ define([
 		aliases.map(function(alias) {
 		    d1.push(log_data[alias].data);
 		});
+		
 		if (aliases.length > 0) {
 		    this._el.append(tmp1);
 		    this._el.append(p);
-		    $.plot($("#log_plot_"+a), d1);
+		    $.plot($("#log_plot_" + a), d1, {
+			legend: {
+			    show: true,
+			    position: "ne",
+			    sorted: "ascending"
+			},
+			series: {
+			    lines: { show: true },
+			    points: { show: false }
+			},
+			grid: {
+			    borderWidth: 1,
+			    minBorderMargin: 20,
+			    labelMargin: 10,
+			    backgroundColor: {
+				colors: ["#fff", "#e4f4f4"]
+			    },
+			    margin: {
+				top: 1,
+				bottom: 20,
+				left: 20
+			    }
+			},
+			xaxis: {
+			    labelWidth: 30
+			},
+			yaxis: {
+			    labelWidth: 30
+			}
+		    });
+		    var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>").text("Experiment Time").appendTo($('#log_plot' + a));
+
+		    var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>").text("Operation Execution Time (s)").appendTo($('#log_data' + a));
+		    yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
 		}
 	    }
 

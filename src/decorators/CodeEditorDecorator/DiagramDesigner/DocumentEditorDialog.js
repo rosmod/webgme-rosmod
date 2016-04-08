@@ -10,7 +10,51 @@ define(['js/util',
 	'css!./DocumentEditorDialog.css',
 	'css!rosmod/Libs/cm/addon/display/fullscreen.css',
 	'css!rosmod/Libs/cm/theme/night.css',
-	'css!rosmod/Libs/cm/lib/codemirror.css'],
+	'css!rosmod/Libs/cm/lib/codemirror.css',
+	'css!rosmod/Libs/cm/theme/3024-day.css',
+	'css!rosmod/Libs/cm/theme/3024-night.css',
+	'css!rosmod/Libs/cm/theme/abcdef.css',
+	'css!rosmod/Libs/cm/theme/ambiance.css',
+	'css!rosmod/Libs/cm/theme/base16-dark.css',
+	'css!rosmod/Libs/cm/theme/bespin.css',
+	'css!rosmod/Libs/cm/theme/base16-light.css',
+	'css!rosmod/Libs/cm/theme/blackboard.css',
+	'css!rosmod/Libs/cm/theme/cobalt.css',
+	'css!rosmod/Libs/cm/theme/colorforth.css',
+	'css!rosmod/Libs/cm/theme/dracula.css',
+	'css!rosmod/Libs/cm/theme/eclipse.css',
+	'css!rosmod/Libs/cm/theme/elegant.css',
+	'css!rosmod/Libs/cm/theme/erlang-dark.css',
+	'css!rosmod/Libs/cm/theme/hopscotch.css',
+	'css!rosmod/Libs/cm/theme/icecoder.css',
+	'css!rosmod/Libs/cm/theme/isotope.css',
+	'css!rosmod/Libs/cm/theme/lesser-dark.css',
+	'css!rosmod/Libs/cm/theme/liquibyte.css',
+	'css!rosmod/Libs/cm/theme/material.css',
+	'css!rosmod/Libs/cm/theme/mbo.css',
+	'css!rosmod/Libs/cm/theme/mdn-like.css',
+	'css!rosmod/Libs/cm/theme/midnight.css',
+	'css!rosmod/Libs/cm/theme/monokai.css',
+	'css!rosmod/Libs/cm/theme/neat.css',
+	'css!rosmod/Libs/cm/theme/neo.css',
+	'css!rosmod/Libs/cm/theme/night.css',
+	'css!rosmod/Libs/cm/theme/paraiso-dark.css',
+	'css!rosmod/Libs/cm/theme/paraiso-light.css',
+	'css!rosmod/Libs/cm/theme/pastel-on-dark.css',
+	'css!rosmod/Libs/cm/theme/railscasts.css',
+	'css!rosmod/Libs/cm/theme/rubyblue.css',
+	'css!rosmod/Libs/cm/theme/seti.css',
+	'css!rosmod/Libs/cm/theme/solarized.css',
+	'css!rosmod/Libs/cm/theme/the-matrix.css',
+	'css!rosmod/Libs/cm/theme/tomorrow-night-bright.css',
+	'css!rosmod/Libs/cm/theme/tomorrow-night-eighties.css',
+	'css!rosmod/Libs/cm/theme/ttcn.css',
+	'css!rosmod/Libs/cm/theme/twilight.css',
+	'css!rosmod/Libs/cm/theme/vibrant-ink.css',
+	'css!rosmod/Libs/cm/theme/xq-dark.css',
+	'css!rosmod/Libs/cm/theme/xq-light.css',
+	'css!rosmod/Libs/cm/theme/yeti.css',
+	'css!rosmod/Libs/cm/theme/zenburn.css'],
     function(Util,
              CodeMirror,
 	     CodeMirrorModeClike,
@@ -42,9 +86,9 @@ define(['js/util',
 		lineNumbers: true,
 		matchBrackets: true,
 		viewPortMargin: Infinity,
-		keyMap: 'emacs',
+		keyMap: 'sublime',
 		path: 'rosmod/Libs/cm/lib/',
-		theme: 'night',
+		theme: 'default',
 		fullscreen: false,
 		mode: {name:'text/x-c++src', useCPP:true}
 	    };
@@ -60,6 +104,57 @@ define(['js/util',
 		    cm.setOption('fullScreen', false);
 		}
 	    });
+
+	    // THEME SELECT
+	    var editor = this.editor;
+	    var input = document.getElementById("theme_select");
+	    $(input).on('change', selectTheme);
+	    function selectTheme() {
+		var theme = input.options[input.selectedIndex].textContent;
+		editor.setOption("theme", theme);
+		location.hash = "#" + theme;
+	    }
+	    var choice = (location.hash && location.hash.slice(1)) ||
+		(document.location.search &&
+		 decodeURIComponent(document.location.search.slice(1)));
+	    var kbs = ["emacs", "sublime", "vim"];
+	    if (choice) {
+		if (kbs.indexOf(choice) < 0) {
+		    input.value = choice;
+		    editor.setOption("theme", choice);
+		}
+	    }
+	    CodeMirror.on(window, "hashchange", function() {
+		var theme = location.hash.slice(1);
+		var kbs = ["emacs", "sublime", "vim"];
+		if (theme && kbs.indexOf(theme) < 0) { 
+		    input.value = theme; selectTheme(); 
+		}
+	    });
+
+	    // KEY MAP SELECTION
+	    var kb_input = document.getElementById("binding_select");
+	    $(kb_input).on('change', selectKeyBinding);
+	    function selectKeyBinding() {
+		var binding = kb_input.options[kb_input.selectedIndex].textContent;
+		editor.setOption("keyMap", binding);
+		location.hash = "#" + binding;
+	    }
+	    var binding = (location.hash && location.hash.slice(1)) ||
+		(document.location.search &&
+		 decodeURIComponent(document.location.search.slice(1)));
+	    if (binding && kbs.indexOf(binding) > -1) {
+		kb_input.value = binding;
+		editor.setOption("keyMap", binding);
+	    }
+	    CodeMirror.on(window, "hashchange", function() {
+		var binding = location.hash.slice(1);
+		var kbs = ["emacs", "sublime", "vim"];
+		if (binding && kbs.indexOf(binding) > -1) {
+		    kb_input.value = binding; selectKeyBinding(); 
+		}
+	    });
+
 
             this.text = ''; // Keep track modified text in editor
         };
