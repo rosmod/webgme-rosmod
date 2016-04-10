@@ -5,6 +5,9 @@ define(['q'], function(Q) {
 
     return {
 	trackedProcesses: ['catkin_make', 'node_main', 'roscore'],
+	chunkString: function(str, len) {
+	    return str.match(new RegExp('(.|[\r\n ]){1,' + len + '}', 'g'));
+	},
 	sanitizePath: function(path) {
 	    return path.replace(/ /g, '\\ ');
 	},
