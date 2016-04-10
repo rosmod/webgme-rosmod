@@ -1260,6 +1260,7 @@
             },
             "registry": {
                 "SVGIcon": "svgs/publisher.svg",
+                "decorator": "SVGDecorator",
                 "isAbstract": false,
                 "position": {
                     "x": 25,
@@ -3402,21 +3403,21 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Operation": {
+                    "AbstractBusinessLogic": {
                         "type": "string"
-                    },
-                    "Period": {
-                        "type": "float"
-                    },
-                    "Deadline": {
-                        "type": "float"
                     },
                     "Priority": {
                         "type": "integer",
                         "min": 1,
                         "max": 99
                     },
-                    "AbstractBusinessLogic": {
+                    "Deadline": {
+                        "type": "float"
+                    },
+                    "Period": {
+                        "type": "float"
+                    },
+                    "Operation": {
                         "type": "string"
                     }
                 },
@@ -6361,10 +6362,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Subnet": {
+                    "Netmask": {
                         "type": "string"
                     },
-                    "Netmask": {
+                    "Subnet": {
                         "type": "string"
                     }
                 }
@@ -7149,14 +7150,14 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "Deadline": {
-                        "type": "float"
+                    "AbstractBusinessLogic": {
+                        "type": "string"
                     },
                     "Operation": {
                         "type": "string"
                     },
-                    "AbstractBusinessLogic": {
-                        "type": "string"
+                    "Deadline": {
+                        "type": "float"
                     }
                 },
                 "pointers": {
@@ -7185,7 +7186,7 @@
             },
             "registry": {
                 "SVGIcon": "svgs/server.svg",
-                "decorator": "SVGDecorator",
+                "decorator": "CodeEditorDecorator",
                 "isAbstract": false,
                 "position": {
                     "x": 413,
@@ -8688,19 +8689,19 @@
                     ]
                 },
                 "attributes": {
-                    "Members": {
-                        "type": "string"
-                    },
-                    "Initialization": {
-                        "type": "string"
-                    },
-                    "Forwards": {
+                    "Definitions": {
                         "type": "string"
                     },
                     "Destruction": {
                         "type": "string"
                     },
-                    "Definitions": {
+                    "Forwards": {
+                        "type": "string"
+                    },
+                    "Initialization": {
+                        "type": "string"
+                    },
+                    "Members": {
                         "type": "string"
                     }
                 },
@@ -10891,8 +10892,8 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "LoggingUnit": {
-                        "type": "integer"
+                    "EnableLogging": {
+                        "type": "boolean"
                     },
                     "SchedulingScheme": {
                         "type": "string",
@@ -10902,8 +10903,8 @@
                             "EDF"
                         ]
                     },
-                    "EnableLogging": {
-                        "type": "boolean"
+                    "LoggingUnit": {
+                        "type": "integer"
                     }
                 },
                 "pointers": {
@@ -11472,12 +11473,12 @@
                     ]
                 },
                 "attributes": {
-                    "CMDLine": {
-                        "type": "string"
-                    },
                     "Priority": {
                         "type": "integer",
                         "max": 99
+                    },
+                    "CMDLine": {
+                        "type": "string"
                     }
                 }
             },
@@ -14278,10 +14279,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Key": {
+                    "Directory": {
                         "type": "string"
                     },
-                    "Directory": {
+                    "Key": {
                         "type": "string"
                     }
                 }
@@ -14566,10 +14567,10 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "IP": {
+                    "NetworkProfile": {
                         "type": "string"
                     },
-                    "NetworkProfile": {
+                    "IP": {
                         "type": "string"
                     }
                 },
@@ -15877,16 +15878,16 @@
                     ]
                 },
                 "attributes": {
-                    "OS": {
-                        "type": "string"
-                    },
-                    "Architecture": {
+                    "Device ID Command": {
                         "type": "string"
                     },
                     "Device ID": {
                         "type": "string"
                     },
-                    "Device ID Command": {
+                    "Architecture": {
+                        "type": "string"
+                    },
+                    "OS": {
                         "type": "string"
                     }
                 },
@@ -16164,7 +16165,7 @@
         },
         "b1b6773e-6831-0ae2-22a4-36f4f9e82182": {
             "attributes": {
-                "name": "Publisher"
+                "name": "Publisher_port"
             },
             "base": "0066ce30-e372-bb27-23c3-219c7d934553",
             "meta": {},
@@ -17562,10 +17563,10 @@
             "base": "da2ea5d7-26ee-0923-0025-38bfbceb5293",
             "meta": {
                 "attributes": {
-                    "Operation": {
+                    "AbstractBusinessLogic": {
                         "type": "string"
                     },
-                    "AbstractBusinessLogic": {
+                    "Operation": {
                         "type": "string"
                     }
                 },
@@ -19571,15 +19572,15 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Priority": {
-                        "type": "integer",
-                        "max": 99
+                    "Deadline": {
+                        "type": "float"
                     },
                     "NetworkProfile": {
                         "type": "string"
                     },
-                    "Deadline": {
-                        "type": "float"
+                    "Priority": {
+                        "type": "integer",
+                        "max": 99
                     }
                 }
             },
@@ -21070,13 +21071,13 @@
             "base": "cd891e7b-e2ea-e929-f6cd-9faf4f1fc045",
             "meta": {
                 "attributes": {
-                    "Detailed Description": {
+                    "Authors": {
                         "type": "string"
                     },
                     "Brief Description": {
                         "type": "string"
                     },
-                    "Authors": {
+                    "Detailed Description": {
                         "type": "string"
                     }
                 }
