@@ -118,6 +118,7 @@ define([
     SoftwareGenerator.prototype.notify = function(level, msg) {
 	var self = this;
 	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
+	var max_msg_len = 100;
 	if (level=='error')
 	    self.logger.error(msg);
 	else if (level=='debug')
@@ -127,7 +128,14 @@ define([
 	else if (level=='warning')
 	    self.logger.warn(msg);
 	self.createMessage(self.activeNode, msg, level);
-	self.sendNotification(prefix+msg);
+	if (msg.length < max_msg_len)
+	    self.sendNotification(prefix+msg);
+	else {
+	    var splitMsgs = utils.chunkString(msg, max_msg_len);
+	    splitMsgs.map(function(splitMsg) {
+		self.sendNotification(prefix+splitMsg);
+	    });
+	}
     };
 
     /**
