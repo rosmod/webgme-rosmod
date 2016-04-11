@@ -8,11 +8,13 @@
 define([
     'text!./RootViz.html',
     'common/util/ejs',
+    './Buttons',
     './Templates',
     'css!./styles/RootVizWidget.css'
 ], function (
     RootVizHtml,
     ejs,
+    Buttons,
     TEMPLATES) {
     'use strict';
 
@@ -41,6 +43,8 @@ define([
 	this._currentRow = 0;
 	var sizeOfElement = 300;
 	this._numElementsPerRow = Math.floor(width / sizeOfElement);
+	var table = this.$el.find('#rootVizTable');
+	table.append('<col width="'+100/this._numElementsPerRow+'%">');
     };
 
     RootVizWidget.prototype.onWidgetContainerResize = function (width, height) {
