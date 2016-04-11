@@ -27,7 +27,7 @@ config.seedProjects.basePaths = ["./src/seeds"]
 config.requirejsPaths.rosmod = "./src/common/"
 
 // Default Project
-config.client.defaultProject = { name: 'IntroductionToROSMOD' };
+config.client.defaultProject = { name: 'ROSMOD+IntroductionToROSMOD' };
 
 config.client.log.level = 'info';
 
