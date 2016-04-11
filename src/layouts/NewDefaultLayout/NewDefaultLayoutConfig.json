@@ -31,6 +31,12 @@
       "DEBUG_ONLY": false
     },
     {
+      "id": "ModelEditor",
+      "panel": "ModelEditor/ModelEditorPanel",
+      "container": "center",
+      "DEBUG_ONLY": false
+    },
+    {
       "id": "ObjectBrowserPanel",
       "panel": "ObjectBrowser/ObjectBrowserPanel",
       "container": "east",
