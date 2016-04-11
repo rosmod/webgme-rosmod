@@ -24,23 +24,90 @@ define([
 
         this.$el = container;
 
+	this._nodes = [];
         this.nodes = {};
-        this._initialize();
+        var width = this.$el.width(),
+            height = this.$el.height();
+        this._initialize(width);
 
         this._logger.debug('ctor finished');
     };
 
-    RootVizWidget.prototype._initialize = function () {
-        var width = this.$el.width(),
-            height = this.$el.height(),
-            self = this;
-
+    RootVizWidget.prototype._initialize = function (width) {
         // set widget class
-        this.$el.addClass(WIDGET_CLASS);
-        this.$el.append($(RootVizHtml));
+        //this.$el.addClass(WIDGET_CLASS);
+        this.$el.append(RootVizHtml);
+	this._numNodes = 0;
+	this._currentRow = 0;
+	var sizeOfElement = 300;
+	this._numElementsPerRow = Math.floor(width / sizeOfElement);
     };
 
     RootVizWidget.prototype.onWidgetContainerResize = function (width, height) {
+	this._logger.error('RESIZING:: ' + width + ' ' + height);
+	this.$el.innerHtml = '';
+	this._initialize(width);
+	this._nodes.map(function(desc) {
+	    this.createNodeEntry(desc);
+	});
+    };
+
+    RootVizWidget.prototype.createNodeEntry = function (desc) {
+	var isValid = NODE_WHITELIST[desc.meta],
+	table,
+	row,
+	column,
+	projectHtml,
+	panelId,
+	title,
+	authors,
+	brief,
+	detailed,
+	htmlId,
+	html;
+
+	if ((this._numNodes % this._numElementsPerRow) == 0) {
+	    this._currentRow++;
+	    var table = this.$el.find('#rootVizTable');
+	    table.append('<tr style="padding: 5px" id="rowClass'+this._currentRow+'"></tr>');
+	}
+	row = this.$el.find('#rowClass' + this._currentRow);
+	row.append('<td style="padding: 5px" id="colClass'+this._numNodes+'"></td>');
+	column = this.$el.find('#colClass' + this._numNodes);
+
+	title = desc.name;
+	panelId = title.replace(/ /g,'-');
+	authors = desc.authors;
+	brief = desc.brief;
+	detailed = desc.detailed;
+	projectHtml = ejs.render(TEMPLATES['Project.html.ejs'], {
+	    id: panelId,
+	    title: title,
+	    authors: authors,
+	    brief: brief,
+	    detailed: detailed
+	});
+
+	column.append(projectHtml);
+
+        htmlId = panelId + '-node-panel';
+        html = this.$el.find('#' + htmlId);
+
+        html.addClass('panel-info');
+        html.on('mouseenter', (event) => {
+            html.addClass('panel-primary');
+            html.removeClass('panel-info');
+        });
+        html.on('mouseleave', (event) => {
+            html.addClass('panel-info');
+            html.removeClass('panel-primary');
+        });
+        html.on('click', (event) => {
+            this.onNodeClick(desc.id);
+            event.stopPropagation();
+            event.preventDefault();
+        });
+	this._numNodes++;
     };
 
     // Adding/Removing/Updating items
@@ -49,52 +116,11 @@ define([
     };
     RootVizWidget.prototype.addNode = function (desc) {
         if (desc) {
-	    var isValid = NODE_WHITELIST[desc.meta],
-	    column,
-	    projectHtml,
-	    panelId,
-	    title,
-	    authors,
-	    brief,
-	    detailed,
-	    htmlId,
-	    html;
+	    var isValid = NODE_WHITELIST[desc.meta];
 
             if (isValid) {
-		column = this.$el.find('#columnClass');
-
-		title = desc.name;
-		panelId = title.replace(/ /g,'-');
-		authors = desc.authors;
-		brief = desc.brief;
-		detailed = desc.detailed;
-		projectHtml = ejs.render(TEMPLATES['Project.html.ejs'], {
-		    id: panelId,
-		    title: title,
-		    authors: authors,
-		    brief: brief,
-		    detailed: detailed
-		});
-
-		column.append(projectHtml);
-
-                htmlId = panelId + '-node-panel';
-                html = this.$el.find('#' + htmlId);
-
-                html.addClass('panel-info');
-                html.on('mouseenter', (event) => {
-                    html.addClass('panel-primary');
-                    html.removeClass('panel-info');
-                });
-                html.on('mouseleave', (event) => {
-                    html.addClass('panel-info');
-                    html.removeClass('panel-primary');
-                });
-                html.on('click', (event) => {
-                    this.onNodeClick(desc.id);
-                    event.stopPropagation();
-                    event.preventDefault();
-                });
+		this._nodes.push(desc);
+		this.createNodeEntry(desc);
             }
         }
     };
