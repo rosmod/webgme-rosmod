@@ -7,12 +7,16 @@
 
 define([
     'text!./RootViz.html',
+    'js/DragDrop/DragHelper',
+    'js/Widgets/DiagramDesigner/DiagramDesignerWidget',
     'common/util/ejs',
     './Buttons',
     './Templates',
     'css!./styles/RootVizWidget.css'
 ], function (
     RootVizHtml,
+    DragHelper,
+    DiagramDesignerWidget,
     ejs,
     Buttons,
     TEMPLATES) {
@@ -21,8 +25,17 @@ define([
     var RootVizWidget,
         WIDGET_CLASS = 'root-viz';
 
-    RootVizWidget = function (logger, container) {
+    RootVizWidget = function (logger, container, params) {
         this._logger = logger.fork('Widget');
+
+	params = params || {};
+	params.tabsEnabled = false;
+	params.addTabs = false;
+	params.deleteTabs = false;
+	params.reorderTabs = false;
+	params.droppable = true;
+
+	DiagramDesignerWidget.call(this, container, params);
 
         this.$el = container;
 
@@ -31,6 +44,11 @@ define([
         this._initialize();
 
         this._logger.debug('ctor finished');
+    };
+
+    _.extend(RootVizWidget.prototype, DiagramDesignerWidget.prototype);
+
+    RootVizWidget.prototype._initZoom = function (params) {
     };
 
     RootVizWidget.prototype._initialize = function () {
