@@ -449,6 +449,13 @@ define([
 	});
 	return Q.all(tasks);
     };
+    
+    RunExperiment.prototype.cleanHost = function(host) {
+	var self = this;
+	var path = require('path');
+	var base_dir = path.join(host.user.directory, 'experiments');
+	return utils.executeOnHost(['rm -rf ' + base_dir], host.intf.ip, host.user);
+    };
 
     RunExperiment.prototype.deployExperiment = function () {
 	var self = this;
@@ -465,6 +472,16 @@ define([
 		var msg = 'Successfully started experiment.';
 		self.notify('info', msg);
 	    })
+	    .catch(function (err) {
+		var tasks = self.experiment.map(function(link) {
+		    var host = link[1];
+		    return self.cleanHost(host);
+		});
+		return Q.all(tasks)
+		    .then(function() {
+			throw err;
+		    });
+	    });
     };
 
     RunExperiment.prototype.createModelArtifacts = function () {
@@ -473,7 +490,7 @@ define([
 	var fcoNode = self.core.getBaseRoot(self.activeNode);
 
 	var containerX = 100;
-	var hostX = 200;
+	var hostX = 400;
 
 	var rowY = 50;
 
@@ -501,11 +518,7 @@ define([
 	    self.core.setRegistry(cn, 'position', {x: containerX, y:rowY});
 	    self.core.setRegistry(hn, 'position', {x: hostX, y:rowY});
 
-	    rowY += 100;
-
-	    //self.logger.info(JSON.stringify(cn, null, 2));
-	    //self.logger.info(JSON.stringify(hn, null, 2));
-	    //self.logger.info(JSON.stringify(ln, null, 2));
+	    rowY += 200;
 
 	    // use self.core.setAttribute(node, name, value);
 	    //    value here can be any valid JS object (even nested types);
