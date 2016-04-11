@@ -15788,7 +15788,7 @@
                     "x": 510,
                     "y": 158
                 },
-                "validPlugins": "SoftwareGenerator"
+                "validPlugins": "SoftwareGenerator TimingAnalysis"
             },
             "sets": {}
         },
