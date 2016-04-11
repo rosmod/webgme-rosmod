@@ -12,6 +12,12 @@
     "DEBUG_ONLY": false
   },
   {
+    "id": "SetEditor",
+    "title": "SetEditor",
+    "panel": "js/Panels/SetEditor/SetEditorPanel",
+    "DEBUG_ONLY": false
+  },
+  {
     "id": "CodeMirrorViz",
     "title": "CodeMirrorViz",
     "panel": "panels/CodeMirrorViz/CodeMirrorVizPanel",
