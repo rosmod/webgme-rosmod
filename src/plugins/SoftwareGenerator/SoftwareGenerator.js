@@ -222,7 +222,8 @@ define([
 	var child_process = require('child_process');
 
 	// clear out any previous project files
-	child_process.execSync('rm -rf ' + utils.sanitizePath(self.gen_dir));
+	child_process.execSync('rm -rf ' + utils.sanitizePath(path.join(self.gen_dir,'bin')));
+	child_process.execSync('rm -rf ' + utils.sanitizePath(path.join(self.gen_dir,'src')));
 
 	filesToAdd[self.projectModel.name + '.json'] = JSON.stringify(self.projectModel, null, 2);
         filesToAdd[self.projectModel.name + '_metadata.json'] = JSON.stringify({
@@ -266,31 +267,26 @@ define([
 	    }
 	}
 
-	var promises = [];
+	var fileNames = Object.keys(filesToAdd);
+	var tasks = fileNames.map(function(fileName) {
+	    var deferred = Q.defer();
+	    var data = filesToAdd[fileName];
+	    filendir.writeFile(path.join(self.gen_dir, fileName), data, function(err) {
+		if (err) {
+		    deferred.reject(err);
+		}
+		else {
+		    deferred.resolve();
+		}
+	    });
+	    return deferred.promise;
+	});
 
-	return (function () {
-	    for (var f in filesToAdd) {
-		var fname = path.join(self.gen_dir, f),
-		data = filesToAdd[f];
-
-		promises.push(new Promise(function(resolve, reject) {
-		    filendir.writeFile(fname, data, function(err) {
-			if (err) {
-			    self.logger.error(err);
-			    reject(err);
-			}
-			else {
-			    resolve();
-			}
-		    });
-		}));
-	    }
-	    return Q.all(promises);
-	})()
+	return Q.all(tasks)
 	    .then(function() {
 		var msg = 'Generated artifacts.';
 		self.notify('info', msg);
-	    })
+	    });
     };
 
     SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, prefix, pkgInfo, compInfo) {
@@ -341,32 +337,33 @@ define([
 	}
 	var msg = 'Generating documentation.'
 	self.notify('info', msg);
+
+	var path = require('path');
+	var docPath = path.join(self.gen_dir, 'doc');
+	var child_process = require('child_process');
+
+	// clear out any previous documentation
+	child_process.execSync('rm -rf ' + utils.sanitizePath(docPath));
+
         //self.createMessage(self.activeNode, msg);
 	return new Promise(function(resolve, reject) {
 	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
-
 	    terminal.stdout.on('data', function (data) {});
-
 	    terminal.stderr.on('data', function (error) {
 	    });
-
 	    terminal.on('exit', function (code) {
-		//self.logger.debug('document generation:: child process exited with code ' + code);
 		if (code == 0) {
 		    resolve(code);
 		}
 		else {
-		    var procStderr;
 		    reject('document generation:: child process exited with code ' + code);
 		}
 	    });
-
 	    setTimeout(function() {
-		//self.logger.debug('Sending stdin to terminal');
 		terminal.stdin.write('doxygen doxygen_config\n');
 		terminal.stdin.write('make -C ./doc/latex/ pdf\n');
-		terminal.stdin.write('mv ./doc/latex/refman.pdf ' + utils.sanitizePath(self.projectModel.name) + '.pdf');
-		//self.logger.debug('Ending terminal session');
+		terminal.stdin.write('mv ./doc/latex/refman.pdf ' + 
+				     utils.sanitizePath(self.projectModel.name) + '.pdf');
 		terminal.stdin.end();
 	    }, 1000);
 	})
