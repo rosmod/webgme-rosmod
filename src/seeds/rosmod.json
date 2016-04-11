@@ -8801,8 +8801,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 622,
-                    "y": 642
+                    "x": 611,
+                    "y": 1068
                 }
             },
             "sets": {
@@ -10249,7 +10249,7 @@
         },
         "65d2d84f-5ab8-3d05-e968-e3b58bdc4976": {
             "attributes": {
-                "documentation": "# Package\n\nA ROSMOD package contains the definitions for its associated `Messages` and `Services`, which follow the [ROS](http://www.ros.org) definitions, as well as the definitions for ROSMOD `Components`. \n\n### Messages\n\nMessages contain a `definition` attribute (editable using a [CodeMirror](http://codemirror.net) dialog).  This definition attribute conforms to the [ROS Message Description Specification](http://wiki.ros.org/msg).  Messages allow components to interact using `Publishers` and `Subscribers`, through a _non-blocking_, _one-to-many_ publish/subscribe interaction pattern.  Non-blocking means that when a component publishes a message, the publish returns immediately, without waiting for any or all subscribers to acknowledge that they have received the message.\n\n### Services\n\nServices contain a `definition` attribute (editable using a [CodeMirror](http://codemirror.net) dialog). This definition attribute conforms to the [ROS Service Description Specification](http://wiki.ros.org/srv).  Services allow components to interact using `Clients` and `Servers`, through a _blocking_, _one-to-one_ client/server interaction pattern.  Blocking means that the component that issues the client call to the server must wait and cannot execute other code until it receives the response from the server.\n\n### Components\n\nComponents contain `forwards`, `members`, `definitions`, `initialization`, and `destruction` attributes which provide an interface for the user to add their own `C++ code` to the component.  \n\n`Forwards` corresponds to code that comes _before the class declaration_ in the generated `component header file`, e.g \n\n```\n#include <stdio.h>\n```\n\nor user-created structure or class definitions.  \n\n`Members` corresponds to _private members and methods_ that the user wishes to add to the component in the generated `component header file`.\n\n`Definitions` corresponds to function definitions or other code that the user wishes to add to the generated `component source file`.  \n\n`Initialization` corresponds to the code the user wishes to run when the component starts up to initialize members to specific values or begin the process of triggering other components in the system through publish or client interactions.\n\nFinally, `Destruction` allows the user to specify destruction of any objects they have allocated on the heap that need to be manually destructed during component destruction."
+                "documentation": "# Package\n\nA ROSMOD package contains the definitions for its associated `Messages` and `Services`, which follow the [ROS](http://www.ros.org) definitions, as well as the definitions for ROSMOD `Components`. \n\n### Messages\n\nMessages contain a `definition` attribute (editable using a [CodeMirror](http://codemirror.net) dialog).  This definition attribute conforms to the [ROS Message Description Specification](http://wiki.ros.org/msg).  Messages allow components to interact using `Publishers` and `Subscribers`, through a _non-blocking_, _one-to-many_ publish/subscribe interaction pattern.  Non-blocking means that when a component publishes a message, the publish returns immediately, without waiting for any or all subscribers to acknowledge that they have received the message.\n\nHere is an example Message `definition`:\n\n```\nint32 X=123\nint32 Y=-123\nstring FOO=\"this is a constant\"\nstring EXAMPLE=\"this is another constant\"\n```\n\n### Services\n\nServices contain a `definition` attribute (editable using a [CodeMirror](http://codemirror.net) dialog). This definition attribute conforms to the [ROS Service Description Specification](http://wiki.ros.org/srv).  Services allow components to interact using `Clients` and `Servers`, through a _blocking_, _one-to-one_ client/server interaction pattern.  Blocking means that the component that issues the client call to the server must wait and cannot execute other code until it receives the response from the server.\n\nHere is an example Service `definition`:\n\n```\n#request constants\nint8 FOO=1\nint8 BAR=2\n#request fields\nint8 foobar\nanother_pkg/AnotherMessage msg\n---\n#response constants\nuint32 SECRET=123456\n#response fields\nanother_pkg/YetAnotherMessage val\nCustomMessageDefinedInThisPackage value\nuint32 an_integer\n```\n\n### Components\n\nComponents contain `forwards`, `members`, `definitions`, `initialization`, and `destruction` attributes which provide an interface for the user to add their own `C++ code` to the component.  \n\n`Forwards` corresponds to code that comes _before the class declaration_ in the generated `component header file`, e.g \n\n```\n#include <stdio.h>\n```\n\nor user-created structure or class definitions.  \n\n`Members` corresponds to _private members and methods_ that the user wishes to add to the component in the generated `component header file`.\n\n`Definitions` corresponds to function definitions or other code that the user wishes to add to the generated `component source file`.  \n\n`Initialization` corresponds to the code the user wishes to run when the component starts up to initialize members to specific values or begin the process of triggering other components in the system through publish or client interactions.\n\nFinally, `Destruction` allows the user to specify destruction of any objects they have allocated on the heap that need to be manually destructed during component destruction."
             },
             "base": "ff602255-f986-9f09-4b88-049c706b1ea6",
             "meta": {},
@@ -13551,8 +13551,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 482,
-                    "y": 642
+                    "x": 471,
+                    "y": 1068
                 }
             },
             "sets": {
@@ -14216,8 +14216,8 @@
             },
             "registry": {
                 "position": {
-                    "x": 474,
-                    "y": 456
+                    "x": 467,
+                    "y": 591
                 }
             },
             "sets": {}
