@@ -234,9 +234,18 @@
             "856354e0-423e-22ea-d8ea-01567652f9ea": {
                 "6c7747ff-2b18-4c75-c333-ecca2711122a": {},
                 "77acbd3d-c761-40d0-7597-c8c3f7af1464": {
-                    "54c5d354-3116-48ce-5a0c-98f88c9c558d": {},
+                    "54c5d354-3116-48ce-5a0c-98f88c9c558d": {
+                        "36c7d60c-63d9-d245-056c-4f402f2bb05c": {},
+                        "4df034df-6b2b-abc0-8888-002e7637bd8a": {},
+                        "9c518df7-c4d4-81c8-ec81-d8339a14e23e": {}
+                    },
                     "65d2d84f-5ab8-3d05-e968-e3b58bdc4976": {},
-                    "8e836348-cc94-016b-860a-2053c7dd5730": {},
+                    "8e836348-cc94-016b-860a-2053c7dd5730": {
+                        "61618474-bb62-2622-5ada-092877132fda": {},
+                        "665545f9-ec93-622b-28e9-7d16bf4d8504": {},
+                        "9de9380d-5e51-e4dc-45ce-8165e3625b84": {},
+                        "bc816610-9e5b-9be0-d96a-f7eb646ab2e1": {}
+                    },
                     "9487d50d-d781-b262-5107-f3f1bb104296": {},
                     "bd9befeb-567c-3c91-1a3c-aca6b262f1af": {}
                 }
@@ -6399,6 +6408,24 @@
             },
             "sets": {}
         },
+        "36c7d60c-63d9-d245-056c-4f402f2bb05c": {
+            "attributes": {
+                "documentation": "# Components\n\nInside the component, the user can define the interaction ports the component supports (i.e. any `publisher`, `subscriber`, `client`, and `server` objects), by dragging and dropping them into the component's canvas.  The relevant `Message` or `Service` pointers for these objects can be defined by either creating the port by dragging the relevant `Message` or `Service` object from the `Tree Browser` into the canvas and selecting the appropriate port type from the pop-up dialog or by dragging the `Message` or `Service` object onto the relevant `Pointer` of the already created port.  Alternatively, the `Message` or `Service` object can be dragged on to the port in the canvas.\n\nInside this aspect is where the user can specify the c++ code that will execute upon the expiry of the relevant `timer`, or when relevant data is received for a `subscriber` or `server`.  The attributes for the ports and timers can be specified in this aspect as well.  These attributes include the `period` of the `timer` or the `deadline` of the subscriber operation, for instance.\n\nThis component acts as an example for an event-triggered component, which only executes when it receives the appropriate `Message` subscription operation or `Service` request.  The c++ code which executes when these operations are triggered can be found in the `Operation` of the respective `subscriber` and `server`."
+            },
+            "base": "ff602255-f986-9f09-4b88-049c706b1ea6",
+            "meta": {},
+            "parent": "54c5d354-3116-48ce-5a0c-98f88c9c558d",
+            "pointers": {
+                "base": "ff602255-f986-9f09-4b88-049c706b1ea6"
+            },
+            "registry": {
+                "position": {
+                    "x": 38,
+                    "y": 103
+                }
+            },
+            "sets": {}
+        },
         "36d534c1-207e-1c52-5336-c74ff256793f": {
             "attributes": {
                 "Netmask": "255.255.255.0",
@@ -8338,6 +8365,23 @@
             },
             "sets": {}
         },
+        "4df034df-6b2b-abc0-8888-002e7637bd8a": {
+            "attributes": {},
+            "base": "40634285-7f30-4d56-3e22-6047fe32f0d7",
+            "meta": {},
+            "parent": "54c5d354-3116-48ce-5a0c-98f88c9c558d",
+            "pointers": {
+                "Service": "9487d50d-d781-b262-5107-f3f1bb104296",
+                "base": "40634285-7f30-4d56-3e22-6047fe32f0d7"
+            },
+            "registry": {
+                "position": {
+                    "x": 723,
+                    "y": 185
+                }
+            },
+            "sets": {}
+        },
         "4e161a51-b5c9-7603-e3ab-fa1d1c2c5cf3": {
             "attributes": {
                 "Device ID": "BeagleBone Black",
@@ -9841,6 +9885,24 @@
                 ]
             }
         },
+        "61618474-bb62-2622-5ada-092877132fda": {
+            "attributes": {
+                "name": "intro_sender_timer"
+            },
+            "base": "0f474808-eadf-a345-7ee9-7279326aab1e",
+            "meta": {},
+            "parent": "8e836348-cc94-016b-860a-2053c7dd5730",
+            "pointers": {
+                "base": "0f474808-eadf-a345-7ee9-7279326aab1e"
+            },
+            "registry": {
+                "position": {
+                    "x": 561,
+                    "y": 287
+                }
+            },
+            "sets": {}
+        },
         "6179d341-cff4-4f10-0595-3fdd6f3b4306": {
             "attributes": {
                 "Architecture": "armv7l",
@@ -10249,7 +10311,7 @@
         },
         "65d2d84f-5ab8-3d05-e968-e3b58bdc4976": {
             "attributes": {
-                "documentation": "# Package\n\nA ROSMOD package contains the definitions for its associated `Messages` and `Services`, which follow the [ROS](http://www.ros.org) definitions, as well as the definitions for ROSMOD `Components`. \n\n### Messages\n\nMessages contain a `definition` attribute (editable using a [CodeMirror](http://codemirror.net) dialog).  This definition attribute conforms to the [ROS Message Description Specification](http://wiki.ros.org/msg).  Messages allow components to interact using `Publishers` and `Subscribers`, through a _non-blocking_, _one-to-many_ publish/subscribe interaction pattern.  Non-blocking means that when a component publishes a message, the publish returns immediately, without waiting for any or all subscribers to acknowledge that they have received the message.\n\nHere is an example Message `definition`:\n\n```\nint32 X=123\nint32 Y=-123\nstring FOO=\"this is a constant\"\nstring EXAMPLE=\"this is another constant\"\n```\n\n### Services\n\nServices contain a `definition` attribute (editable using a [CodeMirror](http://codemirror.net) dialog). This definition attribute conforms to the [ROS Service Description Specification](http://wiki.ros.org/srv).  Services allow components to interact using `Clients` and `Servers`, through a _blocking_, _one-to-one_ client/server interaction pattern.  Blocking means that the component that issues the client call to the server must wait and cannot execute other code until it receives the response from the server.\n\nHere is an example Service `definition`:\n\n```\n#request constants\nint8 FOO=1\nint8 BAR=2\n#request fields\nint8 foobar\nanother_pkg/AnotherMessage msg\n---\n#response constants\nuint32 SECRET=123456\n#response fields\nanother_pkg/YetAnotherMessage val\nCustomMessageDefinedInThisPackage value\nuint32 an_integer\n```\n\n### Components\n\nComponents contain `forwards`, `members`, `definitions`, `initialization`, and `destruction` attributes which provide an interface for the user to add their own `C++ code` to the component.  \n\n`Forwards` corresponds to code that comes _before the class declaration_ in the generated `component header file`, e.g \n\n```\n#include <stdio.h>\n```\n\nor user-created structure or class definitions.  \n\n`Members` corresponds to _private members and methods_ that the user wishes to add to the component in the generated `component header file`.\n\n`Definitions` corresponds to function definitions or other code that the user wishes to add to the generated `component source file`.  \n\n`Initialization` corresponds to the code the user wishes to run when the component starts up to initialize members to specific values or begin the process of triggering other components in the system through publish or client interactions.\n\nFinally, `Destruction` allows the user to specify destruction of any objects they have allocated on the heap that need to be manually destructed during component destruction."
+                "documentation": "# Package\n\nA ROSMOD package contains the definitions for its associated `Messages` and `Services`, which follow the [ROS](http://www.ros.org) definitions, as well as the definitions for ROSMOD `Components`. \n\n### Messages\n\nMessages contain a `definition` attribute (editable using a [CodeMirror](http://codemirror.net) dialog).  This definition attribute conforms to the [ROS Message Description Specification](http://wiki.ros.org/msg).  Messages allow components to interact using `Publishers` and `Subscribers`, through a _non-blocking_, _one-to-many_ publish/subscribe interaction pattern.  Non-blocking means that when a component publishes a message, the publish returns immediately, without waiting for any or all subscribers to acknowledge that they have received the message.\n\nHere is an example Message `definition`:\n\n```\nint32 X=123\nint32 Y=-123\nstring FOO=\"this is a constant\"\nstring EXAMPLE=\"this is another constant\"\n```\n\n### Services\n\nServices contain a `definition` attribute (editable using a [CodeMirror](http://codemirror.net) dialog). This definition attribute conforms to the [ROS Service Description Specification](http://wiki.ros.org/srv).  Services allow components to interact using `Clients` and `Servers`, through a _blocking_, _one-to-one_ client/server interaction pattern.  Blocking means that the component that issues the client call to the server must wait and cannot execute other code until it receives the response from the server.\n\nHere is an example Service `definition`:\n\n```\n#request constants\nint8 FOO=1\nint8 BAR=2\n#request fields\nint8 foobar\nanother_pkg/AnotherMessage msg\n---\n#response constants\nuint32 SECRET=123456\n#response fields\nanother_pkg/YetAnotherMessage val\nCustomMessageDefinedInThisPackage value\nuint32 an_integer\n```\n\n### Components\n\nComponents are single threaded actors which communicate with other components using the publish/subscribe and client/server interaction patterns. These interactions trigger operations to fire in the components, where the operation is a function implemented by the user inside the `operation` attribute of the relevant `subscriber` or `server`.  The component can also have timer operations which fire either sporadically or periodically and similarly have an `operation` attribute in which the user specifies the c++ code to be run when the operation executes.  These operations happen serially through the operation queue and are not preemptable by other operations of that component.  Inside these operations, `publisher` or `client` objects can be used to trigger operations on components which have associated and connected `servers` or `subscribers`.  These `publisher`, `subscriber`, `client`, `server`, and `timer` objects are added by the user and defined inside the component.\n\nComponents contain `forwards`, `members`, `definitions`, `initialization`, and `destruction` attributes which provide an interface for the user to add their own `C++ code` to the component.  \n\n`Forwards` corresponds to code that comes _before the class declaration_ in the generated `component header file`, e.g \n\n```\n#include <stdio.h>\n```\n\nor user-created structure or class definitions.  \n\n`Members` corresponds to _private members and methods_ that the user wishes to add to the component in the generated `component header file`.\n\n`Definitions` corresponds to function definitions or other code that the user wishes to add to the generated `component source file`.  \n\n`Initialization` corresponds to the code the user wishes to run when the component starts up to initialize members to specific values or begin the process of triggering other components in the system through publish or client interactions.\n\nFinally, `Destruction` allows the user to specify destruction of any objects they have allocated on the heap that need to be manually destructed during component destruction.\n"
             },
             "base": "ff602255-f986-9f09-4b88-049c706b1ea6",
             "meta": {},
@@ -10316,6 +10378,25 @@
                 "position": {
                     "x": 100,
                     "y": 100
+                }
+            },
+            "sets": {}
+        },
+        "665545f9-ec93-622b-28e9-7d16bf4d8504": {
+            "attributes": {
+                "name": "intro_service_server"
+            },
+            "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29",
+            "meta": {},
+            "parent": "8e836348-cc94-016b-860a-2053c7dd5730",
+            "pointers": {
+                "Service": "9487d50d-d781-b262-5107-f3f1bb104296",
+                "base": "5e036e97-58b4-2376-76c5-97ef45bd8c29"
+            },
+            "registry": {
+                "position": {
+                    "x": 661,
+                    "y": 178
                 }
             },
             "sets": {}
@@ -14807,6 +14888,23 @@
             },
             "sets": {}
         },
+        "9c518df7-c4d4-81c8-ec81-d8339a14e23e": {
+            "attributes": {},
+            "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5",
+            "meta": {},
+            "parent": "54c5d354-3116-48ce-5a0c-98f88c9c558d",
+            "pointers": {
+                "Message": "bd9befeb-567c-3c91-1a3c-aca6b262f1af",
+                "base": "c16cfc67-9b4e-eb3c-00a3-7f630c9eedb5"
+            },
+            "registry": {
+                "position": {
+                    "x": 549,
+                    "y": 185
+                }
+            },
+            "sets": {}
+        },
         "9c9bbae3-dc41-51ba-4cf5-e29562b4b28a": {
             "attributes": {
                 "name": "armRotationClient"
@@ -14913,6 +15011,25 @@
                 "position": {
                     "x": 310,
                     "y": 682
+                }
+            },
+            "sets": {}
+        },
+        "9de9380d-5e51-e4dc-45ce-8165e3625b84": {
+            "attributes": {
+                "name": "intro_message_publisher"
+            },
+            "base": "0066ce30-e372-bb27-23c3-219c7d934553",
+            "meta": {},
+            "parent": "8e836348-cc94-016b-860a-2053c7dd5730",
+            "pointers": {
+                "Message": "bd9befeb-567c-3c91-1a3c-aca6b262f1af",
+                "base": "0066ce30-e372-bb27-23c3-219c7d934553"
+            },
+            "registry": {
+                "position": {
+                    "x": 469,
+                    "y": 169
                 }
             },
             "sets": {}
@@ -17349,6 +17466,24 @@
                     }
                 ]
             }
+        },
+        "bc816610-9e5b-9be0-d96a-f7eb646ab2e1": {
+            "attributes": {
+                "documentation": "# Components\n\nInside the component, the user can define the interaction ports the component supports (i.e. any `publisher`, `subscriber`, `client`, and `server` objects), by dragging and dropping them into the component's canvas.  The relevant `Message` or `Service` pointers for these objects can be defined by either creating the port by dragging the relevant `Message` or `Service` object from the `Tree Browser` into the canvas and selecting the appropriate port type from the pop-up dialog or by dragging the `Message` or `Service` object onto the relevant `Pointer` of the already created port.  Alternatively, the `Message` or `Service` object can be dragged on to the port in the canvas.\n\nInside this aspect is where the user can specify the c++ code that will execute upon the expiry of the relevant `timer`, or when relevant data is received for a `subscriber` or `server`.  The attributes for the ports and timers can be specified in this aspect as well.  These attributes include the `period` of the `timer` or the `deadline` of the subscriber operation, for instance.\n\nThis component acts as an example for a time-triggered component, which sends out a `Message` publish through its `publisher` and a `Service` request through its client every time its timer fires.  The code which shows the publishing and server request can be found in the `Operation` of the `intro_sender_timer`."
+            },
+            "base": "ff602255-f986-9f09-4b88-049c706b1ea6",
+            "meta": {},
+            "parent": "8e836348-cc94-016b-860a-2053c7dd5730",
+            "pointers": {
+                "base": "ff602255-f986-9f09-4b88-049c706b1ea6"
+            },
+            "registry": {
+                "position": {
+                    "x": 38,
+                    "y": 103
+                }
+            },
+            "sets": {}
         },
         "bc9e634b-48de-6844-8479-229fb51dfaf8": {
             "attributes": {
@@ -22655,6 +22790,7 @@
         "360e7bbc-5886-3895-2b08-bf3029cc1542": "3",
         "367d7340-3e40-ea91-ceaf-371d90d75662": "zr",
         "36a17ddb-9616-c609-87db-9a66b51dea14": "L",
+        "36c7d60c-63d9-d245-056c-4f402f2bb05c": "8",
         "36d534c1-207e-1c52-5336-c74ff256793f": "b",
         "36ee7805-b198-4905-2be2-8a75cc25ee56": "B",
         "3720f809-69f0-f071-1720-c10f752bc451": "3",
@@ -22738,6 +22874,7 @@
         "4d3899e4-84bf-bee7-df83-842240cb8de0": "t",
         "4d5526bf-5772-cc61-a03d-36ff99280a1f": "v",
         "4db0e989-f533-0c9d-b2cc-f49d5a86a5b1": "B",
+        "4df034df-6b2b-abc0-8888-002e7637bd8a": "B",
         "4e161a51-b5c9-7603-e3ab-fa1d1c2c5cf3": "t",
         "4e2629ce-7551-79a8-56db-4301eddbe42e": "v",
         "4f3899e4-84bf-bee7-df83-842240cb8de0": "o",
@@ -22804,6 +22941,7 @@
         "610b9e89-2b1a-6163-aeac-8b1884e7638b": "B",
         "612d14c8-aee9-dece-1155-2553a795b2ef": "3",
         "61357525-43a6-9058-d9f6-607e9275fb5e": "QQ",
+        "61618474-bb62-2622-5ada-092877132fda": "I",
         "6179d341-cff4-4f10-0595-3fdd6f3b4306": "k",
         "6180db39-e4f4-0e84-a57a-02abf337529e": "9",
         "618ee676-567d-7d3c-8476-b092a2875d9a": "G",
@@ -22823,6 +22961,7 @@
         "65d2d84f-5ab8-3d05-e968-e3b58bdc4976": "8",
         "66161a51-b5c9-7603-e3ab-fa1d1c2c5cf3": "aH",
         "663f8aa3-efbf-11eb-de77-3a1a28c3a5e9": "C",
+        "665545f9-ec93-622b-28e9-7d16bf4d8504": "x",
         "66ac6d84-89c6-00df-4eca-afd2ffa2c128": "U",
         "673899e4-84bf-bee7-df83-842240cb8de0": "z",
         "67979130-7063-d019-b18c-a8aa92e87a87": "Vs",
@@ -23021,11 +23160,13 @@
         "9acc7d5d-68a6-d1cc-7919-5d080e79eac6": "9",
         "9c3899e4-84bf-bee7-df83-842240cb8de0": "L",
         "9c50fc4a-3e84-5cb0-812e-59460da120f2": "f",
+        "9c518df7-c4d4-81c8-ec81-d8339a14e23e": "b",
         "9c9bbae3-dc41-51ba-4cf5-e29562b4b28a": "S",
         "9d161a51-b5c9-7603-e3ab-fa1d1c2c5cf3": "q",
         "9d2d9c42-b177-50aa-46ed-e37bbc906c61": "k",
         "9d7b63f9-8842-d7b9-9993-3e8dcbf21149": "n",
         "9dcc3272-6caa-b54d-e83c-442e56836811": "gh",
+        "9de9380d-5e51-e4dc-45ce-8165e3625b84": "N",
         "9e3899e4-84bf-bee7-df83-842240cb8de0": "q",
         "9e85b7fc-307e-c80c-ada2-02a2845c404d": "W",
         "9ec1ad14-ca6f-6895-63a1-6c501f97a49a": "V",
@@ -23129,6 +23270,7 @@
         "bb79d341-cff4-4f10-0595-3fdd6f3b4306": "t",
         "bc03f4b5-46c2-6b69-9c87-0d66f9dd56a7": "i",
         "bc161a51-b5c9-7603-e3ab-fa1d1c2c5cf3": "I",
+        "bc816610-9e5b-9be0-d96a-f7eb646ab2e1": "r",
         "bc9e634b-48de-6844-8479-229fb51dfaf8": "n3",
         "bd3899e4-84bf-bee7-df83-842240cb8de0": "E",
         "bd9befeb-567c-3c91-1a3c-aca6b262f1af": "o",
