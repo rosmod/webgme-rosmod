@@ -27,8 +27,8 @@ define([
         this.panels = CONFIG.panels;
         this._template = (params && params.template) || defaultLayoutTemplate;
 
-        this._body = null;
-        this._panelToContainer = {};
+        //this._body = null;
+        //this._panelToContainer = {};
     };
 
     /**
