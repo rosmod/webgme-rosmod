@@ -84,7 +84,7 @@ define([
                 'name': 'generateCPN',
                 'displayName': 'Generate CPN',
                 'description': 'Enables generation of CPN-based timing analysis model.',
-                'value': true,
+                'value': false,
                 'valueType': 'boolean',
                 'readOnly': false
             },
@@ -155,21 +155,26 @@ define([
         // Default fails
         self.result.success = false;
 
-        if (typeof WebGMEGlobal !== 'undefined') {
-            callback(new Error('Client-side execution is not supported'), self.result);
-            return;
-        }
-	
 	// What did the user select for our configuration?
 	var currentConfig = self.getCurrentConfig();
-        self.logger.debug('Current configuration ' + JSON.stringify(currentConfig, null, 4));
+	self.generateCPNAnalysis = currentConfig.generateCPN;
+	self.compileCode = currentConfig.compile;
+	self.generateDocs = currentConfig.generate_docs;
+	self.returnZip = currentConfig.returnZip;
+	self.runningOnClient = false;
 
+        if (typeof WebGMEGlobal !== 'undefined') {
+	    self.runningOnClient = true;
+	    callback(new Error('Cannot run ' + self.getName() + ' in the browser!'), self.result);
+	    return;
+        }
+	
         self.updateMETA(self.metaTypes);
 
 	var path = require('path');
 
 	// the active node for this plugin is software -> project
-	var projectNode = self.core.getParent(self.activeNode);
+	var projectNode = self.activeNode;
 	self.projectName = self.core.getAttribute(projectNode, 'name');
 
 	// Setting up variables that will be used by various functions of this plugin
@@ -178,10 +183,7 @@ define([
 				 self.project.projectId,
 				 self.branchName,
 				 self.projectName);
-	self.generateCPNAnalysis = currentConfig.generateCPN;
-	self.compileCode = currentConfig.compile;
-	self.generateDocs = currentConfig.generate_docs;
-	self.returnZip = currentConfig.returnZip;
+
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
 
 	loader.logger = self.logger;
@@ -219,8 +221,13 @@ define([
     };
 
     SoftwareGenerator.prototype.generateArtifacts = function () {
-	var self = this,
-	    path = require('path'),
+	var self = this;
+	if ( self.runningOnClient ) {
+	    var msg = 'Skipping code generation.'
+	    self.notify('info', msg);
+	    return;
+	}
+	var path = require('path'),
 	    filendir = require('filendir'),
 	    filesToAdd = {},
 	    prefix = 'src/';
@@ -307,6 +314,9 @@ define([
     SoftwareGenerator.prototype.downloadLibraries = function ()
     {
 	var self = this;
+	if (self.runningOnClient) {
+	    return;
+	}
 	var path = require('path'),
 	prefix = path.join(self.gen_dir, 'src');
 
@@ -332,7 +342,7 @@ define([
     SoftwareGenerator.prototype.generateDocumentation = function () 
     {
 	var self = this;
-	if (!self.generateDocs) {
+	if (!self.generateDocs || self.runningOnClient) {
 	    var msg = 'Skipping documentation generation.'
 	    self.notify('info', msg);
 	    return;
@@ -377,7 +387,7 @@ define([
     {
 	var self = this,
 	filesToAdd = {};
-	if (!self.generateCPNAnalysis) {
+	if (!self.generateCPNAnalysis || self.runningOnClient) {
 	    var msg = 'Skipping CPN model generation.';
 	    self.notify('info', msg);
 	    return;
@@ -794,7 +804,7 @@ define([
 		    });
 		    return true;
 		}
-		else {
+		else if ( data.indexOf('warning:') > -1 ) {
 		    var compileErrors = utils.parseMakeErrorOutput(
 			data,
 			compile_dir + '/src/'
@@ -807,6 +817,12 @@ define([
 			self.notify('warning', msg);
 		    });
 		    return false;
+		}
+		else {
+		    // handle errors that may come before make gets invoked
+		    var msg = 'Build Error:: ' + data;
+		    self.notify('error', msg);
+		    return true;
 		}
 	    };
 	    self.notify('info', 'compiling on: ' + host.intf.ip + ' into '+compile_dir);
@@ -833,22 +849,21 @@ define([
 	    self.notify('info', 'removing compilation artifacts off: ' + host.intf.ip);
 	    return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.ip, host.user);
 	});
-	return Q.all([t1,t2,t3,t4,t5,t6])
-	    .catch(function(err) {
-		child_process.execSync('rm -rf ' + utils.sanitizePath(archBinPath));
-		self.notify('info', 'removing compilation artifacts off: ' + host.intf.ip);
-		return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.ip, host.user)
-		    .then(function() {
-			throw err;
-		    });
-	    });
+	return Q.all([t1,t2,t3,t4,t5,t6]);
+    };
+    
+    SoftwareGenerator.prototype.cleanHost = function(host) {
+	var self = this;
+	var path = require('path');
+	var base_compile_dir = path.join(host.user.directory, 'compilation');
+	return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.ip, host.user);
     };
 
     SoftwareGenerator.prototype.runCompilation = function ()
     {
 	var self = this;
 
-	if (!self.compileCode) {
+	if (!self.compileCode || self.runningOnClient) {
 	    var msg = 'Skipping compilation.';
 	    self.notify('info', msg);
 	    return;
@@ -864,6 +879,13 @@ define([
     {
 	var self = this;
 	var selectedHosts = []
+
+	var path = require('path');
+	var binPath = path.join(self.gen_dir, 'bin');
+	var child_process = require('child_process');
+
+	// clear out any previous binaries
+	child_process.execSync('rm -rf ' + utils.sanitizePath(binPath));
 
 	for (var arch in validHostList) {
 	    var hosts = validHostList[arch];
@@ -885,13 +907,23 @@ define([
 	return Q.all(tasks)
 	    .then(function() {
 		self.createMessage(self.activeNode, 'Compiled binaries.');
+	    })
+	    .catch(function(err) {
+		child_process.execSync('rm -rf ' + utils.sanitizePath(binPath));
+		var tasks = selectedHosts.map(function (host) {
+		    return self.cleanHost(host);
+		});
+		return Q.all(tasks)
+		    .then(function () {
+			throw err;
+		    });
 	    });
     };
 			      
     SoftwareGenerator.prototype.createZip = function() {
 	var self = this;
 	
-	if (!self.returnZip) {
+	if (!self.returnZip || self.runningOnClient) {
             self.notify('info', 'Skipping compression.');
 	    return;
 	}

@@ -6,7 +6,7 @@ define(['q'], function(Q) {
     return {
 	trackedProcesses: ['catkin_make', 'node_main', 'roscore'],
 	chunkString: function(str, len) {
-	    return str.match(new RegExp('(.|[\r\n ]){1,' + len + '}', 'g'));
+	    return String(str).match(new RegExp('(.|[\r\n ]){1,' + len + '}', 'g'));
 	},
 	sanitizePath: function(path) {
 	    return path.replace(/ /g, '\\ ');
@@ -172,15 +172,12 @@ define(['q'], function(Q) {
 	    var cmdString = cmds.join('\n');
 	    var conn = new Client();
 	    conn.on('ready', function() {
-		//self.logger.info('Client :: ready');
-
 		conn.exec(cmdString, function(err, stream) {
 		    if (err) { 
 			var msg = 'SSH2 Exec error: ' + err;
 			throw new String(msg);
 		    }
 		    stream.on('close', function(code, signal) {
-			//self.logger.info('stream closed.');
 			conn.end();
 			output.returnCode = code;
 			output.signal = signal;
@@ -189,11 +186,9 @@ define(['q'], function(Q) {
 			    output.stdout = output.stdout.replace(new RegExp(cmds[c], 'gi'), '');
 			}
 			output.stderr = remote_stderr;
-			//self.logger.info(output.stdout);
 			deferred.resolve(output);
 		    }).stdout.on('data', function(data) {
 			remote_stdout += data;
-			//self.logger.info('STDOUT:: ' + data);
 		    }).stderr.on('data', function(data) {
 			remote_stderr += data;
 			if (stderrCB(data)) {
