@@ -5,14 +5,6 @@
         "src": "src\\plugins\\SoftwareGenerator",
         "test": "test\\plugins\\SoftwareGenerator"
       },
-      "SoftwareCompiler": {
-        "src": "src\\plugins\\SoftwareCompiler",
-        "test": "test\\plugins\\SoftwareCompiler"
-      },
-      "DeploymentGenerator": {
-        "src": "src\\plugins\\DeploymentGenerator",
-        "test": "test\\plugins\\DeploymentGenerator"
-      },
       "RunExperiment": {
         "src": "src\\plugins\\RunExperiment",
         "test": "test\\plugins\\RunExperiment"
@@ -20,6 +12,10 @@
       "StopExperiment": {
         "src": "src/plugins/StopExperiment",
         "test": "test/plugins/StopExperiment"
+      },
+      "TimingAnalysis": {
+        "src": "src/plugins/TimingAnalysis",
+        "test": "test/plugins/TimingAnalysis"
       }
     },
     "addons": {
