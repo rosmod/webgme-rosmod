@@ -9,7 +9,7 @@ config.server.port = 80;
 
 // Authentication
 config.authentication.enable = true;
-config.authentication.allowGuests = false;
+config.authentication.allowGuests = true;
 
 // Executors
 config.executor.enable = true;
@@ -23,12 +23,11 @@ config.plugin.allowBrowserExecution = false;
 // Seeds
 config.seedProjects.enable = true;
 config.seedProjects.basePaths = ["./src/seeds"]
-config.seedProjects.defaultProject = "ROSMOD"
 
 config.requirejsPaths.rosmod = "./src/common/"
 
 // Default Project
-//config.client.defaultProject = { name: 'guest+ROSMOD' };
+config.client.defaultProject = { name: 'guest+INTRO' };
 
 config.client.log.level = 'info';
 
