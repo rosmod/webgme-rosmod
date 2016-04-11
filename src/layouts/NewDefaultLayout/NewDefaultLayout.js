@@ -1,18 +1,18 @@
-/*globals define, WebGMEGlobal, $ */
 define([
     'lib/jquery/' + (DEBUG ? 'jquery.layout' : 'jquery.layout.min'),
     'js/logger',
+    'js/Utils/ComponentSettings',
     'text!./templates/NewDefaultLayout.html',
     'text!./NewDefaultLayoutConfig.json'
-], function(
-    _jQueryLayout,
-    Logger,
-    defaultLayoutTemplate,
-    LayoutConfigJSON
-) {
+], function(_jQueryLayout,
+	    Logger,
+	    ComponentSettings,
+	    defaultLayoutTemplate,
+	    LayoutConfigJSON) {
+
     'use strict';
     
-    var CONFIG = JSON.parse(LayoutConfigJSON),
+    var NewDefaultLayout,
     SPACING_OPEN_TOUCH = 10,
     SPACING_CLOSED_TOUCH = 10,
     SPACING_OPEN_DESKTOP = 3,
@@ -21,14 +21,27 @@ define([
     SPACING_CLOSED = WebGMEGlobal.SUPPORTS_TOUCH ? SPACING_CLOSED_TOUCH : SPACING_CLOSED_DESKTOP,
     SIDE_PANEL_WIDTH = 202;
 
-    var NewDefaultLayout = function(params) {
+    NewDefaultLayout = function(params) {
         this._logger = (params && params.logger) || Logger.create('gme:Layouts:NewDefaultLayout',
 								  WebGMEGlobal.gmeConfig.client.log);
-        this.panels = CONFIG.panels;
+
+        this._config = NewDefaultLayout.getDefaultConfig();
+        ComponentSettings.resolveWithWebGMEGlobal(this._config, NewDefaultLayout.getComponentId());
+        this._logger.debug('Resolved component-settings', this._config);
+
+        this.panels = (params && params.panels) || this._config.panels;
         this._template = (params && params.template) || defaultLayoutTemplate;
 
-        this._body = null;
-        this._panelToContainer = {};
+        //this._body = null;
+        //this._panelToContainer = {};
+    };
+
+    NewDefaultLayout.getComponentId = function () {
+        return 'NewDefaultLayout';
+    };
+
+    NewDefaultLayout.getDefaultConfig = function  () {
+	return JSON.parse(LayoutConfigJSON);
     };
 
     /**
@@ -52,10 +65,11 @@ define([
 
         this._westPanels = [];
         this._eastPanels = [];
+        this._centerPanels = [];
 
-        this._canvas = null;
-        this._east = null;
         this._body.layout({
+            defaults: {},
+
             north: {
                 closable: false,
                 resizable: false,
@@ -113,8 +127,6 @@ define([
             this._headerPanel.append(panel.$pEl);
         } else if (container === 'footer') {
             this._footerPanel.append(panel.$pEl);
-        } else if (container === 'float') {
-            this._floatContainer.append(panel.$pEl);
         } else if (container === 'west') {
             this._westPanel.append(panel.$pEl);
             this._westPanels.push(panel);
@@ -124,9 +136,10 @@ define([
             this._eastPanel.append(panel.$pEl);
             this._eastPanels.push(panel);
             this._onEastResize();
+            return this._onEastResize;
         } else if (container === 'center') {
             this._centerPanel.append(panel.$pEl);
-            this._canvas = panel;
+            this._centerPanels.push(panel);
             this._onCenterResize();
             return this._onCenterResize;
         }
@@ -139,16 +152,31 @@ define([
      * @return {undefined}
      */
     NewDefaultLayout.prototype.remove = function(panel) {
-        if (this._eastPanels.indexOf(panel) > -1) {
-	    var idx = this._eastPanels.indexOf(panel);
-            this._eastPanels[idx].splice(idx, 1);
-	    this._onCenterResize();
-        } else if (this._westPanels.indexOf(panel) > -1) {
-	    var idx = this._westPanels.indexOf(panel);
-	    this._westPanels[idx].splice(idx, 1);
-	    this._onCenterResize();
-        } else if (this._canvas === panel) {
-            this._centerPanel.empty();
+        var idx;
+
+        //check it in the east pane
+        idx = this._eastPanels.indexOf(panel);
+
+        //check it in the west pane if not found in east
+        if (idx === -1) {
+            idx = this._westPanels.indexOf(panel);
+
+            //check it in the center pane if not found in west
+            if (idx === -1) {
+                idx = this._centerPanels.indexOf(panel);
+
+                if (idx === -1) {
+                    this._logger.warn('Panel to be removed not found');
+                } else {
+                    this._centerPanels.splice(idx, 1);
+                    this._onCenterResize();
+                }
+            } else {
+                this._westPanels.splice(idx, 1);
+            }
+        } else {
+            this._eastPanels.splice(idx, 1);
+            this._onEastResize();
         }
     };
 
@@ -166,8 +194,14 @@ define([
     // These are internally called and used by the example to provide a responsive
     // UI (even if it is simply scaling linearly here)
     NewDefaultLayout.prototype._onCenterResize = function() {
-        if (this._canvas) {
-            this._canvas.setSize(this._centerPanel.width(), this._centerPanel.height());
+        var len = this._centerPanels.length,
+            w = this._centerPanel.width(),
+            h = this._centerPanel.height(),
+            pHeight = Math.floor(h / len),
+            i;
+
+        for (i = 0; i < len; i += 1) {
+            this._centerPanels[i].setSize(w, pHeight);
         }
     };
 
@@ -181,15 +215,6 @@ define([
         for (i = 0; i < len; i += 1) {
             this._eastPanels[i].setSize(w, pHeight);
         }
-
-	/*
-        //TODO: fix this
-        //second widget takes all the available space
-        if (len === 2) {
-            h0 = this._westPanels[0].$pEl.outerHeight(true);
-            this._westPanels[1].setSize(w, h - h0);
-        }
-	*/
     };
 
     NewDefaultLayout.prototype._onWestResize = function () {
