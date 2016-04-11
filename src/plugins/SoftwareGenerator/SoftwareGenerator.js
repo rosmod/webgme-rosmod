@@ -232,6 +232,12 @@ define([
 	    filesToAdd = {},
 	    prefix = 'src/';
 
+	var path = require('path');
+	var child_process = require('child_process');
+
+	// clear out any previous project files
+	child_process.execSync('rm -rf ' + utils.sanitizePath(self.gen_dir));
+
 	filesToAdd[self.projectModel.name + '.json'] = JSON.stringify(self.projectModel, null, 2);
         filesToAdd[self.projectModel.name + '_metadata.json'] = JSON.stringify({
     	    projectID: self.project.projectId,
@@ -730,7 +736,7 @@ define([
 	var self = this;
 
 	var validArchitectures = self.getValidArchitectures();
-	var promises = []
+	var promises = [];
 
 	var tasks = Object.keys(validArchitectures).map(function(index) {
 	    return utils.getAvailableHosts(validArchitectures[index])
@@ -878,7 +884,7 @@ define([
     SoftwareGenerator.prototype.compileBinaries = function (validHostList)
     {
 	var self = this;
-	var selectedHosts = []
+	var selectedHosts = [];
 
 	var path = require('path');
 	var binPath = path.join(self.gen_dir, 'bin');
