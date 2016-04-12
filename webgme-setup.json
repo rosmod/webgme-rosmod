@@ -16,6 +16,10 @@
       "TimingAnalysis": {
         "src": "src/plugins/TimingAnalysis",
         "test": "test/plugins/TimingAnalysis"
+      },
+      "GenerateDocumentation": {
+        "src": "src/plugins/GenerateDocumentation",
+        "test": "test/plugins/GenerateDocumentation"
       }
     },
     "addons": {
