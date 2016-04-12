@@ -12,7 +12,7 @@ define(['q'], function(Q) {
 	    return path.replace(/ /g, '\\ ');
 	},
 	getDeviceType: function(host) {
-	    return host.deviceId + '+' + host.architecture;
+	    return host['Device ID'] + '+' + host.Architecture;
 	},
 	range: function(lowEnd,highEnd) {
 	    var arr = [],
@@ -92,48 +92,57 @@ define(['q'], function(Q) {
 	    if (checkTasks === undefined)
 		checkTasks = true;
 	    // test IP connectivity
-	    var tasks = Object.keys(host.interfaces).map(function(index) {
-		var intf = host.interfaces[index];
-		return self.testPing(intf.ip)
-		    .then(function() {
-			var userTasks = Object.keys(host.users).map(function(index) {
-			    var user = host.users[index];
-			    self.logger.info('testing ' + user.name + ' on ' + intf.ip);
-			    return self.testSSH(intf.ip, user)
-				.then(function() {
-				    return user;
+	    if (host.Interface_list) {
+		var tasks = host.Interface_list.map(function(intf) {
+		    //self.logger.info('pinging ' +intf.IP);
+		    return self.testPing(intf.IP)
+			.then(function() {
+			    if (host.Users) {
+				var userTasks = host.Users.map(function(user) {
+				    //self.logger.info('testing ' + user.name + ' on ' + intf.IP);
+				    return self.testSSH(intf.IP, user)
+					.then(function() {
+					    return user;
+					});
 				});
+				return Q.any(userTasks);
+			    }
+			    else {
+				throw new String('Host ' + host.name + ' has no users!');
+			    }
+			})
+			.then(function(user) {
+			    //self.logger.info(intf.IP + ' got valid user: ' + user.name);
+			    return self.testArchOS(host.Architecture, host.OS, intf.IP, user)
+				.then(function() {
+				    return self.testDeviceId(host['Device ID'], 
+							     host['Device ID Command'],
+							     intf.IP, 
+							     user);
+				})
+				.then(function() {
+				    if (checkTasks)
+					return self.isFree(intf.IP, user)
+				    else
+					return [];
+				})
+				.then(function() {
+				    return {host: host, intf:intf, user:user};
+				});
+			})
+			.catch(function(err) {
+			    self.logger.error(err);
 			});
-			return Q.any(userTasks);
-		    })
-		    .then(function(user) {
-			self.logger.info(intf.ip + ' got valid user: ' + user.name);
-			return self.testArchOS(host.architecture, host.os, intf.ip, user)
-			    .then(function() {
-				return self.testDeviceId(host.deviceId, host.deviceIdCommand, intf.ip, user);
-			    })
-			    .then(function() {
-				if (checkTasks)
-				    return self.isFree(intf.ip, user)
-				else
-				    return [];
-			    })
-			    .then(function() {
-				return {host: host, intf:intf, user:user};
-			    });
-		    })
-		    .catch(function(err) {
-			self.logger.error(err);
-		    });
-	    });
-	    return Q.all(tasks);
+		});
+		return Q.all(tasks);
+	    }
+	    return [];
 	},
 	getAvailableHosts: function(hosts, checkTasks) {
 	    var self = this;
 	    if (checkTasks === undefined)
 		checkTasks = true;
-	    var tasks = Object.keys(hosts).map(function(index) {
-		var host = hosts[index];
+	    var tasks = hosts.map(function(host) {
 		return self.getAvailability(host, checkTasks);
 	    });
 	    return Q.all(tasks)
@@ -201,7 +210,7 @@ define(['q'], function(Q) {
 		host: ip,
 		port: 22,
 		username: user.name,
-		privateKey: require('fs').readFileSync(user.key)
+		privateKey: require('fs').readFileSync(user.Key)
 	    });
 	    return deferred.promise;
 	},
@@ -225,15 +234,12 @@ define(['q'], function(Q) {
 	    var cmdString = cmds.join('\n');
 	    var conn = new Client();
 	    conn.on('ready', function() {
-		//self.logger.info('Client :: ready');
-
 		conn.shell(function(err, stream) {
 		    if (err) { 
 			var msg = 'SSH2 Exec error: ' + err;
 			throw new String(msg);
 		    }
 		    stream.on('close', function(code, signal) {
-			//self.logger.info('stream closed.');
 			conn.end();
 			output.returnCode = code;
 			output.signal = signal;
@@ -242,11 +248,9 @@ define(['q'], function(Q) {
 			    output.stdout = output.stdout.replace(new RegExp(cmds[c], 'gi'), '');
 			}
 			output.stderr = remote_stderr;
-			//self.logger.info(output.stdout);
 			deferred.resolve(output);
 		    }).stdout.on('data', function(data) {
 			remote_stdout += data;
-			//self.logger.info('STDOUT:: ' + data);
 		    }).stderr.on('data', function(data) {
 			remote_stderr += data;
 			conn.end();
@@ -258,7 +262,7 @@ define(['q'], function(Q) {
 		host: ip,
 		port: 22,
 		username: user.name,
-		privateKey: require('fs').readFileSync(user.key)
+		privateKey: require('fs').readFileSync(user.Key)
 	    });
 	    return deferred.promise;
 	},
@@ -315,7 +319,7 @@ define(['q'], function(Q) {
 	    client.scp(from, {
 		host: ip,
 		username: user.name,
-		privateKey: require('fs').readFileSync(user.key),
+		privateKey: require('fs').readFileSync(user.Key),
 		path: to
 	    }, function(err) {
 		if (err)
@@ -339,7 +343,7 @@ define(['q'], function(Q) {
 	    var local = to;
 	    var remote = user.name + '@' + ip + ':' + from;
 
-	    var scp = 'scp -o StrictHostKeyChecking=no -i ' + user.key + ' -r ' + remote + ' ' + local;
+	    var scp = 'scp -o StrictHostKeyChecking=no -i ' + user.Key + ' -r ' + remote + ' ' + local;
 	    
 	    var deferred = Q.defer();
 

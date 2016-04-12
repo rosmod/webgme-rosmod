@@ -8,6 +8,7 @@
 define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
+    'text!./metadata.json',
     'common/util/ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/RunExperiment/RunExperiment/Templates/Templates', // 
@@ -18,6 +19,7 @@ define([
 ], function (
     PluginConfig,
     PluginBase,
+    pluginMetadata,
     ejs,
     Converter,
     TEMPLATES,
@@ -26,6 +28,8 @@ define([
     loader,
     Q) {
     'use strict';
+
+    pluginMetadata = JSON.parse(pluginMetadata);
 
     /**
      * Initializes a new instance of RunExperiment.
@@ -39,51 +43,31 @@ define([
         PluginBase.call(this);
 
         this.metaTypes = MetaTypes;
+	this.pluginMetadata = pluginMetadata;
         this.FILES = {
             'node_xml': 'node.xml.ejs'
         };
     };
 
+    RunExperiment.metadata = pluginMetadata;
+
     // Prototypal inheritance from PluginBase.
     RunExperiment.prototype = Object.create(PluginBase.prototype);
     RunExperiment.prototype.constructor = RunExperiment;
 
-    /**
-     * Gets the name of the RunExperiment.
-     * @returns {string} The name of the plugin.
-     * @public
-     */
-    RunExperiment.prototype.getName = function () {
-        return 'RunExperiment';
-    };
-
-    /**
-     * Gets the semantic version (semver.org) of the RunExperiment.
-     * @returns {string} The version of the plugin.
-     * @public
-     */
-    RunExperiment.prototype.getVersion = function () {
-        return '0.1.0';
-    };
-
-    /**
-     * Gets the configuration structure for the ObservationSelection.
-     * The ConfigurationStructure defines the configuration for the plugin
-     * and will be used to populate the GUI when invoking the plugin from webGME.
-     * @returns {object} The version of the plugin.
-     * @public
-     */
-    RunExperiment.prototype.getConfigStructure = function() {
-        return [
-	    {
-		'name': 'returnZip',
-		'displayName': 'Zip and return generated artifacts.',
-		'description': 'If true, it enables the client to download a zip of the artifacts.',
-		'value': false,
-		'valueType': 'boolean',
-		'readOnly': false
-	    }
-        ];
+    RunExperiment.prototype.notify = function(level, msg) {
+	var self = this;
+	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
+	if (level=='error')
+	    self.logger.error(msg);
+	else if (level=='debug')
+	    self.logger.debug(msg);
+	else if (level=='info')
+	    self.logger.info(msg);
+	else if (level=='warning')
+	    self.logger.warn(msg);
+	self.createMessage(self.activeNode, msg, level);
+	self.sendNotification(prefix+msg);
     };
 
     RunExperiment.prototype.notify = function(level, msg) {
@@ -153,17 +137,14 @@ define([
 				 self.experimentName,
 				 'xml');
 
-	//self.logger.info('loading project: ' + projectName);
-	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
+	loader.loadModel(self.core, projectNode)
 	    .then(function(projectModel) {
 		self.projectModel = projectModel;
-		//self.logger.info('parsed model!');
-		// update the object's selectedExperiment variable
-		self.selectedExperiment = self.projectModel.experiments[self.experimentName];
 		// check to make sure we have the right experiment
 		var expPath = self.core.getPath(self.activeNode);
-		if ( expPath != self.selectedExperiment.path ) {
-		    throw new String("Experiments exist with the same name, can't properly resolve!");
+		self.selectedExperiment = self.projectModel.pathDict[expPath];
+		if (!self.selectedExperiment) {
+		    throw new String("Cannot find experiment!");
 		}
 		return self.mapContainersToHosts();
 	    })
@@ -213,49 +194,58 @@ define([
     RunExperiment.prototype.mapContainersToHosts = function () {
 	var self = this;
 
-	self.notify('info','Experiment mapping containers in ' + self.selectedExperiment.deployment.name +
-			 ' to hosts in '  + self.selectedExperiment.system.name);
+	self.notify('info','Experiment mapping containers in ' + 
+		    self.selectedExperiment.Deployment.name +
+		    ' to hosts in '  + self.selectedExperiment.System.name);
 
-	var containers = self.selectedExperiment.deployment.containers;
-	return utils.getAvailableHosts(self.selectedExperiment.system.hosts)
+	var containers = self.selectedExperiment.Deployment.Container_list;
+	var host_list = self.selectedExperiment.System.Host_list;
+	if (!containers || !host_list) {
+	    throw new String('System must have hosts and Deployment must have containers!');
+	}
+	return utils.getAvailableHosts(host_list)
 	    .then(function(hosts) {
-		var containerLength = Object.keys(containers).length;
-		self.notify('info', containerLength + ' mapping to ' + hosts.length);
-		if (hosts.length < containerLength) {
-		    throw new String('Cannot map ' + containerLength +
+		self.notify('info', containers.length + ' mapping to ' + hosts.length);
+		if (hosts.length < containers.length) {
+		    throw new String('Cannot map ' + containers.length +
 				     ' containers to ' + hosts.length +
 				     ' available hosts.');
 		}
 		var sortedContainers = [];
 		// figure out which containers have which constraints;
-		for (var c in containers) {
-		    var container = containers[c];
+		containers.map(function(container) {
 		    container.constraints = [];
-		    for (var n in container.nodes) {
-			var node = container.nodes[n];
-			for (var ci in node.compInstances) {
-			    var comp = node.compInstances[ci].component;
-			    for (var co in comp.constraints) {
-				var constraint = comp.constraints[co];
-				if (container.constraints.indexOf(constraint) == -1) {
-				    container.constraints.push(constraint);
-				}
+		    if (container.Node_list) {
+			container.Node_list.map(function(node) {
+			    if (node['Component Instance_list']) {
+				node['Component Instance_list'].map(function(ci) {
+				    var comp = ci.Component;
+				    if (comp.Constraint_list) {
+					comp.Constraint_list.map(function(constraint) {
+					    if (container.constraints.indexOf(constraint) == -1) {
+						container.constraints.push(constraint);
+					    }
+					});
+				    }
+				});
 			    }
-			}
+			});
 		    }
 		    sortedContainers.push(container);
-		}
+		});
 		// Sort containers by decreasing number of constraints
 		// sort function :  < 0 -> a < b ; = 0 -> a==b ; > 0 -> b < a
-		sortedContainers.sort(function(a,b){ return b.constraints.length - a.constraints.length});
+		sortedContainers.sort(function(a,b) { 
+		    return b.constraints.length - a.constraints.length
+		});
 		// Actually perform the mapping
-		for (var c in sortedContainers) {
+		for (var c=0; c<sortedContainers.length; c++) {
 		    var container = sortedContainers[c];
 		    var constraints = container.constraints;
 		    var foundHost = false;
 		    for (var j=0; j<hosts.length; j++) {
 			var host = hosts[j];
-			var capabilities = host.host.capabilities;
+			var capabilities = host.host.Capability_list;
 			if (self.capabilitiesMeetConstraints(capabilities, constraints)) {
 			    self.experiment.push([container, host]);
 			    hosts.splice(j,1);
@@ -264,7 +254,8 @@ define([
 			}
 		    }
 		    if (!foundHost) {
-			throw new String('Cannot map ' + container.name + ' to any host; constraints: ' +
+			throw new String('Cannot map ' + container.name +
+					 ' to any host; constraints: ' +
 					 JSON.stringify(container.constraints,null,2) +
 					 ' not met.');
 		    }
@@ -274,11 +265,11 @@ define([
 
     RunExperiment.prototype.capabilitiesMeetConstraints = function(capabilities, constraints) {
 	var self = this;
-	if (constraints != undefined && capabilities == undefined) {
-	    return false;
-	}
-	if (constraints == undefined) {
+	if (constraints.length == 0) {
 	    return true;
+	}
+	if (constraints.length > 0 && capabilities == undefined) {
+	    return false;
 	}
 	var capKeys = Object.keys(capabilities);
 	for (var c in constraints) {
@@ -326,46 +317,35 @@ define([
 
 	self.experiment.map(function (containerToHostMap) {
 	    var container = containerToHostMap[0]; // container is [0], host is [1]
-	    Object.keys(container.nodes).map(function(ni) {
-		var node = container.nodes[ni];
-		node.requiredLibs = [];
-		for (var ci in node.compInstances) {
-		    var comp = node.compInstances[ci].component;
-		    for (var l in comp.requiredLibs) {
-			var lib = comp.requiredLibs[l];
-			if ( lib.type == 'Source Library' && node.requiredLibs.indexOf(lib) == -1 )
-			    node.requiredLibs.push(lib);
-		    }
-		}
-		var nodeXMLName = prefix + node.name + '.xml';
-		var nodeXMLTemplate = TEMPLATES[self.FILES['node_xml']];
-		filesToAdd[nodeXMLName] = ejs.render(nodeXMLTemplate, {nodeInfo: node});
-	    });
+	    var nodes = container.Node_list;
+	    if (nodes) {
+		nodes.map(function(node) {
+		    var nodeXMLName = prefix + node.name + '.xml';
+		    var nodeXMLTemplate = TEMPLATES[self.FILES['node_xml']];
+		    filesToAdd[nodeXMLName] = ejs.render(nodeXMLTemplate, {nodeInfo: node});
+		});
+	    }
 	});
 
-	var promises = [];
-
-	return (function () {
-	    for (var f in filesToAdd) {
-		var fname = path.join(self.xml_dir, f),
-		data = filesToAdd[f];
-
-		promises.push(new Promise(function(resolve, reject) {
-		    filendir.writeFile(fname, data, function(err) {
-			if (err) {
-			    reject(err);
-			}
-			else {
-			    resolve();
-			}
-		    });
-		}));
-	    }
-	    return Q.all(promises);
-	})()
+	var fnames = Object.keys(filesToAdd);
+	var tasks = fnames.map(function(f) {
+	    var deferred = Q.defer();
+	    var fname = path.join(self.xml_dir, f),
+	    data = filesToAdd[f];
+	    filendir.writeFile(fname, data, function(err) {
+		if (err) {
+		    deferred.reject(err);
+		}
+		else {
+		    deferred.resolve();
+		}
+	    });
+	    return deferred.promise;
+	});
+	return Q.all(tasks)
 	    .then(function() {
 		self.notify('info', 'Generated artifacts.');
-	    })
+	    });
     };
 
     RunExperiment.prototype.copyArtifactsToHosts = function () {
@@ -374,11 +354,11 @@ define([
 	var tasks = self.experiment.map(function(link) {
 	    var container = link[0];
 	    var host = link[1];
-	    var ip = host.intf.ip;
+	    var ip = host.intf.IP;
 	    var user = host.user;
 	    var devId = utils.getDeviceType(host.host);
 	    var local_exe_dir = path.join(self.root_dir, 'bin', devId)
-	    var deployment_dir = path.join(user.directory,
+	    var deployment_dir = path.join(user.Directory,
 					   'experiments',
 					   self.experimentName);
 	    return utils.mkdirRemote(deployment_dir, ip, user)
@@ -404,7 +384,7 @@ define([
 	var link = self.experiment[0];
 	var container = link[0];
 	var host = link[1];
-	var ip = host.intf.ip;
+	var ip = host.intf.IP;
 	self.rosCoreIp = ip;
 	var user = host.user;
 	var host_commands = [
@@ -424,9 +404,9 @@ define([
 	var tasks = self.experiment.map(function(link) {
 	    var container = link[0];
 	    var host = link[1];
-	    var ip = host.intf.ip;
+	    var ip = host.intf.IP;
 	    var user = host.user;
-	    var deployment_dir = path.join(user.directory,
+	    var deployment_dir = path.join(user.Directory,
 					   'experiments',
 					   self.experimentName);
 	    var host_commands = [
@@ -437,11 +417,13 @@ define([
 		'export ROS_MASTER_URI=http://'+self.rosCoreIp+':'+self.rosCorePort,
 		'export DISPLAY=:0.0'
 	    ];
-	    for (var n in container.nodes) {
+	    if (container.Node_list) {
+		container.Node_list.map(function(node) {
 		host_commands.push('DISPLAY=:0.0 ./node_main -config ' +
-				   container.nodes[n].name + '.xml ' +
-				   container.nodes[n].cmdLine +
+				   node.name + '.xml ' +
+				   node.CMDLine +
 				   ' &');
+		});
 	    }
 	    //host_commands.push('sleep 10');
 	    self.notify('info','starting binaries.');
@@ -453,8 +435,8 @@ define([
     RunExperiment.prototype.cleanHost = function(host) {
 	var self = this;
 	var path = require('path');
-	var base_dir = path.join(host.user.directory, 'experiments');
-	return utils.executeOnHost(['rm -rf ' + base_dir], host.intf.ip, host.user);
+	var base_dir = path.join(host.user.Directory, 'experiments');
+	return utils.executeOnHost(['rm -rf ' + base_dir], host.intf.IP, host.user);
     };
 
     RunExperiment.prototype.deployExperiment = function () {

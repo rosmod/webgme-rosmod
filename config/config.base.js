@@ -10,6 +10,7 @@ config.server.port = 80;
 // Authentication
 config.authentication.enable = true;
 config.authentication.allowGuests = true;
+config.authentication.logOutUrl = '/login';
 
 // Executors
 config.executor.enable = true;
@@ -18,7 +19,7 @@ config.core.enableCustomConstraints = true;
 
 // Plugins
 config.plugin.allowServerExecution = true;
-config.plugin.allowBrowserExecution = false;
+//config.plugin.allowBrowserExecution = false;
 
 // Seeds
 config.seedProjects.enable = true;

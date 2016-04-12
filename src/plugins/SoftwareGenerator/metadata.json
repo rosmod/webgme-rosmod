@@ -1,0 +1,38 @@
+{
+  "id": "SoftwareGenerator",
+  "name": "Software Generator",
+  "version": "1.0.0",
+  "description": "Generates and compiles source code for the model.  Optionally generates code documentation.",
+  "icon": {
+    "class": "glyphicon glyphicon-ok-circle",
+    "src": ""
+  },
+  "disableServerSideExecution": false,
+  "disableBrowserSideExecution": true,
+  "configStructure": [
+      {
+          "name": "compile",
+          "displayName": "Compile Code",
+          "description": "Turn off to just generate source files.",
+          "value": true,
+          "valueType": "boolean",
+          "readOnly": false
+      },
+      {
+	  "name": "generate_docs",
+	  "displayName": "Generate Doxygen Docs",
+	  "description": "Turn off to ignorre doc generation.",
+	  "value": false,
+	  "valueType": "boolean",
+	  "readOnly": false
+      },
+      {
+	  "name": "returnZip",
+	  "displayName": "Zip and return generated artifacts.",
+	  "description": "If true, it enables the client to download a zip of the artifacts.",
+	  "value": true,
+	  "valueType": "boolean",
+	  "readOnly": false
+      }
+  ]
+}

@@ -8,6 +8,7 @@
 define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
+    'text!./metadata.json',
     'common/util/ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/SoftwareGenerator/SoftwareGenerator/Templates/Templates', // 
@@ -18,6 +19,7 @@ define([
 ], function (
     PluginConfig,
     PluginBase,
+    pluginMetadata,
     ejs,
     Converter,
     TEMPLATES,
@@ -26,6 +28,8 @@ define([
     loader,
     Q) {
     'use strict';
+
+    pluginMetadata = JSON.parse(pluginMetadata);
 
     /**
      * Initializes a new instance of SoftwareGenerator.
@@ -38,6 +42,7 @@ define([
         // Call base class' constructor.
         PluginBase.call(this);
         this.metaTypes = MetaTypes;
+	this.pluginMetadata = pluginMetadata;
         this.FILES = {
             'component_cpp': 'component.cpp.ejs',
             'component_hpp': 'component.hpp.ejs',
@@ -48,62 +53,11 @@ define([
         };
     };
 
+    SoftwareGenerator.metadata = pluginMetadata;
+
     // Prototypal inheritance from PluginBase.
     SoftwareGenerator.prototype = Object.create(PluginBase.prototype);
     SoftwareGenerator.prototype.constructor = SoftwareGenerator;
-
-    /**
-     * Gets the name of the SoftwareGenerator.
-     * @returns {string} The name of the plugin.
-     * @public
-     */
-    SoftwareGenerator.prototype.getName = function () {
-        return 'SoftwareGenerator';
-    };
-
-    /**
-     * Gets the semantic version (semver.org) of the SoftwareGenerator.
-     * @returns {string} The version of the plugin.
-     * @public
-     */
-    SoftwareGenerator.prototype.getVersion = function () {
-        return '0.1.0';
-    };
-
-    /**
-     * The ConfigurationStructure defines the configuration for the plugin
-     * and will be used to populate the GUI when invoking the plugin from webGME.
-     * @returns {object} The version of the plugin.
-     * @public
-     */
-    SoftwareGenerator.prototype.getConfigStructure = function() {
-        return [
-            {
-                'name': 'compile',
-                'displayName': 'Compile Code',
-                'description': 'Turn off to just generate source files.',
-                'value': false,
-                'valueType': 'boolean',
-                'readOnly': false
-            },
-	    {
-		'name': 'generate_docs',
-		'displayName': 'Generate Doxygen Docs',
-		'description': 'Turn off to ignorre doc generation.',
-		'value': false,
-		'valueType': 'boolean',
-		'readOnly': false
-	    },
-	    {
-		'name': 'returnZip',
-		'displayName': 'Zip and return generated artifacts.',
-		'description': 'If true, it enables the client to download a zip of the artifacts.',
-		'value': true,
-		'valueType': 'boolean',
-		'readOnly': false
-	    }
-        ];
-    };
 
     SoftwareGenerator.prototype.notify = function(level, msg) {
 	var self = this;
@@ -177,7 +131,7 @@ define([
 
 	loader.logger = self.logger;
 	utils.logger = self.logger;
-      	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
+      	loader.loadModel(self.core, projectNode)
   	    .then(function (projectModel) {
 		self.projectModel = projectModel;
         	return self.generateArtifacts();
@@ -234,37 +188,43 @@ define([
             pluginVersion: self.getVersion()
         }, null, 2);
 
-	var doxygenConfigName = '/doxygen_config',
-	    doxygenTemplate = TEMPLATES[self.FILES['doxygen_config']];
-	filesToAdd[doxygenConfigName] = ejs.render(doxygenTemplate, 
-						   {'projectName': self.projectName});
+	var software_folder = self.projectModel.Software_list[0];
+	if (software_folder && software_folder.Package_list) {
+	    software_folder.Package_list.map(function(pkgInfo) {
 
-        for (var pkg in self.projectModel.software.packages) {
-	    var pkgInfo = self.projectModel.software.packages[pkg],
-		cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt',
+		if (pkgInfo.Component_list) {
+		    pkgInfo.Component_list.map(function(compInfo) {
+			self.generateComponentFiles(filesToAdd, prefix, pkgInfo, compInfo);
+		    });
+		}
+
+		if (pkgInfo.Message_list) {
+		    pkgInfo.Message_list.map(function(msgInfo) {
+			var msgFileName = prefix + pkgInfo.name + '/msg/' + msgInfo.name + '.msg';
+			filesToAdd[msgFileName] = msgInfo.Definition;
+		    });
+		}
+		if (pkgInfo.Service_list) {
+		    pkgInfo.Service_list.map(function(srvInfo) {
+			var srvFileName = prefix + pkgInfo.name + '/srv/' + srvInfo.name + '.srv';
+			filesToAdd[srvFileName] = srvInfo.Definition;
+		    });
+		}
+
+		var	cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt',
 		cmakeTemplate = TEMPLATES[self.FILES['cmakelists']];
-	    filesToAdd[cmakeFileName] = ejs.render(cmakeTemplate, {'pkgInfo':pkgInfo});
+		filesToAdd[cmakeFileName] = ejs.render(cmakeTemplate, {
+		    'pkgInfo':pkgInfo, 
+		    'model': self.projectModel
+		});
 
-	    var packageXMLFileName = prefix + pkgInfo.name + '/package.xml',
+		var packageXMLFileName = prefix + pkgInfo.name + '/package.xml',
 		packageXMLTemplate = TEMPLATES[self.FILES['package_xml']];
-	    filesToAdd[packageXMLFileName] = ejs.render(packageXMLTemplate, {'pkgInfo':pkgInfo});
-
-	    for (var cmp in pkgInfo.components) {
-		var compInfo = pkgInfo.components[cmp];
-		self.generateComponentFiles(filesToAdd, prefix, pkgInfo, compInfo);
-	    }
-
-	    for (var msg in pkgInfo.messages) {
-		var msgInfo = pkgInfo.messages[msg],
-		    msgFileName = prefix + pkgInfo.name + '/msg/' + msgInfo.name + '.msg';
-		filesToAdd[msgFileName] = msgInfo.definition;
-	    }
-
-	    for (var srv in pkgInfo.services) {
-		var srvInfo = pkgInfo.services[srv],
-		    srvFileName = prefix + pkgInfo.name + '/srv/' + srvInfo.name + '.srv';
-		filesToAdd[srvFileName] = srvInfo.definition;
-	    }
+		filesToAdd[packageXMLFileName] = ejs.render(packageXMLTemplate, {
+		    'pkgInfo': pkgInfo,
+		    'model': self.projectModel
+		});
+	    });
 	}
 
 	var fileNames = Object.keys(filesToAdd);
@@ -290,13 +250,31 @@ define([
     };
 
     SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, prefix, pkgInfo, compInfo) {
-	var inclFileName = prefix + pkgInfo.name + '/include/' + pkgInfo.name + '/' + compInfo.name + '.hpp',
-	    srcFileName = prefix + pkgInfo.name + '/src/' + pkgInfo.name + '/' + compInfo.name + '.cpp',
+	var self = this;
+	var path = require('path');
+	var moment = require('moment');
+	var inclFileName = path.join(prefix,
+				     pkgInfo.name,
+				     'include',
+				     pkgInfo.name,
+				     compInfo.name + '.hpp'),
+	    srcFileName = path.join(prefix,
+				    pkgInfo.name,
+				    'src',
+				    pkgInfo.name,
+				    compInfo.name + '.cpp'),
 	    compCPPTemplate = TEMPLATES[this.FILES['component_cpp']],
 	    compHPPTemplate = TEMPLATES[this.FILES['component_hpp']];
-	var moment = require('moment');
-	filesToAdd[inclFileName] = ejs.render(compHPPTemplate, {'compInfo':compInfo, 'moment':moment});
-	filesToAdd[srcFileName] = ejs.render(compCPPTemplate, {'compInfo':compInfo, 'moment':moment});
+	filesToAdd[inclFileName] = ejs.render(compHPPTemplate, {
+	    'compInfo': compInfo,
+	    'moment': moment,
+	    'model': self.projectModel
+	});
+	filesToAdd[srcFileName] = ejs.render(compCPPTemplate, {
+	    'compInfo': compInfo,
+	    'moment': moment,
+	    'model': self.projectModel
+	});
     };
 
     SoftwareGenerator.prototype.downloadLibraries = function ()
@@ -306,25 +284,21 @@ define([
 	    return;
 	}
 	var path = require('path'),
-	prefix = path.join(self.gen_dir, 'src');
+	dir = path.join(self.gen_dir, 'src');
 
-	// Get the required node executable
+	// where is the rosmod-actor executable?
 	var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.2/rosmod-node.zip';
-	var dir = prefix;
+	var tasks = [];
+	if (self.projectModel.Software_list[0]['Source Library_list']) {
+	    tasks = self.projectModel.Software_list[0]['Source Library_list'].map(function(lib) {
+		return utils.wgetAndUnzipLibrary(lib.URL, dir);
+	    });
+	}
 
-	var libraries = self.projectModel.software.libraries;
-	var nodeLib = {url:file_url};
-	libraries['rosmod-actor'] = nodeLib;
-
-	var libKeys = Object.keys(libraries);
-	var tasks = libKeys.map(function(libKey) {
-	    var lib = libraries[libKey];
-	    if (lib.url) {
-		return utils.wgetAndUnzipLibrary(lib.url, dir);
-	    }
-	});
-
-	return Q.all(tasks);
+	return Q.all(tasks)
+	    .then(function() {
+		return utils.wgetAndUnzipLibrary(file_url, dir); // get rosmod-actor
+	    });
     };
 
     SoftwareGenerator.prototype.generateDocumentation = function () 
@@ -338,35 +312,61 @@ define([
 	var msg = 'Generating documentation.'
 	self.notify('info', msg);
 
-	var path = require('path');
+	var path = require('path'),
+	    filendir = require('filendir'),
+	    filesToAdd = {};
 	var docPath = path.join(self.gen_dir, 'doc');
 	var child_process = require('child_process');
+	var doxygenConfigName = 'doxygen_config',
+	    doxygenTemplate = TEMPLATES[self.FILES['doxygen_config']];
 
 	// clear out any previous documentation
-	child_process.execSync('rm -rf ' + utils.sanitizePath(docPath));
+	child_process.execSync('rm -rf ' + utils.sanitizePath(docPath) + ' ' + 
+			      utils.sanitizePath(path.join(self.gen_dir,doxygenConfigName)));
 
-        //self.createMessage(self.activeNode, msg);
-	return new Promise(function(resolve, reject) {
-	    var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
-	    terminal.stdout.on('data', function (data) {});
-	    terminal.stderr.on('data', function (error) {
-	    });
-	    terminal.on('exit', function (code) {
-		if (code == 0) {
-		    resolve(code);
+	filesToAdd[doxygenConfigName] = ejs.render(doxygenTemplate, 
+						   {'projectName': self.projectName});
+
+
+	var fileNames = Object.keys(filesToAdd);
+	var tasks = fileNames.map(function(fileName) {
+	    var deferred = Q.defer();
+	    var data = filesToAdd[fileName];
+	    filendir.writeFile(path.join(self.gen_dir, fileName), data, function(err) {
+		if (err) {
+		    deferred.reject(err);
 		}
 		else {
-		    reject('document generation:: child process exited with code ' + code);
+		    deferred.resolve();
 		}
 	    });
-	    setTimeout(function() {
-		terminal.stdin.write('doxygen doxygen_config\n');
-		terminal.stdin.write('make -C ./doc/latex/ pdf\n');
-		terminal.stdin.write('mv ./doc/latex/refman.pdf ' + 
-				     utils.sanitizePath(self.projectModel.name) + '.pdf');
-		terminal.stdin.end();
-	    }, 1000);
-	})
+	    return deferred.promise;
+	});
+
+	return Q.all(tasks)
+	    .then(function() {
+		var deferred = Q.defer();
+		var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
+		terminal.stdout.on('data', function (data) {});
+		terminal.stderr.on('data', function (error) {
+		});
+		terminal.on('exit', function (code) {
+		    if (code == 0) {
+			deferred.resolve(code);
+		    }
+		    else {
+			deferred.reject('document generation:: child process exited with code ' + code);
+		    }
+		});
+		setTimeout(function() {
+		    terminal.stdin.write('doxygen doxygen_config\n');
+		    terminal.stdin.write('make -C ./doc/latex/ pdf\n');
+		    terminal.stdin.write('mv ./doc/latex/refman.pdf ' + 
+					 utils.sanitizePath(self.projectModel.name) + '.pdf');
+		    terminal.stdin.end();
+		}, 1000);
+		return deferred.promise;
+	    })
 	    .then(function() {
 		self.notify('info', 'Generated doxygen documentation.');
 	    });
@@ -375,16 +375,19 @@ define([
     SoftwareGenerator.prototype.getValidArchitectures = function() {
 	var self = this,
 	validArchs = {};
-	for (var sys in self.projectModel.systems) {
-	    var system = self.projectModel.systems[sys];
-	    for (var hst in system.hosts) {
-		var host = system.hosts[hst];
-		var devName = utils.getDeviceType(host);
-		if (validArchs[devName] === undefined) {
-		    validArchs[devName] = [];
+	var systems_folder = self.projectModel.Systems_list[0];
+	if (systems_folder && systems_folder.System_list) {
+	    systems_folder.System_list.map(function(system) {
+		if (system.Host_list) {
+		    system.Host_list.map(function(host) {
+			var devName = utils.getDeviceType(host);
+			if (validArchs[devName] == undefined) {
+			    validArchs[devName] = [];
+			}
+			validArchs[devName].push(host);
+		    });
 		}
-		validArchs[devName].push(host);
-	    }
+	    });
 	}
 	return validArchs;
     };
@@ -394,7 +397,6 @@ define([
 	var self = this;
 
 	var validArchitectures = self.getValidArchitectures();
-	var promises = [];
 
 	var tasks = Object.keys(validArchitectures).map(function(index) {
 	    return utils.getAvailableHosts(validArchitectures[index])
@@ -421,7 +423,7 @@ define([
 	var mkdirp = require('mkdirp');
 	var child_process = require('child_process');
 
-	var base_compile_dir = path.join(host.user.directory, 'compilation');
+	var base_compile_dir = path.join(host.user.Directory, 'compilation');
 	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
 	var archBinPath = path.join(self.gen_dir, 'bin' , utils.getDeviceType(host.host));
 
@@ -440,16 +442,16 @@ define([
 
 	// make the compile dir
 	var t1 = new Promise(function(resolve,reject) {
-	    self.notify('info', 'making compilation directory on: ' + host.intf.ip);
-	    utils.mkdirRemote(compile_dir, host.intf.ip, host.user)
+	    self.notify('info', 'making compilation directory on: ' + host.intf.IP);
+	    utils.mkdirRemote(compile_dir, host.intf.IP, host.user)
 		.then(function() {
 		    resolve();
 		});
 	});
 	// copy the sources to remote
 	var t2 = t1.then(function() {
-	    self.notify('info', 'copying compilation sources to: ' + host.intf.ip);
-	    return utils.copyToHost(self.gen_dir, compile_dir, host.intf.ip, host.user);
+	    self.notify('info', 'copying compilation sources to: ' + host.intf.IP);
+	    return utils.copyToHost(self.gen_dir, compile_dir, host.intf.IP, host.user);
 	});
 	// run the compile step
 	var t3 = t2.then(function() {
@@ -489,10 +491,10 @@ define([
 		    return true;
 		}
 	    };
-	    self.notify('info', 'compiling on: ' + host.intf.ip + ' into '+compile_dir);
-	    return utils.executeOnHost(compile_commands, host.intf.ip, host.user, stderrCB)
+	    self.notify('info', 'compiling on: ' + host.intf.IP + ' into '+compile_dir);
+	    return utils.executeOnHost(compile_commands, host.intf.IP, host.user, stderrCB)
 		.catch(function(err) {
-		    throw new String('Compilation failed on ' + host.intf.ip);
+		    throw new String('Compilation failed on ' + host.intf.IP);
 		});
 	});
 	// make the local binary folder for the architecture
@@ -502,16 +504,16 @@ define([
 	});
 	// copy the compiled binaries from remote into the local bin folder
 	var t5 = t4.then(function() {
-	    self.notify('info', 'copying from ' + host.intf.ip + ' into local storage.');
+	    self.notify('info', 'copying from ' + host.intf.IP + ' into local storage.');
 	    return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
 				      archBinPath + '/.',
-				      host.intf.ip,
+				      host.intf.IP,
 				      host.user);
 	});
 	// remove the remote folders
 	var t6 = t5.then(function() {
-	    self.notify('info', 'removing compilation artifacts off: ' + host.intf.ip);
-	    return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.ip, host.user);
+	    self.notify('info', 'removing compilation artifacts off: ' + host.intf.IP);
+	    return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.IP, host.user);
 	});
 	return Q.all([t1,t2,t3,t4,t5,t6]);
     };
@@ -519,8 +521,8 @@ define([
     SoftwareGenerator.prototype.cleanHost = function(host) {
 	var self = this;
 	var path = require('path');
-	var base_compile_dir = path.join(host.user.directory, 'compilation');
-	return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.ip, host.user);
+	var base_compile_dir = path.join(host.user.Directory, 'compilation');
+	return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.IP, host.user);
     };
 
     SoftwareGenerator.prototype.runCompilation = function ()
@@ -563,14 +565,14 @@ define([
 	}
 
 	var tasks = selectedHosts.map(function (host) {
-	    var msg = 'Compiling for ' + utils.getDeviceType(host.host) + ' on ' + host.intf.ip;
+	    var msg = 'Compiling for ' + utils.getDeviceType(host.host) + ' on ' + host.intf.IP;
 	    self.notify('info', msg);
 	    return self.compileOnHost(host);
 	});
 	
 	return Q.all(tasks)
 	    .then(function() {
-		self.createMessage(self.activeNode, 'Compiled binaries.');
+		self.notify('info', 'Compiled binaries.');
 	    })
 	    .catch(function(err) {
 		child_process.execSync('rm -rf ' + utils.sanitizePath(binPath));

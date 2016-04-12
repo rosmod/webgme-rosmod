@@ -8,6 +8,7 @@
 define([
     'plugin/PluginConfig',
     'plugin/PluginBase',    
+    'text!./metadata.json',
     'common/util/ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/TimingAnalysis/TimingAnalysis/Templates/Templates', // 
@@ -18,6 +19,7 @@ define([
 ], function (
     PluginConfig,
     PluginBase,
+    pluginMetadata,
     ejs,
     Converter,
     TEMPLATES,
@@ -26,6 +28,8 @@ define([
     loader,
     Q) {
     'use strict';
+
+    pluginMetadata = JSON.parse(pluginMetadata);
 
     /**
      * Initializes a new instance of TimingAnalysis.
@@ -38,59 +42,17 @@ define([
         // Call base class' constructor.
         PluginBase.call(this);
         this.metaTypes = MetaTypes;
+	this.pluginMetadata = pluginMetadata;
         this.FILES = {
 	    'cpn': 'cpn.ejs'
         };
     };
 
+    TimingAnalysis.metadata = pluginMetadata;
+
     // Prototypal inheritance from PluginBase.
     TimingAnalysis.prototype = Object.create(PluginBase.prototype);
     TimingAnalysis.prototype.constructor = TimingAnalysis;
-
-    /**
-     * Gets the name of the TimingAnalysis.
-     * @returns {string} The name of the plugin.
-     * @public
-     */
-    TimingAnalysis.prototype.getName = function () {
-        return 'TimingAnalysis';
-    };
-
-    /**
-     * Gets the semantic version (semver.org) of the TimingAnalysis.
-     * @returns {string} The version of the plugin.
-     * @public
-     */
-    TimingAnalysis.prototype.getVersion = function () {
-        return '0.1.0';
-    };
-
-    /**
-     * The ConfigurationStructure defines the configuration for the plugin
-     * and will be used to populate the GUI when invoking the plugin from webGME.
-     * @returns {object} The version of the plugin.
-     * @public
-     */
-    TimingAnalysis.prototype.getConfigStructure = function() {
-        return [
-            {
-                'name': 'generateCPN',
-                'displayName': 'Generate CPN',
-                'description': 'Enables generation of CPN-based timing analysis model.',
-                'value': true,
-                'valueType': 'boolean',
-                'readOnly': false
-            },
-	    {
-		'name': 'returnZip',
-		'displayName': 'Return generated artifacts.',
-		'description': 'If true, it enables the client to download the artifacts.',
-		'value': true,
-		'valueType': 'boolean',
-		'readOnly': false
-	    }
-        ];
-    };
 
     TimingAnalysis.prototype.notify = function(level, msg) {
 	var self = this;
@@ -154,7 +116,7 @@ define([
 
 	loader.logger = self.logger;
 	utils.logger = self.logger;
-      	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
+      	loader.loadProjectModel(self.core, projectNode)
   	    .then(function (projectModel) {
 		self.projectModel = projectModel;
         	return self.generateArtifacts();
@@ -185,6 +147,7 @@ define([
 	var msg = 'Generating CPN Model.';
 	self.notify('info',msg);
 
+	// THIS NEEDS TO BE HEAVILY UPDATED BASED ON NEW STRUCTURE
 	for (var dpl in self.projectModel.deployments) {
 	    var dpl_model = self.projectModel.deployments[dpl]; 
 	    self.createMessage(self.activeNode, 'Parsing Deployment: ' + dpl_model.name);

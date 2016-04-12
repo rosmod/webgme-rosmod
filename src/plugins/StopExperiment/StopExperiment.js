@@ -8,6 +8,7 @@
 define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
+    'text!./metadata.json',
     'rosmod/meta',
     'rosmod/remote_utils',
     'rosmod/modelLoader',
@@ -15,11 +16,13 @@ define([
 ], function (
     PluginConfig,
     PluginBase,
+    pluginMetadata,
     MetaTypes,
     utils,
     loader,
     Q) {
     'use strict';
+    pluginMetadata = JSON.parse(pluginMetadata);
 
     /**
      * Initializes a new instance of StopExperiment.
@@ -32,49 +35,29 @@ define([
         // Call base class' constructor.
         PluginBase.call(this);
 
+	this.pluginMetadata = pluginMetadata;
         this.metaTypes = MetaTypes;
     };
+
+    StopExperiment.metadata = pluginMetadata;
 
     // Prototypal inheritance from PluginBase.
     StopExperiment.prototype = Object.create(PluginBase.prototype);
     StopExperiment.prototype.constructor = StopExperiment;
 
-    /**
-     * Gets the name of the StopExperiment.
-     * @returns {string} The name of the plugin.
-     * @public
-     */
-    StopExperiment.prototype.getName = function () {
-        return 'StopExperiment';
-    };
-
-    /**
-     * Gets the semantic version (semver.org) of the StopExperiment.
-     * @returns {string} The version of the plugin.
-     * @public
-     */
-    StopExperiment.prototype.getVersion = function () {
-        return '0.1.0';
-    };
-
-    /**
-     * Gets the configuration structure for the ObservationSelection.
-     * The ConfigurationStructure defines the configuration for the plugin
-     * and will be used to populate the GUI when invoking the plugin from webGME.
-     * @returns {object} The version of the plugin.
-     * @public
-     */
-    StopExperiment.prototype.getConfigStructure = function() {
-        return [
-	    {
-		'name': 'returnZip',
-		'displayName': 'Zip and return generated experiment logs.',
-		'description': 'If true, it enables the client to download a zip of the experiment outputs.',
-		'value': false,
-		'valueType': 'boolean',
-		'readOnly': false
-	    }
-        ];
+    StopExperiment.prototype.notify = function(level, msg) {
+	var self = this;
+	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
+	if (level=='error')
+	    self.logger.error(msg);
+	else if (level=='debug')
+	    self.logger.debug(msg);
+	else if (level=='info')
+	    self.logger.info(msg);
+	else if (level=='warning')
+	    self.logger.warn(msg);
+	self.createMessage(self.activeNode, msg, level);
+	self.sendNotification(prefix+msg);
     };
 
     StopExperiment.prototype.notify = function(level, msg) {
@@ -221,7 +204,7 @@ define([
 	if (self.activeHosts.length == 0)
 	    throw new String('No actively deployed experiment!');
 	var tasks = self.activeHosts.map(function(host) {
-	    var ip = host.intf.ip;
+	    var ip = host.intf.IP;
 	    var user = host.user;
 	    var host_commands = [
 		'pkill roscore',
@@ -240,9 +223,9 @@ define([
 	var mkdirp = require('mkdirp');
 	mkdirp.sync(localDir);
 	var tasks = self.activeHosts.map(function(host) {
-	    var ip = host.intf.ip;
+	    var ip = host.intf.IP;
 	    var user = host.user;
-	    var remoteDir = path.join(user.directory,
+	    var remoteDir = path.join(user.Directory,
 				 'experiments',
 				 self.experimentName);
 	    self.logger.info('Copying experiment data from ' + ip);
@@ -275,9 +258,9 @@ define([
 	var self = this;
 	var path = require('path');
 	var tasks = self.activeHosts.map(function(host) {
-	    var ip = host.intf.ip;
+	    var ip = host.intf.IP;
 	    var user = host.user;
-	    var remoteDir = path.join(user.directory,
+	    var remoteDir = path.join(user.Directory,
 				      'experiments');
 	    self.logger.info('Removing experiment data on ' + ip);
 	    return utils.executeOnHost(['rm -rf ' + remoteDir], ip, user);

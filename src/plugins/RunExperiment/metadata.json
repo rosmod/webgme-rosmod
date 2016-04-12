@@ -1,0 +1,22 @@
+{
+  "id": "RunExperiment",
+  "name": "Run Experiment",
+  "version": "1.0.0",
+  "description": "Maps the containers to available hosts and runs the experiment.",
+  "icon": {
+    "class": "glyphicon glyphicon-ok-circle",
+    "src": ""
+  },
+  "disableServerSideExecution": false,
+  "disableBrowserSideExecution": true,
+  "configStructure": [
+      {
+	  "name": "returnZip",
+	  "displayName": "Zip and return generated artifacts.",
+	  "description": "If true, it enables the client to download a zip of the artifacts.",
+	  "value": true,
+	  "valueType": "boolean",
+	  "readOnly": false
+      }
+  ]
+}
