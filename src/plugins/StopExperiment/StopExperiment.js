@@ -221,7 +221,7 @@ define([
 	if (self.activeHosts.length == 0)
 	    throw new String('No actively deployed experiment!');
 	var tasks = self.activeHosts.map(function(host) {
-	    var ip = host.intf.ip;
+	    var ip = host.intf.IP;
 	    var user = host.user;
 	    var host_commands = [
 		'pkill roscore',
@@ -240,9 +240,9 @@ define([
 	var mkdirp = require('mkdirp');
 	mkdirp.sync(localDir);
 	var tasks = self.activeHosts.map(function(host) {
-	    var ip = host.intf.ip;
+	    var ip = host.intf.IP;
 	    var user = host.user;
-	    var remoteDir = path.join(user.directory,
+	    var remoteDir = path.join(user.Directory,
 				 'experiments',
 				 self.experimentName);
 	    self.logger.info('Copying experiment data from ' + ip);
@@ -275,9 +275,9 @@ define([
 	var self = this;
 	var path = require('path');
 	var tasks = self.activeHosts.map(function(host) {
-	    var ip = host.intf.ip;
+	    var ip = host.intf.IP;
 	    var user = host.user;
-	    var remoteDir = path.join(user.directory,
+	    var remoteDir = path.join(user.Directory,
 				      'experiments');
 	    self.logger.info('Removing experiment data on ' + ip);
 	    return utils.executeOnHost(['rm -rf ' + remoteDir], ip, user);

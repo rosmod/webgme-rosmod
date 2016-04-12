@@ -1,7 +1,7 @@
 /** @file    <%- compInfo.name %>.hpp 
- *  @author  Author Name here
+ *  @author  <%- compInfo.Authors %>
  *  @date    <%= moment().format() %>
- *  @brief   This file declares the <%- compInfo.name %> class
+ *  @brief   This file declares the <%- compInfo.name %> class; <%- compInfo['Brief Description'] %>
  */
 
 #ifndef CLIENT_HPP
@@ -12,11 +12,13 @@
  * Component Message and Service Headers
  */
 <%
-for (var i=0; i < compInfo.requiredTypes.length; i++) {
+if (compInfo.Types) {
+  compInfo.Types.map(function(type) {
 -%>
-#include "<%- compInfo.requiredTypes[i].packageName %>/<%- compInfo.requiredTypes[i].name %>.h"
+#include "<%- model.pathDict[type.parentPath].name %>/<%- type.name %>.h"
 <%
-}
+    });
+ }
 -%>
 
 #ifdef USE_ROSMOD
@@ -30,7 +32,7 @@ for (var i=0; i < compInfo.requiredTypes.length; i++) {
 /**
  * Forward declarations
  */
-<%- compInfo.forwards %>
+<%- compInfo.Forwards %>
 
 /**
  * @brief <%- compInfo.name %> class
@@ -56,49 +58,61 @@ public:
   void init_timer_operation(const NAMESPACE::TimerEvent& event);
 
 <%
-for (var tmr in compInfo.timers) {
+if (compInfo.Timer_list) {
+  compInfo.Timer_list.map(function(tmr) {
 -%>
   /**
-   * @brief <%- compInfo.timers[tmr].name %>_operation 
+   * @brief <%- tmr.name %>_operation; <%- tmr['Brief Description'] %>
    *
    * This operation is executed every time the  
-   * <%- compInfo.timers[tmr].name %> operation request is serviced 
+   * <%- tmr.name %> operation request is serviced 
    * @param[in] event a timer event
+   *
+   * <%- tmr['Detailed Description'] %>
    */
-  void <%- compInfo.timers[tmr].name %>_operation(const NAMESPACE::TimerEvent& event);
+  void <%- tmr.name %>_operation(const NAMESPACE::TimerEvent& event);
 <%
-}
+    });
+ }
 -%>
 
 <%
-for (var sub in compInfo.subscribers) {
+if (compInfo.Subscriber_list) {
+  compInfo.Subscriber_list.map(function(sub) {
 -%>
   /**
-   * @brief <%- compInfo.subscribers[sub].name %>_operation
+   * @brief <%- sub.name %>_operation; <%- sub['Brief Description'] %>
    *
    * This operation is executed every time the  
-   * <%- compInfo.subscribers[sub].name %> operation request is serviced 
+   * <%- sub.name %> operation request is serviced 
    * @param[in] received_data message received by the component subscriber
+   *
+   * <%- sub['Detailed Description'] %>
    */
-  void <%- compInfo.subscribers[sub].name %>_operation(const <%- compInfo.subscribers[sub].topic.packageName %>::<%- compInfo.subscribers[sub].topic.name %>::ConstPtr& received_data);
+  void <%- sub.name %>_operation(const <%- model.pathDict[sub.Message.parentPath].name %>::<%- sub.Message.name %>::ConstPtr& received_data);
 <%
-}
+    });
+ }
 -%>
 
 <%
-for (var srv in compInfo.servers) {
+if (compInfo.Server_list) {
+  compInfo.Server_list.map(function(srv) {
 -%>
   /**
-   * @brief <%- compInfo.servers[srv].name %>_operation
+   * @brief <%- srv.name %>_operation; <%- srv['Brief Description'] %>
    *
    * This operation is executed every time the  
-   * <%- compInfo.servers[srv].name %> operation request is serviced 
+   * <%- srv.name %> operation request is serviced 
    * @param[in] req request received from the client
    * @param[out] res response sent back to the client
+   *
+   * <%- srv['Detailed Description'] %>
    */
-  bool <%- compInfo.servers[srv].name %>_operation(const <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Request &req, <%- compInfo.servers[srv].service.packageName %>::<%- compInfo.servers[srv].service.name %>::Response &res);
+  bool <%- srv.name %>_operation(const <%- model.pathDict[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Request &req, <%- model.pathDict[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Response &res);
 <%
-}
+    });
+ }
 -%>
 
  /**
@@ -116,46 +130,55 @@ for (var srv in compInfo.servers) {
 private:
 
 <%
-for (var tmr in compInfo.timers) {
+if (compInfo.Timer_list) {
+  compInfo.Timer_list.map(function(tmr) {
 -%>
-  NAMESPACE::Timer <%- compInfo.timers[tmr].name %>;  /*!< <%- compInfo.timers[tmr].name %> Component Timer */
+  NAMESPACE::Timer <%- tmr.name %>;  /*!< <%- tmr.name %> Component Timer */
 <%
-}
--%>
-<%
-for (var svr in compInfo.servers) {
--%>
-  NAMESPACE::ServiceServer <%- compInfo.servers[svr].name %>;  /*!< <%- compInfo.servers[svr].name %> Component Server */
-<%
-}
+    });
+ }
 -%>
 <%
-for (var clt in compInfo.clients) {
+if (compInfo.Server_list) {
+  compInfo.Server_list.map(function(srv) {
+-%>
+  NAMESPACE::ServiceServer <%- srv.name %>;  /*!< <%- srv.name %> Component Server */
+<%
+    });
+ }
+-%>
+<%
+if (compInfo.Client_list) {
+  compInfo.Client_list.map(function(clt) {
  -%>
-  NAMESPACE::ServiceClient <%- compInfo.clients[clt].name %>;  /*!< <%- compInfo.clients[clt].name %> Component Client */
+  NAMESPACE::ServiceClient <%- clt.name %>;  /*!< <%- clt.name %> Component Client */
 <%
-}
+    });
+ }
 -%>
 <%
-for (var pub in compInfo.publishers) {
+if (compInfo.Publisher_list) {
+  compInfo.Publisher_list.map(function(pub) {
  -%>
-  NAMESPACE::Publisher <%- compInfo.publishers[pub].name %>;  /*!< <%- compInfo.publishers[pub].name %> Component Publisher */
+  NAMESPACE::Publisher <%- pub.name %>;  /*!< <%- pub.name %> Component Publisher */
 <%
-}
+    });
+ }
 -%>
 <%
-for (var sub in compInfo.subscribers) {
+if (compInfo.Subscriber_list) {
+  compInfo.Subscriber_list.map(function(sub) {
  -%>
-  // <%- compInfo.subscribers[sub].name %>
-  NAMESPACE::Subscriber <%- compInfo.subscribers[sub].name %>;  /*!< <%- compInfo.subscribers[sub].name %> Component Subscriber */
+  NAMESPACE::Subscriber <%- sub.name %>;  /*!< <%- sub.name %> Component Subscriber */
 <%
-}
+    });
+ }
 -%>
 
   /** 
    * User-defined private variables
    */
-  <%- compInfo.members %>
+  <%- compInfo.Members %>
 };
 
 #endif

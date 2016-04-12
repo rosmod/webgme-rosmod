@@ -154,7 +154,7 @@ define([
 
 	loader.logger = self.logger;
 	utils.logger = self.logger;
-      	loader.loadProjectModel(self.core, self.META, projectNode, self.rootNode)
+      	loader.loadProjectModel(self.core, projectNode)
   	    .then(function (projectModel) {
 		self.projectModel = projectModel;
         	return self.generateArtifacts();
@@ -185,6 +185,7 @@ define([
 	var msg = 'Generating CPN Model.';
 	self.notify('info',msg);
 
+	// THIS NEEDS TO BE HEAVILY UPDATED BASED ON NEW STRUCTURE
 	for (var dpl in self.projectModel.deployments) {
 	    var dpl_model = self.projectModel.deployments[dpl]; 
 	    self.createMessage(self.activeNode, 'Parsing Deployment: ' + dpl_model.name);

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(<%= pkgInfo.name %>)
+project(<%- pkgInfo.name %>)
 
 ## Start Global Marker
 ## End Global Marker
@@ -27,58 +27,41 @@ ELSE()
   message(FATAL_ERROR "Some error something wrong")
 ENDIF()
 
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
-
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
-
-#
-## Declare ROS messages, services and actions 
-#
-
-## To declare and build messages, services or actions from within this
-## package, follow these steps:
-## * Let MSG_DEP_SET be the set of packages whose message types you use in
-##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
-## * In the file package.xml:
-##   * add a build_depend and a run_depend tag for each package in MSG_DEP_SET
-##   * If MSG_DEP_SET isn't empty the following dependencies might have been
-##     pulled in transitively but can be declared for certainty nonetheless:
-##     * add a build_depend tag for "message_generation"
-##     * add a run_depend tag for "message_runtime"
-## * In this file (CMakeLists.txt):
-##   * add "message_generation" and every package in MSG_DEP_SET to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * add "message_runtime" and every package in MSG_DEP_SET to
-##     catkin_package(CATKIN_DEPENDS ...)
-##   * uncomment the add_*_files sections below as needed
-##     and list every .msg/.srv/.action file to be processed
-##   * uncomment the generate_messages entry below
-##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
-
-<% if (Object.keys(pkgInfo.services).length > 0) { %>
+<% 
+if (pkgInfo.Service_list) { 
+-%>
 # Generate services in the 'srv' folder
 add_service_files(
   FILES
-<% for (var srv in pkgInfo.services) { -%>
- <%= pkgInfo.services[srv].name %>.srv
-<% } -%>
+<%   
+  pkgInfo.Service_list.map(function(srv) { 
+-%>
+  <%- srv.name %>.srv
+<%
+  }); 
+-%>
 )
-<% } -%>
+<%
+} 
+-%>
 
-<% if (Object.keys(pkgInfo.messages).length > 0) { %>
+<%
+if (pkgInfo.Message_list) { 
+-%>
 # Generate messages in the 'msg' folder
 add_message_files(
   FILES
-<% for (var msg in pkgInfo.messages) { -%>
- <%= pkgInfo.messages[msg].name %>.msg
-<% } -%>
+<%
+  pkgInfo.Message_list.map(function(msg) { 
+-%>
+  <%- msg.name %>.msg
+<%
+  }); 
+-%>
 )
-<% } -%>
+<%
+} 
+-%>
 
 
 ## Generate actions in the 'action' folder
@@ -120,17 +103,39 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ../node/include
+<% 
+if (pkgInfo.Component_list) {
+  var indexedPackages = [];
+  pkgInfo.Component_list.map(function(cmp) {
+    // GET ALL REQUIRED TYPES (MSG/SRV) INCLUDES
+    if (cmp.Types) {
+      cmp.Types.map(function(type) { 
+        var packageName = model.pathDict[type.parentPath].name;
+        if (indexedPackages.indexOf(packageName) == -1) {
+          indexedPackages.push(packageName);
+-%>
+  ../<%- packageName %>/include
+<% 
+        }
+      });
+    }
+    if (cmp['Libraries']) {
+      cmp['Libraries'].map(function(lib) {
+        if ( lib['Include Directories'] != null ) {
+-%>
+  <%- lib['Include Directories'] %>
 <%
-for (var cmp in pkgInfo.components) {
-   for (var i=0; i<pkgInfo.components[cmp].requiredTypes.length; i++) { -%>
-  ../<%= pkgInfo.components[cmp].requiredTypes[i].packageName %>/include
-<% } 
-   for (var i=0; i<pkgInfo.components[cmp].requiredLibs.length; i++) {
-     if ( pkgInfo.components[cmp].requiredLibs[i].includeDirs !== undefined ) { -%>
-  <%= pkgInfo.components[cmp].requiredLibs[i].includeDirs %>
-<%   }
-   }
-} -%>
+        }
+        if ( lib.type == 'Source Library' ) {
+-%>
+  ../<%- lib.name %>/include
+<%
+        }
+      });
+    }
+  });
+}
+-%>
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -138,31 +143,50 @@ for (var cmp in pkgInfo.components) {
 # catkin_add_nosetests(test)
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-<% for (var cmp in pkgInfo.components) { %>
-add_library(<%= pkgInfo.components[cmp].name %>
-            src/<%= pkgInfo.name%>/<%= pkgInfo.components[cmp].name %>.cpp
+<%
+if (pkgInfo.Component_list) {
+  var indexedPackages = [pkgInfo.name];
+  pkgInfo.Component_list.map(function(cmp) {
+-%>
+add_library(<%- cmp.name %>
+            src/<%- pkgInfo.name %>/<%- cmp.name %>.cpp
             )
-target_link_libraries(<%= pkgInfo.components[cmp].name %>
+target_link_libraries(<%- cmp.name %>
                       ${catkin_LIBRARIES}
 <%
-  for (var i=0; i<pkgInfo.components[cmp].requiredLibs.length; i++) { -%>
-<%  if ( pkgInfo.components[cmp].requiredLibs[i].type == 'Source Library' ) { -%>
-		      <%= pkgInfo.components[cmp].requiredLibs[i].name %>
-<%  } -%>
-<%  if ( pkgInfo.components[cmp].requiredLibs[i].linkLibs !== undefined ) { -%>
-		      <%= pkgInfo.components[cmp].requiredLibs[i].linkLibs %>
-<%  } -%>
-<%} -%>
+    if (cmp['Libraries']) {
+      cmp['Libraries'].map(function(lib) {
+        if ( lib['Link Libraries'] ) {
+-%>
+                      <%- lib['Link Libraries'] %>
+<%
+        }
+        if ( lib.type == 'Source Library' ) {
+-%>
+                      <%- lib.name %>
+<%
+        }
+      });
+    }
+-%>
                       )
-add_dependencies(<%= pkgInfo.components[cmp].name %>
-                 <%= pkgInfo.name %>_generate_messages_cpp
-<% var types = [];
-   for (var typ in pkgInfo.components[cmp].requiredTypes) { 
-     var t = pkgInfo.components[cmp].requiredTypes[typ]; 
-     if (types.indexOf(t) == -1) {
-       types.push(t); -%>
-	         <%= t.packageName %>_generate_messages_cpp
-<%   } 
-   } -%>
+add_dependencies(<%- cmp.name %>
+                 <%- pkgInfo.name %>_generate_messages_cpp
+<%
+    if (cmp.Types) {
+      cmp.Types.map(function(type) {
+        var packageName = model.pathDict[type.parentPath].name;
+        if (indexedPackages.indexOf(packageName) == -1) {
+          indexedPackages.push(packageName);
+-%>
+	         <%- packageName %>_generate_messages_cpp
+<%
+        }
+      });
+    }
+-%>
 		 )
-<% } -%>
+<%
+  });
+} 
+-%>
