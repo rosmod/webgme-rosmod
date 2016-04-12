@@ -8,6 +8,7 @@
 define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
+    'text!./metadata.json',
     'plugin/SoftwareGenerator/SoftwareGenerator/Templates/Templates', // 
     'rosmod/meta',
     'rosmod/remote_utils',
@@ -16,11 +17,14 @@ define([
 ], function (
     PluginConfig,
     PluginBase,
+    pluginMetadata,
     MetaTypes,
     utils,
     loader,
     Q) {
     'use strict';
+
+    pluginMetadata = JSON.parse(pluginMetadata);
 
     /**
      * Initializes a new instance of GenerateDocumentation.
@@ -32,49 +36,15 @@ define([
     var GenerateDocumentation = function () {
         // Call base class' constructor.
         PluginBase.call(this);
+	this.pluginMetadata = pluginMetadata;
         this.metaTypes = MetaTypes;
     };
+
+    GenerateDocumentation.metadata = pluginMetadata;
 
     // Prototypal inheritance from PluginBase.
     GenerateDocumentation.prototype = Object.create(PluginBase.prototype);
     GenerateDocumentation.prototype.constructor = GenerateDocumentation;
-
-    /**
-     * Gets the name of the GenerateDocumentation.
-     * @returns {string} The name of the plugin.
-     * @public
-     */
-    GenerateDocumentation.prototype.getName = function () {
-        return 'GenerateDocumentation';
-    };
-
-    /**
-     * Gets the semantic version (semver.org) of the GenerateDocumentation.
-     * @returns {string} The version of the plugin.
-     * @public
-     */
-    GenerateDocumentation.prototype.getVersion = function () {
-        return '0.1.0';
-    };
-
-    /**
-     * The ConfigurationStructure defines the configuration for the plugin
-     * and will be used to populate the GUI when invoking the plugin from webGME.
-     * @returns {object} The version of the plugin.
-     * @public
-     */
-    GenerateDocumentation.prototype.getConfigStructure = function() {
-        return [
-	    {
-		'name': 'returnZip',
-		'displayName': 'Zip and return generated artifacts.',
-		'description': 'If true, it enables the client to download a zip of the artifacts.',
-		'value': true,
-		'valueType': 'boolean',
-		'readOnly': false
-	    }
-        ];
-    };
 
     GenerateDocumentation.prototype.notify = function(level, msg) {
 	var self = this;

@@ -1,0 +1,22 @@
+{
+  "id": "StopExperiment",
+  "name": "Stop Experiment",
+  "version": "1.0.0",
+  "description": "Stops all instances of the selected experiment and retrieves the logs.",
+  "icon": {
+    "class": "glyphicon glyphicon-ok-circle",
+    "src": ""
+  },
+  "disableServerSideExecution": false,
+  "disableBrowserSideExecution": true,
+  "configStructure": [
+      {
+	  "name": "returnZip",
+	  "displayName": "Zip and return generated artifacts.",
+	  "description": "If true, it enables the client to download a zip of the experiment outputs.",
+	  "value": true,
+	  "valueType": "boolean",
+	  "readOnly": false
+      }
+  ]
+}

@@ -8,6 +8,7 @@
 define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
+    'text!./metadata.json',
     'common/util/ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/RunExperiment/RunExperiment/Templates/Templates', // 
@@ -18,6 +19,7 @@ define([
 ], function (
     PluginConfig,
     PluginBase,
+    pluginMetadata,
     ejs,
     Converter,
     TEMPLATES,
@@ -26,6 +28,8 @@ define([
     loader,
     Q) {
     'use strict';
+
+    pluginMetadata = JSON.parse(pluginMetadata);
 
     /**
      * Initializes a new instance of RunExperiment.
@@ -39,52 +43,17 @@ define([
         PluginBase.call(this);
 
         this.metaTypes = MetaTypes;
+	this.pluginMetadata = pluginMetadata;
         this.FILES = {
             'node_xml': 'node.xml.ejs'
         };
     };
 
+    RunExperiment.metadata = pluginMetadata;
+
     // Prototypal inheritance from PluginBase.
     RunExperiment.prototype = Object.create(PluginBase.prototype);
     RunExperiment.prototype.constructor = RunExperiment;
-
-    /**
-     * Gets the name of the RunExperiment.
-     * @returns {string} The name of the plugin.
-     * @public
-     */
-    RunExperiment.prototype.getName = function () {
-        return 'RunExperiment';
-    };
-
-    /**
-     * Gets the semantic version (semver.org) of the RunExperiment.
-     * @returns {string} The version of the plugin.
-     * @public
-     */
-    RunExperiment.prototype.getVersion = function () {
-        return '0.1.0';
-    };
-
-    /**
-     * Gets the configuration structure for the ObservationSelection.
-     * The ConfigurationStructure defines the configuration for the plugin
-     * and will be used to populate the GUI when invoking the plugin from webGME.
-     * @returns {object} The version of the plugin.
-     * @public
-     */
-    RunExperiment.prototype.getConfigStructure = function() {
-        return [
-	    {
-		'name': 'returnZip',
-		'displayName': 'Zip and return generated artifacts.',
-		'description': 'If true, it enables the client to download a zip of the artifacts.',
-		'value': false,
-		'valueType': 'boolean',
-		'readOnly': false
-	    }
-        ];
-    };
 
     RunExperiment.prototype.notify = function(level, msg) {
 	var self = this;

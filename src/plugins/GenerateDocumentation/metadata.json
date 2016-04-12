@@ -1,0 +1,22 @@
+{
+  "id": "GenerateDocumentation",
+  "name": "Generate Documentation",
+  "version": "1.0.0",
+  "description": "Generates RST, HTML, and LATEX files from `Documentation` Objects.",
+  "icon": {
+    "class": "glyphicon glyphicon-ok-circle",
+    "src": ""
+  },
+  "disableServerSideExecution": false,
+  "disableBrowserSideExecution": false,
+  "configStructure": [
+    {
+	"name": "returnZip",
+	"displayName": "Zip and return generated artifacts.",
+	"description": "If true, it enables the client to download a zip of the artifacts.",
+	"value": true,
+	"valueType": "boolean",
+	"readOnly": false
+    }
+  ]
+}

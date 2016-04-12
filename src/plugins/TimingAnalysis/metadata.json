@@ -1,0 +1,30 @@
+{
+  "id": "TimingAnalysis",
+  "name": "Timing Analysis",
+  "version": "1.0.0",
+  "description": "Generates and performs Timing Analysis on the deployed software models.",
+  "icon": {
+    "class": "glyphicon glyphicon-ok-circle",
+    "src": ""
+  },
+  "disableServerSideExecution": false,
+  "disableBrowserSideExecution": true,
+  "configStructure": [
+      {
+          "name": "generateCPN",
+          "displayName": "Generate CPN",
+          "description": "Enables generation of CPN-based timing analysis model.",
+          "value": true,
+          "valueType": "boolean",
+          "readOnly": false
+      },
+      {
+	  "name": "returnZip",
+	  "displayName": "Zip and return generated artifacts.",
+	  "description": "If true, it enables the client to download the artifacts.",
+	  "value": true,
+	  "valueType": "boolean",
+	  "readOnly": false
+      }
+  ]
+}

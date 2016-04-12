@@ -8,6 +8,7 @@
 define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
+    'text!./metadata.json',
     'common/util/ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/SoftwareGenerator/SoftwareGenerator/Templates/Templates', // 
@@ -18,6 +19,7 @@ define([
 ], function (
     PluginConfig,
     PluginBase,
+    pluginMetadata,
     ejs,
     Converter,
     TEMPLATES,
@@ -26,6 +28,8 @@ define([
     loader,
     Q) {
     'use strict';
+
+    pluginMetadata = JSON.parse(pluginMetadata);
 
     /**
      * Initializes a new instance of SoftwareGenerator.
@@ -38,6 +42,7 @@ define([
         // Call base class' constructor.
         PluginBase.call(this);
         this.metaTypes = MetaTypes;
+	this.pluginMetadata = pluginMetadata;
         this.FILES = {
             'component_cpp': 'component.cpp.ejs',
             'component_hpp': 'component.hpp.ejs',
@@ -48,62 +53,11 @@ define([
         };
     };
 
+    SoftwareGenerator.metadata = pluginMetadata;
+
     // Prototypal inheritance from PluginBase.
     SoftwareGenerator.prototype = Object.create(PluginBase.prototype);
     SoftwareGenerator.prototype.constructor = SoftwareGenerator;
-
-    /**
-     * Gets the name of the SoftwareGenerator.
-     * @returns {string} The name of the plugin.
-     * @public
-     */
-    SoftwareGenerator.prototype.getName = function () {
-        return 'SoftwareGenerator';
-    };
-
-    /**
-     * Gets the semantic version (semver.org) of the SoftwareGenerator.
-     * @returns {string} The version of the plugin.
-     * @public
-     */
-    SoftwareGenerator.prototype.getVersion = function () {
-        return '0.1.0';
-    };
-
-    /**
-     * The ConfigurationStructure defines the configuration for the plugin
-     * and will be used to populate the GUI when invoking the plugin from webGME.
-     * @returns {object} The version of the plugin.
-     * @public
-     */
-    SoftwareGenerator.prototype.getConfigStructure = function() {
-        return [
-            {
-                'name': 'compile',
-                'displayName': 'Compile Code',
-                'description': 'Turn off to just generate source files.',
-                'value': false,
-                'valueType': 'boolean',
-                'readOnly': false
-            },
-	    {
-		'name': 'generate_docs',
-		'displayName': 'Generate Doxygen Docs',
-		'description': 'Turn off to ignorre doc generation.',
-		'value': false,
-		'valueType': 'boolean',
-		'readOnly': false
-	    },
-	    {
-		'name': 'returnZip',
-		'displayName': 'Zip and return generated artifacts.',
-		'description': 'If true, it enables the client to download a zip of the artifacts.',
-		'value': true,
-		'valueType': 'boolean',
-		'readOnly': false
-	    }
-        ];
-    };
 
     SoftwareGenerator.prototype.notify = function(level, msg) {
 	var self = this;
