@@ -8,7 +8,7 @@
 define([
     'text!./RootViz.html',
     'js/DragDrop/DragHelper',
-    'js/Widgets/DiagramDesigner/DiagramDesignerWidget',
+    'js/Widgets/ModelEditor/ModelEditorWidget',
     'common/util/ejs',
     './Buttons',
     './Templates',
@@ -16,7 +16,7 @@ define([
 ], function (
     RootVizHtml,
     DragHelper,
-    DiagramDesignerWidget,
+    ModelEditorWidget,
     ejs,
     Buttons,
     TEMPLATES) {
@@ -34,8 +34,9 @@ define([
 	params.deleteTabs = false;
 	params.reorderTabs = false;
 	params.droppable = true;
+	params.zoomvalues = [0.1,0.5,1.0,1.5,2.0];
 
-	DiagramDesignerWidget.call(this, container, params);
+	ModelEditorWidget.call(this, container, params);
 
         this.$el = container;
 
@@ -46,10 +47,7 @@ define([
         this._logger.debug('ctor finished');
     };
 
-    _.extend(RootVizWidget.prototype, DiagramDesignerWidget.prototype);
-
-    RootVizWidget.prototype._initZoom = function (params) {
-    };
+    _.extend(RootVizWidget.prototype, ModelEditorWidget.prototype);
 
     RootVizWidget.prototype._initialize = function () {
         // set widget class

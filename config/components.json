@@ -1,4 +1,7 @@
 {
+    "BreadCrumbHeader": {
+	"style": "arrows"
+    },
     "GenericUIDefaultLayout": {
 	"panels": [
 	    {
