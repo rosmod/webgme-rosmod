@@ -9,7 +9,6 @@ define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
     'text!./metadata.json',
-    'plugin/SoftwareGenerator/SoftwareGenerator/Templates/Templates', // 
     'rosmod/meta',
     'rosmod/remote_utils',
     'rosmod/modelLoader',
@@ -109,7 +108,8 @@ define([
 				 'generated',
 				 self.project.projectId,
 				 self.branchName,
-				 self.projectName);
+				 self.projectName,
+				 'manual');
 
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
 
@@ -120,7 +120,7 @@ define([
 		self.projectModel = projectModel;
   	    })
 	    .then(function () {
-		return self.generateDocumentation();
+		return self.generateArtifacts();
 	    })
 	    .then(function () {
 		return self.createZip();
@@ -139,10 +139,126 @@ define([
 
     GenerateDocumentation.prototype.generateArtifacts = function() {
 	var self = this;
+	var child_process = require('child_process');
+
+	// clear out any previous project files
+	child_process.execSync('rm -rf ' + utils.sanitizePath(self.gen_dir));
+
+	var paths = Object.keys(self.projectModel.pathDict);
+	var tasks = paths.map(function(path) {
+	    var obj = self.projectModel.pathDict[path];
+	    if (obj.type != 'Documentation')
+		return self.generateObjectDocumentation(obj);
+	});
+	tasks.push(self.generateObjectDocumentation(self.projectModel));
+	return Q.all(tasks);
+    };
+
+    GenerateDocumentation.prototype.pathToFileName = function(path) {
+	var self = this;
+	return path.replace(/\//g, '_');
+    };
+
+    GenerateDocumentation.prototype.addToC = function(obj, str) {
+	var self = this;
+	str += '\n.. toctree::\n    :includehidden:\n    :maxdepth: 2\n\n';
+	obj.childPaths.map(function(childPath) {
+	    str += '    '+self.pathToFileName(childPath) + '\n';
+	});
+	return str;
+    };
+
+    GenerateDocumentation.prototype.generateObjectDocumentation = function(obj) {
+	var self = this;
+	var path = require('path');
+	var fs = require('fs');
+	var pandoc = require('node-pandoc');
+	var filendir = require('filendir');
+
+	var deferred = Q.defer();
+
+	var prefix = 'rst';
+
+	if (obj.Documentation_list) {
+	    obj.Documentation_list.map(function(documentation) {
+		// do something with docs here
+		if (documentation.documentation) {
+		    var args = '-f markdown -t rst';
+		    pandoc(documentation.documentation, args, function(err, result) {
+			if (err) {
+			    deferred.reject('Conversion with pandoc failed: ' + err);
+			}
+			else {
+			    var filePath = path.join(self.gen_dir, prefix, self.pathToFileName(obj.path) + '.rst');
+			    result = self.addToC(obj, result);
+			    filendir.writeFile(filePath, result, function (err) {
+				if (err) {
+				    deferred.reject('Writing file failed: ' + err);
+				}
+				else {
+				    deferred.resolve();
+				}
+			    });
+			}
+		    });
+		}
+		else {
+		    deferred.resolve();
+		}
+	    });
+	}
+	else {
+	    deferred.resolve();
+	}
+	return deferred.promise;
     };
 
     GenerateDocumentation.prototype.createZip = function() {
 	var self = this;
+	
+	if (!self.returnZip || self.runningOnClient) {
+            self.notify('info', 'Skipping compression.');
+	    return;
+	}
+
+	self.notify('info', 'Starting compression.');
+	
+	return new Promise(function(resolve, reject) {
+	    var zlib = require('zlib'),
+	    tar = require('tar'),
+	    fstream = require('fstream'),
+	    input = self.gen_dir;
+
+	    var bufs = [];
+	    var packer = tar.Pack()
+		.on('error', function(e) { reject(e); });
+
+	    var gzipper = zlib.Gzip()
+		.on('error', function(e) { reject(e); })
+		.on('data', function(d) { bufs.push(d); })
+		.on('end', function() {
+		    var buf = Buffer.concat(bufs);
+		    self.blobClient.putFile('manual.tar.gz',buf)
+			.then(function (hash) {
+			    self.result.addArtifact(hash);
+			    resolve();
+			})
+			.catch(function(err) {
+			    reject(err);
+			})
+			    .done();
+		});
+
+	    var reader = fstream.Reader({ 'path': input, 'type': 'Directory' })
+		.on('error', function(e) { reject(e); });
+
+	    reader
+		.pipe(packer)
+		.pipe(gzipper);
+	})
+	    .then(function() {
+		self.notify('info', 'Created archive.');
+	    });
     };
 
     return GenerateDocumentation;
