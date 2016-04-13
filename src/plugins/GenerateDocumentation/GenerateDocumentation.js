@@ -132,6 +132,9 @@ define([
 		return self.generateArtifacts();
 	    })
 	    .then(function () {
+		return self.buildDocs();
+	    })
+	    .then(function () {
 		return self.createZip();
 	    })
 	    .then(function () {
@@ -150,6 +153,8 @@ define([
 	var self = this;
 	var child_process = require('child_process');
 
+	self.notify('info', 'Generating Artifacts.');
+
 	// clear out any previous project files
 	child_process.execSync('rm -rf ' + utils.sanitizePath(self.gen_dir));
 
@@ -162,7 +167,48 @@ define([
 	tasks.push(self.generateObjectDocumentation(self.projectModel));
 	return Q.all(tasks)
 	    .then(function() {
+		return self.writeTemplate();
+	    })
+	    .then(function() {
 		return self.copyStatic();
+	    })
+	    .then(function() {
+		self.notify('info', 'Generated Artifacts');
+	    });
+    };
+
+    GenerateDocumentation.prototype.writeTemplate = function() {
+	var self = this;
+	var path = require('path');
+	var filendir = require('filendir');
+	var filesToAdd = {};
+	var prefix = 'src';
+	var configTemplate = TEMPLATES[self.FILES['conf']];
+	var configName = prefix + '/conf.py';
+	filesToAdd[configName] = ejs.render(configTemplate, {
+	    'projectName': self.projectName,
+	    'masterDoc' : self.pathToFileName(self.projectModel.path),
+	    'authors' : self.projectModel.Authors
+	});
+	var fileNames = Object.keys(filesToAdd);
+	var tasks = fileNames.map(function(fileName) {
+	    var deferred = Q.defer();
+	    var data = filesToAdd[fileName];
+	    filendir.writeFile(path.join(self.gen_dir, fileName), data, function(err) {
+		if (err) {
+		    deferred.reject(err);
+		}
+		else {
+		    deferred.resolve();
+		}
+	    });
+	    return deferred.promise;
+	});
+
+	return Q.all(tasks)
+	    .then(function() {
+		var msg = 'Wrote config.';
+		self.notify('info', msg);
 	    });
     };
 
@@ -247,6 +293,37 @@ define([
 	else {
 	    deferred.resolve();
 	}
+	return deferred.promise;
+    };
+
+    GenerateDocumentation.prototype.buildDocs = function() {
+	var self = this;
+
+	self.notify('info', 'Building docs into HTML and PDF');
+
+	var deferred = Q.defer();
+	var terminal=  require('child_process').spawn('bash', [], {cwd:self.gen_dir});
+	terminal.stdout.on('data', function (data) {});
+	terminal.stderr.on('data', function (error) {
+	});
+	terminal.on('exit', function(code) {
+	    if (code == 0) {
+		deferred.resolve(code);
+	    }
+	    else {
+		deferred.reject('buildDocs:: child process exited with code ' + code);
+	    }
+	});
+	var pdfName = self.projectName.replace(/ /g, '') + '.pdf';
+	setTimeout(function() {
+	    terminal.stdin.write('make\n');
+	    terminal.stdin.write('make pdf\n');
+	    terminal.stdin.write('mv ./build/html .\n');
+	    terminal.stdin.write('mv ./build/pdf/'+pdfName+' .\n');
+	    terminal.stdin.write('rm -rf ./build/pdf/\n');
+	    terminal.stdin.write('rm -rf ./build\n');
+	    terminal.stdin.end();
+	}, 1000);
 	return deferred.promise;
     };
 
