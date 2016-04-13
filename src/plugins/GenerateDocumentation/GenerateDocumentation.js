@@ -9,7 +9,6 @@ define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
     'text!./metadata.json',
-    'text!./static.tar.gz',
     'common/util/ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/GenerateDocumentation/GenerateDocumentation/Templates/Templates', // 
@@ -21,7 +20,6 @@ define([
     PluginConfig,
     PluginBase,
     pluginMetadata,
-    staticFileData,
     ejs,
     Converter,
     TEMPLATES,
@@ -164,22 +162,33 @@ define([
 	tasks.push(self.generateObjectDocumentation(self.projectModel));
 	return Q.all(tasks)
 	    .then(function() {
-		self.copyStatic();
+		return self.copyStatic();
 	    });
     };
 
     GenerateDocumentation.prototype.copyStatic = function() {
 	var self = this;
 	var fs = require('fs');
+	var path = require('path');
 	var unzip = require('unzip');
 	var fstream = require('fstream');
-	var staticFile = staticFileData;
+
+	var deferred = Q.defer();
+
+	var staticFile = path.join(process.cwd(), 'src/plugins/GenerateDocumentation/static.zip');
+	var readStream = fs.createReadStream(staticFile);
+	
 	var writeStream = fstream.Writer(self.gen_dir);
 	if (writeStream == undefined) {
 	    throw new String('Couldn\'t open '+self.gen_dir);
 	}
-	unzip.Parse(staticFileData)
+
+	writeStream.on('unpipe', () => { deferred.resolve(); } );
+
+	readStream
+	    .pipe(unzip.Parse())
 	    .pipe(writeStream);
+	return deferred.promise;
     };
 
     GenerateDocumentation.prototype.pathToFileName = function(path) {

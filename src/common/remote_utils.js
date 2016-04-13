@@ -396,11 +396,14 @@ define(['q'], function(Q) {
 			deferred.reject("Couldn't open " + dir + " or " + final_file);
 		    }
 		    else {
+			writeStream.on('unpipe', () => {
+			    deferred.resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
+			});
+
 			readStream
 			    .pipe(unzip.Parse())
 			    .pipe(writeStream);
 			fs.unlinkSync(final_file);
-			deferred.resolve('downloaded and unzipped ' + file_name + ' into ' + dir);
 		    }
 		}
 	    });
