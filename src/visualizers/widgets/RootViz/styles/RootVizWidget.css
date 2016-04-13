@@ -8,12 +8,12 @@
 
 .root-viz {
   outline: none; }
-.panel-base-wh.w-tabs .floating-title {
+.root-viz .panel-base-wh.w-tabs .floating-title {
     display: none
 }
-.panel-base-wh .floating-title {
+.root-viz .panel-base-wh .floating-title {
     display: none
 }
-.diagram-designer-tabs-container {
+.root-viz .diagram-designer-tabs-container {
     display: none
 }

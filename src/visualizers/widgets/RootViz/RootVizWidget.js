@@ -8,7 +8,7 @@
 define([
     'text!./RootViz.html',
     'js/DragDrop/DragHelper',
-    'js/Widgets/ModelEditor/ModelEditorWidget',
+    //'js/Widgets/ModelEditor/ModelEditorWidget',
     'common/util/ejs',
     './Buttons',
     './Templates',
@@ -16,7 +16,7 @@ define([
 ], function (
     RootVizHtml,
     DragHelper,
-    ModelEditorWidget,
+    //ModelEditorWidget,
     ejs,
     Buttons,
     TEMPLATES) {
@@ -28,6 +28,7 @@ define([
     RootVizWidget = function (logger, container, params) {
         this._logger = logger.fork('Widget');
 
+	/*
 	params = params || {};
 	params.tabsEnabled = false;
 	params.addTabs = false;
@@ -37,6 +38,7 @@ define([
 	params.zoomvalues = [0.1,0.5,1.0,1.5,2.0];
 
 	ModelEditorWidget.call(this, container, params);
+	*/
 
         this.$el = container;
 
@@ -47,7 +49,7 @@ define([
         this._logger.debug('ctor finished');
     };
 
-    _.extend(RootVizWidget.prototype, ModelEditorWidget.prototype);
+    //_.extend(RootVizWidget.prototype, ModelEditorWidget.prototype);
 
     RootVizWidget.prototype._initialize = function () {
         // set widget class
