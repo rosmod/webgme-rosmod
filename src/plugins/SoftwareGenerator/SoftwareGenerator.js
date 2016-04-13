@@ -48,8 +48,7 @@ define([
             'component_hpp': 'component.hpp.ejs',
             'cmakelists': 'CMakeLists.txt.ejs',
             'package_xml': 'package_xml.ejs',
-	    'doxygen_config': 'doxygen_config.ejs',
-	    'cpn': 'cpn.ejs'
+	    'doxygen_config': 'doxygen_config.ejs'
         };
     };
 

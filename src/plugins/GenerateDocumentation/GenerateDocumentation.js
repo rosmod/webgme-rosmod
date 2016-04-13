@@ -9,6 +9,10 @@ define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
     'text!./metadata.json',
+    'text!./static.tar.gz',
+    'common/util/ejs', // for ejs templates
+    'common/util/xmljsonconverter', // used to save model as json
+    'plugin/GenerateDocumentation/GenerateDocumentation/Templates/Templates', // 
     'rosmod/meta',
     'rosmod/remote_utils',
     'rosmod/modelLoader',
@@ -17,6 +21,10 @@ define([
     PluginConfig,
     PluginBase,
     pluginMetadata,
+    staticFileData,
+    ejs,
+    Converter,
+    TEMPLATES,
     MetaTypes,
     utils,
     loader,
@@ -37,6 +45,9 @@ define([
         PluginBase.call(this);
 	this.pluginMetadata = pluginMetadata;
         this.metaTypes = MetaTypes;
+        this.FILES = {
+            'conf': 'conf.py.ejs'
+        };
     };
 
     GenerateDocumentation.metadata = pluginMetadata;
@@ -151,7 +162,24 @@ define([
 		return self.generateObjectDocumentation(obj);
 	});
 	tasks.push(self.generateObjectDocumentation(self.projectModel));
-	return Q.all(tasks);
+	return Q.all(tasks)
+	    .then(function() {
+		self.copyStatic();
+	    });
+    };
+
+    GenerateDocumentation.prototype.copyStatic = function() {
+	var self = this;
+	var fs = require('fs');
+	var unzip = require('unzip');
+	var fstream = require('fstream');
+	var staticFile = staticFileData;
+	var writeStream = fstream.Writer(self.gen_dir);
+	if (writeStream == undefined) {
+	    throw new String('Couldn\'t open '+self.gen_dir);
+	}
+	unzip.Parse(staticFileData)
+	    .pipe(writeStream);
     };
 
     GenerateDocumentation.prototype.pathToFileName = function(path) {
@@ -177,7 +205,7 @@ define([
 
 	var deferred = Q.defer();
 
-	var prefix = 'rst';
+	var prefix = 'src';
 
 	if (obj.Documentation_list) {
 	    obj.Documentation_list.map(function(documentation) {
