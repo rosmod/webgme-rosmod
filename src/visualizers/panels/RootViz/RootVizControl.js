@@ -5,11 +5,15 @@
  */
 
 define(['js/Constants',
-    'js/Utils/GMEConcepts',
-    'js/NodePropertyNames'
+	'js/Utils/GMEConcepts',
+	'blob/BlobClient',
+	'js/NodePropertyNames',
+	'q'
 ], function (CONSTANTS,
              GMEConcepts,
-             nodePropertyNames) {
+	     BlobClient,
+             nodePropertyNames,
+	     Q) {
 
     'use strict';
 
@@ -19,6 +23,7 @@ define(['js/Constants',
 
         this._logger = options.logger.fork('Control');
 
+	this._blobClient = new BlobClient({logger: options.logger.fork('BlobClient')});
         this._client = options.client;
 
         // Initialize core collections and variables
@@ -44,78 +49,96 @@ define(['js/Constants',
     // defines the parts of the project that the visualizer is interested in
     // (this allows the browser to then only load those relevant parts).
     RootVizControl.prototype.selectedObjectChanged = function (nodeId) {
-        var desc = this._getObjectDescriptor(nodeId),
-            self = this;
+	var self = this;
+	this._getObjectDescriptor(nodeId)
+	    .then(function(desc) {
 
-        self._logger.debug('activeObject nodeId \'' + nodeId + '\'');
+		self._logger.debug('activeObject nodeId \'' + nodeId + '\'');
 
-        // Remove current territory patterns
-        if (self._currentNodeId) {
-            self._client.removeUI(self._territoryId);
-        }
+		// Remove current territory patterns
+		if (self._currentNodeId) {
+		    self._client.removeUI(self._territoryId);
+		}
 
-        self._currentNodeId = nodeId;
-        self._currentNodeParentId = undefined;
+		self._currentNodeId = nodeId;
+		self._currentNodeParentId = undefined;
 
-        if (self._currentNodeId || self._currentNodeId === CONSTANTS.PROJECT_ROOT_ID) {
-            // Put new node's info into territory rules
-            self._selfPatterns = {};
-            self._selfPatterns[nodeId] = {children: 0};  // Territory "rule"
+		if (self._currentNodeId || self._currentNodeId === CONSTANTS.PROJECT_ROOT_ID) {
+		    // Put new node's info into territory rules
+		    self._selfPatterns = {};
+		    self._selfPatterns[nodeId] = {children: 0};  // Territory "rule"
 
-            if (desc.parentId || desc.parentId === CONSTANTS.PROJECT_ROOT_ID) {
-                self.$btnModelHierarchyUp.show();
-            } else {
-                self.$btnModelHierarchyUp.hide();
-            }
+		    if (desc.parentId || desc.parentId === CONSTANTS.PROJECT_ROOT_ID) {
+			self.$btnModelHierarchyUp.show();
+		    } else {
+			self.$btnModelHierarchyUp.hide();
+		    }
 
-            self._currentNodeParentId = desc.parentId;
+		    self._currentNodeParentId = desc.parentId;
 
-            self._territoryId = self._client.addUI(self, function (events) {
-                self._eventCallback(events);
-            });
+		    self._territoryId = self._client.addUI(self, function (events) {
+			self._eventCallback(events);
+		    });
 
-            // Update the territory
-            self._client.updateTerritory(self._territoryId, self._selfPatterns);
+		    // Update the territory
+		    self._client.updateTerritory(self._territoryId, self._selfPatterns);
 
-            self._selfPatterns[nodeId] = {children: 1};
-            self._client.updateTerritory(self._territoryId, self._selfPatterns);
-        }
+		    self._selfPatterns[nodeId] = {children: 1};
+		    self._client.updateTerritory(self._territoryId, self._selfPatterns);
+		}
+	    });
     };
 
     // This next function retrieves the relevant node information for the widget
     RootVizControl.prototype._getObjectDescriptor = function (nodeId) {
-        var nodeObj = this._client.getNode(nodeId),
-            objDescriptor;
+	var self = this;
+        var nodeObj = self._client.getNode(nodeId),
+        objDescriptor;
 
-        if (nodeObj) {
-	    var metaObj = this._client.getNode(nodeObj.getMetaTypeId()),
-	    metaName = undefined;
-	    if (metaObj) {
-		metaName = metaObj.getAttribute(nodePropertyNames.Attributes.name);
+	return new Promise(function(resolve,reject) {
+            if (nodeObj) {
+		var metaObj = self._client.getNode(nodeObj.getMetaTypeId()),
+		metaName = undefined;
+		if (metaObj) {
+		    metaName = metaObj.getAttribute(nodePropertyNames.Attributes.name);
+		}
+
+		objDescriptor = {
+                    'id': undefined,
+                    'name': undefined,
+		    'meta': undefined,
+                    'childrenIds': undefined,
+                    'parentId': undefined,
+                    'isConnection': false
+		};
+
+		objDescriptor.id = nodeObj.getId();
+		objDescriptor.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name);
+		objDescriptor.icon = undefined;
+		objDescriptor.brief = nodeObj.getAttribute('Brief Description');
+		objDescriptor.detailed = nodeObj.getAttribute('Detailed Description');
+		objDescriptor.authors = nodeObj.getAttribute('Authors');
+		objDescriptor.meta = metaName;
+		objDescriptor.childrenIds = nodeObj.getChildrenIds();
+		objDescriptor.childrenNum = objDescriptor.childrenIds.length;
+		objDescriptor.parentId = nodeObj.getParentId();
+		objDescriptor.isConnection = GMEConcepts.isConnection(nodeId);  // GMEConcepts can be helpful
+		var iconHash = nodeObj.getAttribute('Icon');
+		if (iconHash) {
+		    self._blobClient.getObjectAsString(iconHash)
+			.then(function(data) {
+			    objDescriptor.icon = data;
+			    resolve(objDescriptor);
+			});
+		}
+		else {
+		    resolve(objDescriptor);
+		}
+            }
+	    else {
+		resolve(objDescriptor);
 	    }
-
-            objDescriptor = {
-                'id': undefined,
-                'name': undefined,
-		'meta': undefined,
-                'childrenIds': undefined,
-                'parentId': undefined,
-                'isConnection': false
-            };
-
-            objDescriptor.id = nodeObj.getId();
-            objDescriptor.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name);
-	    objDescriptor.brief = nodeObj.getAttribute('Brief Description');
-	    objDescriptor.detailed = nodeObj.getAttribute('Detailed Description');
-	    objDescriptor.authors = nodeObj.getAttribute('Authors');
-	    objDescriptor.meta = metaName;
-            objDescriptor.childrenIds = nodeObj.getChildrenIds();
-            objDescriptor.childrenNum = objDescriptor.childrenIds.length;
-            objDescriptor.parentId = nodeObj.getParentId();
-            objDescriptor.isConnection = GMEConcepts.isConnection(nodeId);  // GMEConcepts can be helpful
-        }
-
-        return objDescriptor;
+	});
     };
 
     /* * * * * * * * Node Event Handling * * * * * * * */
@@ -146,13 +169,19 @@ define(['js/Constants',
     };
 
     RootVizControl.prototype._onLoad = function (gmeId) {
-        var description = this._getObjectDescriptor(gmeId);
-        this._widget.addNode(description);
+	var self = this;
+        this._getObjectDescriptor(gmeId)
+	    .then(function(description) {
+		self._widget.addNode(description);
+	    });
     };
 
     RootVizControl.prototype._onUpdate = function (gmeId) {
-        var description = this._getObjectDescriptor(gmeId);
-        this._widget.updateNode(description);
+	var self=this;
+        this._getObjectDescriptor(gmeId)
+	    .then(function(description) {
+		self._widget.updateNode(description);
+	    });
     };
 
     RootVizControl.prototype._onUnload = function (gmeId) {

@@ -7,6 +7,7 @@
 
 define([
     'text!./RootViz.html',
+    'text!./DefaultIcon.svg',
     'js/DragDrop/DropTarget',
     'js/DragDrop/DragConstants',
     'common/util/ejs',
@@ -16,6 +17,7 @@ define([
     'css!./styles/RootVizWidget.css'
 ], function (
     RootVizHtml,
+    DefaultIcon,
     dropTarget,
     DROP_CONSTANTS,
     ejs,
@@ -73,6 +75,7 @@ define([
 	projectHtml,
 	panelId,
 	title,
+	icon,
 	authors,
 	brief,
 	detailed,
@@ -92,12 +95,17 @@ define([
 
 	title = desc.name;
 	panelId = desc.id.replace(/\//g,'-');
+	icon = desc.icon;
+	if (!icon) {
+	    icon = DefaultIcon;
+	}
 	authors = desc.authors;
 	brief = desc.brief;
 	detailed = desc.detailed;
 	projectHtml = ejs.render(TEMPLATES['Project.html.ejs'], {
 	    id: panelId,
 	    title: title,
+	    icon: icon,
 	    authors: authors,
 	    brief: brief,
 	    detailed: detailed
