@@ -240,7 +240,7 @@ define(['js/Constants',
             title: 'toggle checkbox',
             icon: 'gme icon-gme_diagonal-arrow',
             checkChangedFn: function (data, checked) {
-                self._logger.log('Checkbox has been clicked!');
+                //self._logger.log('Checkbox has been clicked!');
             }
         });
         this._toolbarItems.push(this.$cbShowConnection);

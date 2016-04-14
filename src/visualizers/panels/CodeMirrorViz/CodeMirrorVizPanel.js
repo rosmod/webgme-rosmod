@@ -30,7 +30,7 @@ define(['js/PanelBase/PanelBaseWithHeader',
         //initialize UI
         this._initialize();
 
-        this.logger.debug('ctor finished');
+        this.logger.debug('CodeMirrorViz ctor finished');
     };
 
     //inherit from PanelBaseWithHeader
@@ -49,6 +49,11 @@ define(['js/PanelBase/PanelBaseWithHeader',
             self.setTitle(title);
         };
 
+        this.widget.onUIActivity = function () {
+            WebGMEGlobal.PanelManager.setActivePanel(self);
+            WebGMEGlobal.KeyboardManager.setListener(self.widget);
+        };
+
         this.control = new CodeMirrorVizControl({
             logger: this.logger,
             client: this._client,
@@ -64,6 +69,7 @@ define(['js/PanelBase/PanelBaseWithHeader',
         //apply parent's onReadOnlyChanged
         PanelBaseWithHeader.prototype.onReadOnlyChanged.call(this, isReadOnly);
 
+        this.widget.setReadOnly(isReadOnly);
     };
 
     CodeMirrorVizPanel.prototype.onResize = function (width, height) {
@@ -93,6 +99,10 @@ define(['js/PanelBase/PanelBaseWithHeader',
         this.control.onDeactivate();
         WebGMEGlobal.KeyboardManager.setListener(undefined);
         WebGMEGlobal.Toolbar.refresh();
+    };
+
+    CodeMirrorVizPanel.prototype.getNodeID = function () {
+        return this.control.getNodeID();
     };
 
     return CodeMirrorVizPanel;

@@ -6,8 +6,15 @@
  */
 
 define([
+    'js/Widgets/ModelEditor/ModelEditorWidget',
     'js/Widgets/DiagramDesigner/DiagramDesignerWidget',
     'js/Widgets/DiagramDesigner/DiagramDesignerWidget.Tabs',
+    'js/Widgets/DiagramDesigner/ConnectionRouteManagerBasic',
+    'js/Widgets/DiagramDesigner/ConnectionRouteManager2',
+    'js/Widgets/DiagramDesigner/ConnectionRouteManager3',
+    'js/Widgets/DiagramDesigner/ConnectionDrawingManager',
+    './CodeMirrorVizConnection',
+    './CodeMirrorVizWidget.Mouse',
     './SelectionManager',
     'rosmod/Libs/cm/lib/codemirror', 'rosmod/Libs/cm/mode/clike/clike',
     'rosmod/Libs/cm/keymap/emacs', 'rosmod/Libs/cm/keymap/sublime', 'rosmod/Libs/cm/keymap/vim',
@@ -17,14 +24,20 @@ define([
     'css!rosmod/Libs/cm/lib/codemirror.css',
     'css!./styles/CodeMirrorVizWidget.css'
 ], function (
-    DiagramDesigner,
+    ModelEditorWidget,
+    DiagramDesignerWidget,
     DiagramDesignerTabs,
+    ConnectionRouteManagerBasic,
+    ConnectionRouteManager2,
+    ConnectionRouteManager3,
+    ConnectionDrawingManager,
+    CodeMirrorVizConnection,
+    CodeMirrorVizWidgetMouse,
     SelectionManager,
     CodeMirror,
     CodeMirrorModeClike,
     CodeMirrorEmacsKeymap, CodeMirrorSublimeKeymap, CodeMirrorVimKeymap,
-    CodeMirrorFullScreen
-) {
+    CodeMirrorFullScreen) {
     'use strict';
 
     var CodeMirrorVizWidget,
@@ -36,15 +49,34 @@ define([
 	    selectionManager: selectionManager
 	};
 
-	DiagramDesigner.call(this, container, options);
+	ModelEditorWidget.call(this, container, options);
 	
         this.logger = logger.fork('Widget');
 	
 	this._dialog = null;
-        this.logger.debug('ctor finished');
+        this.logger.debug('CodeMirrorViz ctor finished');
+        this._activateMouseListeners();
     };
 
-    _.extend(CodeMirrorVizWidget.prototype, DiagramDesigner.prototype);
+    _.extend(CodeMirrorVizWidget.prototype, ModelEditorWidget.prototype);
+    _.extend(CodeMirrorVizWidget.prototype, CodeMirrorVizWidgetMouse.prototype);
+
+    CodeMirrorVizWidget.prototype._onSelectionChanged = function (selectedIds) {
+        var _selectedElements = this.selectionManager._selectedElements,
+            selectedId,
+            selectedItem;
+
+        DiagramDesignerWidget.prototype._onSelectionChanged.call(this, selectedIds);
+
+        // remove selection outline if a netlabel connection is the only item selected
+        if (_selectedElements.length === 1) {
+            selectedId = _selectedElements[0];
+            selectedItem = this.items[selectedId];
+            if (selectedItem.showAsLabel) {
+                this.$el.find('.selection-outline').remove();
+            }
+        }
+    };
 
     CodeMirrorVizWidget.prototype._onSelectionCommandClicked = function(command, selectedIds, event) {
 	switch(command) {
