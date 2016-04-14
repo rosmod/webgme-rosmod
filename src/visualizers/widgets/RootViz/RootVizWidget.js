@@ -91,7 +91,7 @@ define([
 	column = this.$el.find('#colClass' + this._numNodes);
 
 	title = desc.name;
-	panelId = title.replace(/ /g,'-');
+	panelId = desc.id.replace(/\//g,'-');
 	authors = desc.authors;
 	brief = desc.brief;
 	detailed = desc.detailed;
@@ -181,43 +181,6 @@ define([
         }
 
         return result;
-    };
-
-
-    // This next function retrieves the relevant node information for the widget
-    RootVizWidget.prototype._getObjectDescriptor = function (nodeId) {
-        var nodeObj = this._client.getNode(nodeId),
-            objDescriptor;
-
-        if (nodeObj) {
-	    var metaObj = this._client.getNode(nodeObj.getMetaTypeId()),
-	    metaName = undefined;
-	    if (metaObj) {
-		metaName = metaObj.getAttribute(nodePropertyNames.Attributes.name);
-	    }
-
-            objDescriptor = {
-                'id': undefined,
-                'name': undefined,
-		'meta': undefined,
-                'childrenIds': undefined,
-                'parentId': undefined,
-                'isConnection': false
-            };
-
-            objDescriptor.id = nodeObj.getId();
-            objDescriptor.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name);
-	    objDescriptor.brief = nodeObj.getAttribute('Brief Description');
-	    objDescriptor.detailed = nodeObj.getAttribute('Detailed Description');
-	    objDescriptor.authors = nodeObj.getAttribute('Authors');
-	    objDescriptor.meta = metaName;
-            objDescriptor.childrenIds = nodeObj.getChildrenIds();
-            objDescriptor.childrenNum = objDescriptor.childrenIds.length;
-            objDescriptor.parentId = nodeObj.getParentId();
-            objDescriptor.isConnection = GMEConcepts.isConnection(nodeId);  // GMEConcepts can be helpful
-        }
-
-        return objDescriptor;
     };
 
     RootVizWidget.prototype.createProject = function(basePath) {
