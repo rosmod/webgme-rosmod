@@ -116,7 +116,7 @@ define([
 
 	loader.logger = self.logger;
 	utils.logger = self.logger;
-      	loader.loadProjectModel(self.core, projectNode)
+      	loader.loadModel(self.core, projectNode)
   	    .then(function (projectModel) {
 		self.projectModel = projectModel;
         	return self.generateArtifacts();
@@ -144,282 +144,294 @@ define([
 	if ( !self.generateCPNAnalysis ) {
 	    return;
 	}
-	var msg = 'Generating CPN Model.';
-	self.notify('info',msg);
+	self.notify('info','Generating CPN Model.');
 
-	// THIS NEEDS TO BE HEAVILY UPDATED BASED ON NEW STRUCTURE
-	for (var dpl in self.projectModel.deployments) {
-	    var dpl_model = self.projectModel.deployments[dpl]; 
-	    self.createMessage(self.activeNode, 'Parsing Deployment: ' + dpl_model.name);
-	    var timer_tokens = '1`[\n';
-	    var clock_tokens = '1`[\n';
-	    var interaction_tokens = '1`[\n';
-	    var component_thread_tokens = '1`[\n';
-	    var message_queue_tokens = '1`[\n';
-	    var hardware_num = 1
+	var deployments_folder = self.projectModel.Deployments_list;
+	if (deployments_folder && deployments_folder[0] && deployments_folder[0].Deployment_list) {
+	    deployments_folder[0].Deployment_list.map(function(deployment) {
+		self.notify('info', 'Parsing Deployment: ' + deployment.name);
+		var timer_tokens = '1`[\n';
+		var clock_tokens = '1`[\n';
+		var interaction_tokens = '1`[\n';
+		var component_thread_tokens = '1`[\n';
+		var message_queue_tokens = '1`[\n';
+		var hardware_num = 1
 
-	    var msg_map = {};
-	    var srv_map = {};
-	    var component_hardware_map = {};
+		var msg_map = {};
+		var srv_map = {};
+		var component_hardware_map = {};
+		if (deployment.Container_list) {
+		    // build up the maps
+		    deployment.Container_list.map(function(container) {
+			if (container.Node_list) {
+			    container.Node_list.map(function(node) {
+				if (node['Component Instance_list']) {
+				    node['Component Instance_list'].map(function(compInstance) {
+					var component = compInstance.Component;
+					component_hardware_map[component.name] = "CPU_" + hardware_num;
+					// possibly refactor the code below to use Array.prototype.filter()
+					if (component.Publisher_list) {
+					    component.Publisher_list.map(function(publisher) {
+						var msg = publisher.Message.name;
+						if (!msg_map[msg]) {
+						    msg_map[msg] = {
+							publishers: [],
+							subscribers: []
+						    };
+						}
+						msg_map[msg].publishers.push(publisher);
+					    });
+					}
+					if (component.Subscriber_list) {
+					    component.Subscriber_list.map(function(subscriber) {
+						var msg = subscriber.Message.name;
+						if (!msg_map[msg]) {
+						    msg_map[msg] = {
+							publishers: [],
+							subscribers: []
+						    };
+						}
+						msg_map[msg].subscribers.push(subscriber);
+					    });
+					}
+					if (component.Client_list) {
+					    component.Client_list.map(function(client) {
+						var srv = client.Service.name;
+						if (!srv_map[srv]) {
+						    srv_map[srv] = {
+							clients: [],
+							servers: []
+						    };
+						}
+						srv_map[srv].clients.push(client);
+					    });
+					}
+					if (component.Server_list) {
+					    component.Server_list.map(function(server) {
+						var srv = server.Service.name;
+						if (!srv_map[srv]) {
+						    srv_map[srv] = {
+							clients: [],
+							servers: []
+						    };
+						}
+						srv_map[srv].servers.push(server);
+					    });
+					}
+				    }); // end ['Component Instance_list'].map(compInstance)
+				}
+				hardware_num += 1; // done with the nodes on this container
+			    }); // end Node_list.map(node)
+			}
+		    }); // end Container_list.map(container)
+		    hardware_num = 1;
+		    // Now generate the tokens based on the maps
+		    deployment.Container_list.map(function(container) {
+			// Clock Tokens check
+			if (clock_tokens != '1`[\n') {
+			    clock_tokens += ',\n';
+			}
+			clock_tokens += '{node="CPU_' + hardware_num.toString() 
+			    + '", value=0, next_tick=4000}';
 
-	    for (var c in dpl_model.containers) {
-		var container = dpl_model.containers[c];
-		for (var n in container.nodes) {
-		    var node = container.nodes[n];
-		    for (var ci in node.compInstances) {
-			var compInstance = node.compInstances[ci];
-			var component = compInstance.component;
-			component_hardware_map[component.name] = "CPU_" + hardware_num;
-		    }
+			// Component Thread Tokens check
+			if (component_thread_tokens != '1`[\n') {
+			    component_thread_tokens += ',\n';
+			}
+			component_thread_tokens += '{node="CPU_' + hardware_num.toString() + '", threads=[';
+
+			// Component Message Queue Tokens check
+			if (message_queue_tokens != '1`[\n') {
+			    message_queue_tokens += ',\n';
+			}
+			// 1`[{node=&quot;BBB_111&quot;, cmql=[{component=&quot;Component_1&quot;, scheme=PFIFO, queue=[]}]}]
+			message_queue_tokens += '{node="CPU_' + hardware_num.toString() + '", cmql=[';
+			
+			if (container.Node_list) {
+			    container.Node_list.map(function(node) {
+				var node_priority = node.Priority;
+				if (node['Component Instance_list']) {
+				    node['Component Instance_list'].map(function(compInstance) {
+					var component = compInstance.Component;
+					if (component_thread_tokens.slice(-1) != '[')
+					    component_thread_tokens += ', ';
+					component_thread_tokens += '{node="CPU_' + hardware_num.toString() + 
+					    '", component="' + component.name + 
+					    '", priority=' + node_priority + ', operation=[]}';
+
+					if (message_queue_tokens.slice(-1) != '[')
+					    message_queue_tokens += ', ';
+					message_queue_tokens += '{component="' + component.name 
+					    + '", scheme=' + compInstance.SchedulingScheme + ', queue=[]}';
+					if (component.Timer_list) {
+					    component.Timer_list.map(function(timer) {
+						// Timer Tokens check
+						if (timer_tokens != '1`[\n') {
+						    timer_tokens += ',\n';
+						}
+						timer_tokens += '{node="CPU_' + hardware_num.toString() + 
+						    '", period=' + timer.period * 1000000 + ', offset=0, operation=' +
+						    '{node="CPU_' + hardware_num.toString() + '", component="' +
+						    component.name + '", operation="' + timer.name + '_operation"' + 
+						    ', priority=' + timer.priority + ', deadline=' + 
+						    timer.deadline * 1000000 + ', enqueue_time=0, steps=[';
+						var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
+						var result = re.exec(timer.abstractBusinessLogic);
+						while(result != null) {
+						    var port_type = result[1];
+						    var wcet = 0;
+						    if (port_type == "LOCAL") {
+							var wcet = result[2];
+							if (timer_tokens.slice(-1) != '[')
+							    timer_tokens += ', ';
+							timer_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], '+
+							    'exec_time=0, duration=' + wcet * 1000000 + '}';
+						    }
+						    else if (port_type == "RMI") {
+							if (timer_tokens.slice(-1) != '[')
+							    timer_tokens += ', ';
+							timer_tokens += '{kind="CLIENT", port="' + result[2] + 
+							    '", unblk=[], exec_time=0, duration=0}';
+						    }
+						    else if (port_type == "PUBLISH") {
+							if (timer_tokens.slice(-1) != '[')
+							    timer_tokens += ', ';
+							timer_tokens += '{kind="PUBLISHER", port="' + result[2] + 
+							    '", unblk=[], exec_time=0, duration=0}';
+						    }
+						    result = re.exec(timer.abstractBusinessLogic);
+						}
+						timer_tokens += ']}}';
+					    }); // end Timer_list.map(timer)
+					}
+					if (component.Publisher_list) {
+					    component.Publisher_list.map(function(publisher) {
+						// publisher tokens
+						var topic = publisher.Message.name;
+						var subscribers = msg_map[topic].subscribers;
+						for (var s in subscribers) {
+						    var subscriber = subscribers[s];
+						    var subCompName= self.projectModel.pathDict[subscriber.parentPath].name;
+						    if (interaction_tokens != '1`[\n') {
+							interaction_tokens += ',\n';
+						    }
+						    interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
+							'", port="' + publisher.name + 
+							'", operation={node="' + component_hardware_map[subCompName] + 
+							'", component="' + subCompName + 
+							'", operation="' + subscriber.name + '_operation", priority=' + 
+							subscriber.Priority + ', deadline=' + 
+							subscriber.Deadline * 1000000 + ', enqueue_time=0, steps=[';
+						    var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
+						    var result = re.exec(subscriber.AbstractBusinessLogic);
+						    while(result != null) {
+							var port_type = result[1];
+							var wcet = 0;
+							if (port_type == "LOCAL") {
+							    var wcet = result[2];
+							    if (interaction_tokens.slice(-1) != '[')
+								interaction_tokens += ', ';
+							    interaction_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], '+
+								'exec_time=0, duration=' + wcet * 1000000 + '}';
+							}
+							else if (port_type == "RMI") {
+							    if (interaction_tokens.slice(-1) != '[')
+								interaction_tokens += ', ';
+							    interaction_tokens += '{kind="CLIENT", port="' + result[2] + 
+								'", unblk=[], exec_time=0, duration=0}';
+							}
+							else if (port_type == "PUBLISH") {
+							    if (interaction_tokens.slice(-1) != '[')
+								interaction_tokens += ', ';
+							    interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + 
+								'", unblk=[], exec_time=0, duration=0}';
+							}
+							result = re.exec(subscriber.AbstractBusinessLogic);
+						    }
+						    interaction_tokens += ']}}';
+						}
+					    }); // end Publisher_list.map(publisher)
+					}
+					if (component.Client_list) {
+					    component.Client_list.map(function(client) {
+						// client tokens
+						var service = client.Service.name;
+						var servers = srv_map[service].servers;
+						for (var s in servers) {
+						    var server = servers[s];
+						    var serverCompName = self.projectModel.pathDict[server.parentPath].name;
+						    if (interaction_tokens != '1`[\n') {
+							interaction_tokens += ',\n';
+						    }
+						    interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
+							'", port="' + client.name + 
+							'", operation={node="' + component_hardware_map[serverCompName] + 
+							'", component="' + serverCompName + 
+							'", operation="' + server.name + '_operation", ' +
+							'priority=' + server.Priority + ', deadline=' + 
+							server.Deadline * 1000000 + ', enqueue_time=0, steps=[';
+						    var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
+						    var result = re.exec(server.AbstractBusinessLogic);
+						    while(result != null) {
+							var port_type = result[1];
+							var wcet = 0;
+							if (port_type == "LOCAL") {
+							    var wcet = result[2];
+							    if (interaction_tokens.slice(-1) != '[')
+								interaction_tokens += ', ';
+							    interaction_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], '+
+								'exec_time=0, duration=' + wcet * 1000000 + '}';
+							}
+							else if (port_type == "RMI") {
+							    if (interaction_tokens.slice(-1) != '[')
+								interaction_tokens += ', ';
+							    interaction_tokens += '{kind="CLIENT", port="' + result[2] + 
+								'", unblk=[], exec_time=0, duration=0}';
+							}
+							else if (port_type == "PUBLISH") {
+							    if (interaction_tokens.slice(-1) != '[')
+								interaction_tokens += ', ';
+							    interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + 
+								'", unblk=[], exec_time=0, duration=0}';
+							}					    
+							result = re.exec(server.AbstractBusinessLogic);
+						    }
+						    var n = interaction_tokens.lastIndexOf("unblk=[]");
+						    interaction_tokens = interaction_tokens.slice(0, n) + 
+							interaction_tokens.slice(n).replace(
+							    "unblk=[]",
+							    'unblk=[{node="CPU_' + 
+								hardware_num.toString() + '", component="' + 
+								component.name  + '", port="' + client.name  + '"}]'
+							);
+						    interaction_tokens += ']}}';
+						}						
+					    });
+					}
+				    }); // end ['Component Instance_list'].map(compInstance)				    
+				}
+			    }); // end Node_list.map(node)
+			    component_thread_tokens += ']}';
+			    message_queue_tokens += ']}';
+			    hardware_num += 1
+			}
+		    }); // end Container_list.map(container)
 		}
-		hardware_num += 1;
-	    }
-	    hardware_num = 1;
-	    for (var c in dpl_model.containers) {
-		var container = dpl_model.containers[c];
-		for (var n in container.nodes) {
-		    var node = container.nodes[n];
-		    for (var ci in node.compInstances) {
-			var compInstance = node.compInstances[ci];
-			var component = compInstance.component;
-			for (var p in component.publishers) {
-			    var publisher = component.publishers[p];
-			    publisher.component = component.name;
-			    var msg = publisher.topic.name;
-			    if (!msg_map[msg]) {
-				msg_map[msg] = {
-				    publishers: [],
-				    subscribers: []
-				};
-			    }
-			    msg_map[msg].publishers.push(publisher);
-			}
-			for (var s in component.subscribers) {
-			    var subscriber = component.subscribers[s];
-			    subscriber.component = component.name;
-			    var msg = subscriber.topic.name;
-			    if (!msg_map[msg]) {
-				msg_map[msg] = {
-				    publishers: [],
-				    subscribers: []
-				};
-			    }
-			    msg_map[msg].subscribers.push(subscriber);
-			}
-			for (var c in component.clients) {
-			    var client = component.clients[c];
-			    client.component = component.name;
-			    var srv = client.service.name;
-			    if (!srv_map[srv]) {
-				srv_map[srv] = {
-				    clients : [],
-				    servers : []
-				};
-			    }
-			    srv_map[srv].clients.push(client);
-			}
-			for (var s in component.servers) {
-			    var server = component.servers[s];
-			    server.component = component.name;
-			    var srv = server.service.name;
-			    if (!srv_map[srv]) {
-				srv_map[srv] = {
-				    clients : [],
-				    servers : []
-				};
-			    }
-			    srv_map[srv].servers.push(server);
-			}
-		    }
-		}
-	    }
+		// finish the token sequences for this deployment
+		clock_tokens += '\n]';
+		timer_tokens += '\n]';
+		interaction_tokens += '\n]';
+		component_thread_tokens += '\n]';
+		message_queue_tokens += '\n]';
 
-	    for (var c in dpl_model.containers) {
-		var container = dpl_model.containers[c];
-
-		// Clock Tokens check
-		if (clock_tokens != '1`[\n') {
-		    clock_tokens += ',\n';
-		}
-		clock_tokens += '{node="CPU_' + hardware_num.toString() 
-		    + '", value=0, next_tick=4000}';
-
-		// Component Thread Tokens check
-		if (component_thread_tokens != '1`[\n') {
-		    component_thread_tokens += ',\n';
-		}
-		component_thread_tokens += '{node="CPU_' + hardware_num.toString() + '", threads=[';
-
-		// Component Message Queue Tokens check
-		if (message_queue_tokens != '1`[\n') {
-		    message_queue_tokens += ',\n';
-		}
-		// 1`[{node=&quot;BBB_111&quot;, cmql=[{component=&quot;Component_1&quot;, scheme=PFIFO, queue=[]}]}]
-		message_queue_tokens += '{node="CPU_' + hardware_num.toString() + '", cmql=[';
-		
-		for (var n in container.nodes) {
-		    var node = container.nodes[n];
-		    var node_priority = node.priority;
-
-		    for (var ci in node.compInstances) {
-			var compInstance = node.compInstances[ci];
-			var component = compInstance.component;
-			if (component_thread_tokens.slice(-1) != '[')
-			    component_thread_tokens += ', ';
-			component_thread_tokens += '{node="CPU_' + hardware_num.toString() + 
-			    '", component="' + component.name + '", priority=' + node_priority + ', operation=[]}';
-
-			if (message_queue_tokens.slice(-1) != '[')
-			    message_queue_tokens += ', ';
-			message_queue_tokens += '{component="' + component.name 
-			    + '", scheme=' + compInstance.schedulingScheme + ', queue=[]}';
-		    }
-
-		    for (var ci in node.compInstances) {
-			var compInstance = node.compInstances[ci];
-			var component = compInstance.component;
-
-			for (var t in component.timers) {
-			    var timer = component.timers[t];
-			    // Timer Tokens check
-			    if (timer_tokens != '1`[\n') {
-				timer_tokens += ',\n';
-			    }
-			    timer_tokens += '{node="CPU_' + hardware_num.toString() + 
-				'", period=' + timer.period * 1000000 + ', offset=0, operation=' +
-				'{node="CPU_' + hardware_num.toString() + '", component="' +
-				component.name + '", operation="' + timer.name + '_operation"' + 
-				', priority=' + timer.priority + ', deadline=' + 
-				timer.deadline * 1000000 + ', enqueue_time=0, steps=[';
-			    var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
-			    var result = re.exec(timer.abstractBusinessLogic);
-			    while(result != null) {
-				var port_type = result[1];
-				var wcet = 0;
-				if (port_type == "LOCAL") {
-				    var wcet = result[2];
-				    if (timer_tokens.slice(-1) != '[')
-					timer_tokens += ', ';
-				    timer_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], exec_time=0, duration=' + wcet * 1000000 + '}';
-				}
-				else if (port_type == "RMI") {
-				    if (timer_tokens.slice(-1) != '[')
-					timer_tokens += ', ';
-				    timer_tokens += '{kind="CLIENT", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
-				}
-				else if (port_type == "PUBLISH") {
-				    if (timer_tokens.slice(-1) != '[')
-					timer_tokens += ', ';
-				    timer_tokens += '{kind="PUBLISHER", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
-				}
-				result = re.exec(timer.abstractBusinessLogic);
-			    }
-			    timer_tokens += ']}}';
-			}
-
-			for (var p in component.publishers) {
-			    var publisher = component.publishers[p];
-			    var topic = publisher.topic.name;
-			    var subscribers = msg_map[topic].subscribers;
-			    for (var s in subscribers) {
-				var subscriber = subscribers[s];
-				if (interaction_tokens != '1`[\n') {
-				    interaction_tokens += ',\n';
-				}
-				interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
-				    '", port="' + publisher.name + '", operation={node="' + component_hardware_map[subscriber.component] + '", component="' + 
-				    subscriber.component + '", operation="' + subscriber.name + '_operation", priority=' + subscriber.priority + ', deadline=' + 
-				    subscriber.deadline * 1000000 + ', enqueue_time=0, steps=[';
-				var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
-				var result = re.exec(subscriber.abstractBusinessLogic);
-				while(result != null) {
-				    var port_type = result[1];
-				    var wcet = 0;
-				    if (port_type == "LOCAL") {
-					var wcet = result[2];
-					if (interaction_tokens.slice(-1) != '[')
-					    interaction_tokens += ', ';
-					interaction_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], exec_time=0, duration=' + wcet * 1000000 + '}';
-				    }
-				    else if (port_type == "RMI") {
-					if (interaction_tokens.slice(-1) != '[')
-					    interaction_tokens += ', ';
-					interaction_tokens += '{kind="CLIENT", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
-				    }
-				    else if (port_type == "PUBLISH") {
-					if (interaction_tokens.slice(-1) != '[')
-					    interaction_tokens += ', ';
-					interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
-				    }
-				    result = re.exec(subscriber.abstractBusinessLogic);
-				}
-				interaction_tokens += ']}}';
-			    }
-			}
-
-			for (var c in component.clients) {
-			    var client = component.clients[c];
-			    var service = client.service.name;
-			    var servers = srv_map[service].servers;
-			    for (var s in servers) {
-				var server = servers[s];
-				if (interaction_tokens != '1`[\n') {
-				    interaction_tokens += ',\n';
-				}
-				interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
-				    '", port="' + client.name + '", operation={node="' + component_hardware_map[server.component] + '", component="' + 
-				    server.component + '", operation="' + server.name + '_operation", priority=' + server.priority + ', deadline=' + 
-				    server.deadline * 1000000 + ', enqueue_time=0, steps=[';
-				var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
-				var result = re.exec(server.abstractBusinessLogic);
-				while(result != null) {
-				    var port_type = result[1];
-				    var wcet = 0;
-				    if (port_type == "LOCAL") {
-					var wcet = result[2];
-					if (interaction_tokens.slice(-1) != '[')
-					    interaction_tokens += ', ';
-					interaction_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], exec_time=0, duration=' + wcet * 1000000 + '}';
-				    }
-				    else if (port_type == "RMI") {
-					if (interaction_tokens.slice(-1) != '[')
-					    interaction_tokens += ', ';
-					interaction_tokens += '{kind="CLIENT", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
-				    }
-				    else if (port_type == "PUBLISH") {
-					if (interaction_tokens.slice(-1) != '[')
-					    interaction_tokens += ', ';
-					interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + '", unblk=[], exec_time=0, duration=0}';
-				    }					    
-				    result = re.exec(server.abstractBusinessLogic);
-				}
-				var n = interaction_tokens.lastIndexOf("unblk=[]");
-				interaction_tokens = interaction_tokens.slice(0, n) + interaction_tokens.slice(n).replace("unblk=[]", 'unblk=[{node="CPU_' +  
-															  hardware_num.toString() + '", component="' + 
-															  component.name  + '", port="' + client.name  + '"}]');
-				interaction_tokens += ']}}';
-			    }
-			}
-
-		    }
-		}
-		component_thread_tokens += ']}';
-		message_queue_tokens += ']}';
-		hardware_num += 1
-	    }
-	    clock_tokens += '\n]';
-	    timer_tokens += '\n]';
-	    interaction_tokens += '\n]';
-	    component_thread_tokens += '\n]';
-	    message_queue_tokens += '\n]';
-
-	    var cpn = dpl_model.name + '_Analysis_Model.cpn',
-	    cpnTemplate = TEMPLATES[self.FILES['cpn']];
-	    self.artifacts[cpn] = ejs.render(cpnTemplate, {'clock_tokens' : clock_tokens, 
-							   'timer_tokens' : timer_tokens,
-							   'interaction_tokens' : interaction_tokens,
-							   'component_thread_tokens' : component_thread_tokens,
-							   'message_queue_tokens' : message_queue_tokens});
+		var cpn = deployment.name + '_Analysis_Model.cpn',
+		cpnTemplate = TEMPLATES[self.FILES['cpn']];
+		self.artifacts[cpn] = ejs.render(cpnTemplate, {'clock_tokens' : clock_tokens, 
+							       'timer_tokens' : timer_tokens,
+							       'interaction_tokens' : interaction_tokens,
+							       'component_thread_tokens' : component_thread_tokens,
+							       'message_queue_tokens' : message_queue_tokens});
+	    }); // end Deployment_list.map(deployment)
 	}
     };
 
@@ -443,9 +455,7 @@ define([
 	var dir = prefix;
 	return utils.wgetAndUnzipLibrary(file_url, dir)
 	    .then(function() {
-		self.createMessage(self.activeNode, 'Downloaded CPN template');
-	    })
-	    .then(function() {
+		self.notify('info', 'Downloaded CPN template');
 		var filendir = require('filendir');
 		var fileKeys = Object.keys(self.artifacts);
 		var tasks = fileKeys.map(function(key) {
@@ -467,9 +477,8 @@ define([
 		return Q.all(tasks);
 	    })
 	    .then(function() {
-		var msg = 'Generated CPN';
-		self.notify('info', msg);
-	    })
+		self.notify('info', 'Generated CPN');
+	    });
     };
 
     TimingAnalysis.prototype.returnArtifactsToUser = function() {
