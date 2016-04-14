@@ -316,17 +316,24 @@ define(['q'], function(Q) {
 	    //from = self.sanitizePath(from);
 	    //to = self.sanitizePath(to);
 	    var deferred = Q.defer();
-	    client.scp(from, {
-		host: ip,
-		username: user.name,
-		privateKey: require('fs').readFileSync(user.Key),
-		path: to
-	    }, function(err) {
-		if (err)
-		    deferred.reject(err);
-		else
-		    deferred.resolve();
-	    });
+	    try { 
+		client.scp(from, {
+		    host: ip,
+		    username: user.name,
+		    privateKey: require('fs').readFileSync(user.Key),
+		    path: to
+		}, function(err) {
+		    if (err)
+			deferred.reject('copy to ' + ip + ' failed: '+ err);
+		    else {
+			self.logger.info('scp succeeded to '+ip);
+			deferred.resolve();
+		    }
+		});
+	    }
+	    catch (err) {
+		deferred.reject('copy to ' + ip + ' failed: '+ err);
+	    }
 	    return deferred.promise;
 	},
 	copyFromHost: function(from, to, ip, user) {
@@ -349,7 +356,7 @@ define(['q'], function(Q) {
 
 	    var child = child_process.exec(scp, function(err, stdout, stderr) {
 		if (err) {
-		    deferred.reject(err);
+		    deferred.reject('copy from ' + ip + ' failed: '+err);
 		}
 		else {
 		    deferred.resolve('copied ' + remote + ' into ' + local);
