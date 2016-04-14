@@ -82,7 +82,7 @@ define(['q'], function(Q) {
 	resolvePointers: function(modelObjects) {
 	    modelObjects.map(function(obj) {
 		// Can't follow parent path: would lead to circular data structure (not stringifiable)
-		// follow children paths
+		// follow children paths, these will always have been loaded
 		obj.childPaths.map(function(childPath) {
 		    var dst = modelObjects.filter(function (c) { 
 			return c.path == childPath; 
@@ -95,7 +95,7 @@ define(['q'], function(Q) {
 			obj[key].push(dst);
 		    }
 		});
-		// follow pointer paths
+		// follow pointer paths, these may not always be loaded!
 		for (var pointer in obj.pointers) {
 		    var path = obj.pointers[pointer];
 		    var dst = modelObjects.filter(function (c) { 
@@ -103,8 +103,10 @@ define(['q'], function(Q) {
 		    })[0];
 		    if (dst)
 			obj[pointer] = dst;
+		    else if (pointer != 'base') 
+			throw new String(obj.name + ' has pointer ' +pointer+ ' to object not in the tree!');
 		}
-		// follow set paths
+		// follow set paths, these may not always be loaded!
 		for (var set in obj.sets) {
 		    var paths = obj.sets[set];
 		    var dsts = [];
@@ -114,6 +116,8 @@ define(['q'], function(Q) {
 			})[0];
 			if (dst)
 			    dsts.push(dst);
+			else
+			    throw new String(obj.name + ' has set '+set+' containing pointer to object not in tree!');
 		    });
 		    obj[set] = dsts;
 		}
