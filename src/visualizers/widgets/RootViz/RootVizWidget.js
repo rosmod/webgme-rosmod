@@ -146,13 +146,10 @@ define([
     };
 
     RootVizWidget.prototype.onWidgetContainerResize = function (width, height) {
-       /*
-       this._logger.error('RESIZING:: ' + width + ' ' + height);
-       this._initialize(width);
-       this._nodes.map(function(desc) {
-           this.createNodeEntry(desc);
-       });
-       */
+	this.setupTable();
+	for (var id in this.nodes) {
+            this.addNode(this.nodes[id]);
+	}
     };
 
     // Adding/Removing/Updating items
@@ -176,7 +173,7 @@ define([
             delete this.nodes[gmeId];
 	    this.setupTable();
 	    for (var id in this.nodes) {
-		this.createNodeEntry(this.nodes[id]);
+		this.addNode(this.nodes[id]);
 	    }
 	}
     };
