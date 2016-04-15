@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Hosts &mdash; ROSMOD GUI 1.0.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="./_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="ROSMOD GUI 1.0.0 documentation" href="index.html"/>
+        <link rel="up" title="System" href="_v_0_g_X.html"/>
+        <link rel="next" title="Software" href="_v_0_f.html"/>
+        <link rel="prev" title="System" href="_v_0_g_X.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ROSMOD GUI
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="users.html">Using ROSMOD</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="users.html#requirements">Requirements</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="users.html#samples">Samples</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="_v_0.html">Introduction to ROSMOD</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="_v_0.html#webgme-usage">WebGME Usage</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="_v_0.html#rosmod-project">ROSMOD Project</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Deploying ROSMOD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ROSMOD GUI</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="users.html">Using ROSMOD</a> &raquo;</li>
+      
+          <li><a href="_v_0.html">Introduction to ROSMOD</a> &raquo;</li>
+      
+          <li><a href="_v_0_g.html">Systems</a> &raquo;</li>
+      
+          <li><a href="_v_0_g_X.html">System</a> &raquo;</li>
+      
+    <li>Hosts</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/_v_0_g_X_8.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="hosts">
+<h1>Hosts<a class="headerlink" href="#hosts" title="Permalink to this headline">¶</a></h1>
+<p>Hosts can have two types of children: <tt class="docutils literal"><span class="pre">Interfaces</span></tt> and
+<tt class="docutils literal"><span class="pre">Capabilities</span></tt>. The attributes of <tt class="docutils literal"><span class="pre">Hosts</span></tt> are described in the
+section regarding <tt class="docutils literal"><span class="pre">System</span></tt> models.</p>
+<div class="section" id="interfaces">
+<h2>Interfaces<a class="headerlink" href="#interfaces" title="Permalink to this headline">¶</a></h2>
+<p>Interfaces are used to specify the network interfaces available on the
+host. Each interface only has a <strong>name</strong>, e.g. <tt class="docutils literal"><span class="pre">eth0</span></tt>, specifying the
+network interface as it would be seen on the actual hardware, for
+instance by running <tt class="docutils literal"><span class="pre">ifconfig</span></tt> in <em>linux</em>.</p>
+</div>
+<div class="section" id="capabilities">
+<h2>Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h2>
+<p>Capabilities are the corresponding object to <tt class="docutils literal"><span class="pre">Constraints</span></tt>, which are
+contained by <tt class="docutils literal"><span class="pre">Components</span></tt>. A <tt class="docutils literal"><span class="pre">Capability</span></tt> corresponds to some
+provision that the <tt class="docutils literal"><span class="pre">Host</span></tt> has that the software may need, for instance
+<tt class="docutils literal"><span class="pre">hasCamera</span></tt>, or <tt class="docutils literal"><span class="pre">hasGPIO</span></tt>. Components which have the correspondingly
+named <tt class="docutils literal"><span class="pre">Constraint</span></tt> can only be mapped during deployment/execution to
+hosts which have <tt class="docutils literal"><span class="pre">Capabilities</span></tt> of the same name. Note that
+<tt class="docutils literal"><span class="pre">Capabilities</span></tt> need not be unique within or between hosts.</p>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="_v_0_f.html" class="btn btn-neutral float-right" title="Software" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="_v_0_g_X.html" class="btn btn-neutral" title="System" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, William Emfinger, Pranav Srinivas Kumar.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-61341323-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+</body>
+</html>

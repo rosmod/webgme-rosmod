@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>System &mdash; ROSMOD GUI 1.0.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="./_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="ROSMOD GUI 1.0.0 documentation" href="index.html"/>
+        <link rel="up" title="Systems" href="_v_0_g.html"/>
+        <link rel="next" title="Hosts" href="_v_0_g_X_8.html"/>
+        <link rel="prev" title="Systems" href="_v_0_g.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ROSMOD GUI
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="users.html">Using ROSMOD</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="users.html#requirements">Requirements</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="users.html#samples">Samples</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="_v_0.html">Introduction to ROSMOD</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="_v_0.html#webgme-usage">WebGME Usage</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="_v_0.html#rosmod-project">ROSMOD Project</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Deploying ROSMOD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ROSMOD GUI</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="users.html">Using ROSMOD</a> &raquo;</li>
+      
+          <li><a href="_v_0.html">Introduction to ROSMOD</a> &raquo;</li>
+      
+          <li><a href="_v_0_g.html">Systems</a> &raquo;</li>
+      
+    <li>System</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/_v_0_g_X.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="system">
+<h1>System<a class="headerlink" href="#system" title="Permalink to this headline">¶</a></h1>
+<p>In a <tt class="docutils literal"><span class="pre">System</span></tt> model, you define <tt class="docutils literal"><span class="pre">Hosts</span></tt>, <tt class="docutils literal"><span class="pre">Users</span></tt>, <tt class="docutils literal"><span class="pre">Networks</span></tt>,
+and <tt class="docutils literal"><span class="pre">Links</span></tt>:</p>
+<div class="section" id="hosts">
+<h2>Hosts<a class="headerlink" href="#hosts" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">Hosts</span></tt> which are computers with a specified <strong>OS</strong>,
+<strong>Architecture</strong>, <strong>Device ID</strong>, and <strong>Device ID Command</strong>. The <strong>Device
+ID</strong> allows the user to delineate between two different devices (e.g. a
+BeagleBone Black and an NVIDIA Jetson TK1) which may have the same
+<em>Architecture</em> (e.g. <tt class="docutils literal"><span class="pre">armv7l</span></tt>), but may need to be separated for
+binary/library incompatibility. Because these devices may have different
+subsystems, we allow the user to specify the <strong>Device ID Command</strong> which
+is run on the host and should return a string containing the specified
+<em>Device ID</em>. Hosts can have any number of <tt class="docutils literal"><span class="pre">Interface</span></tt> <em>children</em>,
+which are displayed as <tt class="docutils literal"><span class="pre">ports</span></tt> on the <tt class="docutils literal"><span class="pre">Host</span></tt>.</p>
+</div>
+<div class="section" id="users">
+<h2>Users<a class="headerlink" href="#users" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">Users</span></tt> which have an associated <strong>SSH Key</strong> location and
+<strong>Directory</strong>. The user&#8217;s <strong>Directory</strong> is where any processes started
+during experiment deployment or compilation on behalf of the user will
+be run and where any artifacts will be generated.</p>
+</div>
+<div class="section" id="networks">
+<h2>Networks<a class="headerlink" href="#networks" title="Permalink to this headline">¶</a></h2>
+<p>A Network defines the <strong>Subnet</strong> of IP addresses available as well as
+the <strong>Netmask</strong> which, together with the <strong>Subnet</strong> defines the range of
+available IP addresses.</p>
+</div>
+<div class="section" id="links">
+<h2>Links<a class="headerlink" href="#links" title="Permalink to this headline">¶</a></h2>
+<p>Links connect a <em>hosts</em> <tt class="docutils literal"><span class="pre">Interface</span></tt> to a <tt class="docutils literal"><span class="pre">Network</span></tt> and has an
+associated <strong>IP</strong> address that the interface will have on that network.
+The user can create links and assign the IP addresses by clicking and
+dragging from the host&#8217;s interface to a network. The IP address is
+displayed on the link and can be edited by clicking on the Link and
+editing its IP property in the <tt class="docutils literal"><span class="pre">Property</span> <span class="pre">Panel</span></tt>.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_v_0_g_X_8.html">Hosts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_v_0_g_X_8.html#interfaces">Interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_v_0_g_X_8.html#capabilities">Capabilities</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="_v_0_g_X_8.html" class="btn btn-neutral float-right" title="Hosts" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="_v_0_g.html" class="btn btn-neutral" title="Systems" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, William Emfinger, Pranav Srinivas Kumar.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-61341323-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+</body>
+</html>
