@@ -3,7 +3,7 @@
 Using ROSMOD
 ============
 
-This section explains how to use ROSMOD, WebGME, and walks through model creation with a few examples.  :ref:`intro` is the best starting point for people new to ROSMOD or WebGME, since it walks through an example project, explaining how all the different parts of the model are created and how they interact with each other (including how you can generate, compile, and execute code).  The project associated with that documentation is hosted at rcps.isis.vanderbilt.edu under the project `ROSMOD/Samples/IntroductionToROSMOD`, which is accessible from `guest` accounts.  
+This section explains how to use ROSMOD, WebGME, and walks through model creation with a few examples.  :ref:`intro` is the best starting point for people new to ROSMOD or WebGME, since it walks through an example project, explaining how all the different parts of the model are created and how they interact with each other (including how you can generate, compile, and execute code).  The project associated with that documentation is hosted at `<rcps.isis.vanderbilt.edu>`_ under the project `ROSMOD/Samples/IntroductionToROSMOD`, which is accessible from `guest` accounts.  
 
 Requirements
 ------------
