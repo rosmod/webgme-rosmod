@@ -158,48 +158,48 @@
   <div class="section" id="example-sender-component">
 <h1>Example Sender Component<a class="headerlink" href="#example-sender-component" title="Permalink to this headline">¶</a></h1>
 <p>Inside the component, the user can define the interaction ports the
-component supports (i.e. any <tt class="docutils literal"><span class="pre">publisher</span></tt>, <tt class="docutils literal"><span class="pre">subscriber</span></tt>, <tt class="docutils literal"><span class="pre">client</span></tt>,
-and <tt class="docutils literal"><span class="pre">server</span></tt> objects), by dragging and dropping them into the
-component&#8217;s canvas. The relevant <tt class="docutils literal"><span class="pre">Message</span></tt> or <tt class="docutils literal"><span class="pre">Service</span></tt> pointers for
+component supports (i.e. any <code class="docutils literal"><span class="pre">publisher</span></code>, <code class="docutils literal"><span class="pre">subscriber</span></code>, <code class="docutils literal"><span class="pre">client</span></code>,
+and <code class="docutils literal"><span class="pre">server</span></code> objects), by dragging and dropping them into the
+component&#8217;s canvas. The relevant <code class="docutils literal"><span class="pre">Message</span></code> or <code class="docutils literal"><span class="pre">Service</span></code> pointers for
 these objects can be defined by either creating the port by dragging the
-relevant <tt class="docutils literal"><span class="pre">Message</span></tt> or <tt class="docutils literal"><span class="pre">Service</span></tt> object from the <tt class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></tt>
+relevant <code class="docutils literal"><span class="pre">Message</span></code> or <code class="docutils literal"><span class="pre">Service</span></code> object from the <code class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></code>
 into the canvas and selecting the appropriate port type from the pop-up
-dialog or by dragging the <tt class="docutils literal"><span class="pre">Message</span></tt> or <tt class="docutils literal"><span class="pre">Service</span></tt> object onto the
-relevant <tt class="docutils literal"><span class="pre">Pointer</span></tt> of the already created port. Alternatively, the
-<tt class="docutils literal"><span class="pre">Message</span></tt> or <tt class="docutils literal"><span class="pre">Service</span></tt> object can be dragged on to the port in the
+dialog or by dragging the <code class="docutils literal"><span class="pre">Message</span></code> or <code class="docutils literal"><span class="pre">Service</span></code> object onto the
+relevant <code class="docutils literal"><span class="pre">Pointer</span></code> of the already created port. Alternatively, the
+<code class="docutils literal"><span class="pre">Message</span></code> or <code class="docutils literal"><span class="pre">Service</span></code> object can be dragged on to the port in the
 canvas.</p>
 <div class="section" id="timers">
 <h2>Timers<a class="headerlink" href="#timers" title="Permalink to this headline">¶</a></h2>
 <p>Inside this aspect is where the user can specify the c++ code that will
-execute upon the expiry of the relevant <tt class="docutils literal"><span class="pre">timer</span></tt>, or when relevant data
-is received for a <tt class="docutils literal"><span class="pre">subscriber</span></tt> or <tt class="docutils literal"><span class="pre">server</span></tt>. The attributes for the
+execute upon the expiry of the relevant <code class="docutils literal"><span class="pre">timer</span></code>, or when relevant data
+is received for a <code class="docutils literal"><span class="pre">subscriber</span></code> or <code class="docutils literal"><span class="pre">server</span></code>. The attributes for the
 ports and timers can be specified in this aspect as well. These
-attributes include the <tt class="docutils literal"><span class="pre">period</span></tt> of the <tt class="docutils literal"><span class="pre">timer</span></tt> or the <tt class="docutils literal"><span class="pre">deadline</span></tt>
+attributes include the <code class="docutils literal"><span class="pre">period</span></code> of the <code class="docutils literal"><span class="pre">timer</span></code> or the <code class="docutils literal"><span class="pre">deadline</span></code>
 of the subscriber operation, for instance.</p>
 </div>
 <div class="section" id="libraries">
 <h2>Libraries<a class="headerlink" href="#libraries" title="Permalink to this headline">¶</a></h2>
-<p>Also inside this aspect is where the user can select the <tt class="docutils literal"><span class="pre">Set</span> <span class="pre">Editor</span></tt>
+<p>Also inside this aspect is where the user can select the <code class="docutils literal"><span class="pre">Set</span> <span class="pre">Editor</span></code>
 visualizer, which allows the user to see or configure the <em>set</em> of
 <strong>Libraries</strong> that the component requires for compilation/execution. The
-user can drag a <tt class="docutils literal"><span class="pre">Source</span> <span class="pre">Library</span></tt> or <tt class="docutils literal"><span class="pre">System</span> <span class="pre">Library</span></tt> from the
-<tt class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></tt> to into the <tt class="docutils literal"><span class="pre">Libraries</span></tt> Set Editor to add the library
+user can drag a <code class="docutils literal"><span class="pre">Source</span> <span class="pre">Library</span></code> or <code class="docutils literal"><span class="pre">System</span> <span class="pre">Library</span></code> from the
+<code class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></code> to into the <code class="docutils literal"><span class="pre">Libraries</span></code> Set Editor to add the library
 as a requirement for the component.</p>
 </div>
 <div class="section" id="constraints">
 <h2>Constraints<a class="headerlink" href="#constraints" title="Permalink to this headline">¶</a></h2>
-<p>The user can drag in <tt class="docutils literal"><span class="pre">constraints</span></tt> from the <tt class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></tt> and name
+<p>The user can drag in <code class="docutils literal"><span class="pre">constraints</span></code> from the <code class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></code> and name
 them accordingly to specify that the component must be deployed onto a
-<tt class="docutils literal"><span class="pre">Host</span></tt> which has a <tt class="docutils literal"><span class="pre">Capability</span></tt> with a name that matches the
+<code class="docutils literal"><span class="pre">Host</span></code> which has a <code class="docutils literal"><span class="pre">Capability</span></code> with a name that matches the
 constraint&#8217;s name.</p>
 </div>
 <div class="section" id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
 <p>This component acts as an example for a time-triggered component, which
-sends out a <tt class="docutils literal"><span class="pre">Message</span></tt> publish through its <tt class="docutils literal"><span class="pre">publisher</span></tt> and a
-<tt class="docutils literal"><span class="pre">Service</span></tt> request through its client every time its timer fires. The
+sends out a <code class="docutils literal"><span class="pre">Message</span></code> publish through its <code class="docutils literal"><span class="pre">publisher</span></code> and a
+<code class="docutils literal"><span class="pre">Service</span></code> request through its client every time its timer fires. The
 code which shows the publishing and server request can be found in the
-<tt class="docutils literal"><span class="pre">Operation</span></tt> of the <tt class="docutils literal"><span class="pre">intro_sender_timer</span></tt>.</p>
+<code class="docutils literal"><span class="pre">Operation</span></code> of the <code class="docutils literal"><span class="pre">intro_sender_timer</span></code>.</p>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>

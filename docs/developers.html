@@ -87,7 +87,11 @@
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="users.html">Using ROSMOD</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Deploying ROSMOD</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#pre-requisites-for-installation">Pre-Requisites for Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pre-requisites-for-installation">Pre-Requisites for Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#for-base-server">For Base Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#for-plugins">For Plugins</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#cloning-installing-dependencies-and-running-the-server">Cloning, Installing Dependencies, and Running the Server</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="webgme.html">WebGME</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plugins.html">Plugins</a></li>
@@ -151,6 +155,8 @@ such interfaces.</p>
 <h2>Pre-Requisites for Installation<a class="headerlink" href="#pre-requisites-for-installation" title="Permalink to this headline">¶</a></h2>
 <p>First and foremost, ROSMOD server&#8217;s plugins require <strong>Linux</strong>, but if you wish to not run any of the compilation, deployment, or generation functions, you can run the server on any platform for which <cite>node</cite> and <cite>mongodb</cite> are available.</p>
 <p>To run a ROSMOD WebGME server, you must have the following things installed:</p>
+<div class="section" id="for-base-server">
+<h3>For Base Server<a class="headerlink" href="#for-base-server" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="http://www.nodejs.org">node</a>, version 4.X;</li>
 </ul>
@@ -160,12 +166,23 @@ such interfaces.</p>
 </div>
 <ul class="simple">
 <li><cite>mongodb</cite>: installable from <cite>apt-get</cite></li>
+</ul>
+</div>
+<div class="section" id="for-plugins">
+<h3>For Plugins<a class="headerlink" href="#for-plugins" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
 <li><cite>ROS</cite>: installable according to the instructions at <a class="reference external" href="http://www.ros.org">http://www.ros.org</a></li>
 <li><a class="reference external" href="http://www.github.com/rosmod/rosmod">ROSMOD-COMM</a> : installable according to the <cite>comm</cite> instructions</li>
+<li><cite>doxygen</cite>: for documentation generation</li>
 <li><cite>pandoc</cite>: for documentation generation</li>
 <li><cite>sphinx</cite>: for documentation generation</li>
 </ul>
+<div class="highlight-bash"><div class="highlight"><pre>apt-get install doxygen pandoc python-sphinx
+pip install sphinx_rtd_theme sphinx-autobuild
+</pre></div>
+</div>
 <p>And for compilation and deployment you must have proper SSH keys and accessibility set up in you system.</p>
+</div>
 </div>
 <div class="section" id="cloning-installing-dependencies-and-running-the-server">
 <h2>Cloning, Installing Dependencies, and Running the Server<a class="headerlink" href="#cloning-installing-dependencies-and-running-the-server" title="Permalink to this headline">¶</a></h2>

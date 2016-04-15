@@ -155,26 +155,26 @@
             
   <div class="section" id="node">
 <h1>Node<a class="headerlink" href="#node" title="Permalink to this headline">¶</a></h1>
-<p>A node can contain any number of <strong>Instances</strong> of <tt class="docutils literal"><span class="pre">Components</span></tt> defined
-in the <tt class="docutils literal"><span class="pre">Software</span></tt> model. A node also has <strong>CMDLine</strong> and <strong>Priority</strong>
+<p>A node can contain any number of <strong>Instances</strong> of <code class="docutils literal"><span class="pre">Components</span></code> defined
+in the <code class="docutils literal"><span class="pre">Software</span></code> model. A node also has <strong>CMDLine</strong> and <strong>Priority</strong>
 attributes which specify the command line string that will be passed to
 the process upon execution and the linux scheduling priority of the
 node&#8217;s process, respectively.</p>
 <blockquote>
-<div>NOTE:: To create a <tt class="docutils literal"><span class="pre">Component</span></tt> <em>Instance</em>, you <strong>never</strong> drag from
-the <tt class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></tt>, but must instead drag and drop a <tt class="docutils literal"><span class="pre">Component</span></tt>
-from this project&#8217;s <tt class="docutils literal"><span class="pre">Software</span></tt> model into the canvas and select
-<tt class="docutils literal"><span class="pre">Create</span> <span class="pre">Instance</span> <span class="pre">Here</span></tt>.</div></blockquote>
-<p>By creating <tt class="docutils literal"><span class="pre">Component</span> <span class="pre">Instances</span></tt> in this way, the user can go into a
-Component Instance and change attributes, e.g. a <tt class="docutils literal"><span class="pre">Timer</span></tt>&#8216;s <strong>Period</strong>
+<div>NOTE:: To create a <code class="docutils literal"><span class="pre">Component</span></code> <em>Instance</em>, you <strong>never</strong> drag from
+the <code class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></code>, but must instead drag and drop a <code class="docutils literal"><span class="pre">Component</span></code>
+from this project&#8217;s <code class="docutils literal"><span class="pre">Software</span></code> model into the canvas and select
+<code class="docutils literal"><span class="pre">Create</span> <span class="pre">Instance</span> <span class="pre">Here</span></code>.</div></blockquote>
+<p>By creating <code class="docutils literal"><span class="pre">Component</span> <span class="pre">Instances</span></code> in this way, the user can go into a
+Component Instance and change attributes, e.g. a <code class="docutils literal"><span class="pre">Timer</span></code>&#8216;s <strong>Period</strong>
 or <strong>Priority</strong>, which will not require a code re-compilation. Further,
 any changes made to the original component in the software model will
-automatically propagate to any <tt class="docutils literal"><span class="pre">Component</span> <span class="pre">Instances</span></tt> that have been
+automatically propagate to any <code class="docutils literal"><span class="pre">Component</span> <span class="pre">Instances</span></code> that have been
 created from it. Any changes made to the instance will <em>override</em> the
 original component&#8217;s properties, but will not affect the original
 component or any other component instances.</p>
-<p>Finally, each <tt class="docutils literal"><span class="pre">Component</span> <span class="pre">Instance</span></tt> corresponds to a separate thread of
-the <tt class="docutils literal"><span class="pre">Node</span></tt>&#8216;s process.</p>
+<p>Finally, each <code class="docutils literal"><span class="pre">Component</span> <span class="pre">Instance</span></code> corresponds to a separate thread of
+the <code class="docutils literal"><span class="pre">Node</span></code>&#8216;s process.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="_v_0_s_6_q_P_K.html">Example Sender Component</a><ul>

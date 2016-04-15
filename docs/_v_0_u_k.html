@@ -151,19 +151,19 @@
             
   <div class="section" id="experiment">
 <h1>Experiment<a class="headerlink" href="#experiment" title="Permalink to this headline">¶</a></h1>
-<p>An experiment maps a <tt class="docutils literal"><span class="pre">Deployment</span></tt>&#8216;s abstract grouping of component
-instances into processes and finally into <tt class="docutils literal"><span class="pre">Containers</span></tt> to <tt class="docutils literal"><span class="pre">Hosts</span></tt>
-from the selected <tt class="docutils literal"><span class="pre">System</span></tt>.</p>
+<p>An experiment maps a <code class="docutils literal"><span class="pre">Deployment</span></code>&#8216;s abstract grouping of component
+instances into processes and finally into <code class="docutils literal"><span class="pre">Containers</span></code> to <code class="docutils literal"><span class="pre">Hosts</span></code>
+from the selected <code class="docutils literal"><span class="pre">System</span></code>.</p>
 <div class="section" id="runexperiment-plugin">
 <h2>RunExperiment Plugin<a class="headerlink" href="#runexperiment-plugin" title="Permalink to this headline">¶</a></h2>
 <p>The mapping and experiment deployment is performed automatically by the
-<tt class="docutils literal"><span class="pre">RunExperiment</span></tt> plugin based on which <tt class="docutils literal"><span class="pre">Hosts</span></tt> are reachable and not
+<code class="docutils literal"><span class="pre">RunExperiment</span></code> plugin based on which <code class="docutils literal"><span class="pre">Hosts</span></code> are reachable and not
 busy (i.e. not running any other experiment or compilation processes)
 from the selected system, and also ensures that the hosts satisfy all of
 the constraints from all of the component instances in a container&#8217;s
 nodes. If there are not enough hosts for the number of containers or if
 the constraints of the software cannot be satisfied by the available
-hosts, the <tt class="docutils literal"><span class="pre">RunExperiment</span></tt> plugin informs the user, else the plugin
+hosts, the <code class="docutils literal"><span class="pre">RunExperiment</span></code> plugin informs the user, else the plugin
 finishes the deployment and saves the mapping into the model for
 reference and showing to the user.</p>
 </div>
@@ -171,12 +171,12 @@ reference and showing to the user.</p>
 <h2>StopExperiment Plugin<a class="headerlink" href="#stopexperiment-plugin" title="Permalink to this headline">¶</a></h2>
 <p>If an experiment is currently running (based on the existence of model
 objects corresponding to the mapping of containers to hosts), the
-<tt class="docutils literal"><span class="pre">StopExperiment</span></tt> plugin will stop all the associated experiment
+<code class="docutils literal"><span class="pre">StopExperiment</span></code> plugin will stop all the associated experiment
 processes and copy back all the components&#8217; generated logs. The logs are
 saved onto the server file system and their contents are also copied
-into attributes of an automatically created <tt class="docutils literal"><span class="pre">Results</span></tt> object, whose
+into attributes of an automatically created <code class="docutils literal"><span class="pre">Results</span></code> object, whose
 name will be the current time at which the experiment finished. If the
-user opens the <tt class="docutils literal"><span class="pre">Results</span></tt> object and selects the <tt class="docutils literal"><span class="pre">ResultsViz</span></tt>
+user opens the <code class="docutils literal"><span class="pre">Results</span></code> object and selects the <code class="docutils literal"><span class="pre">ResultsViz</span></code>
 visualizer, any tracing logs that were recovered will be automatically
 plotted in the canvas.</p>
 <div class="toctree-wrapper compound">

@@ -153,25 +153,25 @@
             
   <div class="section" id="hosts">
 <h1>Hosts<a class="headerlink" href="#hosts" title="Permalink to this headline">¶</a></h1>
-<p>Hosts can have two types of children: <tt class="docutils literal"><span class="pre">Interfaces</span></tt> and
-<tt class="docutils literal"><span class="pre">Capabilities</span></tt>. The attributes of <tt class="docutils literal"><span class="pre">Hosts</span></tt> are described in the
-section regarding <tt class="docutils literal"><span class="pre">System</span></tt> models.</p>
+<p>Hosts can have two types of children: <code class="docutils literal"><span class="pre">Interfaces</span></code> and
+<code class="docutils literal"><span class="pre">Capabilities</span></code>. The attributes of <code class="docutils literal"><span class="pre">Hosts</span></code> are described in the
+section regarding <code class="docutils literal"><span class="pre">System</span></code> models.</p>
 <div class="section" id="interfaces">
 <h2>Interfaces<a class="headerlink" href="#interfaces" title="Permalink to this headline">¶</a></h2>
 <p>Interfaces are used to specify the network interfaces available on the
-host. Each interface only has a <strong>name</strong>, e.g. <tt class="docutils literal"><span class="pre">eth0</span></tt>, specifying the
+host. Each interface only has a <strong>name</strong>, e.g. <code class="docutils literal"><span class="pre">eth0</span></code>, specifying the
 network interface as it would be seen on the actual hardware, for
-instance by running <tt class="docutils literal"><span class="pre">ifconfig</span></tt> in <em>linux</em>.</p>
+instance by running <code class="docutils literal"><span class="pre">ifconfig</span></code> in <em>linux</em>.</p>
 </div>
 <div class="section" id="capabilities">
 <h2>Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h2>
-<p>Capabilities are the corresponding object to <tt class="docutils literal"><span class="pre">Constraints</span></tt>, which are
-contained by <tt class="docutils literal"><span class="pre">Components</span></tt>. A <tt class="docutils literal"><span class="pre">Capability</span></tt> corresponds to some
-provision that the <tt class="docutils literal"><span class="pre">Host</span></tt> has that the software may need, for instance
-<tt class="docutils literal"><span class="pre">hasCamera</span></tt>, or <tt class="docutils literal"><span class="pre">hasGPIO</span></tt>. Components which have the correspondingly
-named <tt class="docutils literal"><span class="pre">Constraint</span></tt> can only be mapped during deployment/execution to
-hosts which have <tt class="docutils literal"><span class="pre">Capabilities</span></tt> of the same name. Note that
-<tt class="docutils literal"><span class="pre">Capabilities</span></tt> need not be unique within or between hosts.</p>
+<p>Capabilities are the corresponding object to <code class="docutils literal"><span class="pre">Constraints</span></code>, which are
+contained by <code class="docutils literal"><span class="pre">Components</span></code>. A <code class="docutils literal"><span class="pre">Capability</span></code> corresponds to some
+provision that the <code class="docutils literal"><span class="pre">Host</span></code> has that the software may need, for instance
+<code class="docutils literal"><span class="pre">hasCamera</span></code>, or <code class="docutils literal"><span class="pre">hasGPIO</span></code>. Components which have the correspondingly
+named <code class="docutils literal"><span class="pre">Constraint</span></code> can only be mapped during deployment/execution to
+hosts which have <code class="docutils literal"><span class="pre">Capabilities</span></code> of the same name. Note that
+<code class="docutils literal"><span class="pre">Capabilities</span></code> need not be unique within or between hosts.</p>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>

@@ -152,21 +152,21 @@
   <div class="section" id="package">
 <h1>Package<a class="headerlink" href="#package" title="Permalink to this headline">¶</a></h1>
 <p>A ROSMOD package contains the definitions for its associated
-<tt class="docutils literal"><span class="pre">Messages</span></tt> and <tt class="docutils literal"><span class="pre">Services</span></tt>, which follow the
+<code class="docutils literal"><span class="pre">Messages</span></code> and <code class="docutils literal"><span class="pre">Services</span></code>, which follow the
 <a class="reference external" href="http://www.ros.org">ROS</a> definitions, as well as the definitions for
-ROSMOD <tt class="docutils literal"><span class="pre">Components</span></tt>.</p>
+ROSMOD <code class="docutils literal"><span class="pre">Components</span></code>.</p>
 <div class="section" id="messages">
 <h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
-<p>Messages contain a <tt class="docutils literal"><span class="pre">definition</span></tt> attribute (editable using a
+<p>Messages contain a <code class="docutils literal"><span class="pre">definition</span></code> attribute (editable using a
 <a class="reference external" href="http://codemirror.net">CodeMirror</a> dialog). This definition
 attribute conforms to the <a class="reference external" href="http://wiki.ros.org/msg">ROS Message Description
 Specification</a>. Messages allow components to
-interact using <tt class="docutils literal"><span class="pre">Publishers</span></tt> and <tt class="docutils literal"><span class="pre">Subscribers</span></tt>, through a
+interact using <code class="docutils literal"><span class="pre">Publishers</span></code> and <code class="docutils literal"><span class="pre">Subscribers</span></code>, through a
 <em>non-blocking</em>, <em>one-to-many</em> publish/subscribe interaction pattern.
 Non-blocking means that when a component publishes a message, the
 publish returns immediately, without waiting for any or all subscribers
 to acknowledge that they have received the message.</p>
-<p>Here is an example Message <tt class="docutils literal"><span class="pre">definition</span></tt>:</p>
+<p>Here is an example Message <code class="docutils literal"><span class="pre">definition</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>int32 X=123
 int32 Y=-123
 string FOO=&quot;this is a constant&quot;
@@ -176,15 +176,15 @@ string EXAMPLE=&quot;this is another constant&quot;
 </div>
 <div class="section" id="services">
 <h2>Services<a class="headerlink" href="#services" title="Permalink to this headline">¶</a></h2>
-<p>Services contain a <tt class="docutils literal"><span class="pre">definition</span></tt> attribute (editable using a
+<p>Services contain a <code class="docutils literal"><span class="pre">definition</span></code> attribute (editable using a
 <a class="reference external" href="http://codemirror.net">CodeMirror</a> dialog). This definition
 attribute conforms to the <a class="reference external" href="http://wiki.ros.org/srv">ROS Service Description
 Specification</a>. Services allow components to
-interact using <tt class="docutils literal"><span class="pre">Clients</span></tt> and <tt class="docutils literal"><span class="pre">Servers</span></tt>, through a <em>blocking</em>,
+interact using <code class="docutils literal"><span class="pre">Clients</span></code> and <code class="docutils literal"><span class="pre">Servers</span></code>, through a <em>blocking</em>,
 <em>one-to-one</em> client/server interaction pattern. Blocking means that the
 component that issues the client call to the server must wait and cannot
 execute other code until it receives the response from the server.</p>
-<p>Here is an example Service <tt class="docutils literal"><span class="pre">definition</span></tt>:</p>
+<p>Here is an example Service <code class="docutils literal"><span class="pre">definition</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>#request constants
 int8 FOO=1
 int8 BAR=2
@@ -207,36 +207,36 @@ uint32 an_integer
 components using the publish/subscribe and client/server interaction
 patterns. These interactions trigger operations to fire in the
 components, where the operation is a function implemented by the user
-inside the <tt class="docutils literal"><span class="pre">operation</span></tt> attribute of the relevant <tt class="docutils literal"><span class="pre">subscriber</span></tt> or
-<tt class="docutils literal"><span class="pre">server</span></tt>. The component can also have timer operations which fire
-either sporadically or periodically and similarly have an <tt class="docutils literal"><span class="pre">operation</span></tt>
+inside the <code class="docutils literal"><span class="pre">operation</span></code> attribute of the relevant <code class="docutils literal"><span class="pre">subscriber</span></code> or
+<code class="docutils literal"><span class="pre">server</span></code>. The component can also have timer operations which fire
+either sporadically or periodically and similarly have an <code class="docutils literal"><span class="pre">operation</span></code>
 attribute in which the user specifies the c++ code to be run when the
 operation executes. These operations happen serially through the
 operation queue and are not preemptable by other operations of that
-component. Inside these operations, <tt class="docutils literal"><span class="pre">publisher</span></tt> or <tt class="docutils literal"><span class="pre">client</span></tt> objects
+component. Inside these operations, <code class="docutils literal"><span class="pre">publisher</span></code> or <code class="docutils literal"><span class="pre">client</span></code> objects
 can be used to trigger operations on components which have associated
-and connected <tt class="docutils literal"><span class="pre">servers</span></tt> or <tt class="docutils literal"><span class="pre">subscribers</span></tt>. These <tt class="docutils literal"><span class="pre">publisher</span></tt>,
-<tt class="docutils literal"><span class="pre">subscriber</span></tt>, <tt class="docutils literal"><span class="pre">client</span></tt>, <tt class="docutils literal"><span class="pre">server</span></tt>, and <tt class="docutils literal"><span class="pre">timer</span></tt> objects are added
+and connected <code class="docutils literal"><span class="pre">servers</span></code> or <code class="docutils literal"><span class="pre">subscribers</span></code>. These <code class="docutils literal"><span class="pre">publisher</span></code>,
+<code class="docutils literal"><span class="pre">subscriber</span></code>, <code class="docutils literal"><span class="pre">client</span></code>, <code class="docutils literal"><span class="pre">server</span></code>, and <code class="docutils literal"><span class="pre">timer</span></code> objects are added
 by the user and defined inside the component.</p>
-<p>Components contain <tt class="docutils literal"><span class="pre">forwards</span></tt>, <tt class="docutils literal"><span class="pre">members</span></tt>, <tt class="docutils literal"><span class="pre">definitions</span></tt>,
-<tt class="docutils literal"><span class="pre">initialization</span></tt>, and <tt class="docutils literal"><span class="pre">destruction</span></tt> attributes which provide an
-interface for the user to add their own <tt class="docutils literal"><span class="pre">C++</span> <span class="pre">code</span></tt> to the component.</p>
-<p><tt class="docutils literal"><span class="pre">Forwards</span></tt> corresponds to code that comes <em>before the class
-declaration</em> in the generated <tt class="docutils literal"><span class="pre">component</span> <span class="pre">header</span> <span class="pre">file</span></tt>, e.g</p>
+<p>Components contain <code class="docutils literal"><span class="pre">forwards</span></code>, <code class="docutils literal"><span class="pre">members</span></code>, <code class="docutils literal"><span class="pre">definitions</span></code>,
+<code class="docutils literal"><span class="pre">initialization</span></code>, and <code class="docutils literal"><span class="pre">destruction</span></code> attributes which provide an
+interface for the user to add their own <code class="docutils literal"><span class="pre">C++</span> <span class="pre">code</span></code> to the component.</p>
+<p><code class="docutils literal"><span class="pre">Forwards</span></code> corresponds to code that comes <em>before the class
+declaration</em> in the generated <code class="docutils literal"><span class="pre">component</span> <span class="pre">header</span> <span class="pre">file</span></code>, e.g</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#include &lt;stdio.h&gt;</span>
 </pre></div>
 </div>
 <p>or user-created structure or class definitions.</p>
-<p><tt class="docutils literal"><span class="pre">Members</span></tt> corresponds to <em>private members and methods</em> that the user
+<p><code class="docutils literal"><span class="pre">Members</span></code> corresponds to <em>private members and methods</em> that the user
 wishes to add to the component in the generated
-<tt class="docutils literal"><span class="pre">component</span> <span class="pre">header</span> <span class="pre">file</span></tt>.</p>
-<p><tt class="docutils literal"><span class="pre">Definitions</span></tt> corresponds to function definitions or other code that
-the user wishes to add to the generated <tt class="docutils literal"><span class="pre">component</span> <span class="pre">source</span> <span class="pre">file</span></tt>.</p>
-<p><tt class="docutils literal"><span class="pre">Initialization</span></tt> corresponds to the code the user wishes to run when
+<code class="docutils literal"><span class="pre">component</span> <span class="pre">header</span> <span class="pre">file</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">Definitions</span></code> corresponds to function definitions or other code that
+the user wishes to add to the generated <code class="docutils literal"><span class="pre">component</span> <span class="pre">source</span> <span class="pre">file</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">Initialization</span></code> corresponds to the code the user wishes to run when
 the component starts up to initialize members to specific values or
 begin the process of triggering other components in the system through
 publish or client interactions.</p>
-<p>Finally, <tt class="docutils literal"><span class="pre">Destruction</span></tt> allows the user to specify destruction of any
+<p>Finally, <code class="docutils literal"><span class="pre">Destruction</span></code> allows the user to specify destruction of any
 objects they have allocated on the heap that need to be manually
 destructed during component destruction.</p>
 <div class="toctree-wrapper compound">

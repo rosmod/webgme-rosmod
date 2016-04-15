@@ -151,24 +151,24 @@
             
   <div class="section" id="system">
 <h1>System<a class="headerlink" href="#system" title="Permalink to this headline">¶</a></h1>
-<p>In a <tt class="docutils literal"><span class="pre">System</span></tt> model, you define <tt class="docutils literal"><span class="pre">Hosts</span></tt>, <tt class="docutils literal"><span class="pre">Users</span></tt>, <tt class="docutils literal"><span class="pre">Networks</span></tt>,
-and <tt class="docutils literal"><span class="pre">Links</span></tt>:</p>
+<p>In a <code class="docutils literal"><span class="pre">System</span></code> model, you define <code class="docutils literal"><span class="pre">Hosts</span></code>, <code class="docutils literal"><span class="pre">Users</span></code>, <code class="docutils literal"><span class="pre">Networks</span></code>,
+and <code class="docutils literal"><span class="pre">Links</span></code>:</p>
 <div class="section" id="hosts">
 <h2>Hosts<a class="headerlink" href="#hosts" title="Permalink to this headline">¶</a></h2>
-<p>The <tt class="docutils literal"><span class="pre">Hosts</span></tt> which are computers with a specified <strong>OS</strong>,
+<p>The <code class="docutils literal"><span class="pre">Hosts</span></code> which are computers with a specified <strong>OS</strong>,
 <strong>Architecture</strong>, <strong>Device ID</strong>, and <strong>Device ID Command</strong>. The <strong>Device
 ID</strong> allows the user to delineate between two different devices (e.g. a
 BeagleBone Black and an NVIDIA Jetson TK1) which may have the same
-<em>Architecture</em> (e.g. <tt class="docutils literal"><span class="pre">armv7l</span></tt>), but may need to be separated for
+<em>Architecture</em> (e.g. <code class="docutils literal"><span class="pre">armv7l</span></code>), but may need to be separated for
 binary/library incompatibility. Because these devices may have different
 subsystems, we allow the user to specify the <strong>Device ID Command</strong> which
 is run on the host and should return a string containing the specified
-<em>Device ID</em>. Hosts can have any number of <tt class="docutils literal"><span class="pre">Interface</span></tt> <em>children</em>,
-which are displayed as <tt class="docutils literal"><span class="pre">ports</span></tt> on the <tt class="docutils literal"><span class="pre">Host</span></tt>.</p>
+<em>Device ID</em>. Hosts can have any number of <code class="docutils literal"><span class="pre">Interface</span></code> <em>children</em>,
+which are displayed as <code class="docutils literal"><span class="pre">ports</span></code> on the <code class="docutils literal"><span class="pre">Host</span></code>.</p>
 </div>
 <div class="section" id="users">
 <h2>Users<a class="headerlink" href="#users" title="Permalink to this headline">¶</a></h2>
-<p>The <tt class="docutils literal"><span class="pre">Users</span></tt> which have an associated <strong>SSH Key</strong> location and
+<p>The <code class="docutils literal"><span class="pre">Users</span></code> which have an associated <strong>SSH Key</strong> location and
 <strong>Directory</strong>. The user&#8217;s <strong>Directory</strong> is where any processes started
 during experiment deployment or compilation on behalf of the user will
 be run and where any artifacts will be generated.</p>
@@ -181,12 +181,12 @@ available IP addresses.</p>
 </div>
 <div class="section" id="links">
 <h2>Links<a class="headerlink" href="#links" title="Permalink to this headline">¶</a></h2>
-<p>Links connect a <em>hosts</em> <tt class="docutils literal"><span class="pre">Interface</span></tt> to a <tt class="docutils literal"><span class="pre">Network</span></tt> and has an
+<p>Links connect a <em>hosts</em> <code class="docutils literal"><span class="pre">Interface</span></code> to a <code class="docutils literal"><span class="pre">Network</span></code> and has an
 associated <strong>IP</strong> address that the interface will have on that network.
 The user can create links and assign the IP addresses by clicking and
 dragging from the host&#8217;s interface to a network. The IP address is
 displayed on the link and can be edited by clicking on the Link and
-editing its IP property in the <tt class="docutils literal"><span class="pre">Property</span> <span class="pre">Panel</span></tt>.</p>
+editing its IP property in the <code class="docutils literal"><span class="pre">Property</span> <span class="pre">Panel</span></code>.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="_v_0_g_X_8.html">Hosts</a><ul>
