@@ -99,6 +99,7 @@ define([
 	authors,
 	brief,
 	detailed,
+	svg,
 	htmlId,
 	html;
 	
@@ -123,6 +124,10 @@ define([
 	column = this.$el.find('#colClass' + panelId);
 	column.empty();
 	column.append(projectHtml);
+
+	svg = column.find('svg');
+	svg.css('height', '120px');
+	svg.css('width', 'auto');
 
 	htmlId = panelId + '-node-panel';
 	html = this.$el.find('#' + htmlId);
