@@ -2,6 +2,60 @@
     "BreadCrumbHeader": {
 	"style": "arrows"
     },
+    "GenericUIProjectNavigatorController": {
+	"disableProjectActions": false,
+	"rootMenuClass": "gme-root",
+	"rootDisplayName": "ROSMOD",
+	"projectMenuClass": "",
+	"branchMenuClass": ""
+    },
+    "GenericUIWebGMEStart": {
+	"pageTitle": "ROSMOD",
+	"disableProjectsDialog": false,
+	"initialContext": {
+	    "project": "ROSMOD+Samples",
+	    "branch": "master",
+	    "node": "/v"
+	},
+	"nodeAtOpen": "/v",
+	"byProjectName": {
+	    "nodeAtOpen": {}
+	},
+	"byProjectId": {
+	    "nodeAtOpen": {}
+	}
+    },
+    "GenericUITreeBrowserControl": {
+	"filters": {
+	    "toggled": {
+		"hideConnections": false,
+		"hideAbstracts": false,
+		"hideLeaves": false,
+		"hideLibraries": false
+	    }
+	},
+	"treeRoot": "/v",
+	"byProjectName": {
+	    "treeRoot": {
+		"ROSMOD+Samples": "/v"
+	    }
+	},
+	"byProjectId": {
+	    "treeRoot": {}
+	}
+    },
+    "GenericUIModelEditorControl": {
+	"topNode": "/v",
+	"byProjectName": {
+	    "topNode": {
+		"ROSMOD+Samples": "/v"
+	    }
+	},
+	"byProjectId": {
+	    "topNode": {
+	    }
+	}
+    },
     "GenericUIDefaultLayout": {
 	"panels": [
 	    {
