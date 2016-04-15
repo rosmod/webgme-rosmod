@@ -17,11 +17,11 @@ First and foremost, ROSMOD server's plugins require **Linux**, but if you wish t
 
 To run a ROSMOD WebGME server, you must have the following things installed:
 
-* `node <nodejs.org>`_, version 4.X; 
+* `node <http://www.nodejs.org>`_, version 4.X; 
 .. note:: you **cannot** install *node* from `apt-get` as it is the wrong version
 * `mongodb`: installable from `apt-get`
-* `ROS`: installable according to the instructions at `<ros.org>`_
-* `ROSMOD-COMM <github.com/rosmod/rosmod>`_ : installable according to the `comm` instructions
+* `ROS`: installable according to the instructions at `<http://www.ros.org>`_
+* `ROSMOD-COMM <http://www.github.com/rosmod/rosmod>`_ : installable according to the `comm` instructions
 * `pandoc`: for documentation generation
 * `sphinx`: for documentation generation
 
