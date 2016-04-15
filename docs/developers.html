@@ -87,8 +87,12 @@
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="users.html">Using ROSMOD</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Deploying ROSMOD</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="webgme.html">WebGME</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plugins.html">Plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pre-requisites-for-installation">Pre-Requisites for Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cloning-installing-dependencies-and-running-the-server">Cloning, Installing Dependencies, and Running the Server</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="webgme.html">WebGME</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins.html">Plugins</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -143,11 +147,43 @@ everything works behind the scenes.  It covers everything from how to
 create meta-models, how to create domain-specific interfaces and
 plugins based on those meta-models and provides some guide-lines for
 such interfaces.</p>
+<div class="section" id="pre-requisites-for-installation">
+<h2>Pre-Requisites for Installation<a class="headerlink" href="#pre-requisites-for-installation" title="Permalink to this headline">¶</a></h2>
+<p>First and foremost, ROSMOD server&#8217;s plugins require <strong>Linux</strong>, but if you wish to not run any of the compilation, deployment, or generation functions, you can run the server on any platform for which <cite>node</cite> and <cite>mongodb</cite> are available.</p>
+<p>To run a ROSMOD WebGME server, you must have the following things installed:</p>
+<ul class="simple">
+<li><a class="reference external" href="nodejs.org">node</a>, version 4.X;</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">you <strong>cannot</strong> install <em>node</em> from <cite>apt-get</cite> as it is the wrong version</p>
+</div>
+<ul class="simple">
+<li><cite>mongodb</cite>: installable from <cite>apt-get</cite></li>
+<li><cite>ROS</cite>: installable according to the instructions at <a class="reference external" href="ros.org">ros.org</a></li>
+<li><a class="reference external" href="github.com/rosmod/rosmod">ROSMOD-COMM</a> : installable according to the <cite>comm</cite> instructions</li>
+<li><cite>pandoc</cite>: for documentation generation</li>
+<li><cite>sphinx</cite>: for documentation generation</li>
+</ul>
+<p>And for compilation and deployment you must have proper SSH keys and accessibility set up in you system.</p>
+</div>
+<div class="section" id="cloning-installing-dependencies-and-running-the-server">
+<h2>Cloning, Installing Dependencies, and Running the Server<a class="headerlink" href="#cloning-installing-dependencies-and-running-the-server" title="Permalink to this headline">¶</a></h2>
+<p>After you have these prerequisites installed, you can clone the repository and install the dependencies:</p>
+<div class="highlight-bash"><div class="highlight"><pre>git clone https://github.com/rosmod/webgme-rosmod
+npm update
+</pre></div>
+</div>
+<p>Assuming you have <cite>mongod</cite> running, you can now start the server (sudo permissions are required because by default it starts on port 80):</p>
+<div class="highlight-bash"><div class="highlight"><pre>sudo npm start
+</pre></div>
+</div>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="webgme.html">WebGME</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins.html">Plugins</a></li>
 </ul>
+</div>
 </div>
 </div>
 
