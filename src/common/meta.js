@@ -8,7 +8,6 @@ define([], function () {
         'Capability': '/3/u',
         'Client': '/3/d',
         'Component': '/3/8',
-        'Component Instance': '/3/F',
         'Constraint': '/3/N',
         'Container': '/3/j',
         'Deployment': '/3/i',

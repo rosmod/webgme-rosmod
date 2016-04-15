@@ -4,12 +4,14 @@
 define([
     'js/RegistryKeys',
     'js/Constants',
+    'rosmod/meta',
     './DocumentEditorDialog',
     'decorators/ModelDecorator/DiagramDesigner/ModelDecorator.DiagramDesignerWidget',
     'css!./CodeEditorDecorator.DiagramDesignerWidget.css'
-  ], function (
+], function (
     REGISTRY_KEYS,
     CONSTANTS,
+    MetaTypes,
     DocumentEditorDialog,
     ModelDecoratorDiagramDesignerWidget) {
 
@@ -24,6 +26,7 @@ define([
 
         ModelDecoratorDiagramDesignerWidget.apply(this, [opts]);
 
+        this.metaTypes = MetaTypes;
         this._skinParts = {};
 	this.buttonDict = {
 	    'Interaction': {
@@ -59,11 +62,10 @@ define([
         //let the parent decorator class do its job first
         ModelDecoratorDiagramDesignerWidget.prototype.on_addTo.apply(this, arguments);
 
-	var baseObject = client.getNode(nodeObj.getBaseId()),
-	    baseType = undefined || baseObject.getAttribute('name'),
-	    isInteraction = baseType == 'Message' || baseType == 'Service',
-	    isComponent = baseType == 'Component',
-	    isPort = baseType == 'Subscriber' || baseType == 'Server' || baseType == 'Timer';
+	var baseId = nodeObj.getBaseId(),
+	    isInteraction = self.metaTypes['Message'] == baseId || self.metaTypes['Service'] == baseId,
+	    isComponent = self.metaTypes['Component'] == baseId,
+	    isPort = self.metaTypes['Subscriber'] == baseId || self.metaTypes['Server'] == baseId || self.metaTypes['Timer'] == baseId;
 
 	var objType = '';
 	if (isInteraction)
