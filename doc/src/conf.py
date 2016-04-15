@@ -1,6 +1,5 @@
 project = 'ROSMOD GUI'
 html_short_title = 'ROSMOD GUI'
-#project = 'PNP2'
 version = '1.0'
 release = '1.0.0'
 copyright = '2016, William Emfinger, Pranav Srinivas Kumar'

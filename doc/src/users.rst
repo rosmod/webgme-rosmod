@@ -15,23 +15,7 @@ Requirements
 Explain here what requirements are for using this tool (what browsers
 are supported, how to connect to a server)
 
-Client Server Example
----------------------
+Samples
+-------
 
-Walk through the creation and deployment of a Client-Server example.
-
-Publish/Subscribe Example
--------------------------
-
-Walk through the creation and deployment of a Publish/Subscribe example.
-
-Constraints Example
--------------------
-
-Walk through the creation and deployment of an example showcasing
-constraints.
-
-Complex Example
----------------
-
-Walk through the creation and deployment of a complex ROSMOD example.
+:ref:`intro` Is the launching point for learning ROSMOD and the WebGME environment.  It walks through the relevant user interfaces, modeling concepts, and ROS/ROSMOD concepts.

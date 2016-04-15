@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using ROSMOD &mdash; ROSMOD GUI 1.0.0 documentation</title>
+  <title>System &mdash; ROSMOD GUI 1.0.0 documentation</title>
   
 
   
@@ -32,9 +32,7 @@
   
 
   
-    <link rel="top" title="ROSMOD GUI 1.0.0 documentation" href="index.html"/>
-        <link rel="next" title="Deploying ROSMOD" href="developers.html"/>
-        <link rel="prev" title="Getting Started" href="getting-started.html"/> 
+    <link rel="top" title="ROSMOD GUI 1.0.0 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -83,13 +81,9 @@
           
             
             
-                <ul class="current">
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Using ROSMOD</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#samples">Samples</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="users.html">Using ROSMOD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">Deploying ROSMOD</a></li>
 </ul>
 
@@ -121,11 +115,11 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Using ROSMOD</li>
+    <li>System</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/users.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/_0_g_X.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -135,20 +129,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="using-rosmod">
-<span id="users"></span><h1>Using ROSMOD<a class="headerlink" href="#using-rosmod" title="Permalink to this headline">¶</a></h1>
-<p><strong>THIS SECTION IS NOT COMPLETE</strong></p>
-<p>Explain here how to create models using ROSMOD and go through several
-examples of using the plugins to compile and execute code on the
-systems.</p>
-<div class="section" id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>Explain here what requirements are for using this tool (what browsers
-are supported, how to connect to a server)</p>
-</div>
-<div class="section" id="samples">
-<h2>Samples<a class="headerlink" href="#samples" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="_0.html#intro"><span>Introduction to ROSMOD</span></a> Is the launching point for learning ROSMOD and the WebGME environment.  It walks through the relevant user interfaces, modeling concepts, and ROS/ROSMOD concepts.</p>
+  <div class="section" id="system">
+<h1>System<a class="headerlink" href="#system" title="Permalink to this headline">¶</a></h1>
+<p>In a <code class="docutils literal"><span class="pre">System</span></code> model, you define:</p>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">Hosts</span></code> which are computers with a specified <strong>OS</strong>,
+<strong>Architecture</strong>, <strong>Device ID</strong>, and <strong>Device ID Command</strong>. The
+<strong>Device ID</strong> allows the user to delineate between two different
+devices (e.g. a BeagleBone Black and an NVIDIA Jetson TK1) which may
+have the same <em>Architecture</em> (e.g. <code class="docutils literal"><span class="pre">armv7l</span></code>), but may need to be
+separated for binary/library incompatibility. Because these devices
+may have different subsystems, we allow the user to specify the
+<strong>Device ID Command</strong> which is run on the host and should return a
+string containing the specified <em>Device ID</em>.</li>
+<li>The <code class="docutils literal"><span class="pre">Users</span></code> which have an associated <strong>SSH Key</strong> location and
+<strong>Directory</strong>. The user&#8217;s <strong>Directory</strong> is where any processes
+started during experiment deployment or compilation on behalf of the
+user will be run and where any artifacts will be generated.</li>
+<li>The <code class="docutils literal"><span class="pre">Network</span></code> which is a group containing a <code class="docutils literal"><span class="pre">Network</span></code> object, as
+well as <code class="docutils literal"><span class="pre">Links</span></code> from the network object to <code class="docutils literal"><span class="pre">Interfaces</span></code> on the
+<code class="docutils literal"><span class="pre">Hosts</span></code>. When a <code class="docutils literal"><span class="pre">Host</span></code> has an <code class="docutils literal"><span class="pre">Interface</span></code> child, the
+<code class="docutils literal"><span class="pre">Interface</span></code> is displayed on the side of the host as a <code class="docutils literal"><span class="pre">Port</span></code>. By
+clicking on this port and dragging to a <code class="docutils literal"><span class="pre">Network</span></code> object, the user
+can create a <code class="docutils literal"><span class="pre">Link</span></code> between the host&#8217;s interface and the network.
+This link is visualized as a line which displays the assigned <strong>IP
+address</strong> that the interface will receive. The user can edit this ip
+address by clicking on the line and editing the <code class="docutils literal"><span class="pre">IP</span></code> property in
+the <code class="docutils literal"><span class="pre">Property</span> <span class="pre">Editor</span></code>. All IP addresses of all interfaces of a host
+will be tested for connectivity.</li>
+</ul>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
 </div>
 </div>
 
@@ -156,15 +168,6 @@ are supported, how to connect to a server)</p>
            </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="developers.html" class="btn btn-neutral float-right" title="Deploying ROSMOD" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="getting-started.html" class="btn btn-neutral" title="Getting Started" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
