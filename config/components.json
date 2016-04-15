@@ -12,13 +12,7 @@
     "GenericUIWebGMEStart": {
 	"pageTitle": "ROSMOD",
 	"disableProjectsDialog": false,
-	"nodeAtOpen": "/v",
-	"byProjectName": {
-	    "nodeAtOpen": {}
-	},
-	"byProjectId": {
-	    "nodeAtOpen": {}
-	}
+	"nodeAtOpen": "/v"
     },
     "GenericUITreeBrowserControl": {
 	"filters": {
@@ -29,14 +23,7 @@
 		"hideLibraries": false
 	    }
 	},
-	"treeRoot": "/v",
-	"byProjectName": {
-	    "treeRoot": {
-	    }
-	},
-	"byProjectId": {
-	    "treeRoot": {}
-	}
+	"treeRoot": "/v"
     },
     "GenericUIDefaultLayout": {
 	"panels": [
