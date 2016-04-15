@@ -326,7 +326,6 @@ define(['q'], function(Q) {
 		    if (err)
 			deferred.reject('copy to ' + ip + ' failed: '+ err);
 		    else {
-			self.logger.info('scp succeeded to '+ip);
 			deferred.resolve();
 		    }
 		});
