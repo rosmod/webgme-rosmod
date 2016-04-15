@@ -212,7 +212,7 @@ define([
 
     RootVizWidget.prototype.createProject = function(basePath) {
 	var client = this._client;
-	var nodeId = '', // root node always exists and always has path ''
+	var nodeId = '/v', // for our seeds, /v is always 'Projects'
 	baseId = client.getNode(basePath).getId();
 	var childCreationParams = {
 	    parentId: nodeId,  // Should be ROOT
