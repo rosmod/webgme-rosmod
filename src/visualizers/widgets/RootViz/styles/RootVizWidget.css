@@ -8,6 +8,12 @@
 
 .root-viz {
   outline: none; }
+
+.root-viz-project-panel {
+    display: inline-block,
+    height: 100%
+}
+
 .root-viz .panel-base-wh.w-tabs .floating-title {
     display: none
 }

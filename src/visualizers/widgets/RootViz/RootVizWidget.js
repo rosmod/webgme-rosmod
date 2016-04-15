@@ -49,10 +49,6 @@ define([
         this.$el.addClass(WIDGET_CLASS);
         this.$el.append(RootVizHtml);
 	this.$table = this.$el.find('#rootVizTable');
-
-	this._nodes = [];
-	this._numNodes = 0;
-	this._currentRow = 0;
 	this._tableSetup = false;
     };
 
@@ -67,11 +63,35 @@ define([
 	    this.$table.append('<col width="'+100/this._numElementsPerRow+'%" height="auto">');
 	this.$table.append('</colgroup>');
 	this._tableSetup = true;
+
+	this._numNodes = 0;
+	this._currentRow = 0;
     };
 
     RootVizWidget.prototype.createNodeEntry = function (desc) {
 	var row,
 	column,
+	panelId;
+	
+	if (!this._tableSetup)
+	    this.setupTable();
+
+	if ((this._numNodes % this._numElementsPerRow) == 0) {
+	    this._currentRow++;
+	    this.$table.append('<tr id="rowClass'+this._currentRow+'"></tr>');
+	}
+
+	panelId = desc.id.replace(/\//g,'-');
+
+	row = this.$el.find('#rowClass' + this._currentRow);
+	row.append('<td style="vertical-align: top; padding-top: 10px; padding-bottom: 10px; padding-right: 10px; padding-left: 10px;" id="colClass'+panelId+'"></td>');
+
+	this.updateNodeEntry(desc);
+	this._numNodes++;
+    };
+
+    RootVizWidget.prototype.updateNodeEntry = function(desc) {
+	var column,
 	projectHtml,
 	panelId,
 	title,
@@ -82,17 +102,6 @@ define([
 	htmlId,
 	html;
 	
-	if (!this._tableSetup)
-	    this.setupTable();
-
-	if ((this._numNodes % this._numElementsPerRow) == 0) {
-	    this._currentRow++;
-	    this.$table.append('<tr id="rowClass'+this._currentRow+'"></tr>');
-	}
-	row = this.$el.find('#rowClass' + this._currentRow);
-	row.append('<td style="vertical-align: top" id="colClass'+this._numNodes+'"></td>');
-	column = this.$el.find('#colClass' + this._numNodes);
-
 	title = desc.name;
 	panelId = desc.id.replace(/\//g,'-');
 	icon = desc.icon;
@@ -111,6 +120,8 @@ define([
 	    detailed: detailed
 	});
 
+	column = this.$el.find('#colClass' + panelId);
+	column.empty();
 	column.append(projectHtml);
 
 	htmlId = panelId + '-node-panel';
@@ -130,7 +141,8 @@ define([
 	    event.stopPropagation();
 	    event.preventDefault();
 	});
-	this._numNodes++;
+
+	this.nodes[desc.id] = desc;
     };
 
     RootVizWidget.prototype.onWidgetContainerResize = function (width, height) {
@@ -162,10 +174,15 @@ define([
     RootVizWidget.prototype.removeNode = function (gmeId) {
 	if (this.nodes[gmeId]) {
             delete this.nodes[gmeId];
+	    this.setupTable();
+	    for (var id in this.nodes) {
+		this.createNodeEntry(this.nodes[id]);
+	    }
 	}
     };
 
     RootVizWidget.prototype.updateNode = function (desc) {
+	this.updateNodeEntry(desc);
     };
 
     RootVizWidget.prototype._isValidDrop = function (dragInfo) {
