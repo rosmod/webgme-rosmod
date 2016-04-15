@@ -12,11 +12,6 @@
     "GenericUIWebGMEStart": {
 	"pageTitle": "ROSMOD",
 	"disableProjectsDialog": false,
-	"initialContext": {
-	    "project": "ROSMOD+Samples",
-	    "branch": "master",
-	    "node": "/v"
-	},
 	"nodeAtOpen": "/v",
 	"byProjectName": {
 	    "nodeAtOpen": {}
@@ -37,23 +32,10 @@
 	"treeRoot": "/v",
 	"byProjectName": {
 	    "treeRoot": {
-		"ROSMOD+Samples": "/v"
 	    }
 	},
 	"byProjectId": {
 	    "treeRoot": {}
-	}
-    },
-    "GenericUIModelEditorControl": {
-	"topNode": "/v",
-	"byProjectName": {
-	    "topNode": {
-		"ROSMOD+Samples": "/v"
-	    }
-	},
-	"byProjectId": {
-	    "topNode": {
-	    }
 	}
     },
     "GenericUIDefaultLayout": {
