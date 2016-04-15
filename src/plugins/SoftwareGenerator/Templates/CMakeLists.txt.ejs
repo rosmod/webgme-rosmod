@@ -161,7 +161,7 @@ target_link_libraries(<%- cmp.name %>
                       <%- lib['Link Libraries'] %>
 <%
         }
-        if ( lib.type == 'Source Library' ) {
+        if ( lib.type == 'Source Library' && lib.CompilesToSO ) {
 -%>
                       <%- lib.name %>
 <%
