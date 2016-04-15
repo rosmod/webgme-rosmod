@@ -22,7 +22,7 @@ To run a ROSMOD WebGME server, you must have the following things installed:
 * `mongodb`: installable from `apt-get`
 * `ROS`: installable according to the instructions at `<http://www.ros.org>`_
 * `ROSMOD-COMM <http://www.github.com/rosmod/rosmod>`_ : installable according to the `comm` instructions
-* `doxygn`: for documentation generation
+* `doxygen`: for documentation generation
 * `pandoc`: for documentation generation
 * `sphinx`: for documentation generation
 
