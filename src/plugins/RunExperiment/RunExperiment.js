@@ -217,9 +217,8 @@ define([
 		    container.constraints = [];
 		    if (container.Node_list) {
 			container.Node_list.map(function(node) {
-			    if (node['Component Instance_list']) {
-				node['Component Instance_list'].map(function(ci) {
-				    var comp = ci.Component;
+			    if (node.Component_list) {
+				node.Component_list.map(function(comp) {
 				    if (comp.Constraint_list) {
 					comp.Constraint_list.map(function(constraint) {
 					    if (container.constraints.indexOf(constraint) == -1) {

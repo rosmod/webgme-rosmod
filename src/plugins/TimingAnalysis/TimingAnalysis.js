@@ -165,9 +165,8 @@ define([
 		    deployment.Container_list.map(function(container) {
 			if (container.Node_list) {
 			    container.Node_list.map(function(node) {
-				if (node['Component Instance_list']) {
-				    node['Component Instance_list'].map(function(compInstance) {
-					var component = compInstance.Component;
+				if (node.Component_list) {
+				    node.Component_list.map(function(component) {
 					component_hardware_map[component.name] = "CPU_" + hardware_num;
 					// possibly refactor the code below to use Array.prototype.filter()
 					if (component.Publisher_list) {
@@ -218,7 +217,7 @@ define([
 						srv_map[srv].servers.push(server);
 					    });
 					}
-				    }); // end ['Component Instance_list'].map(compInstance)
+				    }); // end Component_list.map(component)
 				}
 				hardware_num += 1; // done with the nodes on this container
 			    }); // end Node_list.map(node)
@@ -250,9 +249,8 @@ define([
 			if (container.Node_list) {
 			    container.Node_list.map(function(node) {
 				var node_priority = node.Priority;
-				if (node['Component Instance_list']) {
-				    node['Component Instance_list'].map(function(compInstance) {
-					var component = compInstance.Component;
+				if (node.Component_list) {
+				    node.Component_list.map(function(component) {
 					if (component_thread_tokens.slice(-1) != '[')
 					    component_thread_tokens += ', ';
 					component_thread_tokens += '{node="CPU_' + hardware_num.toString() + 
@@ -262,7 +260,7 @@ define([
 					if (message_queue_tokens.slice(-1) != '[')
 					    message_queue_tokens += ', ';
 					message_queue_tokens += '{component="' + component.name 
-					    + '", scheme=' + compInstance.SchedulingScheme + ', queue=[]}';
+					    + '", scheme=' + component.SchedulingScheme + ', queue=[]}';
 					if (component.Timer_list) {
 					    component.Timer_list.map(function(timer) {
 						// Timer Tokens check
@@ -408,7 +406,7 @@ define([
 						}						
 					    });
 					}
-				    }); // end ['Component Instance_list'].map(compInstance)				    
+				    }); // end Component_list.map(component)				    
 				}
 			    }); // end Node_list.map(node)
 			    component_thread_tokens += ']}';

@@ -2,17 +2,17 @@
 <node name="<%- nodeInfo.name %>">
   <priority setting="<%- nodeInfo.Priority %>"/>
 <% 
-if (nodeInfo['Component Instance_list']) {
-nodeInfo['Component Instance_list'].map(function(ci) {
+if (nodeInfo.Component_list) {
+nodeInfo.Component_list.map(function(comp) {
 -%>
-  <component_instance name="<%- ci.name %>">
-    <library name="lib<%- ci.Component.name %>.so"/>
-    <scheduling_scheme setting="<%- ci.SchedulingScheme %>"/>
+  <component_instance name="<%- comp.name %>">
+    <library name="lib<%- comp.base.name %>.so"/>
+    <scheduling_scheme setting="<%- comp.SchedulingScheme %>"/>
     <numCompsToSync setting="1"/>
     <syncTimeout setting="0.0"/>
     <logging>
-      <is_periodic_logging setting="<%- ci.EnableLogging ? "True" : "False" %>"/>
-      <periodic_log_unit setting="<%- ci.LoggingUnit %>"/>
+      <is_periodic_logging setting="<%- comp.EnableLogging ? "True" : "False" %>"/>
+      <periodic_log_unit setting="<%- comp.LoggingUnit %>"/>
     </logging>    
   </component_instance>
 <% 
