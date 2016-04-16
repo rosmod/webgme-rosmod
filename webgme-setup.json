@@ -43,19 +43,19 @@
         "secondary": false,
         "widget": "src/visualizers/widgets/RootViz"
       },
-      "CodeMirrorViz": {
-        "src": "panels/CodeMirrorViz/CodeMirrorVizPanel",
-        "title": "CodeMirrorViz",
-        "panel": "src/visualizers/panels/CodeMirrorViz",
-        "secondary": false,
-        "widget": "src/visualizers/widgets/CodeMirrorViz"
-      },
       "ResultsViz": {
         "src": "panels/ResultsViz/ResultsVizPanel",
         "title": "ResultsViz",
         "panel": "src/visualizers/panels/ResultsViz",
         "secondary": false,
         "widget": "src/visualizers/widgets/ResultsViz"
+      },
+      "CodeEditor": {
+        "src": "panels/CodeEditor/CodeEditorPanel",
+        "title": "CodeEditor",
+        "panel": "src/visualizers/panels/CodeEditor",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/CodeEditor"
       }
     },
     "layouts": {
