@@ -115,11 +115,12 @@ define([
         self = this;
 
         // set widget class
-        this._el.addClass(WIDGET_CLASS);
+        //this._el.addClass(WIDGET_CLASS);
 
         // Create the CodeEditor and options
         this._el.append(CodeEditorHtml);
 	this._codearea = this._el.find('#codearea').first();
+	this._title = this._el.find('#code_editor_title');
 	this.selectedAttribute = '';
 	this.selectedNode = '';
 
@@ -219,7 +220,7 @@ define([
     CodeEditorWidget.prototype.addNode = function (desc) {
 	var self = this;
         if (desc) {
-	    
+	    $(self._title).append(desc.name);
 	    var attributeNames = Object.keys(desc.codeAttributes);
 	    if (attributeNames.length > 0) {
 		self.nodes[desc.id] = desc;
