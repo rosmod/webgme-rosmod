@@ -96,12 +96,17 @@ define([
     'use strict';
 
     var CodeEditorWidget,
-        WIDGET_CLASS = 'code-editor';
+    WIDGET_CLASS = 'code-editor',
+    cmPercent = '94%';
 
     CodeEditorWidget = function (logger, container, client) {
         this._logger = logger.fork('Widget');
 	this._client = client;
         this._el = container;
+
+	$(this._el).css({
+	    'padding': '0'
+	});
 
         this.nodes = {};
         this._initialize();
@@ -118,7 +123,9 @@ define([
         //this._el.addClass(WIDGET_CLASS);
 
         // Create the CodeEditor and options
+	this._fullscreen = false;
         this._el.append(CodeEditorHtml);
+	this._container = this._el.find('#CODE_EDITOR_DIV').first();
 	this._codearea = this._el.find('#codearea').first();
 	this._title = this._el.find('#code_editor_title');
 	this.selectedAttribute = '';
@@ -127,7 +134,7 @@ define([
 	var CodeMirrorEditorOptions = {
 	    lineNumbers: true,
 	    matchBrackets: true,
-	    viewPortMargin: Infinity,
+	    //viewPortMargin: Infinity,
 	    keyMap: 'sublime',
 	    path: 'rosmod/Libs/cm/lib/',
 	    theme: 'default',
@@ -145,12 +152,15 @@ define([
 	    _.debounce(this.saveChanges.bind(this), 250) // make sure this doesn't fire more than every 250 ms
 	);
 
+	var self=this;
 	this.editor.setOption("extraKeys", {
 	    'F11': function(cm) {
-		cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+		//cm.setOption('fullScreen', !cm.getOption('fullScreen'));
+		self.fullScreen(!self._fullScreen);
 	    },
 	    'Esc': function(cm) {
-		cm.setOption('fullScreen', false);
+		//cm.setOption('fullScreen', false);
+		self.fullScreen(false);
 	    },
 	    "Ctrl-Q": function(cm){ 
 		cm.foldCode(cm.getCursor()); 
@@ -171,6 +181,47 @@ define([
 
 	this.text = '';
 	this.docs = {};
+	$('.CodeMirror').css({
+	    height: cmPercent
+	});
+    };
+
+    CodeEditorWidget.prototype.fullScreen = function(toFullScreen) {
+	if (toFullScreen) {
+	    var container = $(document).find('#CODE_EDITOR_DIV').first();
+	    $(container).css({
+		position: 'fixed',
+		top: '0',
+		left: '0',
+		width: '100%',
+		height: '100%'
+	    });
+	    $(container).zIndex(9999);
+	    $(container).appendTo(document.body);
+	    $('.CodeMirror').css({
+		height: cmPercent
+	    });
+	    this.editor.focus();
+	    this._fullScreen = true;
+	}
+	else {
+	    var container = $(document).find('#CODE_EDITOR_DIV').first();
+	    $(container).css({
+		position: '',
+		top: '',
+		left: '',
+		width: '100%',
+		height: '100%'
+	    });
+	    $(container).zIndex('auto');
+	    $(container).appendTo(this._el);
+	    $('.CodeMirror').css({
+		height: cmPercent
+	    });
+	    this.editor.focus();
+	    this._fullScreen = false;
+	}
+	this.editor.refresh();
     };
 
     CodeEditorWidget.prototype.saveChanges = function(cm, changes) {
