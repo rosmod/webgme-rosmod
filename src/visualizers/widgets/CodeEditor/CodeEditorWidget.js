@@ -123,6 +123,7 @@ define([
         //this._el.addClass(WIDGET_CLASS);
 
         // Create the CodeEditor and options
+	this._readOnly = this._client.isProjectReadOnly();
 	this._fullscreen = false;
         this._el.append(CodeEditorHtml);
 	this._container = this._el.find('#CODE_EDITOR_DIV').first();
@@ -132,6 +133,7 @@ define([
 	this.selectedNode = '';
 
 	var CodeMirrorEditorOptions = {
+	    readOnly: this._readOnly,
 	    lineNumbers: true,
 	    matchBrackets: true,
 	    //viewPortMargin: Infinity,
@@ -263,9 +265,6 @@ define([
     CodeEditorWidget.prototype.onWidgetContainerResize = function (width, height) {
         console.log('Widget is resizing...');
     };
-
-    // create an event here (lodash?) that listens to key presses or changes in the editor text
-    // to automatically save back to the model
 
     // Adding/Removing/Updating items
     CodeEditorWidget.prototype.addNode = function (desc) {
