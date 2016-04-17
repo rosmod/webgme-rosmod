@@ -36,35 +36,35 @@ define(['js/Constants',
 	    'Definition': {name:'clike', useCPP:true}
 	},
 	'Component': {
-	    'Authors': {name:'markdown'},
-	    'Brief Description': {name:'markdown'},
-	    'Detailed Description': {name:'markdown'},
 	    'Forwards': {name:'clike', useCPP:true},
 	    'Members': {name:'clike', useCPP:true},
 	    'Definitions': {name:'clike', useCPP:true},
 	    'Initialization': {name:'clike', useCPP:true},
-	    'Destruction': {name:'clike', useCPP:true}
+	    'Destruction': {name:'clike', useCPP:true},
+	    'Authors': {name:'markdown'},
+	    'Brief Description': {name:'markdown'},
+	    'Detailed Description': {name:'markdown'},
 	},
 	'Timer': {
+	    'Operation': {name:'clike', useCPP:true},
 	    'Authors': {name:'markdown'},
 	    'Brief Description': {name:'markdown'},
 	    'Detailed Description': {name:'markdown'},
 	    'AbstractBusinessLogic': {name:'clike', useCPP:true},
-	    'Operation': {name:'clike', useCPP:true}
 	},
 	'Server': {
+	    'Operation': {name:'clike', useCPP:true},
 	    'Authors': {name:'markdown'},
 	    'Brief Description': {name:'markdown'},
 	    'Detailed Description': {name:'markdown'},
 	    'AbstractBusinessLogic': {name:'clike', useCPP:true},
-	    'Operation': {name:'clike', useCPP:true}
 	},
 	'Subscriber': {
+	    'Operation': {name:'clike', useCPP:true},
 	    'Authors': {name:'markdown'},
 	    'Brief Description': {name:'markdown'},
 	    'Detailed Description': {name:'markdown'},
 	    'AbstractBusinessLogic': {name:'clike', useCPP:true},
-	    'Operation': {name:'clike', useCPP:true}
 	},
     };
 
