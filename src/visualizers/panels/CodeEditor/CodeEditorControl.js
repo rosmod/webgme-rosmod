@@ -117,13 +117,11 @@ define(['js/Constants',
 
             self._widget.setTitle(desc.name.toUpperCase());
 
-	    /*  TO GET GO UP WORKING NEED TO ADD THIS AND FIX NODE ID PROBLEM
             if (desc.parentId || desc.parentId === CONSTANTS.PROJECT_ROOT_ID) {
                 self.$btnModelHierarchyUp.show();
             } else {
                 self.$btnModelHierarchyUp.hide();
             }
-	    */
 
             self._currentNodeParentId = desc.parentId;
 
@@ -291,13 +289,10 @@ define(['js/Constants',
 
         this._toolbarItems = [];
 
-	/*
         this._toolbarItems.push(toolBar.addSeparator());
-	*/
 
         /************** Go to hierarchical parent button ****************/
 
-	/* TO GET GO UP TO PARENT WORKING NEED TO ADD THIS AND FIX ID PROBLEM
         this.$btnModelHierarchyUp = toolBar.addButton({
             title: 'Go to parent',
             icon: 'glyphicon glyphicon-circle-arrow-up',
@@ -307,20 +302,6 @@ define(['js/Constants',
         });
         this._toolbarItems.push(this.$btnModelHierarchyUp);
         this.$btnModelHierarchyUp.hide();
-	*/
-
-        /************** Checkbox example *******************/
-
-	/*
-        this.$cbShowConnection = toolBar.addCheckBox({
-            title: 'toggle checkbox',
-            icon: 'gme icon-gme_diagonal-arrow',
-            checkChangedFn: function (data, checked) {
-                self._logger.log('Checkbox has been clicked!');
-            }
-        });
-        this._toolbarItems.push(this.$cbShowConnection);
-	*/
 
         this._toolbarInitialized = true;
     };
