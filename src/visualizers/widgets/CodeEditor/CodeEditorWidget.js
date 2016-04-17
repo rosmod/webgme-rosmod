@@ -19,8 +19,10 @@ define([
     'rosmod/Libs/cm/keymap/vim',
     // Addons 
     'rosmod/Libs/cm/addon/hint/show-hint',
+    'rosmod/Libs/cm/addon/search/search',
     'rosmod/Libs/cm/addon/search/searchcursor',
     'rosmod/Libs/cm/addon/search/matchesonscrollbar',
+    'rosmod/Libs/cm/addon/search/match-highlighter',
     'rosmod/Libs/cm/addon/search/jump-to-line',
     'rosmod/Libs/cm/addon/scroll/annotatescrollbar',
     'rosmod/Libs/cm/addon/dialog/dialog',
@@ -99,6 +101,7 @@ define([
     CodeMirrorSearch,
     CodeMirrorSearchCursor,
     CodeMirrorMatchesOnScrollbar,
+    CodeMirrorMatchHighlighter,
     CodeMirrorJumpToLine,
     CodeMirrorAnnotateScrollbar,
     CodeMirrorDialog,
