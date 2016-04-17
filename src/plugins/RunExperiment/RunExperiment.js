@@ -504,14 +504,11 @@ define([
 	    // use self.core.setAttribute(node, name, value);
 	    //    value here can be any valid JS object (even nested types);
 	    self.core.setAttribute(cn, 'name', container.name);
-	    self.core.setAttribute(cn, 'type', 'Container');
 	    self.core.setAttribute(hn, 'name', host.host.name);
-	    self.core.setAttribute(hn, 'type', 'Host');
 	    self.core.setAttribute(hn, 'Host', host.host);
 	    self.core.setAttribute(hn, 'User', host.user);
 	    self.core.setAttribute(hn, 'Interface', host.intf);
 	    self.core.setAttribute(ln, 'name', 'MapsTo');
-	    self.core.setAttribute(ln, 'type', 'Association');
 	    // optionally use self.core.setAttributeMeta(node, name, rule);
 	    //    rule here defines the 'type' of the attribute
 	    // use self.core.setPointer(node, name, target);

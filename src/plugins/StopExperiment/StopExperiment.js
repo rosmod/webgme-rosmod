@@ -175,24 +175,21 @@ define([
 	    .then(function (nodes) {
 		var ah = [];
 		for (var i=0; i<nodes.length; i++) {
-		    var node = nodes[i],
-		    nodeName = self.core.getAttribute(node, 'name'),
-		    type = self.core.getAttribute(node, 'type');
-		    if (type == 'Host') {
+		    var node = nodes[i];
+		    if (self.core.isTypeOf(node, self.META.Host)) {
 			var host = self.core.getAttribute(node, 'Host'),
 			user = self.core.getAttribute(node, 'User'),
 			intf = self.core.getAttribute(node, 'Interface');
 			ah.push({host:host, user:user, intf:intf});
 			self.core.deleteNode(node);
 		    }
-		    else if (type == 'Container') {
+		    else if (self.core.isTypeOf(node, self.META.Container)) {
 			self.core.deleteNode(node);
 		    }
-		    else if (type == 'Association') {
-			self.core.deleteNode(node);
-		    }
-		    else if (type != undefined) {
-			self.core.deleteNode(node);
+		    else if (self.core.isTypeOf(node, self.META.FCO) && 
+			     !self.core.isTypeOf(node, self.META.Experiment) &&
+			     !self.core.isTypeOf(node, self.META.Results)) {
+			self.core.deleteNode(node); // delete connections
 		    }
 		}
 		return ah;
@@ -245,8 +242,8 @@ define([
 	var localDir = path.join(self.exp_dir, 'results');
 	var logs = fs.readdirSync(localDir);
 	var rn = self.core.createNode({parent: self.activeNode, base: resultsNode});
+	self.core.setRegistry(rn, 'position', {x: 100, y:50});
 	logs.map(function(log) {
-	    self.notify('info', log);
 	    self.core.setAttribute(rn, log.split('/').slice(-1)[0].replace(/\./g, '_'), 
 				   fs.readFileSync(localDir + '/' + log, 'utf8'));   
 	});

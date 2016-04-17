@@ -14,7 +14,7 @@
 	  "name": "returnZip",
 	  "displayName": "Zip and return generated artifacts.",
 	  "description": "If true, it enables the client to download a zip of the artifacts.",
-	  "value": true,
+	  "value": false,
 	  "valueType": "boolean",
 	  "readOnly": false
       }
