@@ -18,7 +18,7 @@ define([
     'rosmod/Libs/cm/keymap/sublime',
     'rosmod/Libs/cm/keymap/vim',
     // Addons 
-    'rosmod/Libs/cm/addon/search/search',
+    'rosmod/Libs/cm/addon/hint/show-hint',
     'rosmod/Libs/cm/addon/search/searchcursor',
     'rosmod/Libs/cm/addon/search/matchesonscrollbar',
     'rosmod/Libs/cm/addon/search/jump-to-line',
@@ -33,6 +33,7 @@ define([
     'rosmod/Libs/cm/addon/fold/comment-fold',
     // CSS
     'css!./styles/CodeEditorWidget.css',
+    'css!rosmod/Libs/cm/addon/hint/show-hint.css',
     'css!rosmod/Libs/cm/addon/search/matchesonscrollbar.css',
     'css!rosmod/Libs/cm/addon/dialog/dialog.css',
     'css!rosmod/Libs/cm/addon/display/fullscreen.css',
@@ -94,6 +95,7 @@ define([
     CodeMirrorSublimeKeymap,
     CodeMirrorVimKeymap,
     // Addons
+    CodeMirrorShowHint,
     CodeMirrorSearch,
     CodeMirrorSearchCursor,
     CodeMirrorMatchesOnScrollbar,
@@ -145,6 +147,12 @@ define([
 	this._title = this._el.find('#code_editor_title');
 	this.selectedAttribute = '';
 	this.selectedNode = '';
+
+	var mac = CodeMirror.keyMap.default == CodeMirror.keyMap.macDefault;
+	CodeMirror.keyMap.default[(mac ? "Cmd" : "Ctrl") + "-Space"] = "autocomplete";
+	CodeMirror.keyMap.sublime[(mac ? "Cmd" : "Ctrl") + "-Space"] = "autocomplete";
+	CodeMirror.keyMap.emacs[(mac ? "Cmd" : "Ctrl") + "-Space"] = "autocomplete";
+	CodeMirror.keyMap.vim[(mac ? "Cmd" : "Ctrl") + "-Space"] = "autocomplete";
 
 	var CodeMirrorEditorOptions = {
 	    readOnly: this._readOnly,

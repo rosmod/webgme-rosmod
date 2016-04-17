@@ -30,41 +30,79 @@ define(['js/Constants',
 	    'Detailed Description': {name:'markdown'},
 	},
 	'Message': {
-	    'Definition': {name:'clike', useCPP:true}
+	    'Definition': {
+		name:'text/x-c++src', 
+		keywords: {
+		    'int8': 'int8',
+		    'int16': 'int16',
+		    'int32': 'int32',
+		    'int64': 'int64',
+		    'uint8': 'uint8',
+		    'uint16': 'uint16',
+		    'uint32': 'uint32',
+		    'uint64': 'uint64',
+		    'bool': 'bool',
+		    'string': 'string',
+		    'float32': 'float32',
+		    'float64': 'float64',
+		    'time': 'time',
+		    'duration': 'duration'
+		},
+		useCPP:true
+	    }
 	},
 	'Service': {
-	    'Definition': {name:'clike', useCPP:true}
+	    'Definition': {
+		name:'text/x-c++src', 
+		keywords: {
+		    'int8': 'int8',
+		    'int16': 'int16',
+		    'int32': 'int32',
+		    'int64': 'int64',
+		    'uint8': 'uint8',
+		    'uint16': 'uint16',
+		    'uint32': 'uint32',
+		    'uint64': 'uint64',
+		    'bool': 'bool',
+		    'string': 'string',
+		    'float32': 'float32',
+		    'float64': 'float64',
+		    'time': 'time',
+		    'duration': 'duration'
+		},
+		useCPP:true
+	    }
 	},
 	'Component': {
-	    'Forwards': {name:'clike', useCPP:true},
-	    'Members': {name:'clike', useCPP:true},
-	    'Definitions': {name:'clike', useCPP:true},
-	    'Initialization': {name:'clike', useCPP:true},
-	    'Destruction': {name:'clike', useCPP:true},
+	    'Forwards': {name:'text/x-c++src', useCPP:true},
+	    'Members': {name:'text/x-c++src', useCPP:true},
+	    'Definitions': {name:'text/x-c++src', useCPP:true},
+	    'Initialization': {name:'text/x-c++src', useCPP:true},
+	    'Destruction': {name:'text/x-c++src', useCPP:true},
 	    'Authors': {name:'markdown'},
 	    'Brief Description': {name:'markdown'},
 	    'Detailed Description': {name:'markdown'},
 	},
 	'Timer': {
-	    'Operation': {name:'clike', useCPP:true},
+	    'Operation': {name:'text/x-c++src', useCPP:true},
 	    'Authors': {name:'markdown'},
 	    'Brief Description': {name:'markdown'},
 	    'Detailed Description': {name:'markdown'},
-	    'AbstractBusinessLogic': {name:'clike', useCPP:true},
+	    'AbstractBusinessLogic': {name:'text/x-c++src', useCPP:true},
 	},
 	'Server': {
-	    'Operation': {name:'clike', useCPP:true},
+	    'Operation': {name:'text/x-c++src', useCPP:true},
 	    'Authors': {name:'markdown'},
 	    'Brief Description': {name:'markdown'},
 	    'Detailed Description': {name:'markdown'},
-	    'AbstractBusinessLogic': {name:'clike', useCPP:true},
+	    'AbstractBusinessLogic': {name:'text/x-c++src', useCPP:true},
 	},
 	'Subscriber': {
-	    'Operation': {name:'clike', useCPP:true},
+	    'Operation': {name:'text/x-c++src', useCPP:true},
 	    'Authors': {name:'markdown'},
 	    'Brief Description': {name:'markdown'},
 	    'Detailed Description': {name:'markdown'},
-	    'AbstractBusinessLogic': {name:'clike', useCPP:true},
+	    'AbstractBusinessLogic': {name:'text/x-c++src', useCPP:true},
 	},
     };
 
