@@ -206,7 +206,6 @@ define([
 	this.buffer_select = this._el.find("#buffer_select").first();
 	this.buffer_select.on('change', this.selectBuffer.bind(this));
 
-	this.text = '';
 	this.docs = {};
 	$('.CodeMirror').css({
 	    height: cmPercent
@@ -254,10 +253,6 @@ define([
 	}
     };
 
-    CodeEditorWidget.prototype.updateText = function(newText) {
-	this.text = newText;
-    };
-
     CodeEditorWidget.prototype.selectBuffer = function(event) {
 	var buffer_select = event.target;
 	var newAttribute = buffer_select.options[buffer_select.selectedIndex].textContent;
@@ -289,7 +284,7 @@ define([
     CodeEditorWidget.prototype.addNode = function (desc) {
 	var self = this;
         if (desc) {
-	    $(self._title).append(desc.name);
+	    $(self._title).text(desc.name);
 	    var attributeNames = Object.keys(desc.codeAttributes);
 	    if (attributeNames.length > 0) {
 		self.nodes[desc.id] = desc;
@@ -309,15 +304,29 @@ define([
     };
 
     CodeEditorWidget.prototype.removeNode = function (gmeId) {
+	var self = this;
         var desc = this.nodes[gmeId];
-	// NEED TO MAKE SURE I HANDLE REMOVE NODE HERE
-        delete this.nodes[gmeId];
+	if(desc) {
+	    $(this._el).find('#CODE_EDITOR_DIV').first().detach();
+            delete this.nodes[gmeId];
+	}
     };
 
     CodeEditorWidget.prototype.updateNode = function (desc) {
+	var self = this;
         if (desc) {
-            // console.log('Updating node:', desc);
-	    // NEED TO UPDATE THE ATTRIBUTES HERE!
+	    var attributeNames = Object.keys(desc.codeAttributes);
+	    if (attributeNames.length > 0) {
+		self.nodes[desc.id] = desc;
+		attributeNames.map(function(attributeName) {
+		    var cursor = self.docs[attributeName].getCursor();
+		    self.docs[attributeName].setValue(
+			desc.codeAttributes[attributeName].value
+		    );
+		    self.docs[attributeName].setCursor(cursor);
+		});
+		self.editor.refresh();
+	    }
         }
     };
 

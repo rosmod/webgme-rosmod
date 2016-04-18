@@ -148,14 +148,12 @@ define(['js/Constants',
         self._currentNodeId = nodeId;
         self._currentNodeParentId = undefined;
 
-        if (self._currentNodeId || self._currentNodeId === CONSTANTS.PROJECT_ROOT_ID) {
+        if (self._currentNodeId) {
             // Put new node's info into territory rules
             self._selfPatterns = {};
             self._selfPatterns[nodeId] = {children: 0};  // Territory "rule"
 
-            self._widget.setTitle(desc.name.toUpperCase());
-
-            if (desc.parentId || desc.parentId === CONSTANTS.PROJECT_ROOT_ID) {
+            if (desc.parentId) {
                 self.$btnModelHierarchyUp.show();
             } else {
                 self.$btnModelHierarchyUp.hide();
@@ -168,9 +166,6 @@ define(['js/Constants',
             });
 
             // Update the territory
-            self._client.updateTerritory(self._territoryId, self._selfPatterns);
-
-            self._selfPatterns[nodeId] = {children: 0};
             self._client.updateTerritory(self._territoryId, self._selfPatterns);
         }
     };
