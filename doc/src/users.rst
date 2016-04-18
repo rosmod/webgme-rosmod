@@ -13,13 +13,15 @@ ROSMOD is best used with `Google Chrome`, but has been tested for most functiona
 Samples
 -------
 
+The documentation for these samples is the auto-generated documentation from their `Documentation` objects in their respective models.  The :ref:`intro` sample describes how to generate this documentation.
+
 :ref:`intro` Is the launching point for learning ROSMOD and the WebGME environment.  It walks through the relevant user interfaces, modeling concepts, and ROS/ROSMOD concepts.
 
 .. toctree::
     :includehidden:
-    :maxdepth: 2
+    :maxdepth: 3
 
-    _v_0
+    introduction_to_rosmod_v_0
 
 
 .. _rcps: http://rcps.isis.vanderbilt.edu/

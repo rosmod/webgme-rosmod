@@ -21,7 +21,6 @@ communications middleware.
 
 .. toctree::
    :includehidden:
-   :maxdepth: 2
 
    getting-started
    users
