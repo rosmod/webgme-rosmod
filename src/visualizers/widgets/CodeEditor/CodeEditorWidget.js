@@ -6,6 +6,7 @@
  */
 
 define([
+    'js/Utils/ComponentSettings',
     // HTML
     'text!./CodeEditor.html',
     // Codemirror
@@ -87,6 +88,7 @@ define([
     'css!rosmod/Libs/cm/theme/zenburn.css',
     'css!rosmod/Libs/cm/addon/fold/foldgutter'
 ], function (
+    ComponentSettings,
     CodeEditorHtml,
     CodeMirror,
     // Syntax Highlighting
@@ -133,10 +135,32 @@ define([
         this._logger.debug('ctor finished');
     };
 
+    CodeEditorWidget.getName = function () {
+        return 'CodeEditorWidget';
+    };
+
+    CodeEditorWidget.getVersion = function () {
+        return '0.1.0';
+    };
+
+    CodeEditorWidget.getDefaultConfig = function () { 
+        return {
+	    'theme': 'default',
+	    'keyBindings': 'sublime'
+	};
+    }; 
+    
+    CodeEditorWidget.getComponentId = function () { 
+        return 'CodeEditorWidget'; 
+    }; 
+
     CodeEditorWidget.prototype._initialize = function () {
         var width = this._el.width(),
         height = this._el.height(),
         self = this;
+
+	this._config = CodeEditorWidget.getDefaultConfig(); 
+	ComponentSettings.resolveWithWebGMEGlobal(this._config, CodeEditorWidget.getComponentId()); 
 
         // set widget class
         //this._el.addClass(WIDGET_CLASS);
@@ -162,9 +186,9 @@ define([
 	    lineNumbers: true,
 	    matchBrackets: true,
 	    //viewPortMargin: Infinity,
-	    keyMap: 'sublime',
+	    keyMap: this._config.keyBindings,
 	    path: 'rosmod/Libs/cm/lib/',
-	    theme: 'default',
+	    theme: this._config.theme,
 	    fullscreen: false,
 	    foldGutter: true,
 	    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
@@ -197,10 +221,12 @@ define([
 	this.editor.foldCode(CodeMirror.Pos(0, 0));
 	// THEME SELECT
 	this.theme_select = this._el.find("#theme_select").first();
+	$(this.theme_select).val(this._config.theme);
 	this.theme_select.on('change', this.selectTheme.bind(this));
 
 	// KEY MAP SELECTION
 	this.kb_select = this._el.find("#kb_select").first();
+	$(this.kb_select).val(this._config.keyBindings);
 	this.kb_select.on('change', this.selectKeyBinding.bind(this));
 
 	this.buffer_select = this._el.find("#buffer_select").first();
@@ -264,15 +290,34 @@ define([
 	}
     };
 
+    CodeEditorWidget.prototype.saveConfig = function() {
+	var self=this;
+	ComponentSettings.overwriteComponentSettings(
+	    CodeEditorWidget.getComponentId(), this._config,
+	    function (err) {
+		if (err) {
+		    self._logger.error(err);
+		}
+		else
+		    WebGMEGlobal.userInfo.settings[CodeEditorWidget.getComponentId()] = self._config;
+	    });
+    };
+
     CodeEditorWidget.prototype.selectTheme = function(event) {
+	var self=this;
 	var theme_select = event.target;
 	var theme = theme_select.options[theme_select.selectedIndex].textContent;
+	this._config.theme = theme;
+	this.saveConfig();
 	this.editor.setOption("theme", theme);
     };
 
     CodeEditorWidget.prototype.selectKeyBinding = function(event) {
+	var self=this;
 	var kb_select = event.target;
 	var binding = kb_select.options[kb_select.selectedIndex].textContent;
+	this._config.keyBindings = binding;
+	this.saveConfig();
 	this.editor.setOption("keyMap", binding);
     };
 
@@ -342,11 +387,11 @@ define([
     };
 
     CodeEditorWidget.prototype.onActivate = function () {
-        console.log('CodeEditorWidget has been activated');
+        //console.log('CodeEditorWidget has been activated');
     };
 
     CodeEditorWidget.prototype.onDeactivate = function () {
-        console.log('CodeEditorWidget has been deactivated');
+        //console.log('CodeEditorWidget has been deactivated');
     };
 
     return CodeEditorWidget;

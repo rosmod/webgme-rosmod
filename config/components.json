@@ -1,4 +1,8 @@
 {
+    "CodeEditorWidget": {
+	"theme": "default",
+	"keyBindings": "sublime"
+    },
     "BreadCrumbHeader": {
 	"style": "arrows"
     },
