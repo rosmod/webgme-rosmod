@@ -215,7 +215,7 @@ define([
 
     CodeEditorWidget.prototype.fullScreen = function(toFullScreen) {
 	if (toFullScreen) {
-	    var container = $(document).find('#CODE_EDITOR_DIV').first();
+	    var container = $(this._el).find('#CODE_EDITOR_DIV').first();
 	    $(container).css({
 		position: 'fixed',
 		top: '0',
@@ -224,10 +224,7 @@ define([
 		height: '100%'
 	    });
 	    $(container).zIndex(9999);
-	    $(container).appendTo(document.body);
-	    $('.CodeMirror').css({
-		height: cmPercent
-	    });
+	    $(container).prependTo(document.body);
 	    this.editor.focus();
 	    this._fullScreen = true;
 	}
@@ -242,9 +239,6 @@ define([
 	    });
 	    $(container).zIndex('auto');
 	    $(container).appendTo(this._el);
-	    $('.CodeMirror').css({
-		height: cmPercent
-	    });
 	    this.editor.focus();
 	    this._fullScreen = false;
 	}
