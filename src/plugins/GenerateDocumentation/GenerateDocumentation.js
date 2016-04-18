@@ -239,7 +239,7 @@ define([
 
     GenerateDocumentation.prototype.pathToFileName = function(path) {
 	var self = this;
-	return self.projectName + path.replace(/\//g, '_');
+	return self.projectName.replace(/ /g,'_').toLowerCase() + path.replace(/\//g, '_');
     };
 
     GenerateDocumentation.prototype.addToC = function(obj, str) {
