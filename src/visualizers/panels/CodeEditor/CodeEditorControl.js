@@ -115,8 +115,8 @@ define(['js/Constants',
         // Initialize core collections and variables
         this._widget = options.widget;
 
-        this._currentNodeId = null;
-        this._currentNodeParentId = undefined;
+        this.currentNodeInfo = {id: null, children: [], parentId: null};
+	this._topNode = '/v';
 
         this._initWidgetEventHandlers();
 
@@ -135,31 +135,32 @@ define(['js/Constants',
     // defines the parts of the project that the visualizer is interested in
     // (this allows the browser to then only load those relevant parts).
     CodeEditorControl.prototype.selectedObjectChanged = function (nodeId) {
-        var desc = this._getObjectDescriptor(nodeId),
-            self = this;
+        var self = this,
+	desc,
+	nodeName;
 
         self._logger.debug('activeObject nodeId \'' + nodeId + '\'');
 
         // Remove current territory patterns
-        if (self._currentNodeId) {
+        if (self._territoryId) {
             self._client.removeUI(self._territoryId);
         }
 
-        self._currentNodeId = nodeId;
-        self._currentNodeParentId = undefined;
+        this.currentNodeInfo.id = nodeId;
+        this.currentNodeInfo.parentId = undefined;
 
-        if (self._currentNodeId) {
+        if (nodeId) {
+            desc = this._getObjectDescriptor(nodeId);
+            nodeName = (desc && desc.name);
+            if (desc) {
+                this.currentNodeInfo.parentId = desc.parentId;
+            }
+
+            this._refreshBtnModelHierarchyUp();
+
             // Put new node's info into territory rules
             self._selfPatterns = {};
             self._selfPatterns[nodeId] = {children: 0};  // Territory "rule"
-
-            if (desc.parentId) {
-                self.$btnModelHierarchyUp.show();
-            } else {
-                self.$btnModelHierarchyUp.hide();
-            }
-
-            self._currentNodeParentId = desc.parentId;
 
             self._territoryId = self._client.addUI(self, function (events) {
                 self._eventCallback(events);
@@ -167,6 +168,14 @@ define(['js/Constants',
 
             // Update the territory
             self._client.updateTerritory(self._territoryId, self._selfPatterns);
+        }
+    };
+
+    CodeEditorControl.prototype._refreshBtnModelHierarchyUp = function () {
+        if (this.currentNodeInfo.id && this.currentNodeInfo.id !== this._topNode) {
+            this.$btnModelHierarchyUp.show();
+        } else {
+            this.$btnModelHierarchyUp.hide();
         }
     };
 
@@ -279,6 +288,12 @@ define(['js/Constants',
     CodeEditorControl.prototype.onActivate = function () {
         this._attachClientEventListeners();
         this._displayToolbarItems();
+
+        if (this.currentNodeInfo && typeof this.currentNodeInfo.id === 'string') {
+            WebGMEGlobal.State.registerSuppressVisualizerFromNode(true);
+            WebGMEGlobal.State.registerActiveObject(this.currentNodeInfo.id);
+            WebGMEGlobal.State.registerSuppressVisualizerFromNode(false);
+        }
     };
 
     CodeEditorControl.prototype.onDeactivate = function () {
@@ -316,6 +331,15 @@ define(['js/Constants',
         }
     };
 
+    CodeEditorControl.prototype._onModelHierarchyUp = function () {
+        var myId = this.currentNodeInfo.id;
+        if (this.currentNodeInfo.parentId ||
+            this.currentNodeInfo.parentId === CONSTANTS.PROJECT_ROOT_ID) {
+            WebGMEGlobal.State.registerActiveObject(this.currentNodeInfo.parentId);
+            WebGMEGlobal.State.registerActiveSelection([myId]);
+        }
+    };
+
     CodeEditorControl.prototype._initializeToolbar = function () {
         var self = this,
             toolBar = WebGMEGlobal.Toolbar;
@@ -324,16 +348,16 @@ define(['js/Constants',
 
         this._toolbarItems.push(toolBar.addSeparator());
 
-        /************** Go to hierarchical parent button ****************/
-
+        /************** GOTO PARENT IN HIERARCHY BUTTON ****************/
         this.$btnModelHierarchyUp = toolBar.addButton({
             title: 'Go to parent',
             icon: 'glyphicon glyphicon-circle-arrow-up',
-            clickFn: function () {  // (data)
-                WebGMEGlobal.State.registerActiveObject(self._currentNodeParentId);
+            clickFn: function (/*data*/) {
+                self._onModelHierarchyUp();
             }
         });
         this._toolbarItems.push(this.$btnModelHierarchyUp);
+
         this.$btnModelHierarchyUp.hide();
 
         this._toolbarInitialized = true;
