@@ -105,6 +105,16 @@ define([
         if (typeof WebGMEGlobal !== 'undefined') {
 	    self.runningOnClient = true;
         }
+
+	if (!self.runningOnClient) {
+	    var path = require('path');
+	    // Setting up variables that will be used by various functions of this plugin
+	    self.gen_dir = path.join(process.cwd(),
+				     'generated',
+				     self.project.projectId,
+				     self.branchName,
+				     self.projectName);
+	}
 	
         self.updateMETA(self.metaTypes);
 
@@ -119,10 +129,12 @@ define([
       	loader.loadModel(self.core, projectNode)
   	    .then(function (projectModel) {
 		self.projectModel = projectModel;
-        	return self.generateArtifacts();
   	    })
 	    .then(function () {
-		return self.saveArtifactsOnServer();
+		return self.generateArtifacts();
+	    })
+	    .then(function () {
+		return self.saveArtifactsOnServer(); //downloads template and renders files to server
 	    })
 	    .then(function () {
 		return self.returnArtifactsToUser();
@@ -306,47 +318,47 @@ define([
 					    component.Publisher_list.map(function(publisher) {
 						// publisher tokens
 						var topic = publisher.Message.name;
-						var subscribers = msg_map[topic].subscribers;
-						for (var s in subscribers) {
-						    var subscriber = subscribers[s];
-						    var subCompName= self.projectModel.pathDict[subscriber.parentPath].name;
-						    if (interaction_tokens != '1`[\n') {
-							interaction_tokens += ',\n';
-						    }
-						    interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
-							'", port="' + publisher.name + 
-							'", operation={node="' + component_hardware_map[subCompName] + 
-							'", component="' + subCompName + 
-							'", operation="' + subscriber.name + '_operation", priority=' + 
-							subscriber.Priority + ', deadline=' + 
-							subscriber.Deadline * 1000000 + ', enqueue_time=0, steps=[';
-						    var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
-						    var result = re.exec(subscriber.AbstractBusinessLogic);
-						    while(result != null) {
-							var port_type = result[1];
-							var wcet = 0;
-							if (port_type == "LOCAL") {
-							    var wcet = result[2];
-							    if (interaction_tokens.slice(-1) != '[')
-								interaction_tokens += ', ';
-							    interaction_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], '+
-								'exec_time=0, duration=' + wcet * 1000000 + '}';
+						if (msg_map[topic].subscribers) {
+						    msg_map[topic].subscribers.map(function(subscriber) {
+							var subCompName= self.projectModel.pathDict[subscriber.parentPath].name;
+							if (interaction_tokens != '1`[\n') {
+							    interaction_tokens += ',\n';
 							}
-							else if (port_type == "RMI") {
-							    if (interaction_tokens.slice(-1) != '[')
-								interaction_tokens += ', ';
-							    interaction_tokens += '{kind="CLIENT", port="' + result[2] + 
-								'", unblk=[], exec_time=0, duration=0}';
+							interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
+							    '", port="' + publisher.name + 
+							    '", operation={node="' + component_hardware_map[subCompName] + 
+							    '", component="' + subCompName + 
+							    '", operation="' + subscriber.name + '_operation", priority=' + 
+							    subscriber.Priority + ', deadline=' + 
+							    subscriber.Deadline * 1000000 + ', enqueue_time=0, steps=[';
+							var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
+							var result = re.exec(subscriber.AbstractBusinessLogic);
+							while(result != null) {
+							    var port_type = result[1];
+							    var wcet = 0;
+							    if (port_type == "LOCAL") {
+								var wcet = result[2];
+								if (interaction_tokens.slice(-1) != '[')
+								    interaction_tokens += ', ';
+								interaction_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], '+
+								    'exec_time=0, duration=' + wcet * 1000000 + '}';
+							    }
+							    else if (port_type == "RMI") {
+								if (interaction_tokens.slice(-1) != '[')
+								    interaction_tokens += ', ';
+								interaction_tokens += '{kind="CLIENT", port="' + result[2] + 
+								    '", unblk=[], exec_time=0, duration=0}';
+							    }
+							    else if (port_type == "PUBLISH") {
+								if (interaction_tokens.slice(-1) != '[')
+								    interaction_tokens += ', ';
+								interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + 
+								    '", unblk=[], exec_time=0, duration=0}';
+							    }
+							    result = re.exec(subscriber.AbstractBusinessLogic);
 							}
-							else if (port_type == "PUBLISH") {
-							    if (interaction_tokens.slice(-1) != '[')
-								interaction_tokens += ', ';
-							    interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + 
-								'", unblk=[], exec_time=0, duration=0}';
-							}
-							result = re.exec(subscriber.AbstractBusinessLogic);
-						    }
-						    interaction_tokens += ']}}';
+							interaction_tokens += ']}}';
+						    }); // end msg_map[topic].subscribers.map(subscriber)
 						}
 					    }); // end Publisher_list.map(publisher)
 					}
@@ -354,57 +366,57 @@ define([
 					    component.Client_list.map(function(client) {
 						// client tokens
 						var service = client.Service.name;
-						var servers = srv_map[service].servers;
-						for (var s in servers) {
-						    var server = servers[s];
-						    var serverCompName = self.projectModel.pathDict[server.parentPath].name;
-						    if (interaction_tokens != '1`[\n') {
-							interaction_tokens += ',\n';
-						    }
-						    interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
-							'", port="' + client.name + 
-							'", operation={node="' + component_hardware_map[serverCompName] + 
-							'", component="' + serverCompName + 
-							'", operation="' + server.name + '_operation", ' +
-							'priority=' + server.Priority + ', deadline=' + 
-							server.Deadline * 1000000 + ', enqueue_time=0, steps=[';
-						    var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
-						    var result = re.exec(server.AbstractBusinessLogic);
-						    while(result != null) {
-							var port_type = result[1];
-							var wcet = 0;
-							if (port_type == "LOCAL") {
-							    var wcet = result[2];
-							    if (interaction_tokens.slice(-1) != '[')
-								interaction_tokens += ', ';
-							    interaction_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], '+
-								'exec_time=0, duration=' + wcet * 1000000 + '}';
+						if (srv_map[service].servers) {
+						    srv_map[service].servers.map(function(server) {
+							var serverCompName = self.projectModel.pathDict[server.parentPath].name;
+							if (interaction_tokens != '1`[\n') {
+							    interaction_tokens += ',\n';
 							}
-							else if (port_type == "RMI") {
-							    if (interaction_tokens.slice(-1) != '[')
-								interaction_tokens += ', ';
-							    interaction_tokens += '{kind="CLIENT", port="' + result[2] + 
-								'", unblk=[], exec_time=0, duration=0}';
+							interaction_tokens += '{node="CPU_' + hardware_num.toString() + 
+							    '", port="' + client.name + 
+							    '", operation={node="' + component_hardware_map[serverCompName] + 
+							    '", component="' + serverCompName + 
+							    '", operation="' + server.name + '_operation", ' +
+							    'priority=' + server.Priority + ', deadline=' + 
+							    server.Deadline * 1000000 + ', enqueue_time=0, steps=[';
+							var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
+							var result = re.exec(server.AbstractBusinessLogic);
+							while(result != null) {
+							    var port_type = result[1];
+							    var wcet = 0;
+							    if (port_type == "LOCAL") {
+								var wcet = result[2];
+								if (interaction_tokens.slice(-1) != '[')
+								    interaction_tokens += ', ';
+								interaction_tokens += '{kind="LOCAL", port="LOCAL", unblk=[], '+
+								    'exec_time=0, duration=' + wcet * 1000000 + '}';
+							    }
+							    else if (port_type == "RMI") {
+								if (interaction_tokens.slice(-1) != '[')
+								    interaction_tokens += ', ';
+								interaction_tokens += '{kind="CLIENT", port="' + result[2] + 
+								    '", unblk=[], exec_time=0, duration=0}';
+							    }
+							    else if (port_type == "PUBLISH") {
+								if (interaction_tokens.slice(-1) != '[')
+								    interaction_tokens += ', ';
+								interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + 
+								    '", unblk=[], exec_time=0, duration=0}';
+							    }					    
+							    result = re.exec(server.AbstractBusinessLogic);
 							}
-							else if (port_type == "PUBLISH") {
-							    if (interaction_tokens.slice(-1) != '[')
-								interaction_tokens += ', ';
-							    interaction_tokens += '{kind="PUBLISHER", port="' + result[2] + 
-								'", unblk=[], exec_time=0, duration=0}';
-							}					    
-							result = re.exec(server.AbstractBusinessLogic);
-						    }
-						    var n = interaction_tokens.lastIndexOf("unblk=[]");
-						    interaction_tokens = interaction_tokens.slice(0, n) + 
-							interaction_tokens.slice(n).replace(
-							    "unblk=[]",
-							    'unblk=[{node="CPU_' + 
-								hardware_num.toString() + '", component="' + 
-								component.name  + '", port="' + client.name  + '"}]'
-							);
-						    interaction_tokens += ']}}';
-						}						
-					    });
+							var n = interaction_tokens.lastIndexOf("unblk=[]");
+							interaction_tokens = interaction_tokens.slice(0, n) + 
+							    interaction_tokens.slice(n).replace(
+								"unblk=[]",
+								'unblk=[{node="CPU_' + 
+								    hardware_num.toString() + '", component="' + 
+								    component.name  + '", port="' + client.name  + '"}]'
+							    );
+							interaction_tokens += ']}}';
+						    }); // end srv_map[service].servers.map(server)
+						}
+					    }); // end component.Client_list.map(client)
 					}
 				    }); // end Component_list.map(component)				    
 				}
@@ -439,25 +451,21 @@ define([
 	    return;
 	}
 	var path = require('path');
+	var dir = path.join(self.gen_dir,'cpn');
+	var child_process = require('child_process');
 
-	// Setting up variables that will be used by various functions of this plugin
-	self.gen_dir = path.join(process.cwd(),
-				 'generated',
-				 self.project.projectId,
-				 self.branchName,
-				 self.projectName);
-	var prefix = path.join(self.gen_dir,'cpn');
+	// clear out any previous project files
+	child_process.execSync('rm -rf ' + utils.sanitizePath(dir));
 
 	// Get the dummy cpn template
 	var file_url = 'https://github.com/rosmod/rosmod-cpn/releases/download/v1.0.0/cpn.zip';
-	var dir = prefix;
 	return utils.wgetAndUnzipLibrary(file_url, dir)
 	    .then(function() {
 		self.notify('info', 'Downloaded CPN template');
 		var filendir = require('filendir');
 		var fileKeys = Object.keys(self.artifacts);
 		var tasks = fileKeys.map(function(key) {
-		    var fname = path.join(prefix, key),
+		    var fname = path.join(dir, key),
 		    data = self.artifacts[key];
 
 		    return new Promise(function(resolve, reject) {
@@ -488,16 +496,58 @@ define([
 	
 	self.notify('info', 'Returning artifacts to user.');
 
-	var fileNames = Object.keys(self.artifacts);
+	if (self.runningOnClient) {
+	    // we are running on client; couldn't download template and can't zip
+	    var fileNames = Object.keys(self.artifacts);
 
-	var tasks = fileNames.map(function(fileName) {
-	    return self.blobClient.putFile(fileName, self.artifacts[fileName])
-		.then(function (hash) {
-		    self.result.addArtifact(hash);
+	    var tasks = fileNames.map(function(fileName) {
+		return self.blobClient.putFile(fileName, self.artifacts[fileName])
+		    .then(function (hash) {
+			self.result.addArtifact(hash);
+		    });
+	    });
+
+	    return Q.all(tasks);
+	}
+	else {  // we are running on server, downloaded template and need to zip;
+	    return new Promise(function(resolve, reject) {
+		var zlib = require('zlib'),
+		tar = require('tar'),
+		fstream = require('fstream'),
+		path = require('path'),
+		input = path.join(self.gen_dir,'cpn');
+
+		var bufs = [];
+		var packer = tar.Pack()
+		    .on('error', function(e) { reject(e); });
+
+		var gzipper = zlib.Gzip()
+		    .on('error', function(e) { reject(e); })
+		    .on('data', function(d) { bufs.push(d); })
+		    .on('end', function() {
+			var buf = Buffer.concat(bufs);
+			self.blobClient.putFile('artifacts.tar.gz',buf)
+			    .then(function (hash) {
+				self.result.addArtifact(hash);
+				resolve();
+			    })
+			    .catch(function(err) {
+				reject(err);
+			    })
+				.done();
+		    });
+
+		var reader = fstream.Reader({ 'path': input, 'type': 'Directory' })
+		    .on('error', function(e) { reject(e); });
+
+		reader
+		    .pipe(packer)
+		    .pipe(gzipper);
+	    })
+		.then(function() {
+		    self.notify('info', 'Created archive.');
 		});
-	});
-
-	return Q.all(tasks);
+	}
     };
 
     return TimingAnalysis;
