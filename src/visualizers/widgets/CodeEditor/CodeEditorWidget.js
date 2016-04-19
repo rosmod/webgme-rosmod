@@ -365,8 +365,12 @@ define([
 		self.nodes[desc.id] = desc;
 		attributeNames.map(function(attributeName) {
 		    var cursor = self.docs[attributeName].getCursor();
-		    self.docs[attributeName].setValue(
-			desc.codeAttributes[attributeName].value
+		    var lineCount = self.docs[attributeName].lineCount();
+		    self._logger.error(cursor);
+		    self.docs[attributeName].replaceRange(
+			desc.codeAttributes[attributeName].value,
+			{line:0, ch: 0},
+			{line:lineCount}
 		    );
 		    self.docs[attributeName].setCursor(cursor);
 		});
