@@ -56,7 +56,7 @@ define([
 	var sizeOfElement = 300;
         var width = this.$el.width(),
             height = this.$el.height();
-	this._numElementsPerRow = Math.floor(width / sizeOfElement);
+	this._numElementsPerRow = Math.floor(width / sizeOfElement) || 1;
 	this.$table.empty();
 	this.$table.append('<colgroup>');
 	for (var i=0;i<this._numElementsPerRow;i++)
@@ -188,6 +188,8 @@ define([
     };
 
     RootVizWidget.prototype._isValidDrop = function (dragInfo) {
+	if (!dragInfo)
+	    return false;
 	var self = this;
         var result = false,
         draggedNodePath,
@@ -210,23 +212,35 @@ define([
         return result;
     };
 
-    RootVizWidget.prototype.createProject = function(basePath) {
+    RootVizWidget.prototype.createProject = function(nodePath) {
 	var client = this._client;
-	var nodeId = '/v', // for our seeds, /v is always 'Projects'
-	baseId = client.getNode(basePath).getId();
-	var childCreationParams = {
-	    parentId: nodeId,  // Should be ROOT
-	    baseId: baseId,    // should be META:Project
-	};
-	var childId = client.createChild(childCreationParams, 'Creating new Project');
-	return childId;
+	var parentId = '/v', // for our seeds, /v is always 'Projects'
+	node = client.getNode(nodePath),
+	nodeId = node.getId(),
+	baseId = node.getBaseId(),
+	baseNode = client.getNode(baseId),
+	baseName = baseNode.getAttribute('name');
+
+	if (baseName == 'FCO') { // 
+	    var childCreationParams = {
+		parentId: parentId,  // Should be Projects (/v)
+		baseId: nodeId,    // should be META:Project
+	    };
+	    client.createChild(childCreationParams, 'Creating new Project');
+	}
+	else if (baseName == 'Project') {
+            var params = {parentId: parentId};
+	    params[nodeId] = {};
+            this._client.startTransaction();
+            this._client.copyMoreNodes(params);
+            this._client.completeTransaction();
+	}
     };
 
     /* * * * * * * * Visualizer event handlers * * * * * * * */
 
     RootVizWidget.prototype._makeDroppable = function () {
 	var self = this,
-	newProjectId,
 	desc;
         self.$el.addClass('drop-area');
         //self._div.append(self.__iconAssignNullPointer);
@@ -244,7 +258,7 @@ define([
             },
             drop: function (event, dragInfo) {
                 if (self._isValidDrop(dragInfo)) {
-		    newProjectId = self.createProject(dragInfo[DROP_CONSTANTS.DRAG_ITEMS][0]);
+		    self.createProject(dragInfo[DROP_CONSTANTS.DRAG_ITEMS][0]);
                 }
                 self.$el.removeClass('accept-drop reject-drop');
             }

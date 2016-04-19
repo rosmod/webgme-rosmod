@@ -56,14 +56,14 @@ define(['js/Constants',
 		self._logger.debug('activeObject nodeId \'' + nodeId + '\'');
 
 		// Remove current territory patterns
-		if (self._currentNodeId) {
+		if (typeof self._currentNodeId === 'string') {
 		    self._client.removeUI(self._territoryId);
 		}
 
 		self._currentNodeId = nodeId;
 		self._currentNodeParentId = undefined;
 
-		if (self._currentNodeId || self._currentNodeId === CONSTANTS.PROJECT_ROOT_ID) {
+		if (typeof desc.parentId === 'string') {
 		    // Put new node's info into territory rules
 		    self._selfPatterns = {};
 		    self._selfPatterns[nodeId] = {children: 0};  // Territory "rule"
@@ -189,7 +189,11 @@ define(['js/Constants',
     };
 
     RootVizControl.prototype._stateActiveObjectChanged = function (model, activeObjectId) {
-        this.selectedObjectChanged(activeObjectId);
+	if (this._currentNodeId === activeObjectId) {  
+	    // The same node selected as before - do not trigger  
+	} else {  
+	    this.selectedObjectChanged(activeObjectId);  
+	}  
     };
 
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
@@ -210,6 +214,11 @@ define(['js/Constants',
     RootVizControl.prototype.onActivate = function () {
         this._attachClientEventListeners();
         this._displayToolbarItems();
+	if (typeof this._currentNodeId === 'string') {  
+	    WebGMEGlobal.State.registerSuppressVisualizerFromNode(true);  
+	    WebGMEGlobal.State.registerActiveObject(this._currentNodeId);  
+            WebGMEGlobal.State.registerSuppressVisualizerFromNode(false);  
+	}  
     };
 
     RootVizControl.prototype.onDeactivate = function () {
