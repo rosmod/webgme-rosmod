@@ -200,7 +200,7 @@ define([
 
 	this.editor.on(
 	    'changes', 
-	    _.debounce(this.saveChanges.bind(this), 250) // make sure this doesn't fire more than every 250 ms
+	    _.debounce(this.saveChanges.bind(this), 1000) // make sure this doesn't fire more than every second
 	);
 
 	var self=this;
