@@ -280,13 +280,13 @@ define([
 						    timer_tokens += ',\n';
 						}
 						timer_tokens += '{node="CPU_' + hardware_num.toString() + 
-						    '", period=' + timer.period * 1000000 + ', offset=0, operation=' +
+						    '", period=' + timer.Period * 1000000 + ', offset=0, operation=' +
 						    '{node="CPU_' + hardware_num.toString() + '", component="' +
 						    component.name + '", operation="' + timer.name + '_operation"' + 
-						    ', priority=' + timer.priority + ', deadline=' + 
-						    timer.deadline * 1000000 + ', enqueue_time=0, steps=[';
+						    ', priority=' + timer.Priority + ', deadline=' + 
+						    timer.Deadline * 1000000 + ', enqueue_time=0, steps=[';
 						var re = /([A-Z]*)\s([\w\_\.\(\)]+);/g;
-						var result = re.exec(timer.abstractBusinessLogic);
+						var result = re.exec(timer.AbstractBusinessLogic);
 						while(result != null) {
 						    var port_type = result[1];
 						    var wcet = 0;
@@ -309,7 +309,7 @@ define([
 							timer_tokens += '{kind="PUBLISHER", port="' + result[2] + 
 							    '", unblk=[], exec_time=0, duration=0}';
 						    }
-						    result = re.exec(timer.abstractBusinessLogic);
+						    result = re.exec(timer.AbstractBusinessLogic);
 						}
 						timer_tokens += ']}}';
 					    }); // end Timer_list.map(timer)
