@@ -465,7 +465,7 @@ define([
 		var filendir = require('filendir');
 		var fileKeys = Object.keys(self.artifacts);
 		var tasks = fileKeys.map(function(key) {
-		    var fname = path.join(dir, key),
+		    var fname = path.join(dir,'cpn', key),
 		    data = self.artifacts[key];
 
 		    return new Promise(function(resolve, reject) {
