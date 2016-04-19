@@ -233,7 +233,7 @@ define([
 	this.buffer_select.on('change', this.selectBuffer.bind(this));
 
 	this.docs = {};
-	$('.CodeMirror').css({
+	$(this._el).find('.CodeMirror').css({
 	    height: cmPercent
 	});
     };
@@ -250,6 +250,9 @@ define([
 	    });
 	    $(container).zIndex(9999);
 	    $(container).prependTo(document.body);
+	    $(container).find('.CodeMirror').css({
+		height: cmPercent
+	    });
 	    this.editor.focus();
 	    this._fullScreen = true;
 	}
@@ -264,6 +267,9 @@ define([
 	    });
 	    $(container).zIndex('auto');
 	    $(container).appendTo(this._el);
+	    $(container).find('.CodeMirror').css({
+		height: cmPercent
+	    });
 	    this.editor.focus();
 	    this._fullScreen = false;
 	}
@@ -366,7 +372,6 @@ define([
 		attributeNames.map(function(attributeName) {
 		    var cursor = self.docs[attributeName].getCursor();
 		    var lineCount = self.docs[attributeName].lineCount();
-		    self._logger.error(cursor);
 		    self.docs[attributeName].replaceRange(
 			desc.codeAttributes[attributeName].value,
 			{line:0, ch: 0},
