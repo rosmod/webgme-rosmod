@@ -101,59 +101,78 @@ define([
 		    }
 		    result = re.exec(desc.attributes[a]);
 		}
-		var d1 = [];
+		var plot_data = {};
 		var aliases = Object.keys(log_data);
+		var i = 0;
 		aliases.map(function(alias) {
 		    $(choices).append(
 			"<br/><input type='checkbox' name='"+alias + "' checked='checked' id ='id"+alias + "'></input>" +
 			    "<label for='id"+alias + "'>" + alias + "</label>"
 		    );
-		    d1.push({
+		    plot_data[alias] = {
 			label: alias,
-			data: log_data[alias].data
-		    });
+			data: log_data[alias].data,
+			color: i
+		    };
+		    i++;
 		});
-		
-		if (aliases.length > 0) {
-		    $.plot($("#plot_" + a), d1, {
-			legend: {
-			    show: true,
-			    position: "ne",
-			    sorted: "ascending"
-			},
-			series: {
-			    lines: { show: true },
-			    points: { show: false }
-			},
-			grid: {
-			    borderWidth: 1,
-			    minBorderMargin: 20,
-			    labelMargin: 10,
-			    backgroundColor: {
-				colors: ["#fff", "#e4f4f4"]
-			    },
-			    margin: {
-				top: 1,
-				bottom: 20,
-				left: 20
+
+		var plotAccordingToChoices = function(attr, cont, data) {
+		    return function() {
+
+			var plottedData = [];
+
+			$('#choices_'+attr).find('input:checked').each(function() {
+			    var key = $(this).attr('name');
+			    if (key && data[key]) {
+				plottedData.push(data[key]);
 			    }
-			},
-			xaxis: {
-			    labelWidth: 30
-			},
-			yaxis: {
-			    labelWidth: 30
+			});
+			
+			if (plottedData.length > 0) {
+			    $.plot($("#plot_" + attr), plottedData, {
+				legend: {
+				    show: true,
+				    position: "ne",
+				    sorted: "ascending"
+				},
+				series: {
+				    lines: { show: true },
+				    points: { show: false }
+				},
+				grid: {
+				    borderWidth: 1,
+				    minBorderMargin: 20,
+				    labelMargin: 10,
+				    backgroundColor: {
+					colors: ["#fff", "#e4f4f4"]
+				    },
+				    margin: {
+					top: 1,
+					bottom: 20,
+					left: 20
+				    }
+				},
+				xaxis: {
+				    labelWidth: 30
+				},
+				yaxis: {
+				    labelWidth: 30
+				}
+			    });
+			    var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
+				.text("Experiment Time").appendTo($('#plot_' + attr));
+			    var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
+				.text("Operation Execution Time (s)").appendTo($('#plot_' + attr));
+			    yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
 			}
-		    });
-		    var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
-			.text("Experiment Time").appendTo($('#plot_' + a));
-		    var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
-			.text("Operation Execution Time (s)").appendTo($('#plot_' + a));
-		    yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
-		}
-		else {
-		    $(container).detach();
-		}
+			else {
+			    $('#plot_'+a).detach();
+			}
+		    };
+		}(a, container, plot_data); // bind the arguments so they're saved for later
+		choices.click(plotAccordingToChoices);
+		plotAccordingToChoices();
 	    }
 
             this.nodes[desc.id] = desc;
