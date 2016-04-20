@@ -6,9 +6,10 @@
  */
 
 define([
+    'text!./Plot.html',
     'rosmod/Libs/flot/jquery.flot',
     'css!./styles/ResultsVizWidget.css'
-], function () {
+], function (PlotHtml) {
     'use strict';
 
     var ResultsVizWidget,
@@ -32,16 +33,6 @@ define([
 
         // set widget class
         this._el.addClass(WIDGET_CLASS);
-
-        // Create a dummy header 
-        //this._el.append('<h3>ResultsViz Events:</h3>');
-
-        // Registering to events can be done with jQuery (as normal)
-        this._el.on('dblclick', function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            self.onBackgroundDblClick();
-        });
     };
 
     ResultsVizWidget.prototype.onWidgetContainerResize = function (width, height) {
@@ -51,24 +42,22 @@ define([
     // Adding/Removing/Updating items
     ResultsVizWidget.prototype.addNode = function (desc) {
         if (desc) {
-            // Add node to a table of nodes
-            var node = document.createElement('div'),
-                label = 'children';
-
-            if (desc.childrenIds.length === 1) {
-                label = 'child';
-            }
-   
 	    for (var a in desc.attributes) {
-		var tmp1 = document.createElement('h6');
-		tmp1.innerHTML = a;
-		var linebreak = document.createElement("br");
-		//var tmp = document.createElement('div');
-		//tmp.innerHTML = desc.attributes[a];
-		//this._el.append(tmp);
-		var p = document.createElement('div');
-		p.id = "log_plot_" + a;
-		p.style = 'width:1300px;height:300px';
+		// setup the html
+		this._el.append(PlotHtml);
+		var container = this._el.find('#log');
+		$(container).attr('id', 'log_'+a);
+		
+		var title = this._el.find('#title');
+		$(title).attr('id','title_'+a);
+
+		var p = this._el.find('#plot');
+		$(p).attr('id',"plot_" + a);
+
+		var choices = this._el.find('#choices');
+		$(choices).attr('id','choices_'+a);
+
+		// parse the logs
 		var re = /ROSMOD::(\w+)::([\d]*)::((?:CALLBACK COMPLETED)|(?:CALLBACK FIFO ENQUEUE) ?)*::Alias=(\w+); (?:(?:[\w=;, ]*Enqueue Time)|(?:Completion Time)) sec=(\d*), nsec=(\d*)/gi;
 		var result = re.exec(desc.attributes[a]);
 		var log_data = {};
@@ -115,6 +104,10 @@ define([
 		var d1 = [];
 		var aliases = Object.keys(log_data);
 		aliases.map(function(alias) {
+		    $(choices).append(
+			"<br/><input type='checkbox' name='"+alias + "' checked='checked' id ='id"+alias + "'></input>" +
+			    "<label for='id"+alias + "'>" + alias + "</label>"
+		    );
 		    d1.push({
 			label: alias,
 			data: log_data[alias].data
@@ -122,9 +115,7 @@ define([
 		});
 		
 		if (aliases.length > 0) {
-		    this._el.append(tmp1);
-		    this._el.append(p);
-		    $.plot($("#log_plot_" + a), d1, {
+		    $.plot($("#plot_" + a), d1, {
 			legend: {
 			    show: true,
 			    position: "ne",
@@ -154,17 +145,18 @@ define([
 			    labelWidth: 30
 			}
 		    });
-		    var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>").text("Experiment Time").appendTo($('#log_plot' + a));
-
-		    var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>").text("Operation Execution Time (s)").appendTo($('#log_data' + a));
+		    var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
+			.text("Experiment Time").appendTo($('#plot_' + a));
+		    var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
+			.text("Operation Execution Time (s)").appendTo($('#plot_' + a));
 		    yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
+		}
+		else {
+		    $(container).detach();
 		}
 	    }
 
             this.nodes[desc.id] = desc;
-
-            this._el.append(node);
-            node.onclick = this.onNodeClick.bind(this, desc.id);
         }
     };
 
@@ -189,7 +181,6 @@ define([
     };
 
     ResultsVizWidget.prototype.onBackgroundDblClick = function () {
-        this._el.append('<div>Background was double-clicked!!</div>');
     };
 
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
