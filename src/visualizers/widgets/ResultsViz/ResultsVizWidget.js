@@ -115,7 +115,10 @@ define([
 		var d1 = [];
 		var aliases = Object.keys(log_data);
 		aliases.map(function(alias) {
-		    d1.push(log_data[alias].data);
+		    d1.push({
+			label: alias,
+			data: log_data[alias].data
+		    });
 		});
 		
 		if (aliases.length > 0) {
@@ -159,8 +162,6 @@ define([
 	    }
 
             this.nodes[desc.id] = desc;
-            node.innerHTML += 'Adding node "' + desc.name + '" (click to view). It has ' + 
-                desc.childrenIds.length + ' ' + label + '.';
 
             this._el.append(node);
             node.onclick = this.onNodeClick.bind(this, desc.id);
