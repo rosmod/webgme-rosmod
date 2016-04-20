@@ -8,8 +8,14 @@
 define([
     'text!./Plot.html',
     'rosmod/Libs/flot/jquery.flot',
+    'rosmod/Libs/flot/jquery.flot.navigate',
+    'rosmod/Libs/flot/jquery.flot.selection',
     'css!./styles/ResultsVizWidget.css'
-], function (PlotHtml) {
+], function (
+    PlotHtml, 
+    flot, 
+    flotNavigate,
+    flotSelection) {
     'use strict';
 
     var ResultsVizWidget,
@@ -136,6 +142,12 @@ define([
 				    position: "ne",
 				    sorted: "ascending"
 				},
+				zoom: {
+				    interactive: true
+				},
+				pan: {
+				    interactive: true
+				},
 				series: {
 				    lines: { show: true },
 				    points: { show: false }
@@ -171,7 +183,10 @@ define([
 			}
 		    };
 		}(a, container, plot_data); // bind the arguments so they're saved for later
+
+		// bind events for plots and choices
 		choices.click(plotAccordingToChoices);
+
 		plotAccordingToChoices();
 	    }
 
