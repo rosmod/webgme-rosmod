@@ -7,15 +7,13 @@
 
 define([
     'text!./Plot.html',
-    'rosmod/Libs/flot/jquery.flot',
-    'rosmod/Libs/flot/jquery.flot.navigate',
-    'rosmod/Libs/flot/jquery.flot.selection',
+    './ResultsVizWidget.Parser',
+    './ResultsVizWidget.Plotter',
     'css!./styles/ResultsVizWidget.css'
 ], function (
-    PlotHtml, 
-    flot, 
-    flotNavigate,
-    flotSelection) {
+    PlotHtml,
+    Parser,
+    Plotter) {
     'use strict';
 
     var ResultsVizWidget,
@@ -56,139 +54,24 @@ define([
 		
 		var title = this._el.find('#title');
 		$(title).attr('id','title_'+a);
+		title.append('<b>'+a+'</b>');
 
 		var p = this._el.find('#plot');
 		$(p).attr('id',"plot_" + a);
 
-		var choices = this._el.find('#choices');
-		$(choices).attr('id','choices_'+a);
-
 		// parse the logs
-		var re = /ROSMOD::(\w+)::([\d]*)::((?:CALLBACK COMPLETED)|(?:CALLBACK FIFO ENQUEUE) ?)*::Alias=(\w+); (?:(?:[\w=;, ]*Enqueue Time)|(?:Completion Time)) sec=(\d*), nsec=(\d*)/gi;
-		var result = re.exec(desc.attributes[a]);
-		var log_data = {};
-		var first_time = 0.0;
-		var max_exec_time = 0.0;
-		if (result != null)
-		    var first_time = parseInt(result[5]) + result[6]/1000000000.0;
-		while(result != null) {
-		    var alias = result[4];
-		    if (!log_data[alias]) {
-			log_data[alias] = {
-			    data : [],
-			    enqueue_times: [],
-			    completion_times: []
-			};
-		    }
-		    if (result[3].indexOf('ENQUEUE') > -1) {
-			var enqueue_time = parseInt(result[5]) + result[6]/1000000000.0;
-			log_data[alias].enqueue_times.push(enqueue_time);
-			if (first_time == 0.0)
-			    first_time = enqueue_time;
-		    }
-		    else if (result[3].indexOf('COMPLETED') > -1) {
-			var completion_time = parseInt(result[5]) + result[6]/1000000000.0;
-			log_data[alias].completion_times.push(completion_time);
-		    }
-		    if ( log_data[alias].completion_times.length > 0 && log_data[alias].enqueue_times.length > 0 ) {
-			// at this point there can only be one completion_time, though there may be multiple enqueue times
-			var comp = log_data[alias].completion_times[0];
-			var enq = log_data[alias].enqueue_times[0];
-			var exec_time = comp - enq;
-			if (exec_time > max_exec_time)
-			    max_exec_time = exec_time;
-			log_data[alias].data.push([enq - first_time,  0]);
-			log_data[alias].data.push([enq - first_time,  exec_time]);
-			log_data[alias].data.push([comp - first_time, exec_time]);
-			log_data[alias].data.push([comp - first_time, 0]);
-			// remove the currently processed enqueue / completion time
-			log_data[alias].enqueue_times = log_data[alias].enqueue_times.slice(1);
-			log_data[alias].completion_times = log_data[alias].completion_times.slice(1);
-		    }
-		    result = re.exec(desc.attributes[a]);
-		}
-		var plot_data = {};
+		var log_data = Parser.getDataFromAttribute(desc.attributes[a]);
+		var plot_data = [];
 		var aliases = Object.keys(log_data);
-		var i = 0;
 		aliases.map(function(alias) {
-		    $(choices).append(
-			"<br/><input type='checkbox' name='"+alias + "' checked='checked' id ='id"+alias + "'></input>" +
-			    "<label for='id"+alias + "'>" + alias + "</label>"
-		    );
-		    plot_data[alias] = {
-			label: alias,
-			data: log_data[alias].data,
-			color: i
-		    };
-		    i++;
+		    plot_data.push(log_data[alias].data);
 		});
-
-		var plotAccordingToChoices = function(attr, cont, data) {
-		    return function() {
-
-			var plottedData = [];
-
-			$('#choices_'+attr).find('input:checked').each(function() {
-			    var key = $(this).attr('name');
-			    if (key && data[key]) {
-				plottedData.push(data[key]);
-			    }
-			});
-			
-			if (plottedData.length > 0) {
-			    $.plot($("#plot_" + attr), plottedData, {
-				legend: {
-				    show: true,
-				    position: "ne",
-				    sorted: "ascending"
-				},
-				zoom: {
-				    interactive: true
-				},
-				pan: {
-				    interactive: true
-				},
-				series: {
-				    lines: { show: true },
-				    points: { show: false }
-				},
-				grid: {
-				    borderWidth: 1,
-				    minBorderMargin: 20,
-				    labelMargin: 10,
-				    backgroundColor: {
-					colors: ["#fff", "#e4f4f4"]
-				    },
-				    margin: {
-					top: 1,
-					bottom: 20,
-					left: 20
-				    }
-				},
-				xaxis: {
-				    labelWidth: 30
-				},
-				yaxis: {
-				    labelWidth: 30
-				}
-			    });
-			    var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
-				.text("Experiment Time").appendTo($('#plot_' + attr));
-			    var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
-				.text("Operation Execution Time (s)").appendTo($('#plot_' + attr));
-			    yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
-			}
-			else {
-			    $('#plot_'+a).detach();
-			}
-		    };
-		}(a, container, plot_data); // bind the arguments so they're saved for later
-
-		// bind events for plots and choices
-		choices.click(plotAccordingToChoices);
-
-		plotAccordingToChoices();
+		if (plot_data.length > 0)
+		    Plotter.plotData('#plot_'+a, plot_data);
+		else
+		    $(container).detach();
 	    }
+	    //Plotter.plotData('#plot_'+Object.keys(desc.attributes)[0]);
 
             this.nodes[desc.id] = desc;
         }
