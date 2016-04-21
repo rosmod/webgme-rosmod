@@ -179,6 +179,31 @@ While viewing a project, the user can run the following plugins:
    ``software`` defined for the project according to the
    ``host architectures`` defined in the ``system models`` of the
    project.
+
+    **NOTE::** If you choose to download the software sources and
+    compile them locally, you will need to run
+    ``catkin_make -DNAMESPACE=ros`` to build against *stock ros*
+    dependencies (in which case the operation **deadline**/**priority**
+    settings and the **SchedulingScheme** of the component queue will
+    not have any effect) or ``catkin_make -DNAMESPACE=rosmod`` to build
+    with *rosmod* dependencies. In order to build with ``rosmod``
+    dependencies, you will need to have
+    `ROSMOD-COMM <https://github.com/rosmod/rosmod/tree/master/comm>`__
+    installed.
+
+    **NOTE::** When running a build on a project, the compilation is
+    performed on one of each of the different *types* of ``hosts`` in
+    the defined ``systems``. Because many of the samples support
+    execution on the RCPS cluster of 32 *BeagleBone Blacks (BBB)*, a
+    compilation process will be started on a BBB for the project if
+    compilation is selected. Compilation on a BBB takes a long time
+    (more than 5 minutes for a simple sample), so it is recommended that
+    ``guests`` never issue a compilation request. By invoking the plugin
+    without requesting compilation, the user will be able to download
+    the most recently compiled binaries for that sample along with the
+    code (they will be in the ``bin`` folder inside the returned
+    compressed file).
+
 -  **GenerateDocumenation**: aggregates all the ``Documentation``
    objects in the project's tree, converts them to ``ReStructuredText``
    and compiles them into ``html`` and ``pdf``.

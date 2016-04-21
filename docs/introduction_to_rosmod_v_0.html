@@ -301,17 +301,44 @@ visualizers list in the <code class="docutils literal"><span class="pre">Visuali
 <div class="section" id="project-plugins">
 <h3>Project Plugins<a class="headerlink" href="#project-plugins" title="Permalink to this headline">¶</a></h3>
 <p>While viewing a project, the user can run the following plugins:</p>
-<ul class="simple">
-<li><strong>SoftwareGenerator</strong>: for generating and optionally compiling the
+<ul>
+<li><p class="first"><strong>SoftwareGenerator</strong>: for generating and optionally compiling the
 <code class="docutils literal"><span class="pre">software</span></code> defined for the project according to the
 <code class="docutils literal"><span class="pre">host</span> <span class="pre">architectures</span></code> defined in the <code class="docutils literal"><span class="pre">system</span> <span class="pre">models</span></code> of the
-project.</li>
-<li><strong>GenerateDocumenation</strong>: aggregates all the <code class="docutils literal"><span class="pre">Documentation</span></code>
+project.</p>
+<blockquote>
+<div><p><strong>NOTE::</strong> If you choose to download the software sources and
+compile them locally, you will need to run
+<code class="docutils literal"><span class="pre">catkin_make</span> <span class="pre">-DNAMESPACE=ros</span></code> to build against <em>stock ros</em>
+dependencies (in which case the operation <strong>deadline</strong>/<strong>priority</strong>
+settings and the <strong>SchedulingScheme</strong> of the component queue will
+not have any effect) or <code class="docutils literal"><span class="pre">catkin_make</span> <span class="pre">-DNAMESPACE=rosmod</span></code> to build
+with <em>rosmod</em> dependencies. In order to build with <code class="docutils literal"><span class="pre">rosmod</span></code>
+dependencies, you will need to have
+<a class="reference external" href="https://github.com/rosmod/rosmod/tree/master/comm">ROSMOD-COMM</a>
+installed.</p>
+<p><strong>NOTE::</strong> When running a build on a project, the compilation is
+performed on one of each of the different <em>types</em> of <code class="docutils literal"><span class="pre">hosts</span></code> in
+the defined <code class="docutils literal"><span class="pre">systems</span></code>. Because many of the samples support
+execution on the RCPS cluster of 32 <em>BeagleBone Blacks (BBB)</em>, a
+compilation process will be started on a BBB for the project if
+compilation is selected. Compilation on a BBB takes a long time
+(more than 5 minutes for a simple sample), so it is recommended that
+<code class="docutils literal"><span class="pre">guests</span></code> never issue a compilation request. By invoking the plugin
+without requesting compilation, the user will be able to download
+the most recently compiled binaries for that sample along with the
+code (they will be in the <code class="docutils literal"><span class="pre">bin</span></code> folder inside the returned
+compressed file).</p>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>GenerateDocumenation</strong>: aggregates all the <code class="docutils literal"><span class="pre">Documentation</span></code>
 objects in the project&#8217;s tree, converts them to <code class="docutils literal"><span class="pre">ReStructuredText</span></code>
-and compiles them into <code class="docutils literal"><span class="pre">html</span></code> and <code class="docutils literal"><span class="pre">pdf</span></code>.</li>
-<li><strong>TimingAnalysis</strong>: generates a <code class="docutils literal"><span class="pre">Colored</span> <span class="pre">Petri-Net</span></code> model for
+and compiles them into <code class="docutils literal"><span class="pre">html</span></code> and <code class="docutils literal"><span class="pre">pdf</span></code>.</p>
+</li>
+<li><p class="first"><strong>TimingAnalysis</strong>: generates a <code class="docutils literal"><span class="pre">Colored</span> <span class="pre">Petri-Net</span></code> model for
 performing timing analysis on the <code class="docutils literal"><span class="pre">deployments</span></code> (software instanced
-on <em>abstract</em> hardware)</li>
+on <em>abstract</em> hardware)</p>
+</li>
 </ul>
 </div>
 <div class="section" id="saving-exporting-the-project">
