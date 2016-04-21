@@ -28,7 +28,6 @@ define(['d3'], function() {
 		x2: xdomain,
 		y2: ydomain
 	    };
-	    var drag = d3.behavior.drag();
 
 	    var svg = d3.select(plotId)
 		.attr("width", width + margin.left + margin.right)
@@ -60,13 +59,6 @@ define(['d3'], function() {
 		    return y(d[1]);
 		});
 
-	    var band = svg.append("rect")
-		.attr("width", 0)
-		.attr("height", 0)
-		.attr("x", 0)
-		.attr("y", 0)
-		.attr("class", "band");
-
 	    // add axes
 	    svg.append("g")
 		.attr("class", "x axis")
@@ -77,6 +69,7 @@ define(['d3'], function() {
 		.attr("class", "y axis")
 		.call(yAxis)
 
+	    // add clipping for plot
 	    svg.append("clipPath")
 		.attr("id", "clip")
 		.append("rect")
@@ -125,8 +118,21 @@ define(['d3'], function() {
 
 		});
 
+	    var bandId = 'band_'+plotId.replace('#','');
 	    // handle zoom and its overlay
+	    var band = svg.append("rect")
+		.attr("id", bandId)
+		.attr("width", 0)
+		.attr("height", 0)
+		.attr("x", 0)
+		.attr("y", 0)
+		.attr("class", "band");
+
+	    var drag = d3.behavior.drag();
+
+	    var zoomOverlayId = 'zoomOverlay_'+plotId.replace('#','');
 	    var zoomOverlay = svg.append("rect")
+		.attr("id", zoomOverlayId)
 		.attr("width", width - 10)
 		.attr("height", height)
 		.attr("class", "zoomOverlay")
@@ -180,7 +186,7 @@ define(['d3'], function() {
 
 		bandPos = [-1, -1];
 
-		d3.select(".band").transition()
+		d3.select("#"+bandId).transition()
 		    .attr("width", 0)
 		    .attr("height", 0)
 		    .attr("x", bandPos[0])
@@ -194,25 +200,25 @@ define(['d3'], function() {
 		var pos = d3.mouse(this);
 
 		if (pos[0] < bandPos[0]) {
-		    d3.select(".band").
+		    d3.select("#"+bandId).
 			attr("transform", "translate(" + (pos[0]) + "," + bandPos[1] + ")");
 		}
 		if (pos[1] < bandPos[1]) {
-		    d3.select(".band").
+		    d3.select("#"+bandId).
 			attr("transform", "translate(" + (pos[0]) + "," + pos[1] + ")");
 		}
 		if (pos[1] < bandPos[1] && pos[0] > bandPos[0]) {
-		    d3.select(".band").
+		    d3.select("#"+bandId).
 			attr("transform", "translate(" + (bandPos[0]) + "," + pos[1] + ")");
 		}
 
 		//set new position of band when user initializes drag
 		if (bandPos[0] == -1) {
 		    bandPos = pos;
-		    d3.select(".band").attr("transform", "translate(" + bandPos[0] + "," + bandPos[1] + ")");
+		    d3.select("#"+bandId).attr("transform", "translate(" + bandPos[0] + "," + bandPos[1] + ")");
 		}
 
-		d3.select(".band").transition().duration(1)
+		d3.select("#"+bandId).transition().duration(1)
 		    .attr("width", Math.abs(bandPos[0] - pos[0]))
 		    .attr("height", Math.abs(bandPos[1] - pos[1]));
 	    });
