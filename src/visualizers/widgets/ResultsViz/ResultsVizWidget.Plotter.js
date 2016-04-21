@@ -3,7 +3,8 @@
 define(['d3'], function() {
     'use strict';
     return {
-	plotData: function(plotId, data) {
+	plotData: function(plotId, data, names) {
+
 	    var bandPos = [-1, -1];
 	    var pos;
 
@@ -66,6 +67,7 @@ define(['d3'], function() {
 		.attr("y", 0)
 		.attr("class", "band");
 
+	    // add axes
 	    svg.append("g")
 		.attr("class", "x axis")
 		.call(xAxis)
@@ -81,6 +83,7 @@ define(['d3'], function() {
 		.attr("width", width)
 		.attr("height", height);
 
+	    // add data
 	    for (var idx=0; idx< data.length; idx++) {
 		svg.append("path")
 		    .datum(data[idx])
@@ -90,6 +93,39 @@ define(['d3'], function() {
 		    .attr("d", line);
 	    }
 
+	    var longestName = names.sort(function (a, b) { return b.length - a.length; })[0];
+	    var legendWidth = longestName.length * 5 + 10;
+	    // add legend   
+	    var legend = svg.append("g")
+		.attr("class", "legend")
+		.attr("x", width - legendWidth)
+		.attr("y", 25)
+		.attr("height", 100)
+		.attr("width", legendWidth * 2);
+
+	    legend.selectAll('g').data(data)
+		.enter()
+		.append('g')
+		.each(function(d, i) {
+		    var g = d3.select(this);
+		    g.append("rect")
+			.attr("x", width - legendWidth)
+			.attr("y", i*25)
+			.attr("width", 10)
+			.attr("height", 10)
+			.style("fill", colors[i]);
+		    
+		    g.append("text")
+			.attr("x", width - legendWidth + 10)
+			.attr("y", i * 25 + 8)
+			.attr("height",30)
+			.attr("width",legendWidth)
+			.style("fill", "black")
+			.text(names[i]);
+
+		});
+
+	    // handle zoom and its overlay
 	    var zoomOverlay = svg.append("rect")
 		.attr("width", width - 10)
 		.attr("height", height)

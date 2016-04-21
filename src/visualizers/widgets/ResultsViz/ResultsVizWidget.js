@@ -67,7 +67,7 @@ define([
 		    plot_data.push(log_data[alias].data);
 		});
 		if (plot_data.length > 0)
-		    Plotter.plotData('#plot_'+a, plot_data);
+		    Plotter.plotData('#plot_'+a, plot_data, aliases);
 		else
 		    $(container).detach();
 	    }
