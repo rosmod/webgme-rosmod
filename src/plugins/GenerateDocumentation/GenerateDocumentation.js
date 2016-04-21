@@ -255,7 +255,7 @@ define([
 	var self = this;
 	var path = require('path');
 	var fs = require('fs');
-	var pandoc = require('node-pandoc');
+	var child_process=  require('child_process');
 	var filendir = require('filendir');
 
 	var deferred = Q.defer();
@@ -266,24 +266,27 @@ define([
 	    obj.Documentation_list.map(function(documentation) {
 		// do something with docs here
 		if (documentation.documentation) {
-		    var args = '-f markdown -t rst';
-		    pandoc(documentation.documentation, args, function(err, result) {
-			if (err) {
-			    deferred.reject('Conversion with pandoc failed: ' + err);
-			}
-			else {
-			    var filePath = path.join(self.gen_dir, prefix, self.pathToFileName(obj.path) + '.rst');
-			    result = self.addToC(obj, result);
-			    filendir.writeFile(filePath, result, function (err) {
-				if (err) {
-				    deferred.reject('Writing file failed: ' + err);
-				}
-				else {
-				    deferred.resolve();
-				}
-			    });
-			}
+		    var filePath = path.join(self.gen_dir, prefix, self.pathToFileName(obj.path) + '.rst');
+		    var result = '';
+		    var pandoc = child_process.spawn('pandoc', ['-f','markdown','-t','rst']);
+		    pandoc.stdout.on('data', function(data) {
+			result += data + '';
 		    });
+		    pandoc.stdout.on('end', function() {
+			result = self.addToC(obj, result);
+			filendir.writeFile(filePath, result, function (err) {
+			    if (err) {
+				deferred.reject('Writing file failed: ' + err);
+			    }
+			    else {
+				deferred.resolve();
+			    }
+			});
+		    });
+		    pandoc.stderr.on('data', function(err) {
+			deferred.reject('Conversion with pandoc failed: ' + err);
+		    });
+		    pandoc.stdin.end(documentation.documentation, 'utf-8');
 		}
 		else {
 		    deferred.resolve();
