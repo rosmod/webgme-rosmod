@@ -141,7 +141,7 @@ define([
 	    html.addClass('panel-info');
 	    html.removeClass('panel-primary');
 	});
-	html.on('click', (event) => {
+	html.on('dblclick', (event) => {
 	    this.onNodeClick(desc.id);
 	    event.stopPropagation();
 	    event.preventDefault();
