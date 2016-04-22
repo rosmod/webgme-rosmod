@@ -21,7 +21,7 @@ define(['d3'], function() {
 		left: 60
 	    }
 	    var width = 760 - margin.left - margin.right;
-	    var height = 450 - margin.top - margin.bottom;
+	    var height = 250 - margin.top - margin.bottom;
 	    var zoomArea = {
 		x1: 0,
 		y1: 0,
@@ -30,17 +30,22 @@ define(['d3'], function() {
 	    };
 
 	    var svg = d3.select(plotId)
-		.attr("width", width + margin.left + margin.right)
-		.attr("height", height + margin.top + margin.bottom)
+		.attr('preserveAspectRatio', 'xMinYMin meet')
+		.attr('viewBox', '0 0 '+(width+margin.left+margin.right) + ' '+(height +margin.bottom+margin.top))
+		//.attr("width", "100%")
+		//.attr("height", height + margin.top + margin.bottom)
+		.classed('svg-content-responsive', true)
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
 	    var x = d3.scale.linear()
-		.range([0, width]).domain([0, xdomain]);
+		.domain([0, xdomain])
+		.range([0, width]);
 
 	    var y = d3.scale.linear()
-		.range([height, 0]).domain([0, ydomain]);
+		.domain([0, ydomain])
+		.range([height, 0]);
 
 	    var xAxis = d3.svg.axis()
 		.scale(x)
@@ -69,12 +74,14 @@ define(['d3'], function() {
 		.attr("class", "y axis")
 		.call(yAxis)
 
+	    /*
 	    // add clipping for plot
 	    svg.append("clipPath")
 		.attr("id", "clip")
 		.append("rect")
 		.attr("width", width)
 		.attr("height", height);
+	    */
 
 	    // add data
 	    for (var idx=0; idx< data.length; idx++) {

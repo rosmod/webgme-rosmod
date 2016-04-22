@@ -9,6 +9,10 @@
 .results-viz {
     outline: none; 
 }
+.svg-content-responsive {
+    display: inline-block;
+    /*position: absolute;*/
+}
 .axis path, .axis line {
     fill: none;
     stroke: #000;
