@@ -74,14 +74,12 @@ define(['d3'], function() {
 		.attr("class", "y axis")
 		.call(yAxis)
 
-	    /*
 	    // add clipping for plot
 	    svg.append("clipPath")
 		.attr("id", "clip")
 		.append("rect")
 		.attr("width", width)
 		.attr("height", height);
-	    */
 
 	    // add data
 	    for (var idx=0; idx< data.length; idx++) {
