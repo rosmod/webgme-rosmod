@@ -127,6 +127,7 @@ define([
 				 self.projectName);
 
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
+	self.artifacts = {}; // will be filled out and used by various parts of this plugin
 
 	loader.logger = self.logger;
 	utils.logger = self.logger;
@@ -168,7 +169,6 @@ define([
 	}
 	var path = require('path'),
 	    filendir = require('filendir'),
-	    filesToAdd = {},
 	    prefix = 'src/';
 
 	var path = require('path');
@@ -178,8 +178,8 @@ define([
 	child_process.execSync('rm -rf ' + utils.sanitizePath(path.join(self.gen_dir,'bin')));
 	child_process.execSync('rm -rf ' + utils.sanitizePath(path.join(self.gen_dir,'src')));
 
-	filesToAdd[self.projectModel.name + '.json'] = JSON.stringify(self.projectModel, null, 2);
-        filesToAdd[self.projectModel.name + '_metadata.json'] = JSON.stringify({
+	self.artifacts[self.projectModel.name + '.json'] = JSON.stringify(self.projectModel, null, 2);
+        self.artifacts[self.projectModel.name + '_metadata.json'] = JSON.stringify({
     	    projectID: self.project.projectId,
             commitHash: self.commitHash,
             branchName: self.branchName,
@@ -187,49 +187,55 @@ define([
             pluginVersion: self.getVersion()
         }, null, 2);
 
+	// render the doxygen template
+	var doxygenConfigName = 'doxygen_config',
+	    doxygenTemplate = TEMPLATES[self.FILES['doxygen_config']];
+	self.artifacts[doxygenConfigName] = ejs.render(doxygenTemplate, 
+						   {'projectName': self.projectName});
+
 	var software_folder = self.projectModel.Software_list[0];
 	if (software_folder && software_folder.Package_list) {
 	    software_folder.Package_list.map(function(pkgInfo) {
 
 		if (pkgInfo.Component_list) {
 		    pkgInfo.Component_list.map(function(compInfo) {
-			self.generateComponentFiles(filesToAdd, prefix, pkgInfo, compInfo);
+			self.generateComponentFiles(prefix, pkgInfo, compInfo);
 		    });
 		}
 
 		if (pkgInfo.Message_list) {
 		    pkgInfo.Message_list.map(function(msgInfo) {
 			var msgFileName = prefix + pkgInfo.name + '/msg/' + msgInfo.name + '.msg';
-			filesToAdd[msgFileName] = msgInfo.Definition;
+			self.artifacts[msgFileName] = msgInfo.Definition;
 		    });
 		}
 		if (pkgInfo.Service_list) {
 		    pkgInfo.Service_list.map(function(srvInfo) {
 			var srvFileName = prefix + pkgInfo.name + '/srv/' + srvInfo.name + '.srv';
-			filesToAdd[srvFileName] = srvInfo.Definition;
+			self.artifacts[srvFileName] = srvInfo.Definition;
 		    });
 		}
 
 		var	cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt',
 		cmakeTemplate = TEMPLATES[self.FILES['cmakelists']];
-		filesToAdd[cmakeFileName] = ejs.render(cmakeTemplate, {
+		self.artifacts[cmakeFileName] = ejs.render(cmakeTemplate, {
 		    'pkgInfo':pkgInfo, 
 		    'model': self.projectModel
 		});
 
 		var packageXMLFileName = prefix + pkgInfo.name + '/package.xml',
 		packageXMLTemplate = TEMPLATES[self.FILES['package_xml']];
-		filesToAdd[packageXMLFileName] = ejs.render(packageXMLTemplate, {
+		self.artifacts[packageXMLFileName] = ejs.render(packageXMLTemplate, {
 		    'pkgInfo': pkgInfo,
 		    'model': self.projectModel
 		});
 	    });
 	}
 
-	var fileNames = Object.keys(filesToAdd);
+	var fileNames = Object.keys(self.artifacts);
 	var tasks = fileNames.map(function(fileName) {
 	    var deferred = Q.defer();
-	    var data = filesToAdd[fileName];
+	    var data = self.artifacts[fileName];
 	    filendir.writeFile(path.join(self.gen_dir, fileName), data, function(err) {
 		if (err) {
 		    deferred.reject(err);
@@ -248,7 +254,7 @@ define([
 	    });
     };
 
-    SoftwareGenerator.prototype.generateComponentFiles = function (filesToAdd, prefix, pkgInfo, compInfo) {
+    SoftwareGenerator.prototype.generateComponentFiles = function (prefix, pkgInfo, compInfo) {
 	var self = this;
 	var path = require('path');
 	var moment = require('moment');
@@ -264,12 +270,12 @@ define([
 				    compInfo.name + '.cpp'),
 	    compCPPTemplate = TEMPLATES[this.FILES['component_cpp']],
 	    compHPPTemplate = TEMPLATES[this.FILES['component_hpp']];
-	filesToAdd[inclFileName] = ejs.render(compHPPTemplate, {
+	self.artifacts[inclFileName] = ejs.render(compHPPTemplate, {
 	    'compInfo': compInfo,
 	    'moment': moment,
 	    'model': self.projectModel
 	});
-	filesToAdd[srcFileName] = ejs.render(compCPPTemplate, {
+	self.artifacts[srcFileName] = ejs.render(compCPPTemplate, {
 	    'compInfo': compInfo,
 	    'moment': moment,
 	    'model': self.projectModel
@@ -312,63 +318,33 @@ define([
 	self.notify('info', msg);
 
 	var path = require('path'),
-	    filendir = require('filendir'),
-	    filesToAdd = {};
+	child_process = require('child_process');
+
 	var docPath = path.join(self.gen_dir, 'doc');
-	var child_process = require('child_process');
-	var doxygenConfigName = 'doxygen_config',
-	    doxygenTemplate = TEMPLATES[self.FILES['doxygen_config']];
-
 	// clear out any previous documentation
-	child_process.execSync('rm -rf ' + utils.sanitizePath(docPath) + ' ' + 
-			      utils.sanitizePath(path.join(self.gen_dir,doxygenConfigName)));
+	child_process.execSync('rm -rf ' + utils.sanitizePath(docPath));
 
-	filesToAdd[doxygenConfigName] = ejs.render(doxygenTemplate, 
-						   {'projectName': self.projectName});
-
-
-	var fileNames = Object.keys(filesToAdd);
-	var tasks = fileNames.map(function(fileName) {
-	    var deferred = Q.defer();
-	    var data = filesToAdd[fileName];
-	    filendir.writeFile(path.join(self.gen_dir, fileName), data, function(err) {
-		if (err) {
-		    deferred.reject(err);
-		}
-		else {
-		    deferred.resolve();
-		}
-	    });
-	    return deferred.promise;
+	var deferred = Q.defer();
+	var terminal = child_process.spawn('bash', [], {cwd:self.gen_dir});
+	terminal.stdout.on('data', function (data) {});
+	terminal.stderr.on('data', function (error) {
 	});
-
-	return Q.all(tasks)
-	    .then(function() {
-		var deferred = Q.defer();
-		var terminal = require('child_process').spawn('bash', [], {cwd:self.gen_dir});
-		terminal.stdout.on('data', function (data) {});
-		terminal.stderr.on('data', function (error) {
-		});
-		terminal.on('exit', function (code) {
-		    if (code == 0) {
-			deferred.resolve(code);
-		    }
-		    else {
-			deferred.reject('document generation:: child process exited with code ' + code);
-		    }
-		});
-		setTimeout(function() {
-		    terminal.stdin.write('doxygen doxygen_config\n');
-		    terminal.stdin.write('make -C ./doc/latex/ pdf\n');
-		    terminal.stdin.write('mv ./doc/latex/refman.pdf ' + 
-					 utils.sanitizePath(self.projectModel.name) + '.pdf');
-		    terminal.stdin.end();
-		}, 1000);
-		return deferred.promise;
-	    })
-	    .then(function() {
-		self.notify('info', 'Generated doxygen documentation.');
-	    });
+	terminal.on('exit', function (code) {
+	    if (code == 0) {
+		deferred.resolve(code);
+	    }
+	    else {
+		deferred.reject('document generation:: child process exited with code ' + code);
+	    }
+	});
+	setTimeout(function() {
+	    terminal.stdin.write('doxygen doxygen_config\n');
+	    terminal.stdin.write('make -C ./doc/latex/ pdf\n');
+	    terminal.stdin.write('mv ./doc/latex/refman.pdf ' + 
+				 utils.sanitizePath(self.projectModel.name) + '.pdf');
+	    terminal.stdin.end();
+	}, 1000);
+	return deferred.promise;
     };
 
     SoftwareGenerator.prototype.getValidArchitectures = function() {
@@ -416,6 +392,110 @@ define([
 	    });
     };
 
+    SoftwareGenerator.prototype.getObjectAttributeFromBuild = function (pkgName, compName, fileName, fileLineNumber) {
+	var self = this;
+	var deferred = Q.defer();
+	var path = require('path');
+	// find correct file
+	var fileKey = path.join('src', 
+				pkgName,
+				(fileName.split('.')[1] == 'hpp') ? 'include' : 'src',
+				pkgName,
+				fileName);
+	var fileData = self.artifacts[fileKey];
+	if (fileData) {
+	    // split the file string into line string array
+	    var fileLines = fileData.split("\n");
+	    // use line number from error to start working our way back using regex to find obj.attr
+	    var regex = /\/\/::::([a-zA-Z0-9\/]*)::::([^:\s]*)::::(?:end::::)?/gi;
+	    var path, attr, attrLineNumber;
+	    for (var l=fileLineNumber; l>0; l--) {
+		var line = fileLines[l];
+		var result = regex.exec(line);
+		if (result) {
+		    path = result[1];
+		    attr = result[2];
+		    attrLineNumber = fileLineNumber - l -1;
+		    break;
+		}
+	    }
+	    self.core.loadByPath(self.rootNode, path, function (err, node) {
+		if (err) {
+		    deferred.reject(err);
+		    return;
+		}
+		else {
+		    deferred.resolve({node: node, attr: attr, lineNumber: attrLineNumber});
+		}
+	    });
+	    return deferred.promise;
+	}
+	return null;
+    };
+
+    SoftwareGenerator.prototype.parseCompileStdErr = function (host, data) {
+	// returns true if the error should halt the build, false otherwise
+	var self = this;
+	var path = require('path');
+	var base_compile_dir = path.join(host.user.Directory, 'compilation');
+	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
+
+	if ( data.indexOf('error:') > -1 ) {
+	    var compileErrors = utils.parseMakeErrorOutput(
+		data,
+		compile_dir + '/src/'
+	    );
+	    var tasks = compileErrors.map(function(compileError) {
+		var compName = compileError.fileName.split('.')[0];
+		var msg = 'Build Error:: package: ' + compileError.packageName + ', component: ' +
+		    compName + ' :\n\t' +
+		    compileError.text + '\n';
+		self.notify('error', msg);
+		return self.getObjectAttributeFromBuild(compileError.packageName, 
+							compName,
+							compileError.fileName, 
+							compileError.line)
+		    .then(function( info ) {
+			var node = info.node,
+			attr = info.attr,
+			lineNum = info.lineNumber;
+			if (node) {
+			    var nodeName = self.core.getAttribute(node, 'name');
+			    self.notify('error', 'Error in Package: ' + compileError.packageName + 
+					', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
+					', at line: ' + lineNum, node);
+			}
+			else {
+			    self.notify('error', 'Library ' + compileError.packageName + ' has error!');
+			}
+		    });
+		});
+	    return Q.all(tasks)
+		.then(function () {
+		    return true;
+		});
+	}
+	else if ( data.indexOf('warning:') > -1 ) {
+	    var compileErrors = utils.parseMakeErrorOutput(
+		data,
+		compile_dir + '/src/'
+	    );
+	    compileErrors.map(function(compileError) {
+		var msg = 'Build Warning:: package: ' + compileError.packageName + ', component:' +
+		    compileError.fileName.split('.')[0] + ' :\n\t' +
+		    compileError.text + '\n';
+		self.notify('warning', msg);
+	    });
+	    return false;
+	}
+	else {
+	    // handle errors that may come before make gets invoked
+	    var msg = 'Build Error:: ' + data;
+	    self.notify('error', msg);
+	    return true;
+	}
+    };
+
     SoftwareGenerator.prototype.compileOnHost = function (host) {
 	var self = this;
 	var path = require('path');
@@ -454,44 +534,14 @@ define([
 	});
 	// run the compile step
 	var t3 = t2.then(function() {
-	    var stderrCB = function(data) {
-		if ( data.indexOf('error:') > -1 ) {
-		    var compileErrors = utils.parseMakeErrorOutput(
-			data,
-			compile_dir + '/src/'
-		    );
-		    compileErrors.map(function(compileError) {
-			var msg = 'Build Error:: ' + compileError.packageName + ':' +
-			    compileError.fileName + ':' + 
-			    compileError.line + ':' + compileError.column + ':\n\t' +
-			    compileError.text + '\n';
-			self.notify('error', msg);
-		    });
-		    return true;
-		}
-		else if ( data.indexOf('warning:') > -1 ) {
-		    var compileErrors = utils.parseMakeErrorOutput(
-			data,
-			compile_dir + '/src/'
-		    );
-		    compileErrors.map(function(compileError) {
-			var msg = 'Build Warning:: ' + compileError.packageName + ':' +
-			    compileError.fileName + ':' + 
-			    compileError.line + ':' + compileError.column + ':\n\t' +
-			    compileError.text + '\n';
-			self.notify('warning', msg);
-		    });
-		    return false;
-		}
-		else {
-		    // handle errors that may come before make gets invoked
-		    var msg = 'Build Error:: ' + data;
-		    self.notify('error', msg);
-		    return true;
-		}
-	    };
 	    self.notify('info', 'compiling on: ' + host.intf.IP + ' into '+compile_dir);
-	    return utils.executeOnHost(compile_commands, host.intf.IP, host.user, stderrCB)
+	    var stdErrCB = function(host) {
+		return function(data) { return self.parseCompileStdErr(host,data); };
+	    }(host);
+	    return utils.executeOnHost(compile_commands, 
+				       host.intf.IP, 
+				       host.user, 
+				       stdErrCB)
 		.catch(function(err) {
 		    throw new String('Compilation failed on ' + host.intf.IP);
 		});

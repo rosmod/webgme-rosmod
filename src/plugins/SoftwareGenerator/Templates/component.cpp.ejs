@@ -7,6 +7,7 @@
 #include "<%- model.pathDict[compInfo.parentPath].name %>/<%- compInfo.name %>.hpp"
 
 // User Definitions
+//::::<%- compInfo.path %>::::Definitions::::
 <%- compInfo.Definitions %>
 
 // Component Initialization 
@@ -16,6 +17,7 @@ void <%- compInfo.name %>::init_timer_operation(const NAMESPACE::TimerEvent& eve
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::init_timer_operation");
 #endif
   // User Initialization Code
+  //::::<%- compInfo.path %>::::Initialization::::
   <%- compInfo.Initialization %>
   init_timer.stop();
 #ifdef USE_ROSMOD
@@ -33,6 +35,7 @@ void <%- compInfo.name %>::<%- tmr.name %>_operation(const NAMESPACE::TimerEvent
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::<%- tmr.name %>_operation");
 #endif
+  //::::<%- tmr.path %>::::Operation::::
   <%- tmr.Operation %>
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::<%- tmr.name %>_operation");
@@ -53,6 +56,7 @@ void <%- compInfo.name %>::<%- sub.name %>_operation(const <%- model.pathDict[su
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::<%- sub.name %>_operation");
 #endif
+  //::::<%- sub.path %>::::Operation::::
   <%- sub.Operation %>
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::<%- sub.name %>_operation");
@@ -73,6 +77,7 @@ bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- model.pathDict[sr
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::<%- srv.name %>_operation");
 #endif
+  //::::<%- srv.path %>::::Operation::::
   <%- srv.Operation %>
 #ifdef USE_ROSMOD
   comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::<%- srv.name %>_operation");
