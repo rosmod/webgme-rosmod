@@ -300,7 +300,7 @@ define([
 	var self = this;
 	var config = {};
 	config.Name = node.name;
-	config.Prority = node.Priority;
+	config.Priority = node.Priority;
 	config['Component Instances'] = [];
 	if (node.Component_list) {
 	    node.Component_list.map(function(comp) {
