@@ -146,33 +146,40 @@ void <%- compInfo.name %>::startUp()
 {
   NAMESPACE::NodeHandle nh;
   std::string advertiseName;
+  ros::Duration deadline;
+  bool isOneShot;
 
   // Identify the pwd of Node Executable
-  std::string s = node_argv[0];
+  char szTmp[32];
+  char pBuf[1024];
+  memset(pBuf, 0, 1024);
+  sprintf(szTmp, "/proc/%d/exe", getpid());
+  readlink(szTmp, pBuf, 1024);
+
+  std::string s = pBuf;
   std::string exec_path = s;
   std::string delimiter = "/";
-  std::string exec, pwd;
+  std::string exec, procDir;
   size_t pos = 0;
   while ((pos = s.find(delimiter)) != std::string::npos) {
     exec = s.substr(0, pos);
     s.erase(0, pos + delimiter.length());
   }
   exec = s.substr(0, pos);
-  pwd = exec_path.erase(exec_path.find(exec), exec.length());
-  std::string log_file_path = pwd + config.nodeName + "." + config.compName + ".log"; 
+  procDir = exec_path.erase(exec_path.find(exec), exec.length());
 
-  logger->create_file(pwd + config.nodeName + "." + config.compName + ".log");
-  logger->set_is_periodic(config.is_periodic_logging);
-  logger->set_max_log_unit(config.periodic_log_unit);
+  logger->create_file(procDir + '/' + config["Logging"]["FileName"].asString());
+  logger->set_is_periodic(config["Logging"]["Enabled"].asBool());
+  logger->set_max_log_unit(config["Logging"]["Unit"].asInt());
 
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->create_file(pwd + "ROSMOD_DEBUG." + config.nodeName + "." + config.compName + ".log");
-  comp_queue.ROSMOD_LOGGER->set_is_periodic(config.is_periodic_logging);
-  comp_queue.ROSMOD_LOGGER->set_max_log_unit(config.periodic_log_unit);
+  comp_queue.ROSMOD_LOGGER->create_file( procDir + '/' + config["Logging"]["FileName"].asString() + ".rosmod");
+  comp_queue.ROSMOD_LOGGER->set_is_periodic(config["Logging"]["Enabled"].asBool());
+  comp_queue.ROSMOD_LOGGER->set_max_log_unit(config["Logging"]["Unit"].asInt());
 #endif    
   
 #ifdef USE_ROSMOD 
-  this->comp_queue.scheduling_scheme = config.schedulingScheme;
+  this->comp_queue.scheduling_scheme = config["SchedulingScheme"].asString();
   rosmod::ROSMOD_Callback_Options callback_options;
 #endif  
 
@@ -184,13 +191,13 @@ if (compInfo.Server_list) {
   // Server - <%- srv.name %>
 #ifdef USE_ROSMOD  
   callback_options.alias = "<%- srv.name %>_operation";
-  callback_options.priority = <%- srv.Priority %>;
-  callback_options.deadline.sec =<%- Math.floor(srv.Deadline) %>;
-  callback_options.deadline.nsec = <%- Math.floor((srv.Deadline % 1) * 1000000000) %>;
+  
+  callback_options.priority = config["Servers"]["<%- srv.name %>"]["Priority"].asInt();
+  deadline = ros::Duration(config["Servers"]["<%- srv.name %>"]["Deadline"].asFloat());
+  callback_options.deadline.sec = deadline.sec;
+  callback_options.deadline.nsec = deadline.nsec;
 #endif    
   advertiseName = "<%- srv.Service.name %>";
-  if (config.portGroupMap.find("<%- srv.name %>") != config.portGroupMap.end())
-    advertiseName += "_" + config.portGroupMap["<%- srv.name %>"];
   NAMESPACE::AdvertiseServiceOptions <%- srv.name %>_server_options;
   <%- srv.name %>_server_options = NAMESPACE::AdvertiseServiceOptions::create<<%- model.pathDict[srv.Service.parentPath].name %>::<%- srv.Service.name %>>
       (advertiseName.c_str(),
@@ -214,8 +221,6 @@ if (compInfo.Client_list) {
 -%>
   // Client - <%- clt.name %>
   advertiseName = "<%- clt.Service.name %>";
-  if (config.portGroupMap.find("<%- clt.name %>") != config.portGroupMap.end())
-    advertiseName += "_" + config.portGroupMap["<%- clt.name %>"];
   this-><%- clt.name %> = nh.serviceClient<<%- model.pathDict[clt.Service.parentPath].name %>::<%- clt.Service.name %>>(advertiseName.c_str());//, true); 
   this-><%- clt.name %>.waitForExistence();
   logger->log("DEBUG", "<%- clt.name %> connected!");
@@ -230,8 +235,6 @@ if (compInfo.Publisher_list) {
 -%>
   // Publisher - <%- pub.name %>
   advertiseName = "<%- pub.Message.name %>";
-  if (config.portGroupMap.find("<%- pub.name %>") != config.portGroupMap.end())
-    advertiseName += "_" + config.portGroupMap["<%- pub.name %>"];
   this-><%- pub.name %> = nh.advertise<<%- model.pathDict[pub.Message.parentPath].name %>::<%- pub.Message.name %>>(advertiseName.c_str(), 1000); 
 <%
     });
@@ -245,13 +248,17 @@ if (compInfo.Subscriber_list) {
   // Subscriber - <%- sub.name %>
 #ifdef USE_ROSMOD 
   callback_options.alias = "<%- sub.name %>_operation";
+
+  callback_options.priority = config["Subscribers"]["<%- sub.name %>"]["Priority"].asInt();
+  deadline = ros::Duration(config["Subscribers"]["<%- sub.name %>"]["Deadline"].asFloat());
+  callback_options.deadline.sec = deadline.sec;
+  callback_options.deadline.nsec = deadline.nsec;
+
   callback_options.priority = <%- sub.Priority %>;
   callback_options.deadline.sec = <%- Math.floor(sub.Deadline) %>;
   callback_options.deadline.nsec = <%- Math.floor((sub.Deadline % 1) * 1000000000) %>;
 #endif  
   advertiseName = "<%- sub.Message.name %>";
-  if (config.portGroupMap.find("<%- sub.name %>") != config.portGroupMap.end())
-    advertiseName += "_" + config.portGroupMap["<%- sub.name %>"];
   NAMESPACE::SubscribeOptions <%- sub.name %>_options;
   <%- sub.name %>_options = NAMESPACE::SubscribeOptions::create<<%- model.pathDict[sub.Message.parentPath].name %>::<%- sub.Message.name %>>
       (advertiseName.c_str(),
@@ -299,23 +306,22 @@ if (compInfo.Timer_list) {
   // Component Timer - <%- tmr.name %>
 #ifdef USE_ROSMOD   
   callback_options.alias = "<%- tmr.name %>_operation";
-  callback_options.priority = <%- tmr.Priority %>;
-  callback_options.deadline.sec = <%- Math.floor(tmr.Deadline) %>;
-  callback_options.deadline.nsec = <%- Math.floor((tmr.Deadline % 1) * 1000000000) %>;
+  
+  callback_options.priority = config["Timers"]["<%- tmr.name %>"]["Priority"].asInt();
+  deadline = ros::Duration(config["Timers"]["<%- tmr.name %>"]["Deadline"].asFloat());
+  callback_options.deadline.sec = deadline.sec;
+  callback_options.deadline.nsec = deadline.nsec;
 #endif
+  isOneShot = (config["Timers"]["<%- tmr.name %>"]["Period"].asFloat() == 0) ? true : false;
   timer_options = 
     NAMESPACE::TimerOptions
-    (ros::Duration(<%- tmr.Period %>),
+    (ros::Duration(config["Timers"]["<%- tmr.name %>"]["Period"].asFloat()),
      boost::bind(&<%- compInfo.name %>::<%- tmr.name %>_operation, this, _1),
      &this->comp_queue,
 #ifdef USE_ROSMOD     
      callback_options,
 #endif 
-     <% if ( tmr.Period == 0 ) { -%>
-     true,
-     <% } else { -%>
-     false,
-     <% } -%>
+     isOneShot,
      false);
   this-><%- tmr.name %> = nh.createTimer(timer_options);
   this-><%- tmr.name %>.stop();
@@ -338,8 +344,8 @@ if (compInfo.Timer_list) {
 }
 
 extern "C" {
-  Component *maker(ComponentConfig &config, int argc, char **argv) {
-    return new <%- compInfo.name %>(config,argc,argv);
+  Component *maker(Json::Value &config) {
+    return new <%- compInfo.name %>(config);
   }
 }
 

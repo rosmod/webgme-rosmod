@@ -60,21 +60,6 @@ define([
 	self.sendNotification(prefix+msg);
     };
 
-    StopExperiment.prototype.notify = function(level, msg) {
-	var self = this;
-	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
-	if (level=='error')
-	    self.logger.error(msg);
-	else if (level=='debug')
-	    self.logger.debug(msg);
-	else if (level=='info')
-	    self.logger.info(msg);
-	else if (level=='warning')
-	    self.logger.warn(msg);
-	self.createMessage(self.activeNode, msg, level);
-	self.sendNotification(prefix+msg);
-    };
-
     /**
      * Main function for the plugin to execute. This will perform the execution.
      * Notes:
@@ -226,7 +211,7 @@ define([
 				 'experiments',
 				 self.experimentName);
 	    self.logger.info('Copying experiment data from ' + ip);
-	    return utils.copyFromHost(remoteDir + '/*.log', localDir + '/.', ip, user)
+	    return utils.copyFromHost(remoteDir + '/*.log*', localDir + '/.', ip, user)
 		.catch(function(err) {
 		    throw new String('No logs found on: '+ip);
 		});

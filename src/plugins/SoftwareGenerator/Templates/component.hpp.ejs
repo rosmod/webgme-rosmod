@@ -43,12 +43,10 @@ class <%- compInfo.name %> : public Component
 public:
   /**
    * @brief <%- compInfo.name %> Constructor.
-   * @param _config Component configuration parsed from deployment XML
-   * @param[in] argc command-line argument count
-   * @param[in] argv command-line arguments of the actor process
+   * @param _config Component configuration parsed from deployment JSON
    */
-  <%- compInfo.name %>(ComponentConfig& _config, int argc, char **argv)
-  : Component(_config, argc, argv) {}
+  <%- compInfo.name %>(Json::Value& _config)
+  : Component(_config) {}
 
   /**
    * @brief <%- compInfo.name %> Initializer

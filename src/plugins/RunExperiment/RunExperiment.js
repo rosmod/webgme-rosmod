@@ -310,13 +310,14 @@ define([
 		    "SchedulingScheme": comp.SchedulingScheme,
 		    "Logging": { 
 			"Enabled": comp.EnableLogging, 
-			"Unit": comp.LoggingUnit
+			"Unit": comp.LoggingUnit,
+			"FileName": node.name + '.' + comp.name + '.log'
 		    },
-		    "Timers": [],
+		    "Timers": {},
 		    "Publishers": [],
-		    "Subscribers": [],
+		    "Subscribers": {},
 		    "Clients": [],
-		    "Servers": []
+		    "Servers": {}
 		};
 		if (comp.Timer_list) {
 		    comp.Timer_list.map(function(timer) {
@@ -326,7 +327,7 @@ define([
 			    "Priority": timer.Priority,
 			    "Deadline": timer.Deadline
 			};
-			ci.Timers.push(ti);
+			ci.Timers[ti.Name] = ti;
 		    });
 		}
 		if (comp.Subscriber_list) {
@@ -336,7 +337,7 @@ define([
 			    "Priority": sub.Priority,
 			    "Deadline": sub.Deadline
 			};
-			ci.Subscribers.push(si);
+			ci.Subscribers[si.Name] = si;
 		    });
 		}
 		if (comp.Server_list) {
@@ -346,7 +347,7 @@ define([
 			    "Priority": server.Priority,
 			    "Deadline": server.Deadline
 			};
-			ci.Servers.push(si);
+			ci.Servers[si.Name] = si;
 		    });
 		}
 		config['Component Instances'].push(ci);
@@ -370,11 +371,8 @@ define([
 	    if (nodes) {
 		nodes.map(function(node) {
 		    var nodeConfigName = prefix + node.name + '.config';
-		    filesToAdd[nodeConfigName] = JSON.stringify(
-			self.getNodeConfig(node), 
-			null, 
-			2
-		    );
+		    var config = self.getNodeConfig(node);
+		    filesToAdd[nodeConfigName] = JSON.stringify( config, null, 2 );
 		});
 	    }
 	});
