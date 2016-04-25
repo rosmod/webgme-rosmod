@@ -509,7 +509,7 @@ define([
 	var compile_commands = [
 	    'cd ' + compile_dir,
 	    'rm -rf bin',
-	    'source /opt/ros/indigo/setup.bash',
+	    'source '+host.host['ROS Install']+'/setup.bash',
 	    'catkin_make -DNAMESPACE=rosmod',
 	    'mkdir bin',
 	    'cp devel/lib/*.so bin/.',

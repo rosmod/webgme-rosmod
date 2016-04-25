@@ -387,7 +387,7 @@ define([
 	self.rosCoreIp = ip;
 	var user = host.user;
 	var host_commands = [
-	    'source /opt/ros/indigo/setup.bash',
+	    'source '+host.host['ROS Install']+'/setup.bash',
 	    'export ROS_IP='+ip,
 	    'export ROS_MASTER_URI=http://'+ip+':'+self.rosCorePort,
 	    'roscore --port=' + self.rosCorePort + ' &'
@@ -410,7 +410,7 @@ define([
 					   self.experimentName);
 	    var host_commands = [
 		'cd ' + deployment_dir,
-		'source /opt/ros/indigo/setup.bash',
+		'source '+host.host['ROS Install']+'/setup.bash',
 		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH',
 		'export ROS_IP='+ip,
 		'export ROS_MASTER_URI=http://'+self.rosCoreIp+':'+self.rosCorePort,
