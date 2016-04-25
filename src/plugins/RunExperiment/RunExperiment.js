@@ -9,9 +9,6 @@ define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
     'text!./metadata.json',
-    'common/util/ejs', // for ejs templates
-    'common/util/xmljsonconverter', // used to save model as json
-    'plugin/RunExperiment/RunExperiment/Templates/Templates', // 
     'rosmod/meta',
     'rosmod/remote_utils',
     'rosmod/modelLoader',
@@ -20,9 +17,6 @@ define([
     PluginConfig,
     PluginBase,
     pluginMetadata,
-    ejs,
-    Converter,
-    TEMPLATES,
     MetaTypes,
     utils,
     loader,
@@ -44,9 +38,6 @@ define([
 
         this.metaTypes = MetaTypes;
 	this.pluginMetadata = pluginMetadata;
-        this.FILES = {
-            'node_xml': 'node.xml.ejs'
-        };
     };
 
     RunExperiment.metadata = pluginMetadata;
@@ -132,10 +123,10 @@ define([
 				  self.project.projectId, 
 				  self.branchName,
 				  projectName);
-	self.xml_dir = path.join(self.root_dir,
-				 'experiments', 
-				 self.experimentName,
-				 'xml');
+	self.config_dir = path.join(self.root_dir,
+				    'experiments', 
+				    self.experimentName,
+				    'config');
 
 	loader.loadModel(self.core, projectNode)
 	    .then(function(projectModel) {
@@ -154,7 +145,7 @@ define([
 		return self.checkBinaries();
 	    })
 	    .then(function() {
-		// generate xml files here
+		// generate config files here
 		self.notify('info','generating artifacts');
 		return self.generateArtifacts();
 	    })
@@ -305,6 +296,65 @@ define([
 	return Q.all(tasks);
     };
 
+    RunExperiment.prototype.getNodeConfig = function(node) {
+	var self = this;
+	var config = {};
+	config.Name = node.name;
+	config.Prority = node.Priority;
+	config['Component Instances'] = [];
+	if (node.Component_list) {
+	    node.Component_list.map(function(comp) {
+		var ci = {
+		    "Name": comp.name,
+		    "Definition": "lib" + comp.base.name + ".so",
+		    "SchedulingScheme": comp.SchedulingScheme,
+		    "Logging": { 
+			"Enabled": comp.EnableLogging, 
+			"Unit": comp.LoggingUnit
+		    },
+		    "Timers": [],
+		    "Publishers": [],
+		    "Subscribers": [],
+		    "Clients": [],
+		    "Servers": []
+		};
+		if (comp.Timer_list) {
+		    comp.Timer_list.map(function(timer) {
+			var ti = {
+			    "Name": timer.name,
+			    "Period": timer.Period,
+			    "Priority": timer.Priority,
+			    "Deadline": timer.Deadline
+			};
+			ci.Timers.push(ti);
+		    });
+		}
+		if (comp.Subscriber_list) {
+		    comp.Subscriber_list.map(function(sub) {
+			var si = {
+			    "Name": sub.name,
+			    "Priority": sub.Priority,
+			    "Deadline": sub.Deadline
+			};
+			ci.Subscribers.push(si);
+		    });
+		}
+		if (comp.Server_list) {
+		    comp.Server_list.map(function(server) {
+			var si = {
+			    "Name": server.name,
+			    "Priority": server.Priority,
+			    "Deadline": server.Deadline
+			};
+			ci.Servers.push(si);
+		    });
+		}
+		config['Component Instances'].push(ci);
+	    });
+	}
+	return config;
+    };
+
     RunExperiment.prototype.generateArtifacts = function () {
 	var self = this;
 	var path = require('path');
@@ -319,9 +369,12 @@ define([
 	    var nodes = container.Node_list;
 	    if (nodes) {
 		nodes.map(function(node) {
-		    var nodeXMLName = prefix + node.name + '.xml';
-		    var nodeXMLTemplate = TEMPLATES[self.FILES['node_xml']];
-		    filesToAdd[nodeXMLName] = ejs.render(nodeXMLTemplate, {nodeInfo: node});
+		    var nodeConfigName = prefix + node.name + '.config';
+		    filesToAdd[nodeConfigName] = JSON.stringify(
+			self.getNodeConfig(node), 
+			null, 
+			2
+		    );
 		});
 	    }
 	});
@@ -329,7 +382,7 @@ define([
 	var fnames = Object.keys(filesToAdd);
 	var tasks = fnames.map(function(f) {
 	    var deferred = Q.defer();
-	    var fname = path.join(self.xml_dir, f),
+	    var fname = path.join(self.config_dir, f),
 	    data = filesToAdd[f];
 	    filendir.writeFile(fname, data, function(err) {
 		if (err) {
@@ -368,7 +421,7 @@ define([
 					    user);
 		})
 		.then(function() {
-		    return utils.copyToHost(self.xml_dir,
+		    return utils.copyToHost(self.config_dir,
 					    deployment_dir,
 					    ip,
 					    user);
@@ -418,8 +471,8 @@ define([
 	    ];
 	    if (container.Node_list) {
 		container.Node_list.map(function(node) {
-		host_commands.push('DISPLAY=:0.0 ./node_main -config ' +
-				   node.name + '.xml ' +
+		host_commands.push('DISPLAY=:0.0 ./node_main --config ' +
+				   node.name + '.config ' +
 				   node.CMDLine +
 				   ' &');
 		});
@@ -530,7 +583,7 @@ define([
 	    var zlib = require('zlib'),
 	    tar = require('tar'),
 	    fstream = require('fstream'),
-	    input = self.xml_dir;
+	    input = self.config_dir;
 
 	    self.logger.info('zipping ' + input);
 
