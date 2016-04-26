@@ -20,6 +20,10 @@ define([
     'rosmod/Libs/cm/keymap/sublime',
     'rosmod/Libs/cm/keymap/vim',
     // Addons 
+    'rosmod/Libs/cm/addon/lint/lint',
+    'rosmod/Libs/cm/addon/lint/json-lint',
+    'rosmod/Libs/cm/addon/lint/jsonlint',
+    'rosmod/Libs/cm/addon/hint/show-hint',
     'rosmod/Libs/cm/addon/hint/show-hint',
     'rosmod/Libs/cm/addon/search/search',
     'rosmod/Libs/cm/addon/search/searchcursor',
@@ -37,6 +41,7 @@ define([
     'rosmod/Libs/cm/addon/fold/comment-fold',
     // CSS
     'css!./styles/CodeEditorWidget.css',
+    'css!rosmod/Libs/cm/addon/lint/lint.css',
     'css!rosmod/Libs/cm/addon/hint/show-hint.css',
     'css!rosmod/Libs/cm/addon/search/matchesonscrollbar.css',
     'css!rosmod/Libs/cm/addon/dialog/dialog.css',
@@ -101,6 +106,9 @@ define([
     CodeMirrorSublimeKeymap,
     CodeMirrorVimKeymap,
     // Addons
+    CodeMirrorLint,
+    CodeMirrorJSONLint,
+    jsonlint,
     CodeMirrorShowHint,
     CodeMirrorSearch,
     CodeMirrorSearchCursor,
@@ -187,13 +195,14 @@ define([
 	    readOnly: this._readOnly,
 	    lineNumbers: true,
 	    matchBrackets: true,
+	    lint: true,
 	    //viewPortMargin: Infinity,
 	    keyMap: this._config.keyBindings,
 	    path: 'rosmod/Libs/cm/lib/',
 	    theme: this._config.theme,
 	    fullscreen: false,
 	    foldGutter: true,
-	    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+	    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"]
 	};
 	this.editor = new CodeMirror.fromTextArea(
 	    this._codearea.get(0),
