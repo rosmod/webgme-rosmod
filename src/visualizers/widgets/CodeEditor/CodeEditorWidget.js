@@ -14,6 +14,7 @@ define([
     // Syntax highlighting
     'rosmod/Libs/cm/mode/clike/clike',
     'rosmod/Libs/cm/mode/markdown/markdown',
+    'rosmod/Libs/cm/mode/javascript/javascript',
     // Keymaps
     'rosmod/Libs/cm/keymap/emacs', 
     'rosmod/Libs/cm/keymap/sublime',
@@ -94,6 +95,7 @@ define([
     // Syntax Highlighting
     CodeMirrorModeClike,
     CodeMirrorModeMarkdown,
+    CodeMirrorJavascript,
     // Keymaps
     CodeMirrorEmacsKeymap,
     CodeMirrorSublimeKeymap,

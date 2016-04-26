@@ -168,12 +168,12 @@ void <%- compInfo.name %>::startUp()
   exec = s.substr(0, pos);
   procDir = exec_path.erase(exec_path.find(exec), exec.length());
 
-  logger->create_file(procDir + '/' + config["Logging"]["FileName"].asString());
+  logger->create_file(procDir + '/' + config["Logging"]["Component Log FileName"].asString());
   logger->set_is_periodic(config["Logging"]["Enabled"].asBool());
   logger->set_max_log_unit(config["Logging"]["Unit"].asInt());
 
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->create_file( procDir + '/' + config["Logging"]["FileName"].asString() + ".rosmod");
+  comp_queue.ROSMOD_LOGGER->create_file( procDir + '/' + config["Logging"]["ROSMOD Log FileName"].asString());
   comp_queue.ROSMOD_LOGGER->set_is_periodic(config["Logging"]["Enabled"].asBool());
   comp_queue.ROSMOD_LOGGER->set_max_log_unit(config["Logging"]["Unit"].asInt());
 #endif    

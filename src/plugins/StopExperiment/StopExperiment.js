@@ -163,9 +163,10 @@ define([
 		    var node = nodes[i];
 		    if (self.core.isTypeOf(node, self.META.Host)) {
 			var host = self.core.getAttribute(node, 'Host'),
+			artifacts = self.core.getAttribute(node, 'Artifacts'),
 			user = self.core.getAttribute(node, 'User'),
 			intf = self.core.getAttribute(node, 'Interface');
-			ah.push({host:host, user:user, intf:intf});
+			ah.push({host:host, user:user, intf:intf, artifacts: artifacts});
 			self.core.deleteNode(node);
 		    }
 		    else if (self.core.isTypeOf(node, self.META.Container)) {
@@ -203,7 +204,13 @@ define([
 	var path = require('path');
 	var localDir = path.join(self.exp_dir, 'results');
 	var mkdirp = require('mkdirp');
+
+	var child_process = require('child_process');
+	// clear out any previous config files
+	child_process.execSync('rm -rf ' + utils.sanitizePath(localDir));
+	// re-create it
 	mkdirp.sync(localDir);
+
 	var tasks = self.activeHosts.map(function(host) {
 	    var ip = host.intf.IP;
 	    var user = host.user;
@@ -211,10 +218,14 @@ define([
 				 'experiments',
 				 self.experimentName);
 	    self.logger.info('Copying experiment data from ' + ip);
-	    return utils.copyFromHost(remoteDir + '/*.log*', localDir + '/.', ip, user)
-		.catch(function(err) {
-		    throw new String('No logs found on: '+ip);
-		});
+	    var artTasks = host.artifacts.map(function(artifact) {
+		return utils.copyFromHost(remoteDir + '/' + artifact, localDir + '/.', ip, user)
+		    .catch(function(err) {
+			self.notify('warning', artifact + ' not found on ' + ip);
+		    });
+
+	    });
+	    return Q.all(artTasks);
 	});
 	return Q.all(tasks);
     };

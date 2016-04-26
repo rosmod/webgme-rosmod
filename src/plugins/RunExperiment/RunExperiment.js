@@ -9,6 +9,7 @@ define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
     'text!./metadata.json',
+    'rosmod/minify.json',
     'rosmod/meta',
     'rosmod/remote_utils',
     'rosmod/modelLoader',
@@ -17,6 +18,7 @@ define([
     PluginConfig,
     PluginBase,
     pluginMetadata,
+    minify,
     MetaTypes,
     utils,
     loader,
@@ -302,16 +304,19 @@ define([
 	config.Name = node.name;
 	config.Priority = node.Priority;
 	config['Component Instances'] = [];
+	config['Artifacts'] = [];
 	if (node.Component_list) {
 	    node.Component_list.map(function(comp) {
 		var ci = {
 		    "Name": comp.name,
 		    "Definition": "lib" + comp.base.name + ".so",
 		    "SchedulingScheme": comp.SchedulingScheme,
+		    "User Configuration": JSON.parse(JSON.minify(comp['User Configuration'])),
 		    "Logging": { 
 			"Enabled": comp.EnableLogging, 
 			"Unit": comp.LoggingUnit,
-			"FileName": node.name + '.' + comp.name + '.log'
+			"Component Log FileName": node.name + '.' + comp.name + '.user.log',
+			"ROSMOD Log FileName": node.name + '.' + comp.name + '.trace.log'
 		    },
 		    "Timers": {},
 		    "Publishers": [],
@@ -319,6 +324,9 @@ define([
 		    "Clients": [],
 		    "Servers": {}
 		};
+		config['Artifacts'].concat(JSON.parse(JSON.minify(comp['User Artifacts'])));
+		config['Artifacts'].push(ci.Logging['Component Log FileName']);
+		config['Artifacts'].push(ci.Logging['ROSMOD Log FileName']);
 		if (comp.Timer_list) {
 		    comp.Timer_list.map(function(timer) {
 			var ti = {
@@ -365,13 +373,19 @@ define([
 
 	var projectName = self.projectModel.name;
 
+	var child_process = require('child_process');
+	// clear out any previous config files
+	child_process.execSync('rm -rf ' + utils.sanitizePath(self.config_dir));
+
 	self.experiment.map(function (containerToHostMap) {
 	    var container = containerToHostMap[0]; // container is [0], host is [1]
+	    var host = containerToHostMap[1]; // container is [0], host is [1]
 	    var nodes = container.Node_list;
 	    if (nodes) {
 		nodes.map(function(node) {
 		    var nodeConfigName = prefix + node.name + '.config';
 		    var config = self.getNodeConfig(node);
+		    host.artifacts = config.Artifacts;
 		    filesToAdd[nodeConfigName] = JSON.stringify( config, null, 2 );
 		});
 	    }
@@ -557,6 +571,7 @@ define([
 	    self.core.setAttribute(cn, 'name', container.name);
 	    self.core.setAttribute(hn, 'name', host.host.name);
 	    self.core.setAttribute(hn, 'Host', host.host);
+	    self.core.setAttribute(hn, 'Artifacts', host.artifacts);
 	    self.core.setAttribute(hn, 'User', host.user);
 	    self.core.setAttribute(hn, 'Interface', host.intf);
 	    self.core.setAttribute(ln, 'name', 'MapsTo');
