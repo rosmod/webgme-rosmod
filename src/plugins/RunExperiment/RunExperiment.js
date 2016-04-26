@@ -484,9 +484,7 @@ define([
 	    if (container.Node_list) {
 		container.Node_list.map(function(node) {
 		host_commands.push('DISPLAY=:0.0 ./node_main --config ' +
-				   node.name + '.config ' +
-				   node.CMDLine +
-				   ' &');
+				   node.name + '.config &');
 		});
 	    }
 	    //host_commands.push('sleep 10');
