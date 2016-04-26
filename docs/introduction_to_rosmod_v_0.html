@@ -158,41 +158,41 @@ arranged horizontally with each other into left, center, and right
 panels. The center panel is the main view for the currently selected
 model object; and the left and right panels can be optionally hidden by
 using the mouse and dragging/clicking their hide function or by using
-<code class="docutils literal"><span class="pre">ctrl+right</span></code> (to toggle the display of the right panel) or
-<code class="docutils literal"><span class="pre">ctrl+left</span></code> (to toggle the display of the left panel).</p>
+<tt class="docutils literal"><span class="pre">ctrl+right</span></tt> (to toggle the display of the right panel) or
+<tt class="docutils literal"><span class="pre">ctrl+left</span></tt> (to toggle the display of the left panel).</p>
 <div class="section" id="visualizer-selection-and-part-browser">
 <h3>Visualizer Selection and Part Browser<a class="headerlink" href="#visualizer-selection-and-part-browser" title="Permalink to this headline">¶</a></h3>
 <p>The left panel is composed of two sub-panels (arranged vertically): the
-<code class="docutils literal"><span class="pre">Visualizer</span> <span class="pre">Selection</span></code> panel and the <code class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></code> panel. The
-<code class="docutils literal"><span class="pre">Visualizer</span> <span class="pre">Selection</span></code> panel allows the user to select between the
+<tt class="docutils literal"><span class="pre">Visualizer</span> <span class="pre">Selection</span></tt> panel and the <tt class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></tt> panel. The
+<tt class="docutils literal"><span class="pre">Visualizer</span> <span class="pre">Selection</span></tt> panel allows the user to select between the
 available visualizations of the currently selected model object. This
 visualization affects the content and interaction of the center portion
-of the UI. The <code class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></code> panel displays the object types which
+of the UI. The <tt class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></tt> panel displays the object types which
 can be created as children of the currently selected model object.
 Creation of objects can be achieved by dragging from the
-<code class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></code> panel into the center panel.</p>
+<tt class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></tt> panel into the center panel.</p>
 </div>
 <div class="section" id="active-object-visualization">
 <h3>Active Object Visualization<a class="headerlink" href="#active-object-visualization" title="Permalink to this headline">¶</a></h3>
 <p>The center panel displays selected visualization of the currently
 selected model object. The default visualization displays the children
 of the currently selected model object, and allows drag-and-drop from
-the <code class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></code> or <code class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></code> into the center panel for
+the <tt class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></tt> or <tt class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></tt> into the center panel for
 creation (from part browser) or move/instance/copy (from the tree
 browser).</p>
 </div>
 <div class="section" id="tree-browser-and-attribute-editor">
 <h3>Tree Browser and Attribute Editor<a class="headerlink" href="#tree-browser-and-attribute-editor" title="Permalink to this headline">¶</a></h3>
 <p>The right panel is composed of two sub-panels (arranged vertically): the
-<code class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></code> panel and the <code class="docutils literal"><span class="pre">Attribute</span> <span class="pre">Editor</span></code> panel. The
-<code class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></code> panel allows the navigation of all the projects in the
+<tt class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></tt> panel and the <tt class="docutils literal"><span class="pre">Attribute</span> <span class="pre">Editor</span></tt> panel. The
+<tt class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></tt> panel allows the navigation of all the projects in the
 current model and all of their children objects in a tree. It also
 supports group selection, movement, copying, deletion, and drag/drop to
-other panels (for instance the <code class="docutils literal"><span class="pre">Attribute</span> <span class="pre">Editor</span></code> or the center
-panel). The <code class="docutils literal"><span class="pre">Attribute</span> <span class="pre">Editor</span></code> panel allows the editing of the
+other panels (for instance the <tt class="docutils literal"><span class="pre">Attribute</span> <span class="pre">Editor</span></tt> or the center
+panel). The <tt class="docutils literal"><span class="pre">Attribute</span> <span class="pre">Editor</span></tt> panel allows the editing of the
 currently selected model object&#8217;s <em>Attributes</em> and <em>Pointers</em>. Since
 pointers are references to other model objects, the user can drag an
-object from the <code class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></code> onto a pointer of the selected model
+object from the <tt class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></tt> onto a pointer of the selected model
 object to set that pointer. Note that the drop action will check to
 ensure that the object to which the pointer is being set belongs to the
 types of objects that are valid for that pointer to point to. If the
@@ -203,7 +203,7 @@ will not update the value.</p>
 <div class="section" id="constraints">
 <h3>Constraints<a class="headerlink" href="#constraints" title="Permalink to this headline">¶</a></h3>
 <p>In the upper left of the UI, WebGME provides the utility to check the
-<code class="docutils literal"><span class="pre">constraints</span></code> defined in the <code class="docutils literal"><span class="pre">meta</span></code>. These constraints can be
+<tt class="docutils literal"><span class="pre">constraints</span></tt> defined in the <tt class="docutils literal"><span class="pre">meta</span></tt>. These constraints can be
 checked for just the currently selected model object, the selected model
 object and all its children, or the whole project. Upon completion it
 returns a form which specifies any constraints (e.g. containment
@@ -212,7 +212,7 @@ objects.</p>
 </div>
 <div class="section" id="plugins">
 <h3>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h3>
-<p>Finally, WebGME provides the infrastructure for executing <code class="docutils literal"><span class="pre">Plugins</span></code>,
+<p>Finally, WebGME provides the infrastructure for executing <tt class="docutils literal"><span class="pre">Plugins</span></tt>,
 which can create, edit, or delete model objects in addition to creating
 and returning artifacts based on the model. Additionally, these plugins
 can spawn off other tasks (e.g. compilation).</p>
@@ -228,7 +228,7 @@ editing the model.</p>
 <p>While the plugin is executing, it may produce notifications (view-able
 in the bottom right) as a list that is clear-able; each notification
 received shows as a popup temporarily but is also saved into the list.
-The list is view-able by clicking on the <code class="docutils literal"><span class="pre">Notifications</span></code> button.</p>
+The list is view-able by clicking on the <tt class="docutils literal"><span class="pre">Notifications</span></tt> button.</p>
 <p>When the plugin completes (possibly terminating due to an error), the
 user is notified and may view the results of the plugin. The results are
 presented as messages and optionally some downloadable artifacts. Note
@@ -244,7 +244,7 @@ formalizes a component model with proper execution semantics, and adds
 modeling of software and systems for a full tool-suite according to
 model-driven engineering.</p>
 <p>When developing models using ROSMOD, the top-level entity is a ROSMOD
-<code class="docutils literal"><span class="pre">Project</span></code>, which is a self-contained collection of</p>
+<tt class="docutils literal"><span class="pre">Project</span></tt>, which is a self-contained collection of</p>
 <ul class="simple">
 <li>Software</li>
 <li>Systems</li>
@@ -260,100 +260,100 @@ run-time is separated into specific deployments which are independent of
 the hardware model and to some degree the software model.</p>
 <div class="section" id="project-creation">
 <h3>Project Creation<a class="headerlink" href="#project-creation" title="Permalink to this headline">¶</a></h3>
-<p>To create a new project, you can either drag and drop a <code class="docutils literal"><span class="pre">Project</span></code>
-object from the <code class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></code> into the canvas when viewing the
-<code class="docutils literal"><span class="pre">Projects</span></code> <em>root node</em> or you can right click on the <code class="docutils literal"><span class="pre">Projects</span></code>
-<em>root node</em> of the <code class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></code> and create a new child of type
-<code class="docutils literal"><span class="pre">Project</span></code>. Please note that you cannot drag a <code class="docutils literal"><span class="pre">Documentation</span></code> object
-into the <code class="docutils literal"><span class="pre">Projects</span></code> canvas to create a documentation object and that
-if you choose to create a <code class="docutils literal"><span class="pre">Documentation</span></code> object inside the
-<code class="docutils literal"><span class="pre">Projects</span></code> <em>root node</em> it will not be displayed in the <code class="docutils literal"><span class="pre">RootViz</span></code>
+<p>To create a new project, you can either drag and drop a <tt class="docutils literal"><span class="pre">Project</span></tt>
+object from the <tt class="docutils literal"><span class="pre">Part</span> <span class="pre">Browser</span></tt> into the canvas when viewing the
+<tt class="docutils literal"><span class="pre">Projects</span></tt> <em>root node</em> or you can right click on the <tt class="docutils literal"><span class="pre">Projects</span></tt>
+<em>root node</em> of the <tt class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></tt> and create a new child of type
+<tt class="docutils literal"><span class="pre">Project</span></tt>. Please note that you cannot drag a <tt class="docutils literal"><span class="pre">Documentation</span></tt> object
+into the <tt class="docutils literal"><span class="pre">Projects</span></tt> canvas to create a documentation object and that
+if you choose to create a <tt class="docutils literal"><span class="pre">Documentation</span></tt> object inside the
+<tt class="docutils literal"><span class="pre">Projects</span></tt> <em>root node</em> it will not be displayed in the <tt class="docutils literal"><span class="pre">RootViz</span></tt>
 visualizer which shows all the Projects and will not be included in any
 of the generated documentation.</p>
 </div>
 <div class="section" id="project-attributes">
 <h3>Project Attributes<a class="headerlink" href="#project-attributes" title="Permalink to this headline">¶</a></h3>
-<p>Each project has special <code class="docutils literal"><span class="pre">Code</span> <span class="pre">Documentation</span></code> attributes: <code class="docutils literal"><span class="pre">Authors</span></code>,
-<code class="docutils literal"><span class="pre">Brief</span> <span class="pre">Description</span></code>, and <code class="docutils literal"><span class="pre">Detailed</span> <span class="pre">Description</span></code>, which are best
-edited by clicking on the <code class="docutils literal"><span class="pre">CodeEditor</span></code> visualizer. This visualizer
+<p>Each project has special <tt class="docutils literal"><span class="pre">Code</span> <span class="pre">Documentation</span></tt> attributes: <tt class="docutils literal"><span class="pre">Authors</span></tt>,
+<tt class="docutils literal"><span class="pre">Brief</span> <span class="pre">Description</span></tt>, and <tt class="docutils literal"><span class="pre">Detailed</span> <span class="pre">Description</span></tt>, which are best
+edited by clicking on the <tt class="docutils literal"><span class="pre">CodeEditor</span></tt> visualizer. This visualizer
 fills the canvas with a <a class="reference external" href="http://www.codemirror.net">CodeMirror</a>
 instance which allows the user to easily edit multi-line strings with:</p>
 <ul class="simple">
 <li>automatic saving when changes are made</li>
 <li>undo/redo</li>
 <li>syntax highlighting</li>
-<li>code completion, activated with <code class="docutils literal"><span class="pre">ctrl+space</span></code></li>
-<li>code folding, using the <em>gutter</em> buttons or <code class="docutils literal"><span class="pre">ctrl+q</span></code> on the top of
-the code to be folded (e.g. start of an <code class="docutils literal"><span class="pre">if</span></code> block)</li>
+<li>code completion, activated with <tt class="docutils literal"><span class="pre">ctrl+space</span></tt></li>
+<li>code folding, using the <em>gutter</em> buttons or <tt class="docutils literal"><span class="pre">ctrl+q</span></tt> on the top of
+the code to be folded (e.g. start of an <tt class="docutils literal"><span class="pre">if</span></tt> block)</li>
 </ul>
 <p>while allowing the user to configure (using drop-down menus):</p>
 <ul class="simple">
 <li>the currently viewed/edited <strong>attribute</strong></li>
 <li>the current <strong>color theme</strong> of the code editor</li>
 <li>the current <strong>keybindings</strong> associated with the code editor
-(supported keybindings are <code class="docutils literal"><span class="pre">sublime</span></code>, <code class="docutils literal"><span class="pre">emacs</span></code>, and <code class="docutils literal"><span class="pre">vim</span></code>)</li>
+(supported keybindings are <tt class="docutils literal"><span class="pre">sublime</span></tt>, <tt class="docutils literal"><span class="pre">emacs</span></tt>, and <tt class="docutils literal"><span class="pre">vim</span></tt>)</li>
 </ul>
-<p>The <code class="docutils literal"><span class="pre">CodeEditor</span></code> visualizer is used in many places throughout the UI;
+<p>The <tt class="docutils literal"><span class="pre">CodeEditor</span></tt> visualizer is used in many places throughout the UI;
 any object that has attributes which support editing using the
-<code class="docutils literal"><span class="pre">CodeEditor</span></code> will display the <code class="docutils literal"><span class="pre">CodeEditor</span></code> as a selection in the
-visualizers list in the <code class="docutils literal"><span class="pre">Visualizer</span> <span class="pre">Panel</span></code>.</p>
+<tt class="docutils literal"><span class="pre">CodeEditor</span></tt> will display the <tt class="docutils literal"><span class="pre">CodeEditor</span></tt> as a selection in the
+visualizers list in the <tt class="docutils literal"><span class="pre">Visualizer</span> <span class="pre">Panel</span></tt>.</p>
 </div>
 <div class="section" id="project-plugins">
 <h3>Project Plugins<a class="headerlink" href="#project-plugins" title="Permalink to this headline">¶</a></h3>
 <p>While viewing a project, the user can run the following plugins:</p>
 <ul>
 <li><p class="first"><strong>SoftwareGenerator</strong>: for generating and optionally compiling the
-<code class="docutils literal"><span class="pre">software</span></code> defined for the project according to the
-<code class="docutils literal"><span class="pre">host</span> <span class="pre">architectures</span></code> defined in the <code class="docutils literal"><span class="pre">system</span> <span class="pre">models</span></code> of the
+<tt class="docutils literal"><span class="pre">software</span></tt> defined for the project according to the
+<tt class="docutils literal"><span class="pre">host</span> <span class="pre">architectures</span></tt> defined in the <tt class="docutils literal"><span class="pre">system</span> <span class="pre">models</span></tt> of the
 project.</p>
 <blockquote>
 <div><p><strong>NOTE::</strong> If you choose to download the software sources and
 compile them locally, you will need to run
-<code class="docutils literal"><span class="pre">catkin_make</span> <span class="pre">-DNAMESPACE=ros</span></code> to build against <em>stock ros</em>
+<tt class="docutils literal"><span class="pre">catkin_make</span> <span class="pre">-DNAMESPACE=ros</span></tt> to build against <em>stock ros</em>
 dependencies (in which case the operation <strong>deadline</strong>/<strong>priority</strong>
 settings and the <strong>SchedulingScheme</strong> of the component queue will
-not have any effect) or <code class="docutils literal"><span class="pre">catkin_make</span> <span class="pre">-DNAMESPACE=rosmod</span></code> to build
-with <em>rosmod</em> dependencies. In order to build with <code class="docutils literal"><span class="pre">rosmod</span></code>
+not have any effect) or <tt class="docutils literal"><span class="pre">catkin_make</span> <span class="pre">-DNAMESPACE=rosmod</span></tt> to build
+with <em>rosmod</em> dependencies. In order to build with <tt class="docutils literal"><span class="pre">rosmod</span></tt>
 dependencies, you will need to have
 <a class="reference external" href="https://github.com/rosmod/rosmod/tree/master/comm">ROSMOD-COMM</a>
 installed.</p>
 <p><strong>NOTE::</strong> When running a build on a project, the compilation is
-performed on one of each of the different <em>types</em> of <code class="docutils literal"><span class="pre">hosts</span></code> in
-the defined <code class="docutils literal"><span class="pre">systems</span></code>. Because many of the samples support
+performed on one of each of the different <em>types</em> of <tt class="docutils literal"><span class="pre">hosts</span></tt> in
+the defined <tt class="docutils literal"><span class="pre">systems</span></tt>. Because many of the samples support
 execution on the RCPS cluster of 32 <em>BeagleBone Blacks (BBB)</em>, a
 compilation process will be started on a BBB for the project if
 compilation is selected. Compilation on a BBB takes a long time
 (more than 5 minutes for a simple sample), so it is recommended that
-<code class="docutils literal"><span class="pre">guests</span></code> never issue a compilation request. By invoking the plugin
+<tt class="docutils literal"><span class="pre">guests</span></tt> never issue a compilation request. By invoking the plugin
 without requesting compilation, the user will be able to download
 the most recently compiled binaries for that sample along with the
-code (they will be in the <code class="docutils literal"><span class="pre">bin</span></code> folder inside the returned
+code (they will be in the <tt class="docutils literal"><span class="pre">bin</span></tt> folder inside the returned
 compressed file).</p>
 </div></blockquote>
 </li>
-<li><p class="first"><strong>GenerateDocumenation</strong>: aggregates all the <code class="docutils literal"><span class="pre">Documentation</span></code>
-objects in the project&#8217;s tree, converts them to <code class="docutils literal"><span class="pre">ReStructuredText</span></code>
-and compiles them into <code class="docutils literal"><span class="pre">html</span></code> and <code class="docutils literal"><span class="pre">pdf</span></code>.</p>
+<li><p class="first"><strong>GenerateDocumenation</strong>: aggregates all the <tt class="docutils literal"><span class="pre">Documentation</span></tt>
+objects in the project&#8217;s tree, converts them to <tt class="docutils literal"><span class="pre">ReStructuredText</span></tt>
+and compiles them into <tt class="docutils literal"><span class="pre">html</span></tt> and <tt class="docutils literal"><span class="pre">pdf</span></tt>.</p>
 </li>
-<li><p class="first"><strong>TimingAnalysis</strong>: generates a <code class="docutils literal"><span class="pre">Colored</span> <span class="pre">Petri-Net</span></code> model for
-performing timing analysis on the <code class="docutils literal"><span class="pre">deployments</span></code> (software instanced
+<li><p class="first"><strong>TimingAnalysis</strong>: generates a <tt class="docutils literal"><span class="pre">Colored</span> <span class="pre">Petri-Net</span></tt> model for
+performing timing analysis on the <tt class="docutils literal"><span class="pre">deployments</span></tt> (software instanced
 on <em>abstract</em> hardware)</p>
 </li>
 </ul>
 </div>
 <div class="section" id="saving-exporting-the-project">
 <h3>Saving/Exporting the Project<a class="headerlink" href="#saving-exporting-the-project" title="Permalink to this headline">¶</a></h3>
-<p>Currently there are two ways to save/export and Load a <code class="docutils literal"><span class="pre">Project</span></code> or
-sub-model (e.g. a <code class="docutils literal"><span class="pre">System</span></code> model).</p>
+<p>Currently there are two ways to save/export and Load a <tt class="docutils literal"><span class="pre">Project</span></tt> or
+sub-model (e.g. a <tt class="docutils literal"><span class="pre">System</span></tt> model).</p>
 <p>The first way is to save a selected (sub-)tree of the WebGME model, by
-right-clicking on the sub-tree&#8217;s root (e.g. a <code class="docutils literal"><span class="pre">System</span></code> model) and
-selecting <code class="docutils literal"><span class="pre">Export</span> <span class="pre">Library</span></code>. This exported library can be shared among
+right-clicking on the sub-tree&#8217;s root (e.g. a <tt class="docutils literal"><span class="pre">System</span></tt> model) and
+selecting <tt class="docutils literal"><span class="pre">Export</span> <span class="pre">Library</span></tt>. This exported library can be shared among
 WebGME models and organizations. To <strong>load</strong> a library saved in this
-way, simply right-click on the <code class="docutils literal"><span class="pre">parent</span></code> node in the <code class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></code>
+way, simply right-click on the <tt class="docutils literal"><span class="pre">parent</span></tt> node in the <tt class="docutils literal"><span class="pre">Tree</span> <span class="pre">Browser</span></tt>
 for which you want the library to be a child. Select
-<code class="docutils literal"><span class="pre">Import/Update</span> <span class="pre">Library</span></code> and choose the library file you like.</p>
-<p>The second way is to go to the <code class="docutils literal"><span class="pre">root</span></code> of the WebGME model (i.e. the
-<code class="docutils literal"><span class="pre">Projects</span></code> node), and run the plugin <code class="docutils literal"><span class="pre">ExportImport</span></code> which will
+<tt class="docutils literal"><span class="pre">Import/Update</span> <span class="pre">Library</span></tt> and choose the library file you like.</p>
+<p>The second way is to go to the <tt class="docutils literal"><span class="pre">root</span></tt> of the WebGME model (i.e. the
+<tt class="docutils literal"><span class="pre">Projects</span></tt> node), and run the plugin <tt class="docutils literal"><span class="pre">ExportImport</span></tt> which will
 provide you a dialog to configure what you wish to do.</p>
 <div class="toctree-wrapper compound">
 <ul>
