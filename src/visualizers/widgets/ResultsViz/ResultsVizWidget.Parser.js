@@ -4,7 +4,7 @@ define([], function() {
     'use strict';
     return {
 	getDataFromAttribute: function(attribute) {
-	    var re = /((?:[^\r\n,+\-\(\)\\\/][\S])+),([0-9\.]+),([0-9\.]+),([0-9\.]+),([0-9\.]+),([0-9\.]+)/gi;
+	    var re = /((?:[^:\r\n,+\-\(\)\\\/])*), ([0-9\.]+), ([0-9\.]+), ([0-9\.]+), ([0-9\.]+), ([0-9\.]+)/gi;
 	    var result = re.exec(attribute);
 	    var log_data = {};
 	    var first_time = 0.0;
