@@ -13,16 +13,10 @@
 // Component Initialization 
 void <%- compInfo.name %>::init_timer_operation(const NAMESPACE::TimerEvent& event)
 {
-#ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::init_timer_operation");
-#endif
   // User Initialization Code
   //::::<%- compInfo.path %>::::Initialization::::
   <%- compInfo.Initialization %>
   init_timer.stop();
-#ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::init_timer_operation");
-#endif  
 }
 
 <%
@@ -32,14 +26,8 @@ if (compInfo.Timer_list) {
 // Timer Operation - <%- tmr.name %>
 void <%- compInfo.name %>::<%- tmr.name %>_operation(const NAMESPACE::TimerEvent& event)
 {
-#ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::<%- tmr.name %>_operation");
-#endif
   //::::<%- tmr.path %>::::Operation::::
   <%- tmr.Operation %>
-#ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::<%- tmr.name %>_operation");
-#endif
 }
 <%
   });
@@ -53,14 +41,8 @@ if (compInfo.Subscriber_list) {
 // Subscriber Operation - <%- sub.name %>
 void <%- compInfo.name %>::<%- sub.name %>_operation(const <%- model.pathDict[sub.Message.parentPath].name %>::<%- sub.Message.name %>::ConstPtr& received_data)
 {
-#ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::<%- sub.name %>_operation");
-#endif
   //::::<%- sub.path %>::::Operation::::
   <%- sub.Operation %>
-#ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::<%- sub.name %>_operation");
-#endif
 }
 <%
   });
@@ -74,14 +56,8 @@ if (compInfo.Server_list) {
 // Server Operation - <%- srv.name %>
 bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- model.pathDict[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Request &req, <%- model.pathDict[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Response &res )
 {
-#ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Entering <%- compInfo.name %>::<%- srv.name %>_operation");
-#endif
   //::::<%- srv.path %>::::Operation::::
   <%- srv.Operation %>
-#ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->log("DEBUG", "Exiting <%- compInfo.name %>::<%- srv.name %>_operation");
-#endif
   return true;
 }
 <%
