@@ -149,9 +149,11 @@ void <%- compInfo.name %>::startUp()
   logger->set_max_log_unit(config["Logging"]["Unit"].asInt());
 
 #ifdef USE_ROSMOD
-  comp_queue.ROSMOD_LOGGER->create_file( procDir + '/' + config["Logging"]["ROSMOD Log FileName"].asString());
-  comp_queue.ROSMOD_LOGGER->set_is_periodic(config["Logging"]["Enabled"].asBool());
-  comp_queue.ROSMOD_LOGGER->set_max_log_unit(config["Logging"]["Unit"].asInt());
+  if ( config["Logging"]["Enabled"].asBool() ) {
+    comp_queue.ROSMOD_LOGGER->enable_logging();
+    comp_queue.ROSMOD_LOGGER->create_file( procDir + '/' + config["Logging"]["ROSMOD Log FileName"].asString());
+    comp_queue.ROSMOD_LOGGER->set_max_log_unit(config["Logging"]["Unit"].asInt());
+  }
 #endif    
   
 #ifdef USE_ROSMOD 
