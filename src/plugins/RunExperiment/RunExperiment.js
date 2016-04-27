@@ -472,7 +472,6 @@ define([
 		'pkill roscore',
 		'rm -rf ' + deployment_dir
 	    ];
-	    self.notify('info','starting binaries.');
 	    return utils.deployOnHost(host_commands, ip, user);
 	});
 	return Q.all(tasks);
