@@ -379,7 +379,7 @@ define([
 
 	var child_process = require('child_process');
 	// clear out any previous config files
-	child_process.execSync('rm -rf ' + utils.sanitizePath(self.config_dir));
+	//child_process.execSync('rm -rf ' + utils.sanitizePath(self.config_dir));
 
 	self.experiment.map(function (containerToHostMap) {
 	    var container = containerToHostMap[0]; // container is [0], host is [1]
