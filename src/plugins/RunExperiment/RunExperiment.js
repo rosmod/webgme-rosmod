@@ -170,16 +170,25 @@ define([
 	    })
 	    .then(function (err) {
 		if (err.status != 'SYNCED') {
-		    callback(err, self.result);
-		    return;
+		    throw new String('Couldnt write to model!');
 		}
 		self.result.setSuccess(true);
 		callback(null, self.result);
 	    })
 	    .catch(function(err) {
-        	self.notify('error', err);
-		self.result.setSuccess(false);
-		callback(err, self.result);
+		if (self.experiment.length) { // if we made a host to container map
+		    return self.stopHosts()
+			.then(function() {
+        		    self.notify('error', err);
+			    self.result.setSuccess(false);
+			    callback(err, self.result);
+			});
+		}
+		else {
+        	    self.notify('error', err);
+		    self.result.setSuccess(false);
+		    callback(err, self.result);
+		}
 	    })
 		.done();
     };
@@ -443,6 +452,28 @@ define([
 					    ip,
 					    user);
 		});
+	});
+	return Q.all(tasks);
+    };
+
+    RunExperiment.prototype.stopHosts = function() {
+	// used when we need to tear down a partially started experiment
+	var self = this;
+	self.notify('info', 'Encountered issue, tearing down experiment.');
+	var path = require('path');
+	var tasks = self.experiment.map(function(link) {
+	    var host = link[1];
+	    var ip = host.intf.IP;
+	    var user = host.user;
+	    var deployment_dir = path.join(user.Directory,
+					   'experiments');
+	    var host_commands = [
+		'pkill node_main',
+		'pkill roscore',
+		'rm -rf ' + deployment_dir
+	    ];
+	    self.notify('info','starting binaries.');
+	    return utils.deployOnHost(host_commands, ip, user);
 	});
 	return Q.all(tasks);
     };
