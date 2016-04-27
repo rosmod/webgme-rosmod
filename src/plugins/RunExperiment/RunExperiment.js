@@ -205,6 +205,10 @@ define([
 				     ' available hosts.');
 		}
 		var sortedContainers = [];
+		var fs = require('fs');
+		var path = require('path');
+		var fname = path.join(self.config_dir, 'constraints.json');
+		fs.writeFileSync(fname, JSON.stringify({containers: containers, hosts: hosts},null,2));
 		// figure out which containers have which constraints;
 		containers.map(function(container) {
 		    container.constraints = [];
