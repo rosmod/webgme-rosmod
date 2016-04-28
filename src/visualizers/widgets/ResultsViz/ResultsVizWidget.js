@@ -60,14 +60,9 @@ define([
 		$(p).attr('id',"plot_" + a);
 
 		// parse the logs
-		var log_data = Parser.getDataFromAttribute(desc.attributes[a]);
-		var plot_data = [];
-		var aliases = Object.keys(log_data);
-		aliases.map(function(alias) {
-		    plot_data.push(log_data[alias].data);
-		});
-		if (plot_data.length > 0)
-		    Plotter.plotData('#plot_'+a, plot_data, aliases);
+		var data = Parser.getDataFromAttribute(desc.attributes[a]);
+		if (!_.isEmpty(data))
+		    Plotter.plotData('#plot_'+a, data);
 		else
 		    $(container).detach();
 	    }

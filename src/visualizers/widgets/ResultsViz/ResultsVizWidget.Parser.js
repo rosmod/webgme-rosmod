@@ -14,6 +14,7 @@ define([], function() {
 		var alias = result[1];
 		if (!log_data[alias]) {
 		    log_data[alias] = {
+			name : alias,
 			data : [],
 		    };
 		}

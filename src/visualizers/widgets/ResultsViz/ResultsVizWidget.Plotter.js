@@ -3,16 +3,34 @@
 define(['d3'], function() {
     'use strict';
     return {
-	plotData: function(plotId, data, names) {
+	plotData: function(plotId, data) {
+	    if (_.isEmpty(data))
+		return;
+
+	    var names = Object.keys(data);
 
 	    var bandPos = [-1, -1];
 	    var pos;
 
 	    // extent returns array: [min, max]
-	    var xdomain = d3.extent(data, function(d) { return d3.extent(d, function(xy) { return xy[0]; })[1]; })[1];
-	    var ydomain = d3.extent(data, function(d) { return d3.extent(d, function(xy) { return xy[1]; })[1]; })[1];
+	    var maxXs = Object.keys(data).map(function(key) {
+		return d3.extent(data[key].data, function(xy) { return xy[0]; })[1];
+	    });
+	    var maxYs = Object.keys(data).map(function(key) {
+		return d3.extent(data[key].data, function(xy) { return xy[1]; })[1];
+	    });
+	    var xdomain = d3.max(maxXs);
+	    var ydomain = d3.max(maxYs); 
 
-	    var colors = ["steelblue", "green", "red", "purple", "lavender"];
+	    var colors = ["steelblue", "green", "red", "purple", "lavender", "orange", "yellow", "blue", "grey"];
+	    var colorMap = {};
+	    var tmp =0;
+	    for (var key in data) {
+		colorMap[key] = colors[tmp];
+		tmp++;
+		if (tmp >= colors.length)
+		    tmp = 0;
+	    }
 
 	    var margin = {
 		top: 40,
@@ -82,12 +100,12 @@ define(['d3'], function() {
 		.attr("height", height);
 
 	    // add data
-	    for (var idx=0; idx< data.length; idx++) {
+	    for (var alias in data) {
 		svg.append("path")
-		    .datum(data[idx])
-		    .attr("class", "line line" + idx)
+		    .datum(data[alias].data)
+		    .attr("class", "line line" + alias)
 		    .attr("clip-path", "url(#clip)")
-		    .style("stroke", colors[idx])
+		    .style("stroke", colorMap[alias])
 		    .attr("d", line);
 	    }
 
@@ -96,12 +114,21 @@ define(['d3'], function() {
 	    // add legend   
 	    var legend = svg.append("g")
 		.attr("class", "legend")
+		//.attr("x", width - legendWidth)
+		//.attr("y", 25)
+		.attr("height", 100)
+		.attr("width", legendWidth * 2)
+	    .attr('transform', 'translate(0, 0)');
+
+	    /*
+	    var legend = svg.append("g")
+		.attr("class", "legend")
 		.attr("x", width - legendWidth)
 		.attr("y", 25)
 		.attr("height", 100)
 		.attr("width", legendWidth * 2);
-
-	    legend.selectAll('g').data(data)
+	    */
+	    legend.selectAll('g').data(names)
 		.enter()
 		.append('g')
 		.each(function(d, i) {
@@ -111,7 +138,7 @@ define(['d3'], function() {
 			.attr("y", i*25)
 			.attr("width", 10)
 			.attr("height", 10)
-			.style("fill", colors[i]);
+			.style("fill", colorMap[d]);
 		    
 		    g.append("text")
 			.attr("x", width - legendWidth + 10)
@@ -119,7 +146,7 @@ define(['d3'], function() {
 			.attr("height",30)
 			.attr("width",legendWidth)
 			.style("fill", "black")
-			.text(names[i]);
+			.text(d);
 
 		});
 
