@@ -114,20 +114,10 @@ define(['d3'], function() {
 	    // add legend   
 	    var legend = svg.append("g")
 		.attr("class", "legend")
-		//.attr("x", width - legendWidth)
-		//.attr("y", 25)
 		.attr("height", 100)
 		.attr("width", legendWidth * 2)
 	    .attr('transform', 'translate(0, 0)');
 
-	    /*
-	    var legend = svg.append("g")
-		.attr("class", "legend")
-		.attr("x", width - legendWidth)
-		.attr("y", 25)
-		.attr("height", 100)
-		.attr("width", legendWidth * 2);
-	    */
 	    legend.selectAll('g').data(names)
 		.enter()
 		.append('g')
