@@ -145,7 +145,6 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 <%
 if (pkgInfo.Component_list) {
-  var indexedPackages = [pkgInfo.name];
   pkgInfo.Component_list.map(function(cmp) {
 -%>
 add_library(<%- cmp.name %>
@@ -170,10 +169,12 @@ target_link_libraries(<%- cmp.name %>
     }
 -%>
                       )
-add_dependencies(<%- cmp.name %>
-                 <%- pkgInfo.name %>_generate_messages_cpp
 <%
     if (cmp.Types) {
+-%>
+add_dependencies(<%- cmp.name %>
+<%
+      var indexedPackages = [];
       cmp.Types.map(function(type) {
         var packageName = model.pathDict[type.parentPath].name;
         if (indexedPackages.indexOf(packageName) == -1) {
