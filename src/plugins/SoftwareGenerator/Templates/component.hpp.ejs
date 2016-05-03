@@ -12,7 +12,7 @@
  * Component Message and Service Headers
  */
 <%
-if (compInfo.Types) {
+if (compInfo.Types.length) {
   compInfo.Types.map(function(type) {
 -%>
 #include "<%- model.pathDict[type.parentPath].name %>/<%- type.name %>.h"
