@@ -71,11 +71,17 @@ add_message_files(
 #   Action2.action
 # )
 
+<%
+if (pkgInfo.Message_list) {
+-%>
 # Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
   std_msgs
 )
+<%
+}
+-%>
 
 #
 ## catkin specific configuration 
@@ -170,7 +176,7 @@ target_link_libraries(<%- cmp.name %>
 -%>
                       )
 <%
-    if (cmp.Types) {
+    if (cmp.Types.length) {
 -%>
 add_dependencies(<%- cmp.name %>
 <%
@@ -184,9 +190,11 @@ add_dependencies(<%- cmp.name %>
 <%
         }
       });
-    }
 -%>
 		 )
+<%
+    }
+-%>
 <%
   });
 } 
