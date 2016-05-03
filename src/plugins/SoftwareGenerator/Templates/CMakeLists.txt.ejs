@@ -114,7 +114,7 @@ if (pkgInfo.Component_list) {
   var indexedPackages = [];
   pkgInfo.Component_list.map(function(cmp) {
     // GET ALL REQUIRED TYPES (MSG/SRV) INCLUDES
-    if (cmp.Types) {
+    if (cmp.Types.length) {
       cmp.Types.map(function(type) { 
         var packageName = model.pathDict[type.parentPath].name;
         if (indexedPackages.indexOf(packageName) == -1) {
