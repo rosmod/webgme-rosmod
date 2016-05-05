@@ -5,7 +5,7 @@ This repository contains the implementation of ROSMOD-GUI, based on
 found on [WebGME.org](http://webgme.org).
 
 An example server running ROSMOD-GUI can be found on
-[rcps.isis.vanderbilt.edu](http://rcps.isis.vanderbilt.edu).  RCPS is
+[rosmod.rcps.isis.vanderbilt.edu](http://rosmod.rcps.isis.vanderbilt.edu).  RCPS is
 a BeagleBone Black cluster at the Vanderbilt University Institute for
 Software Integrated Systems (ISIS), on which we run resilient,
 distributed CPS research.  Please note that guest accounts are not
@@ -17,7 +17,14 @@ source and deployment files).
 Documentation for ROSMOD-GUI can be found here:
  * [ROSMOD-GUI github documentation](http://rosmod.github.io/webgme-rosmod/docs)
 
+## Component Model
 ![Component](./src/figures/ROSMOD_Component.png)
+
+## Execution Semantics
 ![Execution Semantics](./src/figures/cop_execution_semantics.png)
+
+## Code Generation Example
 ![Code Generation](./src/figures/Code_Generation.png)
+
+## AGSE Example
 ![AGSE](./src/figures/AGSE-Deployment.png)
