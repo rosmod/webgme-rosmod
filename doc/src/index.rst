@@ -19,9 +19,13 @@ ROSMOD, which is designed as a modeling, generation, deployment, and
 management toolsuite for distributed CPS applications using ROS as the
 communications middleware.
 
+ROSMOD is hosted as a development toolsuite for distributed CPS at `rosmod`_, and documentation for using it can be found in the section :ref:`users`.
+
 .. toctree::
    :includehidden:
 
    getting-started
    users
    developers
+
+.. _rosmod: http://rosmod.rcps.isis.vanderbilt.edu/
