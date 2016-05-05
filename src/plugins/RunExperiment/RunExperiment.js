@@ -235,7 +235,13 @@ define([
 				    }
 				});
 			    }
+			    else { // no components in the node
+				throw new String('Node ' + node.name + ' contains no component instances to execute!');
+			    }
 			});
+		    }
+		    else { // no nodes in the container
+			throw new String('Container ' + container.name + ' contains no runnable Nodes!');
 		    }
 		    sortedContainers.push(container);
 		});

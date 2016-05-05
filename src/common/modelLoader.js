@@ -105,6 +105,8 @@ define(['q'], function(Q) {
 			obj[pointer] = dst;
 		    else if (pointer != 'base' && path != null) 
 			throw new String(obj.name + ' has pointer ' +pointer+ ' to object not in the tree!');
+		    else if (path == null) 
+			throw new String(obj.name + ' has null pointer ' + pointer);
 		}
 		// follow set paths, these may not always be loaded!
 		for (var set in obj.sets) {
@@ -118,6 +120,8 @@ define(['q'], function(Q) {
 			    dsts.push(dst);
 			else if (path != null)
 			    throw new String(obj.name + ' has set '+set+' containing pointer to object not in tree!');
+			else
+			    throw new String(obj.name + ' has set '+set+' containing null pointer!'); // shouldn't be possible!
 		    });
 		    obj[set] = dsts;
 		}

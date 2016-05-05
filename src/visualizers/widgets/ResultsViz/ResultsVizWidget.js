@@ -66,7 +66,6 @@ define([
 		else
 		    $(container).detach();
 	    }
-	    //Plotter.plotData('#plot_'+Object.keys(desc.attributes)[0]);
 
             this.nodes[desc.id] = desc;
         }
