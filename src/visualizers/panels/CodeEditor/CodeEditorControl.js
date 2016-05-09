@@ -198,7 +198,7 @@ define(['js/Constants',
 		'codeAttributes': {}
             };
 
-	    var baseId = nodeObj.getBaseId();
+	    var baseId = nodeObj.getMetaTypeId();
 
 	    var metaNames = Object.keys(self.metaTypes);
 	    var nodeMetaName = metaNames.filter(function(n) {
