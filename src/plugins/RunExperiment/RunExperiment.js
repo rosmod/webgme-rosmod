@@ -396,11 +396,11 @@ define([
 	var child_process = require('child_process');
 	// clear out any previous config files
 	child_process.execSync('rm -rf ' + utils.sanitizePath(self.config_dir));
-	host.artifacts = [];
 
 	self.experiment.map(function (containerToHostMap) {
 	    var container = containerToHostMap[0]; // container is [0], host is [1]
 	    var host = containerToHostMap[1]; // container is [0], host is [1]
+	    host.artifacts = [];
 	    var nodes = container.Node_list;
 	    if (nodes) {
 		nodes.map(function(node) {
