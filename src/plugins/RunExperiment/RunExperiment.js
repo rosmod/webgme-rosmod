@@ -396,6 +396,7 @@ define([
 	var child_process = require('child_process');
 	// clear out any previous config files
 	child_process.execSync('rm -rf ' + utils.sanitizePath(self.config_dir));
+	host.artifacts = [];
 
 	self.experiment.map(function (containerToHostMap) {
 	    var container = containerToHostMap[0]; // container is [0], host is [1]
@@ -405,7 +406,7 @@ define([
 		nodes.map(function(node) {
 		    var nodeConfigName = prefix + node.name + '.config';
 		    var config = self.getNodeConfig(node);
-		    host.artifacts = config.Artifacts;
+		    host.artifacts = host.artifacts.concat(config.Artifacts);
 		    filesToAdd[nodeConfigName] = JSON.stringify( config, null, 2 );
 		});
 	    }
