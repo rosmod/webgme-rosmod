@@ -158,7 +158,6 @@ define(['q'], function(Q) {
 	executeOnHost: function(cmds, ip, user, stderrCB) {
 	    var self = this;
 	    var Client = require('ssh2').Client;
-
 	    var deferred = Q.defer();
 	    var output = {
 		user: user,
@@ -179,45 +178,49 @@ define(['q'], function(Q) {
 	    var remote_stderr = '';
 	    cmds.push('exit\n');
 	    var cmdString = cmds.join('\n');
-	    var conn = new Client();
-	    conn.on('ready', function() {
-		conn.exec(cmdString, function(err, stream) {
-		    if (err) { 
-			var msg = 'SSH2 Exec error: ' + err;
-			throw new String(msg);
-		    }
-		    stream.on('close', function(code, signal) {
-			conn.end();
-			output.returnCode = code;
-			output.signal = signal;
-			output.stdout = remote_stdout.replace(new RegExp(user.name + '@.+\$','gi'), '');
-			for (var c in cmds) {
-			    output.stdout = output.stdout.replace(new RegExp(cmds[c], 'gi'), '');
+	    try {
+		var conn = new Client();
+		conn.on('ready', function() {
+		    conn.exec(cmdString, function(err, stream) {
+			if (err) { 
+			    var msg = 'SSH2 Exec error: ' + err;
+			    deferred.reject(msg);
 			}
-			output.stderr = remote_stderr;
-			deferred.resolve(output);
-		    }).stdout.on('data', function(data) {
-			remote_stdout += data;
-		    }).stderr.on('data', function(data) {
-			remote_stderr += data;
-			if (stderrCB(data)) {
+			stream.on('close', function(code, signal) {
 			    conn.end();
-			    deferred.reject(data);
-			}
-		    });
-		})
-	    }).connect({
-		host: ip,
-		port: 22,
-		username: user.name,
-		privateKey: require('fs').readFileSync(user.Key)
-	    });
+			    output.returnCode = code;
+			    output.signal = signal;
+			    output.stdout = remote_stdout.replace(new RegExp(user.name + '@.+\$','gi'), '');
+			    for (var c in cmds) {
+				output.stdout = output.stdout.replace(new RegExp(cmds[c], 'gi'), '');
+			    }
+			    output.stderr = remote_stderr;
+			    deferred.resolve(output);
+			}).stdout.on('data', function(data) {
+			    remote_stdout += data;
+			}).stderr.on('data', function(data) {
+			    remote_stderr += data;
+			    if (stderrCB(data)) {
+				conn.end();
+				deferred.reject(data);
+			    }
+			});
+		    })
+		}).connect({
+		    host: ip,
+		    port: 22,
+		    username: user.name,
+		    privateKey: require('fs').readFileSync(user.Key)
+		});
+	    }
+	    catch (err) {
+		deferred.reject('Couldnt execute on ' + ip + ': '+ err);
+	    }
 	    return deferred.promise;
 	},
 	deployOnHost: function(cmds, ip, user) {
 	    var self = this;
 	    var Client = require('ssh2').Client;
-
 	    var deferred = Q.defer();
 	    var output = {
 		user: user,
@@ -232,38 +235,43 @@ define(['q'], function(Q) {
 	    var remote_stderr = '';
 	    cmds.push('exit\n');
 	    var cmdString = cmds.join('\n');
-	    var conn = new Client();
-	    conn.on('ready', function() {
-		conn.shell(function(err, stream) {
-		    if (err) { 
-			var msg = 'SSH2 Exec error: ' + err;
-			throw new String(msg);
-		    }
-		    stream.on('close', function(code, signal) {
-			conn.end();
-			output.returnCode = code;
-			output.signal = signal;
-			output.stdout = remote_stdout.replace(new RegExp(user.name + '@.+\$','gi'), '');
-			for (var c in cmds) {
-			    output.stdout = output.stdout.replace(new RegExp(cmds[c], 'gi'), '');
+	    try {
+		var conn = new Client();
+		conn.on('ready', function() {
+		    conn.shell(function(err, stream) {
+			if (err) { 
+			    var msg = 'SSH2 Exec error: ' + err;
+			    throw new String(msg);
 			}
-			output.stderr = remote_stderr;
-			deferred.resolve(output);
-		    }).stdout.on('data', function(data) {
-			remote_stdout += data;
-		    }).stderr.on('data', function(data) {
-			remote_stderr += data;
-			conn.end();
-			deferred.reject(data);
-		    });
-		    stream.end(cmdString);
-		})
-	    }).connect({
-		host: ip,
-		port: 22,
-		username: user.name,
-		privateKey: require('fs').readFileSync(user.Key)
-	    });
+			stream.on('close', function(code, signal) {
+			    conn.end();
+			    output.returnCode = code;
+			    output.signal = signal;
+			    output.stdout = remote_stdout.replace(new RegExp(user.name + '@.+\$','gi'), '');
+			    for (var c in cmds) {
+				output.stdout = output.stdout.replace(new RegExp(cmds[c], 'gi'), '');
+			    }
+			    output.stderr = remote_stderr;
+			    deferred.resolve(output);
+			}).stdout.on('data', function(data) {
+			    remote_stdout += data;
+			}).stderr.on('data', function(data) {
+			    remote_stderr += data;
+			    conn.end();
+			    deferred.reject(data);
+			});
+			stream.end(cmdString);
+		    })
+		}).connect({
+		    host: ip,
+		    port: 22,
+		    username: user.name,
+		    privateKey: require('fs').readFileSync(user.Key)
+		});
+	    }
+	    catch (err) {
+		deferred.reject('Couldnt deploy onto: ' + ip + ': ' + err);
+	    }
 	    return deferred.promise;
 	},
 	parseMakePercentOutput: function(output) {
