@@ -115,6 +115,7 @@ define([
 				 'xml');
 
 	self.logger.info('loading project: ' + projectName);
+	utils.logger = self.logger;
 	return self.getActiveHosts()
 	    .then(function (ah) {
 		self.activeHosts = ah;

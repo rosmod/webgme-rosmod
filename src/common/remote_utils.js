@@ -180,6 +180,9 @@ define(['q'], function(Q) {
 	    var cmdString = cmds.join('\n');
 	    try {
 		var conn = new Client();
+		conn.on('error', (err) => {
+		    deferred.reject('Couldnt connect to ' + ip + ': ' + err);
+		});
 		conn.on('ready', function() {
 		    conn.exec(cmdString, function(err, stream) {
 			if (err) { 
@@ -237,6 +240,9 @@ define(['q'], function(Q) {
 	    var cmdString = cmds.join('\n');
 	    try {
 		var conn = new Client();
+		conn.on('error', (err) => {
+		    deferred.reject('Couldnt connect to ' + ip + ': ' + err);
+		});
 		conn.on('ready', function() {
 		    conn.shell(function(err, stream) {
 			if (err) { 
