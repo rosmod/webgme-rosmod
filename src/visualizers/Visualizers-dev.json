@@ -1,0 +1,38 @@
+[
+  {
+    "id": "RootViz",
+    "title": "RootViz",
+    "panel": "panels/RootViz/RootVizPanel",
+    "DEBUG_ONLY": false
+  },
+  {
+    "id": "ModelEditor",
+    "title": "Model",
+    "panel": "js/Panels/ModelEditor/ModelEditorPanel",
+    "DEBUG_ONLY": false
+  },
+  {
+    "id": "METAAspect",
+    "title": "Meta",
+    "panel": "js/Panels/MetaEditor/MetaEditorPanel",
+    "DEBUG_ONLY": false
+  },
+  {
+    "id": "SetEditor",
+    "title": "SetEditor",
+    "panel": "js/Panels/SetEditor/SetEditorPanel",
+    "DEBUG_ONLY": false
+  },
+  {
+    "id": "ResultsViz",
+    "title": "ResultsViz",
+    "panel": "panels/ResultsViz/ResultsVizPanel",
+    "DEBUG_ONLY": false
+  },
+  {
+    "id": "CodeEditor",
+    "title": "CodeEditor",
+    "panel": "panels/CodeEditor/CodeEditorPanel",
+    "DEBUG_ONLY": false
+  }
+]
