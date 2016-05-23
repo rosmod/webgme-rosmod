@@ -21,7 +21,7 @@
     "tar": "^2.2.1",
     "unzip": "0.1.x",
     "url": "0.11.x",
-    "webgme": "^1.1.0",
+    "webgme": "^2.0.0",
     "webgme-breadcrumbheader": "dfst/webgme-breadcrumbheader",
     "webgme-fab": "dfst/webgme-fab"
   },
