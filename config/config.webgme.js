@@ -17,6 +17,7 @@ config.addOn.enable = true;
 
 config.visualization.panelPaths.push('node_modules/webgme-breadcrumbheader/src/visualizers/panels');
 config.visualization.panelPaths.push('node_modules/webgme-fab/src/visualizers/panels');
+config.visualization.panelPaths.push('node_modules/webgme-codeeditor/src/visualizers/panels');
 config.visualization.panelPaths.push('src/visualizers/panels');
 
 
@@ -24,10 +25,13 @@ config.visualization.panelPaths.push('src/visualizers/panels');
 config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');
 // Add requirejs paths
 config.requirejsPaths = {
+  'CodeEditor': 'panels/CodeEditor/CodeEditorPanel',
   'FloatingActionButton': 'panels/FloatingActionButton/FloatingActionButtonPanel',
   'BreadcrumbHeader': 'panels/BreadcrumbHeader/BreadcrumbHeaderPanel',
   'panels': './src/visualizers/panels',
   'widgets': './src/visualizers/widgets',
+  'panels/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/panels/CodeEditor',
+  'widgets/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/widgets/CodeEditor',
   'panels/FloatingActionButton': './node_modules/webgme-fab/src/visualizers/panels/FloatingActionButton',
   'widgets/FloatingActionButton': './node_modules/webgme-fab/src/visualizers/widgets/FloatingActionButton',
   'panels/BreadcrumbHeader': './node_modules/webgme-breadcrumbheader/src/visualizers/panels/BreadcrumbHeader',

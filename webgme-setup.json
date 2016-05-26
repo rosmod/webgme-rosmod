@@ -46,13 +46,6 @@
         "panel": "src/visualizers/panels/ResultsViz",
         "secondary": false,
         "widget": "src/visualizers/widgets/ResultsViz"
-      },
-      "CodeEditor": {
-        "src": "panels/CodeEditor/CodeEditorPanel",
-        "title": "CodeEditor",
-        "panel": "src/visualizers/panels/CodeEditor",
-        "secondary": false,
-        "widget": "src/visualizers/widgets/CodeEditor"
       }
     },
     "layouts": {
@@ -81,6 +74,14 @@
         "secondary": true,
         "widget": "src/visualizers/widgets/FloatingActionButton",
         "project": "webgme-fab"
+      },
+      "CodeEditor": {
+        "src": "panels/CodeEditor/CodeEditorPanel",
+        "title": "CodeEditor",
+        "panel": "src/visualizers/panels/CodeEditor",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/CodeEditor",
+        "project": "webgme-codeeditor"
       }
     },
     "layouts": {}
