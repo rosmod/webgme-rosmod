@@ -141,6 +141,11 @@ define([
 	    html.addClass('panel-info');
 	    html.removeClass('panel-primary');
 	});
+	html.on('click', (event) => {
+	    this.onNodeSelect(desc.id);
+	    event.stopPropagation();
+	    event.preventDefault();
+	});
 	html.on('dblclick', (event) => {
 	    this.onNodeClick(desc.id);
 	    event.stopPropagation();
@@ -263,6 +268,9 @@ define([
                 self.$el.removeClass('accept-drop reject-drop');
             }
         });
+    };
+
+    RootVizWidget.prototype.onNodeSelect = function (id) {
     };
 
     RootVizWidget.prototype.onNodeClick = function (id) {
