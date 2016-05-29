@@ -34,3 +34,6 @@ node_modules
 
 # webgme local storage directory
 blob-local-storage
+
+# rosmod generated files
+generated
