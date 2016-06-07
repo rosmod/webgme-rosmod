@@ -96,6 +96,9 @@
     "BreadCrumbHeader": {
 	"style": "arrows"
     },
+    "BreadcrumbHeader": {
+	"disableUserProfile": false
+    },
     "GenericUIProjectNavigatorController": {
 	"disableProjectActions": false,
 	"rootMenuClass": "gme-root",
