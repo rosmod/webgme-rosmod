@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Package &mdash; ROSMOD GUI 1.0.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="./_static/custom.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="ROSMOD GUI 1.0.0 documentation" href="index.html"/>
+        <link rel="up" title="Software" href="introduction_to_rosmod_v_0_f.html"/>
+        <link rel="next" title="Example Sender Component" href="introduction_to_rosmod_v_0_f_U_3.html"/>
+        <link rel="prev" title="Software" href="introduction_to_rosmod_v_0_f.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ROSMOD GUI
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="users.html">Using ROSMOD</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="users.html#requirements">Requirements</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="users.html#samples">Samples</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="introduction_to_rosmod_v_0.html">Introduction to ROSMOD</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="introduction_to_rosmod_v_0.html#webgme-usage">WebGME Usage</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="introduction_to_rosmod_v_0.html#rosmod-project">ROSMOD Project</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developers.html">Deploying ROSMOD</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ROSMOD GUI</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="users.html">Using ROSMOD</a> &raquo;</li>
+      
+          <li><a href="introduction_to_rosmod_v_0.html">Introduction to ROSMOD</a> &raquo;</li>
+      
+          <li><a href="introduction_to_rosmod_v_0_f.html">Software</a> &raquo;</li>
+      
+    <li>Package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/introduction_to_rosmod_v_0_f_U.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="package">
+<h1>Package<a class="headerlink" href="#package" title="Permalink to this headline">¶</a></h1>
+<p>A ROSMOD package contains the definitions for its associated
+<tt class="docutils literal"><span class="pre">Messages</span></tt> and <tt class="docutils literal"><span class="pre">Services</span></tt>, which follow the
+<a class="reference external" href="http://www.ros.org">ROS</a> definitions, as well as the definitions for
+ROSMOD <tt class="docutils literal"><span class="pre">Components</span></tt>.</p>
+<div class="section" id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
+<p>Messages contain a <tt class="docutils literal"><span class="pre">definition</span></tt> attribute (editable using a
+<a class="reference external" href="http://codemirror.net">CodeMirror</a> dialog). This definition
+attribute conforms to the <a class="reference external" href="http://wiki.ros.org/msg">ROS Message Description
+Specification</a>. Messages allow components to
+interact using <tt class="docutils literal"><span class="pre">Publishers</span></tt> and <tt class="docutils literal"><span class="pre">Subscribers</span></tt>, through a
+<em>non-blocking</em>, <em>one-to-many</em> publish/subscribe interaction pattern.
+Non-blocking means that when a component publishes a message, the
+publish returns immediately, without waiting for any or all subscribers
+to acknowledge that they have received the message.</p>
+<p>Here is an example Message <tt class="docutils literal"><span class="pre">definition</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>int32 X=123
+int32 Y=-123
+string FOO=&quot;this is a constant&quot;
+string EXAMPLE=&quot;this is another constant&quot;
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">definition</span></tt> is edited using the <tt class="docutils literal"><span class="pre">CodeEditor</span></tt> visualizer, as
+described in the beginning of this sample&#8217;s documentation. Since a
+<tt class="docutils literal"><span class="pre">Message</span></tt> has no other valid visualizers, when you double-click on a
+message, it will automatically open into its definition to be
+viewed/edited using the <tt class="docutils literal"><span class="pre">CodeEditor</span></tt> visualizer.</p>
+</div>
+<div class="section" id="services">
+<h2>Services<a class="headerlink" href="#services" title="Permalink to this headline">¶</a></h2>
+<p>Services contain a <tt class="docutils literal"><span class="pre">definition</span></tt> attribute (editable using a
+<a class="reference external" href="http://codemirror.net">CodeMirror</a> dialog). This definition
+attribute conforms to the <a class="reference external" href="http://wiki.ros.org/srv">ROS Service Description
+Specification</a>. Services allow components to
+interact using <tt class="docutils literal"><span class="pre">Clients</span></tt> and <tt class="docutils literal"><span class="pre">Servers</span></tt>, through a <em>blocking</em>,
+<em>one-to-one</em> client/server interaction pattern. Blocking means that the
+component that issues the client call to the server must wait and cannot
+execute other code until it receives the response from the server.</p>
+<p>Here is an example Service <tt class="docutils literal"><span class="pre">definition</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>#request constants
+int8 FOO=1
+int8 BAR=2
+#request fields
+int8 foobar
+another_pkg/AnotherMessage msg
+---
+#response constants
+uint32 SECRET=123456
+#response fields
+another_pkg/YetAnotherMessage val
+CustomMessageDefinedInThisPackage value
+uint32 an_integer
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">definition</span></tt> is edited using the <tt class="docutils literal"><span class="pre">CodeEditor</span></tt> visualizer, as
+described in the beginning of this sample&#8217;s documentation. Since a
+<tt class="docutils literal"><span class="pre">Service</span></tt> has no other valid visualizers, when you double-click on a
+message, it will automatically open into its definition to be
+viewed/edited using the <tt class="docutils literal"><span class="pre">CodeEditor</span></tt> visualizer.</p>
+</div>
+<div class="section" id="components">
+<h2>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h2>
+<p>Components are single threaded actors which communicate with other
+components using the publish/subscribe and client/server interaction
+patterns. These interactions trigger operations to fire in the
+components, where the operation is a function implemented by the user
+inside the <tt class="docutils literal"><span class="pre">operation</span></tt> attribute of the relevant <tt class="docutils literal"><span class="pre">subscriber</span></tt> or
+<tt class="docutils literal"><span class="pre">server</span></tt>. The component can also have timer operations which fire
+either sporadically or periodically and similarly have an <tt class="docutils literal"><span class="pre">operation</span></tt>
+attribute in which the user specifies the c++ code to be run when the
+operation executes. These operations happen serially through the
+operation queue and are not preemptable by other operations of that
+component. Inside these operations, <tt class="docutils literal"><span class="pre">publisher</span></tt> or <tt class="docutils literal"><span class="pre">client</span></tt> objects
+can be used to trigger operations on components which have associated
+and connected <tt class="docutils literal"><span class="pre">servers</span></tt> or <tt class="docutils literal"><span class="pre">subscribers</span></tt>. These <tt class="docutils literal"><span class="pre">publisher</span></tt>,
+<tt class="docutils literal"><span class="pre">subscriber</span></tt>, <tt class="docutils literal"><span class="pre">client</span></tt>, <tt class="docutils literal"><span class="pre">server</span></tt>, and <tt class="docutils literal"><span class="pre">timer</span></tt> objects are added
+by the user and defined inside the component.</p>
+<p>Components contain <tt class="docutils literal"><span class="pre">forwards</span></tt>, <tt class="docutils literal"><span class="pre">members</span></tt>, <tt class="docutils literal"><span class="pre">definitions</span></tt>,
+<tt class="docutils literal"><span class="pre">initialization</span></tt>, and <tt class="docutils literal"><span class="pre">destruction</span></tt> attributes which provide an
+interface for the user to add their own <tt class="docutils literal"><span class="pre">C++</span> <span class="pre">code</span></tt> to the component.
+Each of those attributes is (as previously) editable using the
+<tt class="docutils literal"><span class="pre">CodeEditor</span></tt> visualizer.</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Forwards</span></tt> corresponds to code that comes <em>before the class
+declaration</em> in the generated <tt class="docutils literal"><span class="pre">component</span> <span class="pre">header</span> <span class="pre">file</span></tt>, e.g</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#include &lt;stdio.h&gt;</span>
+</pre></div>
+</div>
+<p>or user-created structure or class definitions.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Members</span></tt> corresponds to <em>private members and methods</em> that the
+user wishes to add to the component in the generated
+<tt class="docutils literal"><span class="pre">component</span> <span class="pre">header</span> <span class="pre">file</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Definitions</span></tt> corresponds to function definitions or other code
+that the user wishes to add to the generated
+<tt class="docutils literal"><span class="pre">component</span> <span class="pre">source</span> <span class="pre">file</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Initialization</span></tt> corresponds to the code the user wishes to run
+when the component starts up to initialize members to specific values
+or begin the process of triggering other components in the system
+through publish or client interactions.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Destruction</span></tt> allows the user to specify destruction of any objects
+they have allocated on the heap that need to be manually destructed
+during component destruction.</p>
+</li>
+</ul>
+<p>Additionally, components contain <tt class="docutils literal"><span class="pre">User</span> <span class="pre">Configuration</span></tt> and
+<tt class="docutils literal"><span class="pre">User</span> <span class="pre">Artifacts</span></tt> attributes, which are editable as <tt class="docutils literal"><span class="pre">JSON</span></tt> code using
+the <tt class="docutils literal"><span class="pre">CodeEditor</span></tt> visualizer.</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">User</span> <span class="pre">Configuration</span></tt> is a way of specifying the options passed to
+the component at run-time. The configuration object will be stored as
+a (possibly nested) dictionary within the component&#8217;s config, at
+<tt class="docutils literal"><span class="pre">config[&quot;User</span> <span class="pre">Configuration&quot;]</span></tt>. These data are used instead of
+command line arguments to allow the user to send complex/nested data
+structures as configuration to the component, allow multiple
+component (instance) within a process to be configured with different
+values for the same parameter, and to save developer time by
+automatically parsing these data into usable structures. For example,
+given the following config:</p>
+<div class="highlight-python"><div class="highlight"><pre>{
+  &quot;logSensorData&quot;: true,
+  &quot;logPeriod&quot;: 0.1,
+  &quot;logFields&quot;: {
+    &quot;time&quot;: &quot;float&quot;,
+    &quot;data&quot;: &quot;int&quot;
+  }
+  &quot;sensorOffsets&quot;: [
+    0.1,
+    0.2,
+    0.3
+  ]
+}
+</pre></div>
+</div>
+<p>The user could access the configuration structure using the following
+<tt class="docutils literal"><span class="pre">c++</span></tt> code anywhere within the component:</p>
+<div class="highlight-python"><div class="highlight"><pre>bool logData = config[&quot;User Configuration&quot;][&quot;logSensorData&quot;].asBool();
+float period = config[&quot;User Configuration&quot;][&quot;logPeriod&quot;].asFloat();
+std::string firstField = config[&quot;User Configuration&quot;][&quot;logFields&quot;][&quot;time&quot;].asString();
+std::string secondField = config[&quot;User Configuration&quot;][&quot;logFields&quot;][&quot;data&quot;].asString();
+float firstOffset = config[&quot;User Configuration&quot;][&quot;sensorOffsets&quot;][0].asFloat();
+float secondOffset = config[&quot;User Configuration&quot;][&quot;sensorOffsets&quot;][1].asFloat();
+</pre></div>
+</div>
+<p>The documentation for the generated objects can be found at
+<a class="reference external" href="http://open-source-parsers.github.io/jsoncpp-docs/doxygen/">jsoncpp</a>,
+which is the library used to parse the <tt class="docutils literal"><span class="pre">JSON</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">User</span> <span class="pre">Artifacts</span></tt> is a way for the user to specify any files that
+may be produced by the component so that the experiment / plotting
+infrastructure can manage and version them. The attribute is
+specified as a <tt class="docutils literal"><span class="pre">JSON</span> <span class="pre">array</span></tt> of <tt class="docutils literal"><span class="pre">strings</span></tt> where each string is a
+filename of an output file.</p>
+</li>
+</ul>
+<p>Note that both the <tt class="docutils literal"><span class="pre">User</span> <span class="pre">Artifacts</span></tt> and <tt class="docutils literal"><span class="pre">User</span> <span class="pre">Configuration</span></tt> can be
+overridden independently within any <tt class="docutils literal"><span class="pre">Component</span> <span class="pre">Instance</span></tt> in a
+<tt class="docutils literal"><span class="pre">Deployment</span></tt>.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction_to_rosmod_v_0_f_U_3.html">Example Sender Component</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction_to_rosmod_v_0_f_U_3.html#timers">Timers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction_to_rosmod_v_0_f_U_3.html#libraries">Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction_to_rosmod_v_0_f_U_3.html#constraints">Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction_to_rosmod_v_0_f_U_3.html#description">Description</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introduction_to_rosmod_v_0_f_U_A.html">Example Receiver Component</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction_to_rosmod_v_0_f_U_A.html#timers">Timers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction_to_rosmod_v_0_f_U_A.html#libraries">Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction_to_rosmod_v_0_f_U_A.html#constraints">Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction_to_rosmod_v_0_f_U_A.html#description">Description</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="introduction_to_rosmod_v_0_f_U_3.html" class="btn btn-neutral float-right" title="Example Sender Component" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="introduction_to_rosmod_v_0_f.html" class="btn btn-neutral" title="Software" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, William Emfinger, Pranav Srinivas Kumar.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+ 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-61341323-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+</body>
+</html>
