@@ -355,7 +355,8 @@ define([
 		.on('data', function(d) { bufs.push(d); })
 		.on('end', function() {
 		    var buf = Buffer.concat(bufs);
-		    self.blobClient.putFile('manual.tar.gz',buf)
+		    var name = self.projectName+ + '+Documentation';
+		    self.blobClient.putFile(name+'.tar.gz',buf)
 			.then(function (hash) {
 			    self.result.addArtifact(hash);
 			    resolve();

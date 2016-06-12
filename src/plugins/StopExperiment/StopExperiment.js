@@ -289,7 +289,8 @@ define([
 		.on('end', function() {
 		    self.logger.debug('gzip ended.');
 		    var buf = Buffer.concat(bufs);
-		    self.blobClient.putFile('artifacts.tar.gz',buf)
+		    var name = self.projectName + '+' + self.experimentName + '+Results';
+		    self.blobClient.putFile(name+'.tar.gz',buf)
 			.then(function (hash) {
 			    self.result.addArtifact(hash);
 			    self.logger.info('compression complete');

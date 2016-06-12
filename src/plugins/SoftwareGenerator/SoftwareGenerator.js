@@ -660,7 +660,12 @@ define([
 		.on('data', function(d) { bufs.push(d); })
 		.on('end', function() {
 		    var buf = Buffer.concat(bufs);
-		    self.blobClient.putFile('artifacts.tar.gz',buf)
+		    var name = self.projectName + "+Software";
+		    if (self.compileCode)
+			name += '+Binaries';
+		    if (self.generateDocs)
+			name += '+Docs';
+		    self.blobClient.putFile(name+'.tar.gz',buf)
 			.then(function (hash) {
 			    self.result.addArtifact(hash);
 			    resolve();
