@@ -50,8 +50,8 @@ define(['d3'], function() {
 	    var svg = d3.select(plotId)
 		.attr('preserveAspectRatio', 'xMinYMin meet')
 		.attr('viewBox', '0 0 '+(width+margin.left+margin.right) + ' '+(height +margin.bottom+margin.top))
-		//.attr("width", "100%")
-		//.attr("height", height + margin.top + margin.bottom)
+	    //.attr("width", "100%")
+	    //.attr("height", height + margin.top + margin.bottom)
 		.classed('svg-content-responsive', true)
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -74,7 +74,7 @@ define(['d3'], function() {
 		.orient("left");
 
 	    var line = d3.svg.line()
-		//.interpolate("basis")  // Don't want to interpolate between points!
+	    //.interpolate("basis")  // Don't want to interpolate between points!
 		.x(function(d) {
 		    return x(d[0]);
 		})
@@ -105,40 +105,11 @@ define(['d3'], function() {
 		    .datum(data[alias].data)
 		    .attr("class", "line line" + alias)
 		    .attr("clip-path", "url(#clip)")
+		    .style("opacity", 1)
 		    .style("stroke", colorMap[alias])
+		    //.attr("id", plotId+alias)
 		    .attr("d", line);
 	    }
-
-	    var longestName = names.sort(function (a, b) { return b.length - a.length; })[0];
-	    var legendWidth = longestName.length * 5 + 10;
-	    // add legend   
-	    var legend = svg.append("g")
-		.attr("class", "legend")
-		.attr("height", 100)
-		.attr("width", legendWidth * 2)
-	    .attr('transform', 'translate(0, 0)');
-
-	    legend.selectAll('g').data(names)
-		.enter()
-		.append('g')
-		.each(function(d, i) {
-		    var g = d3.select(this);
-		    g.append("rect")
-			.attr("x", width - legendWidth)
-			.attr("y", i*25)
-			.attr("width", 10)
-			.attr("height", 10)
-			.style("fill", colorMap[d]);
-		    
-		    g.append("text")
-			.attr("x", width - legendWidth + 10)
-			.attr("y", i * 25 + 8)
-			.attr("height",30)
-			.attr("width",legendWidth)
-			.style("fill", "black")
-			.text(d);
-
-		});
 
 	    var bandId = 'band_'+plotId.replace('#','');
 	    // handle zoom and its overlay
@@ -277,6 +248,52 @@ define(['d3'], function() {
 
 		t.selectAll(".line").attr("d", line);     
 	    }
+	    var longestName = names.sort(function (a, b) { return b.length - a.length; })[0];
+	    var legendWidth = longestName.length * 5 + 10;
+	    // add legend   
+	    var legend = svg.append("g")
+		.attr("class", "legend")
+		.attr("height", 100)
+		.attr("width", legendWidth * 2)
+		.attr('transform', 'translate(0, 0)');
+
+	    legend.selectAll('g').data(names)
+		.enter()
+		.append('g')
+		.each(function(d, i) {
+		    var g = d3.select(this);
+		    g.append("rect")
+			.attr("x", width - legendWidth)
+			.attr("y", i*25)
+			.attr("width", 10)
+			.attr("height", 10)
+			.style("fill", colorMap[d])
+			.on('click', function() {
+			    var active = data[d].active ? false : true,
+			    newOpacity = active ? 0 : 1;
+			    d3.select('.line'+d)
+				.transition().duration(100)
+				.style("opacity", newOpacity);
+			    data[d].active = active;
+			});
+
+		    
+		    g.append("text")
+			.attr("x", width - legendWidth + 10)
+			.attr("y", i * 25 + 8)
+			.attr("height",30)
+			.attr("width",legendWidth)
+			.style("fill", "black")
+			.text(d)
+			.on('click', function() {
+			    var active = data[d].active ? false : true,
+			    newOpacity = active ? 0 : 1;
+			    d3.select('.line'+d)
+				.transition().duration(100)
+				.style("opacity", newOpacity);
+			    data[d].active = active;
+			});
+		})
 	},
     }
 });

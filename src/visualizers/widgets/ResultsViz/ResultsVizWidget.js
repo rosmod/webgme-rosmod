@@ -40,7 +40,7 @@ define([
     };
 
     ResultsVizWidget.prototype.onWidgetContainerResize = function (width, height) {
-        console.log('Widget is resizing...');
+        //console.log('Widget is resizing...');
     };
 
     // Adding/Removing/Updating items
@@ -79,7 +79,7 @@ define([
 
     ResultsVizWidget.prototype.updateNode = function (desc) {
         if (desc) {
-            console.log('Updating node:', desc);
+            //console.log('Updating node:', desc);
             this._el.append('<div>Updating node "'+desc.name+'"</div>');
         }
     };
@@ -99,11 +99,11 @@ define([
     };
 
     ResultsVizWidget.prototype.onActivate = function () {
-        console.log('ResultsVizWidget has been activated');
+        //console.log('ResultsVizWidget has been activated');
     };
 
     ResultsVizWidget.prototype.onDeactivate = function () {
-        console.log('ResultsVizWidget has been deactivated');
+        //console.log('ResultsVizWidget has been deactivated');
     };
 
     return ResultsVizWidget;
