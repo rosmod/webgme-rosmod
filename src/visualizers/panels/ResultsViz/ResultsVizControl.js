@@ -96,16 +96,12 @@ define(['js/Constants',
                 'childrenIds': undefined,
                 'parentId': undefined,
                 'isConnection': false,
-		'attributes': {}
+		'attributes': []
             };
 
             objDescriptor.id = nodeObj.getId();
             objDescriptor.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name);
-	    var attribute_names = nodeObj.getAttributeNames();
-	    attribute_names.map(function(attribute) {
-		if (attribute != "name")
-		    objDescriptor.attributes[attribute] = nodeObj.getAttribute(attribute);
-	    });
+	    objDescriptor.attributes = nodeObj.getAttributeNames().filter((e) => {return e !== 'name';});
             objDescriptor.childrenIds = nodeObj.getChildrenIds();
             objDescriptor.childrenNum = objDescriptor.childrenIds.length;
             objDescriptor.parentId = nodeObj.getParentId();
@@ -144,7 +140,7 @@ define(['js/Constants',
 
     ResultsVizControl.prototype._onLoad = function (gmeId) {
         var description = this._getObjectDescriptor(gmeId);
-        this._widget.addNode(description);
+        return this._widget.addNode(description);
     };
 
     ResultsVizControl.prototype._onUpdate = function (gmeId) {

@@ -43,7 +43,11 @@ define(['js/PanelBase/PanelBaseWithHeader',
         //set Widget title
         this.setTitle('');
 
-        this.widget = new ResultsVizWidget(this.logger, this.$el);
+        this.widget = new ResultsVizWidget({
+	    logger: this.logger, 
+	    container: this.$el, 
+	    client: this._client
+	});
 
         this.widget.setTitle = function (title) {
             self.setTitle(title);

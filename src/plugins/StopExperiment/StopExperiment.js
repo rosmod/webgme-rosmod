@@ -240,12 +240,22 @@ define([
 	var logs = fs.readdirSync(localDir);
 	var rn = self.core.createNode({parent: self.activeNode, base: resultsNode});
 	self.core.setRegistry(rn, 'position', {x: 100, y:50});
-	logs.map(function(log) {
-	    self.core.setAttribute(rn, log.split('/').slice(-1)[0].replace(/\./g, '_'), 
-				   fs.readFileSync(localDir + '/' + log, 'utf8'));   
+	var tasks = logs.map(function(log) {
+	    var logName = log.split('/').slice(-1)[0].replace(/\./g, '_');
+	    self.logger.info('setting meta attr for '+logName);
+	    self.core.setAttributeMeta(rn, logName, {'type':'asset'});
+	    self.logger.info('set meta attr for '+logName);
+	    return self.blobClient.putFile(log, fs.readFileSync(localDir + '/' + log, 'utf8'))
+		.then(function (hash) {
+		    self.logger.info('got hash for '+log+': ' + hash);
+		    self.core.setAttribute(rn, logName, hash);
+		});
 	});
-	var d = new Date();
-	self.core.setAttribute(rn, 'name', 'Results-'+d.toUTCString());
+	return Q.all(tasks)
+	    .then(() => {
+		var d = new Date();
+		self.core.setAttribute(rn, 'name', 'Results-'+d.toUTCString());
+	    });
     };
 
     StopExperiment.prototype.cleanupExperiment = function() {

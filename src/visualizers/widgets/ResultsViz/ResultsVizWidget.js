@@ -7,22 +7,29 @@
 
 define([
     'text!./Plot.html',
+    'blob/BlobClient',
     './ResultsVizWidget.Parser',
     './ResultsVizWidget.Plotter',
+    'q',
     'css!./styles/ResultsVizWidget.css'
 ], function (
     PlotHtml,
+    BlobClient,
     Parser,
-    Plotter) {
+    Plotter,
+    Q) {
     'use strict';
 
     var ResultsVizWidget,
-        WIDGET_CLASS = 'results-viz';
+    WIDGET_CLASS = 'results-viz';
 
-    ResultsVizWidget = function (logger, container) {
-        this._logger = logger.fork('Widget');
+    ResultsVizWidget = function (options) {
+        this._logger = options.logger.fork('Widget');
 
-        this._el = container;
+        this._el = options.container;
+
+	this._blobClient = new BlobClient({logger: options.logger.fork('BlobClient')});
+	this._client = options.client;
 
         this.nodes = {};
         this._initialize();
@@ -32,8 +39,8 @@ define([
 
     ResultsVizWidget.prototype._initialize = function () {
         var width = this._el.width(),
-            height = this._el.height(),
-            self = this;
+        height = this._el.height(),
+        self = this;
 
         // set widget class
         this._el.addClass(WIDGET_CLASS);
@@ -49,49 +56,65 @@ define([
 	    var datas = {};
 	    var first_time = undefined;
 	    var last_time = undefined;
-	    for (var a in desc.attributes) {
-		// parse the logs
-		datas[a] = Parser.getDataFromAttribute(desc.attributes[a]);
-		var aliases = Object.keys(datas[a]);
-		aliases.map((key) => {
-		    var d = datas[a][key].data;
-		    var first_entry = d[0];
-		    var last_entry = d[d.length-1];
-		    if ( first_time === undefined || first_time > first_entry[0] ) {
-			first_time = first_entry[0];
-		    } 
-		    if ( last_time === undefined || last_time < last_entry[0] ) {
-			last_time = last_entry[0];
-		    }
-		});
-	    }
-	    for (var a in desc.attributes) {
-		// setup the html
-		this._el.append(PlotHtml);
-		var container = this._el.find('#log');
-		$(container).attr('id', 'log_'+a);
-		
-		var title = this._el.find('#title');
-		$(title).attr('id','title_'+a);
-		title.append('<b>'+a+'</b>');
-
-		var p = this._el.find('#plot');
-		$(p).attr('id',"plot_" + a);
-
-		var data = datas[a];
-		var offset = first_time;
-		if (!_.isEmpty(data)) {
-		    var aliases = Object.keys(data);
-		    aliases.map((key) => {
-			data[key].data.push([last_time, 0]);
-		    });
-		    Plotter.plotData('#plot_'+a, data, offset);
+	    desc.logs = {};
+	    var tasks = desc.attributes.map((key) => {
+		var deferred = Q.defer();
+		var a = key;
+		// load the attribute
+		var nodeObj = this._client.getNode(desc.id);
+		var logHash = nodeObj.getAttribute(a);
+		if (logHash) {
+		    this._blobClient.getObjectAsString(logHash)
+			.then((data) => {
+			    desc.logs[a] = data;
+			    // parse the logs
+			    datas[a] = Parser.getDataFromAttribute(data);
+			    var aliases = Object.keys(datas[a]);
+			    aliases.map((key) => {
+				var d = datas[a][key].data;
+				var first_entry = d[0];
+				var last_entry = d[d.length-1];
+				if ( first_time === undefined || first_time > first_entry[0] ) {
+				    first_time = first_entry[0];
+				} 
+				if ( last_time === undefined || last_time < last_entry[0] ) {
+				    last_time = last_entry[0];
+				}
+			    });
+			    deferred.resolve();
+			});
+		    return deferred.promise;
 		}
-		else
-		    $(container).detach();
-	    }
+	    });
+	    return Q.all(tasks)
+		.then(() => {
+		    for (var a in desc.logs) {
+			// setup the html
+			this._el.append(PlotHtml);
+			var container = this._el.find('#log');
+			$(container).attr('id', 'log_'+a);
+			
+			var title = this._el.find('#title');
+			$(title).attr('id','title_'+a);
+			title.append('<b>'+a+'</b>');
 
-            this.nodes[desc.id] = desc;
+			var p = this._el.find('#plot');
+			$(p).attr('id',"plot_" + a);
+
+			var data = datas[a];
+			var offset = first_time;
+			if (!_.isEmpty(data)) {
+			    var aliases = Object.keys(data);
+			    aliases.map((key) => {
+				data[key].data.push([last_time, 0]);
+			    });
+			    Plotter.plotData('#plot_'+a, data, offset);
+			}
+			else
+			    $(container).detach();
+		    }
+		    this.nodes[desc.id] = desc;
+		});
         }
     };
 
