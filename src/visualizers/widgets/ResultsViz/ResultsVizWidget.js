@@ -46,6 +46,25 @@ define([
     // Adding/Removing/Updating items
     ResultsVizWidget.prototype.addNode = function (desc) {
         if (desc) {
+	    var datas = {};
+	    var first_time = undefined;
+	    var last_time = undefined;
+	    for (var a in desc.attributes) {
+		// parse the logs
+		datas[a] = Parser.getDataFromAttribute(desc.attributes[a]);
+		var aliases = Object.keys(datas[a]);
+		aliases.map((key) => {
+		    var d = datas[a][key].data;
+		    var first_entry = d[0];
+		    var last_entry = d[d.length-1];
+		    if ( first_time === undefined || first_time > first_entry[0] ) {
+			first_time = first_entry[0];
+		    } 
+		    if ( last_time === undefined || last_time < last_entry[0] ) {
+			last_time = last_entry[0];
+		    }
+		});
+	    }
 	    for (var a in desc.attributes) {
 		// setup the html
 		this._el.append(PlotHtml);
@@ -59,10 +78,15 @@ define([
 		var p = this._el.find('#plot');
 		$(p).attr('id',"plot_" + a);
 
-		// parse the logs
-		var data = Parser.getDataFromAttribute(desc.attributes[a]);
-		if (!_.isEmpty(data))
-		    Plotter.plotData('#plot_'+a, data);
+		var data = datas[a];
+		var offset = first_time;
+		if (!_.isEmpty(data)) {
+		    var aliases = Object.keys(data);
+		    aliases.map((key) => {
+			data[key].data.push([last_time, 0]);
+		    });
+		    Plotter.plotData('#plot_'+a, data, offset);
+		}
 		else
 		    $(container).detach();
 	    }

@@ -3,7 +3,7 @@
 define(['d3'], function() {
     'use strict';
     return {
-	plotData: function(plotId, data) {
+	plotData: function(plotId, data, offset) {
 	    if (_.isEmpty(data))
 		return;
 
@@ -14,7 +14,7 @@ define(['d3'], function() {
 
 	    // extent returns array: [min, max]
 	    var maxXs = Object.keys(data).map(function(key) {
-		return d3.extent(data[key].data, function(xy) { return xy[0]; })[1];
+		return d3.extent(data[key].data, function(xy) { return xy[0] - offset; })[1];
 	    });
 	    var maxYs = Object.keys(data).map(function(key) {
 		return d3.extent(data[key].data, function(xy) { return xy[1]; })[1];
@@ -76,7 +76,7 @@ define(['d3'], function() {
 	    var line = d3.svg.line()
 	    //.interpolate("basis")  // Don't want to interpolate between points!
 		.x(function(d) {
-		    return x(d[0]);
+		    return x(d[0] - offset);
 		})
 		.y(function(d) {
 		    return y(d[1]);
