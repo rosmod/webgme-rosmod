@@ -101,7 +101,9 @@ define(['js/Constants',
 
             objDescriptor.id = nodeObj.getId();
             objDescriptor.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name);
-	    objDescriptor.attributes = nodeObj.getAttributeNames().filter((e) => {return e !== 'name';});
+	    objDescriptor.attributes = nodeObj.getAttributeNames().filter((e) => {
+		return e !== 'name' && e.indexOf('trace') > -1;
+	    });
             objDescriptor.childrenIds = nodeObj.getChildrenIds();
             objDescriptor.childrenNum = objDescriptor.childrenIds.length;
             objDescriptor.parentId = nodeObj.getParentId();

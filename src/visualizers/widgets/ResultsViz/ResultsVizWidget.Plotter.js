@@ -292,7 +292,7 @@ define(['d3'], function() {
 			.on('click', function() {
 			    var active = data[d].active ? false : true,
 			    newOpacity = active ? 0 : 1;
-			    d3.select('.line'+d)
+			    d3.select('.line'+plotId.replace('#','')+d)
 				.transition().duration(100)
 				.style("opacity", newOpacity);
 			    data[d].active = active;
