@@ -38,8 +38,10 @@ define(['d3'], function() {
 		bottom: 50,
 		left: 60
 	    }
-	    var width = 760 - margin.left - margin.right;
-	    var height = 250 - margin.top - margin.bottom;
+	    var base_width = 760;
+	    var base_height = 250;
+	    var width = base_width - margin.left - margin.right;
+	    var height = base_height - margin.top - margin.bottom;
 	    var zoomArea = {
 		x1: 0,
 		y1: 0,
@@ -57,6 +59,7 @@ define(['d3'], function() {
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
+	    // axes
 	    var x = d3.scale.linear()
 		.domain([0, xdomain])
 		.range([0, width]);
@@ -73,6 +76,7 @@ define(['d3'], function() {
 		.scale(y)
 		.orient("left");
 
+	    // Line functions for data
 	    var line = d3.svg.line()
 	    //.interpolate("basis")  // Don't want to interpolate between points!
 		.x(function(d) {
@@ -88,9 +92,26 @@ define(['d3'], function() {
 		.call(xAxis)
 		.attr("transform", "translate(0," + height + ")");
 
+	    svg.append("text")
+		.attr("class", "x label")
+		.attr("text-anchor", "end")
+		.attr("x", base_width / 2)
+		.attr("y", base_height - margin.bottom - 6)
+		.text("Time (s)");
+
 	    svg.append("g")
 		.attr("class", "y axis")
 		.call(yAxis)
+
+	    svg.append("text")
+		.attr("class", "y label")
+		.attr("text-anchor", "end")
+		.attr("y", 6)
+		.attr("dy", ".75em")
+		.attr("transform", "rotate(-90)")
+		.attr("x", -margin.left/2)
+		.attr("y", -60)
+		.text("Execution Time (s)");
 
 	    // add clipping for plot
 	    svg.append("clipPath")
