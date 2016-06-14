@@ -103,7 +103,7 @@ define(['d3'], function() {
 	    for (var alias in data) {
 		svg.append("path")
 		    .datum(data[alias].data)
-		    .attr("class", "line line" + alias)
+		    .attr("class", "line line" + plotId.replace('#','')+alias)
 		    .attr("clip-path", "url(#clip)")
 		    .style("opacity", 1)
 		    .style("stroke", colorMap[alias])
@@ -288,7 +288,7 @@ define(['d3'], function() {
 			.on('click', function() {
 			    var active = data[d].active ? false : true,
 			    newOpacity = active ? 0 : 1;
-			    d3.select('.line'+d)
+			    d3.select('.line'+plotId.replace('#','')+d)
 				.transition().duration(100)
 				.style("opacity", newOpacity);
 			    data[d].active = active;
