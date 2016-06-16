@@ -291,10 +291,12 @@ define(['d3'], function() {
 			.style("fill", colorMap[d])
 			.on('click', function() {
 			    var active = data[d].active ? false : true,
-			    newOpacity = active ? 0 : 1;
+			    newOpacity = active ? 0 : 1,
+			    visibility = active ? 'hidden' : 'visible';
 			    d3.select('.line'+plotId.replace('#','')+d)
 				.transition().duration(100)
-				.style("opacity", newOpacity);
+				//.style("opacity", newOpacity);
+				.style('visibility', visibility);
 			    data[d].active = active;
 			});
 
@@ -308,10 +310,12 @@ define(['d3'], function() {
 			.text(d)
 			.on('click', function() {
 			    var active = data[d].active ? false : true,
-			    newOpacity = active ? 0 : 1;
+			    newOpacity = active ? 0 : 1,
+			    visibility = active ? 'hidden' : 'visible';
 			    d3.select('.line'+plotId.replace('#','')+d)
 				.transition().duration(100)
-				.style("opacity", newOpacity);
+				//.style("opacity", newOpacity);
+				.style('visibility', visibility);
 			    data[d].active = active;
 			});
 		})

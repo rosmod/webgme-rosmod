@@ -57,6 +57,20 @@ define([
 	    var first_time = undefined;
 	    var last_time = undefined;
 	    desc.logs = {};
+
+	    var hidePlotFunc = function(a) {
+		var active = datas[a].active ? false : true;
+		var opacity = active ? 0 : 1;
+		var visibility = active ? 'hidden' : 'visible';
+		var display = active ? 'none' : 'block';
+		d3.select('#plot_'+a)
+		    .transition().duration(100)
+		    .style('opacity', opacity)
+		    //.style('visibility', visibility);
+		    .style('display', display);
+		datas[a].active = active;
+	    };
+
 	    var tasks = desc.attributes.map((key) => {
 		var deferred = Q.defer();
 		var a = key;
@@ -95,7 +109,13 @@ define([
 			$(container).attr('id', 'log_'+a);
 			
 			var title = this._el.find('#title');
-			$(title).attr('id','title_'+a);
+			$(title).attr('id','title_'+a)
+			    .on('click', function(_a) {
+				return function() {
+				    hidePlotFunc(_a);
+				};
+			    }(a));
+
 			title.append('<b>'+a+'</b>');
 
 			var p = this._el.find('#plot');
