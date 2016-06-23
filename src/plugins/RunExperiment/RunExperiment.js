@@ -283,10 +283,10 @@ define([
 	if (constraints.length > 0 && capabilities == undefined) {
 	    return false;
 	}
-	var capKeys = Object.keys(capabilities);
+	capabilities = capabilities.map((capability) => { return capability.name; });
 	for (var c in constraints) {
 	    var constraint = constraints[c];
-	    if (capKeys.indexOf(constraint.name) == -1) {
+	    if (capabilities.indexOf(constraint.name) == -1) {
 		return false;
 	    }
 	}
