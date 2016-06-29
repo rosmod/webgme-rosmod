@@ -267,6 +267,7 @@ define([
 		// do something with docs here
 		if (documentation.documentation) {
 		    var filePath = path.join(self.gen_dir, prefix, self.pathToFileName(obj.path) + '.rst');
+		    var srcPath = path.join(self.gen_dir, prefix, self.pathToFileName(obj.path) + '.md');
 		    var result = '';
 		    var pandoc = child_process.spawn('pandoc', ['-f','markdown','-t','rst']);
 		    pandoc.stdout.on('data', function(data) {
@@ -279,7 +280,14 @@ define([
 				deferred.reject('Writing file failed: ' + err);
 			    }
 			    else {
-				deferred.resolve();
+				filendir.writeFile(srcPath, documentation.documentation, function (err) {
+				    if (err) {
+					deferred.reject('Writing src failed: ' + err);
+				    }
+				    else {
+					deferred.resolve();
+				    }
+				});
 			    }
 			});
 		    });
@@ -355,7 +363,7 @@ define([
 		.on('data', function(d) { bufs.push(d); })
 		.on('end', function() {
 		    var buf = Buffer.concat(bufs);
-		    var name = self.projectName+ + '+Documentation';
+		    var name = self.projectName + '+Documentation';
 		    self.blobClient.putFile(name+'.tar.gz',buf)
 			.then(function (hash) {
 			    self.result.addArtifact(hash);
