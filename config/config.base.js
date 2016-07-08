@@ -10,7 +10,7 @@ config.server.port = 8080;
 // Authentication
 config.authentication.enable = true;
 config.authentication.allowGuests = true;
-config.authentication.logOutUrl = '/login';
+//config.authentication.logOutUrl = '/login';
 
 // Executors
 config.executor.enable = true;
