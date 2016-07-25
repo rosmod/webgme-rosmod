@@ -291,11 +291,14 @@ define([
 	var path = require('path'),
 	dir = path.join(self.gen_dir, 'src');
 
+	self.notify('info', 'Downloading Source Libraries');
+
 	// where is the rosmod-actor executable?
 	var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.4/rosmod-node.zip';
 	var tasks = [];
 	if (self.projectModel.Software_list[0]['Source Library_list']) {
 	    tasks = self.projectModel.Software_list[0]['Source Library_list'].map(function(lib) {
+		self.notify('info', 'Downloading: ' + lib.name + ' from '+ lib.URL);
 		return utils.wgetAndUnzipLibrary(lib.URL, dir);
 	    });
 	}
@@ -514,7 +517,7 @@ define([
 	    'mkdir bin',
 	    'cp devel/lib/*.so bin/.',
 	    'cp devel/lib/node/node_main bin/.',
-	    'rm -rf devel build'
+	    'rm -rf devel build',
 	];
 
 	child_process.execSync('rm -rf ' + utils.sanitizePath(archBinPath));
@@ -525,6 +528,9 @@ define([
 	    utils.mkdirRemote(compile_dir, host.intf.IP, host.user)
 		.then(function() {
 		    resolve();
+		})
+		.catch(function() {
+		    reject("Couldn't make remote compilation dir!");
 		});
 	});
 	// copy the sources to remote
@@ -614,7 +620,7 @@ define([
 	}
 
 	var tasks = selectedHosts.map(function (host) {
-	    var msg = 'Compiling for ' + utils.getDeviceType(host.host) + ' on ' + host.intf.IP;
+	    var msg = 'Compiling for ' + utils.getDeviceType(host.host) + ' on ' + host.user.name + '@' + host.intf.IP;
 	    self.notify('info', msg);
 	    return self.compileOnHost(host);
 	});
