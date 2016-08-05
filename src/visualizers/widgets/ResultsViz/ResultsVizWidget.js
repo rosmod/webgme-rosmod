@@ -18,7 +18,6 @@ define([
     Parser,
     Plotter,
     Q) {
-    'use strict';
 
     var ResultsVizWidget,
     WIDGET_CLASS = 'results-viz';
