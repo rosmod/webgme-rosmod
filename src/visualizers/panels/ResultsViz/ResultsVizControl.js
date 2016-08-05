@@ -96,13 +96,19 @@ define(['js/Constants',
                 'childrenIds': undefined,
                 'parentId': undefined,
                 'isConnection': false,
-		'attributes': []
+		'parser': undefined,
+		'attributes': [],
+		'userLogs': []
             };
 
             objDescriptor.id = nodeObj.getId();
             objDescriptor.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name);
+	    objDescriptor.parser = nodeObj.getAttribute('User Parser');
 	    objDescriptor.attributes = nodeObj.getAttributeNames().filter((e) => {
 		return e !== 'name' && e.indexOf('trace') > -1;
+	    });
+	    objDescriptor.userLogs = nodeObj.getAttributeNames().filter((e) => {
+		return e !== 'name' && e != 'User Parser' && e.indexOf('user') > -1;
 	    });
             objDescriptor.childrenIds = nodeObj.getChildrenIds();
             objDescriptor.childrenNum = objDescriptor.childrenIds.length;
