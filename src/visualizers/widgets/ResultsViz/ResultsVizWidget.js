@@ -20,7 +20,7 @@ define([
     Q) {
 
     var ResultsVizWidget,
-    WIDGET_CLASS = 'results-viz';
+	WIDGET_CLASS = 'results-viz';
 
     ResultsVizWidget = function (options) {
         this._logger = options.logger.fork('Widget');
@@ -38,8 +38,8 @@ define([
 
     ResultsVizWidget.prototype._initialize = function () {
         var width = this._el.width(),
-        height = this._el.height(),
-        self = this;
+            height = this._el.height(),
+            self = this;
 
         // set widget class
         this._el.addClass(WIDGET_CLASS);
@@ -65,7 +65,7 @@ define([
 		d3.select('#plot_'+a)
 		    .transition().duration(100)
 		    .style('opacity', opacity)
-		    //.style('visibility', visibility);
+		//.style('visibility', visibility);
 		    .style('display', display);
 		datas[a].active = active;
 	    };
@@ -100,7 +100,7 @@ define([
 		}
 	    });
 	    if (desc.parser) {
-		tasks.concat(desc.attributes.map((key) => {
+		tasks.concat(desc.userLogs.map((key) => {
 		    var deferred = Q.defer();
 		    var a = key;
 		    // load the attribute
