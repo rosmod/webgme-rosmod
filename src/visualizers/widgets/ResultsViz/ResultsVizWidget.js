@@ -106,8 +106,7 @@ define([
 		    // load the attribute
 		    var nodeObj = this._client.getNode(desc.id);
 		    var logHash = nodeObj.getAttribute(a);
-		    
-		    var userParseFunc = eval(desc.parser);
+		    eval(desc.parser.replace(/\n/gm,' '));
 		    if (logHash) {
 			this._blobClient.getObjectAsString(logHash)
 			    .then((data) => {

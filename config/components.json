@@ -91,6 +91,9 @@
 		"Brief Description": {"name":"markdown"},
 		"Detailed Description": {"name":"markdown"},
 		"AbstractBusinessLogic": {"name":"text/x-c++src", "useCPP":true}
+	    },
+	    "Results": {
+		"User Parser": {"name":"text/javascript"}
 	    }
 	}
     },
