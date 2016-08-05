@@ -100,36 +100,39 @@ define([
 		    return deferred.promise;
 		}
 	    });
-	    tasks.concat(desc.attributes.map((key) => {
-		var deferred = Q.defer();
-		var a = key;
-		// load the attribute
-		var nodeObj = this._client.getNode(desc.id);
-		var logHash = nodeObj.getAttribute(a);
-		var userParseFunc = eval(desc.parser);
-		if (logHash) {
-		    this._blobClient.getObjectAsString(logHash)
-			.then((data) => {
-			    desc.logs[a] = data;
-			    // parse the logs
-			    datas[a] = userParseFunc(data);
-			    var aliases = Object.keys(datas[a]);
-			    aliases.map((key) => {
-				var d = datas[a][key].data;
-				var first_entry = d[0];
-				var last_entry = d[d.length-1];
-				if ( first_time === undefined || first_time > first_entry[0] ) {
-				    first_time = first_entry[0];
-				} 
-				if ( last_time === undefined || last_time < last_entry[0] ) {
-				    last_time = last_entry[0];
-				}
+	    if (desc.parser) {
+		tasks.concat(desc.attributes.map((key) => {
+		    var deferred = Q.defer();
+		    var a = key;
+		    // load the attribute
+		    var nodeObj = this._client.getNode(desc.id);
+		    var logHash = nodeObj.getAttribute(a);
+		    
+		    var userParseFunc = eval(desc.parser);
+		    if (logHash) {
+			this._blobClient.getObjectAsString(logHash)
+			    .then((data) => {
+				desc.logs[a] = data;
+				// parse the logs
+				datas[a] = userParseFunc(data);
+				var aliases = Object.keys(datas[a]);
+				aliases.map((key) => {
+				    var d = datas[a][key].data;
+				    var first_entry = d[0];
+				    var last_entry = d[d.length-1];
+				    if ( first_time === undefined || first_time > first_entry[0] ) {
+					first_time = first_entry[0];
+				    } 
+				    if ( last_time === undefined || last_time < last_entry[0] ) {
+					last_time = last_entry[0];
+				    }
+				});
+				deferred.resolve();
 			    });
-			    deferred.resolve();
-			});
-		    return deferred.promise;
-		}
-	    });
+			return deferred.promise;
+		    }
+		}));
+	    }
 	    return Q.all(tasks)
 		.then(() => {
 		    for (var a in desc.logs) {
