@@ -7,7 +7,18 @@ define(['q'], function(Q) {
 	// update all pointers and sets
 	importModel: function(core, model) {
 	    var self = this;
-	    var modelObjects = [];   // used to store the objects for handling pointers
+
+	    var createdObjects = []; // list of paths?
+	    // how do I handle the paths that I'm loading vs. the
+	    // paths that exist in the model already?
+
+	    model.modelObjects.map((modelObject) => {
+		// get meta object
+		// make sure parent exists or create it
+		// if object doesn't exist create object
+		// create attributes
+		// add to createdObjects
+	    });
 
 	    var nodeName = core.getAttribute(modelNode, 'name'),
 	    nodePath = core.getPath(modelNode),
