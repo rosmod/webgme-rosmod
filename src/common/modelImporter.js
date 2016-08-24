@@ -12,11 +12,7 @@ define(['q'], function(Q) {
 	    self.model = model;
 	    self.rootNode = rootNode;
 
-	    self.createdObjects = []; // list of paths?
-	    // how do I handle the paths that I'm loading vs. the
-	    // paths that exist in the model already? - don't care?
-	    // just store which I've created, not what they've turned
-	    // into
+	    self.createdObjects = {}; // map of path to WebGME Nodes
 
 	    var modelObjectPaths = Object.keys(self.model.modelObjects);
 	    modelObjectPaths.map((modelObjectPath) => {
@@ -27,18 +23,18 @@ define(['q'], function(Q) {
 	createObject: function(objectPath) {
 	    var self = this;
 	    var modelObject = self.model.modelObjects[objectPath];
-	    var metaType = modelObject.type;
+	    var metaNode = self.META[modelObject.type];
 	    var parentNode = self.rootNode;
 	    var newNode = null;
-	    if (self.createdObjects.indexOf(objectPath) == -1) {
-		if (self.createdObjects.indexOf(modelObject.parentPath) == -1) {
+	    if (self.createdObjects[objectPath] == null) {
+		if (self.createdObjects[modelObject.parentPath] == null) {
 		    // create parent
 		    parentNode = self.createObject(modelObject.parentPath);
 		}
 		// create object
 		newNode = self.core.createNode({
 		    parent: parentNode,
-		    base: self.META[metaType]
+		    base: metaNode
 		});
 		// configure attributes
 		var attributes = Object.keys(modelObject.attributes);
@@ -47,7 +43,10 @@ define(['q'], function(Q) {
 		});
 		
 		// add path of object to created objects list
-		self.createdObjects.push(objectPath);
+		self.createdObjects[objectPath] = newNode;
+	    }
+	    else {
+		newNode = self.createdObjects[objectPath];
 	    }
 	    return newNode;
 	}
