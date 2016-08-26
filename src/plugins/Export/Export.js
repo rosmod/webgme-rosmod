@@ -87,30 +87,17 @@ define([
 	// What did the user select for our configuration?
 	var currentConfig = self.getCurrentConfig();
 	self.modelHash = currentConfig.modelHash;
-	
-	loader.logger = self.logger;
-	utils.logger = self.logger;
 
-	modelLoader.loadModel(self.core, self.META, model, self.activeNode)
-	    .then(function(projectModel) {
-		self.projectModel = projectModel;
-		// check to make sure we have the right experiment
-		var expPath = self.core.getPath(self.activeNode);
-		self.selectedExperiment = self.projectModel.pathDict[expPath];
-		if (!self.selectedExperiment) {
-		    throw new String("Cannot find experiment!");
-		}
-		return self.mapContainersToHosts();
+	var nodeName = self.core.getAttribute(self.activeNode, 'name');
+	
+	modelLoader.logger = self.logger;
+
+	modelLoader.loadModel(self.core, self.activeNode)
+	    .then(function(model) {
+		return self.blobClient.putFile(name+'.json', JSON.stringify(model, null, 2));
 	    })
-	    .then(function() {
-		// This will save the changes. If you don't want to save;
-		self.notify('info','saving updates to model');
-		return self.save('RunExperiment updated model.');
-	    })
-	    .then(function (err) {
-		if (err.status != 'SYNCED') {
-		    throw new String('Couldnt write to model!');
-		}
+	    .then(function(hash) {
+		self.result.addArtifact(hash);
 		self.result.setSuccess(true);
 		callback(null, self.result);
 	    })
