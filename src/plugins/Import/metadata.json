@@ -10,5 +10,14 @@
   "disableServerSideExecution": false,
   "disableBrowserSideExecution": false,
   "writeAccessRequired": false,
-  "configStructure": []
+  "configStructure": [
+      {
+	  "name": "modelHash",
+	  "displayName": "Object JSON",
+	  "description": "JSON file exported by the Export plugin.",
+	  "value": '',
+	  "valueType": "asset",
+	  "readOnly": false
+      }
+  ]
 }
