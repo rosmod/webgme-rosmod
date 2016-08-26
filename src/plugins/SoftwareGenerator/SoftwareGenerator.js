@@ -562,7 +562,7 @@ define([
 		    //self.notify('error', "STDERR: " +host.stdErr);
 		    var files = {
 			'compile.stdout.txt': host.stdOut,
-			'compile.stderr.txt': host.stderr
+			'compile.stderr.txt': host.stdErr
 		    };
 		    var fnames = Object.keys(files);
 		    var tasks = fnames.map((fname) => {
