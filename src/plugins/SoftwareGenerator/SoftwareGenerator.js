@@ -558,9 +558,23 @@ define([
 				       stdErrCB,
 				       stdOutCB)
 		.catch(function(err) {
-		    self.notify('error', "STDOUT: " +host.stdOut);
-		    self.notify('error', "STDERR: " +host.stdErr);
-		    throw new String('Compilation failed on ' + host.intf.IP);
+		    //self.notify('error', "STDOUT: " +host.stdOut);
+		    //self.notify('error', "STDERR: " +host.stdErr);
+		    var files = {
+			'compile.stdout.txt': host.stdOut,
+			'compile.stderr.txt': host.stderr
+		    };
+		    var fnames = Object.keys(files);
+		    var tasks = fnames.map((fname) => {
+			return self.blobClient.putFile(fname, files[fname])
+			    .then((hash) => {
+				self.result.addArtifact(hash);
+			    });
+		    });
+		    return Q.all(tasks)
+			.then(() => {
+			    throw new String('Compilation failed on ' + host.intf.IP);
+			});
 		});
 	});
 	// make the local binary folder for the architecture
