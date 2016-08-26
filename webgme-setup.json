@@ -20,6 +20,14 @@
       "GenerateDocumentation": {
         "src": "src/plugins/GenerateDocumentation",
         "test": "test/plugins/GenerateDocumentation"
+      },
+      "Export": {
+        "src": "src/plugins/Export",
+        "test": "test/plugins/Export"
+      },
+      "Import": {
+        "src": "src/plugins/Import",
+        "test": "test/plugins/Import"
       }
     },
     "addons": {
