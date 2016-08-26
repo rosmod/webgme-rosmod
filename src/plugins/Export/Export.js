@@ -94,7 +94,7 @@ define([
 
 	modelLoader.loadModel(self.core, self.activeNode)
 	    .then(function(model) {
-		return self.blobClient.putFile(name+'.json', JSON.stringify(model, null, 2));
+		return self.blobClient.putFile(nodeName+'.json', JSON.stringify(model, null, 2));
 	    })
 	    .then(function(hash) {
 		self.result.addArtifact(hash);
