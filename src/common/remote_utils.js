@@ -155,7 +155,7 @@ define(['q'], function(Q) {
 		    return hostsUp;
 		});
 	},
-	executeOnHost: function(cmds, ip, user, stderrCB) {
+	executeOnHost: function(cmds, ip, user, stderrCB, stdoutCB) {
 	    var self = this;
 	    var Client = require('ssh2').Client;
 	    var deferred = Q.defer();
@@ -201,6 +201,8 @@ define(['q'], function(Q) {
 			    deferred.resolve(output);
 			}).stdout.on('data', function(data) {
 			    remote_stdout += data;
+			    if (stdoutCB != null)
+				stdoutCB(data);
 			}).stderr.on('data', function(data) {
 			    remote_stderr += data;
 			    if (stderrCB(data)) {

@@ -541,14 +541,25 @@ define([
 	// run the compile step
 	var t3 = t2.then(function() {
 	    self.notify('info', 'compiling on: ' + host.intf.IP + ' into '+compile_dir);
+	    host.stdErr = '';
+	    host.stdOut = '';
 	    var stdErrCB = function(host) {
-		return function(data) { return self.parseCompileStdErr(host,data); };
+		return function(data) {
+		    host.stdErr += data;
+		    return self.parseCompileStdErr(host,data);
+		};
+	    }(host);
+	    var stdOutCB = function(host) {
+		return function(data) { host.stdOut += data; };
 	    }(host);
 	    return utils.executeOnHost(compile_commands, 
 				       host.intf.IP, 
 				       host.user, 
-				       stdErrCB)
+				       stdErrCB,
+				       stdOutCB)
 		.catch(function(err) {
+		    self.notify('error', "STDOUT: " +host.stdOut);
+		    self.notify('error', "STDERR: " +host.stdErr);
 		    throw new String('Compilation failed on ' + host.intf.IP);
 		});
 	});
