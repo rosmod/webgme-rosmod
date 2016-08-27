@@ -117,7 +117,7 @@ if (pkgInfo.Component_list) {
     // GET ALL REQUIRED TYPES (MSG/SRV) INCLUDES
     if (cmp.Types.length) {
       cmp.Types.map(function(type) { 
-        var packageName = model.pathDict[type.parentPath].name;
+        var packageName = objects[type.parentPath].name;
         if (indexedPackages.indexOf(packageName) == -1) {
           indexedPackages.push(packageName);
 -%>
@@ -183,7 +183,7 @@ add_dependencies(<%- cmp.name %>
 <%
       var indexedPackages = [];
       cmp.Types.map(function(type) {
-        var packageName = model.pathDict[type.parentPath].name;
+        var packageName = objects[type.parentPath].name;
         if (indexedPackages.indexOf(packageName) == -1) {
           indexedPackages.push(packageName);
 -%>

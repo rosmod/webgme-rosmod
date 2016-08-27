@@ -13,7 +13,6 @@ define([
     'plugin/PluginBase',
     'rosmod/minify.json',
     'rosmod/meta',
-    'rosmod/remote_utils',
     'rosmod/modelImporter',
     'q'
 ], function (
@@ -22,7 +21,6 @@ define([
     PluginBase,
     minify,
     MetaTypes,
-    utils,
     modelImporter,
     Q) {
     'use strict';
@@ -30,13 +28,13 @@ define([
     pluginMetadata = JSON.parse(pluginMetadata);
 
     /**
-     * Initializes a new instance of Import.
+     * Initializes a new instance of Importer.
      * @class
      * @augments {PluginBase}
-     * @classdesc This class represents the plugin Import.
+     * @classdesc This class represents the plugin Importer.
      * @constructor
      */
-    var Import = function () {
+    var Importer = function () {
         // Call base class' constructor.
         PluginBase.call(this);
         this.metaTypes = MetaTypes;
@@ -48,13 +46,13 @@ define([
      * This is also available at the instance at this.pluginMetadata.
      * @type {object}
      */
-    Import.metadata = pluginMetadata;
+    Importer.metadata = pluginMetadata;
 
     // Prototypical inheritance from PluginBase.
-    Import.prototype = Object.create(PluginBase.prototype);
-    Import.prototype.constructor = Import;
+    Importer.prototype = Object.create(PluginBase.prototype);
+    Importer.prototype.constructor = Importer;
 
-    Import.prototype.notify = function(level, msg) {
+    Importer.prototype.notify = function(level, msg) {
 	var self = this;
 	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
 	if (level=='error')
@@ -78,7 +76,7 @@ define([
      *
      * @param {function(string, plugin.PluginResult)} callback - the result callback
      */
-    Import.prototype.main = function (callback) {
+    Importer.prototype.main = function (callback) {
 	var self = this;
         self.result.success = false;
 
@@ -88,24 +86,21 @@ define([
 	var currentConfig = self.getCurrentConfig();
 	self.modelHash = currentConfig.modelHash;
 	
-	loader.logger = self.logger;
-	utils.logger = self.logger;
+	modelImporter.logger = self.logger;
 
-	modelImporter.importModel(self.core, self.META, model, self.activeNode)
-	    .then(function(projectModel) {
-		self.projectModel = projectModel;
-		// check to make sure we have the right experiment
-		var expPath = self.core.getPath(self.activeNode);
-		self.selectedExperiment = self.projectModel.pathDict[expPath];
-		if (!self.selectedExperiment) {
-		    throw new String("Cannot find experiment!");
-		}
-		return self.mapContainersToHosts();
+	return self.blobClient.getMetadata(self.modelHash)
+	    .then((modelMetadata) => {
+		self.modelName = modelMetadata.name;
+		return self.blobClient.getObjectAsString(self.modelHash);
+	    })
+	    .then((modelString) => {
+		var modelJSON = JSON.parse(modelString);
+		return modelImporter.importModel(self.core, self.META, modelJSON, self.activeNode)
 	    })
 	    .then(function() {
 		// This will save the changes. If you don't want to save;
-		self.notify('info','saving updates to model');
-		return self.save('RunExperiment updated model.');
+		self.notify('info','Loaded ' + self.modelName + ', saving updates.');
+		return self.save('Imported ' + self.modelName);
 	    })
 	    .then(function (err) {
 		if (err.status != 'SYNCED') {
@@ -122,5 +117,5 @@ define([
 		.done();
     };
 
-    return Import;
+    return Importer;
 });

@@ -13,7 +13,6 @@ define([
     'plugin/PluginBase',
     'rosmod/minify.json',
     'rosmod/meta',
-    'rosmod/remote_utils',
     'rosmod/modelLoader',
     'q'
 ], function (
@@ -22,7 +21,6 @@ define([
     PluginBase,
     minify,
     MetaTypes,
-    utils,
     modelLoader,
     Q) {
     'use strict';

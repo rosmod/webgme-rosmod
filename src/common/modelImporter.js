@@ -14,7 +14,7 @@ define(['q'], function(Q) {
 
 	    self.createdObjects = {}; // map of path to WebGME Nodes
 
-	    var modelObjectPaths = Object.keys(self.model.modelObjects);
+	    var modelObjectPaths = Object.keys(self.model.objects);
 	    modelObjectPaths.map((modelObjectPath) => {
 		self.createObject(modelObjectPath);
 	    });
@@ -22,32 +22,44 @@ define(['q'], function(Q) {
 	},
 	createObject: function(objectPath) {
 	    var self = this;
-	    var modelObject = self.model.modelObjects[objectPath];
-	    var metaNode = self.META[modelObject.type];
-	    var parentNode = self.rootNode;
 	    var newNode = null;
-	    if (self.createdObjects[objectPath] == null) {
-		if (self.createdObjects[modelObject.parentPath] == null) {
-		    // create parent
-		    parentNode = self.createObject(modelObject.parentPath);
-		}
-		// create object
-		newNode = self.core.createNode({
-		    parent: parentNode,
-		    base: metaNode
-		});
-		// configure attributes
-		var attributes = Object.keys(modelObject.attributes);
-		attributes.map((attr) => {
-		    self.core.setAttribute(newNode, attr, modelObject[attr]);
-		});
-		
-		// add path of object to created objects list
-		self.createdObjects[objectPath] = newNode;
-	    }
-	    else {
-		newNode = self.createdObjects[objectPath];
-	    }
+	    var object = self.model.objects[objectPath];
+            if (object == null) {
+                self.logger.error('object is null: ' + objectPath);
+            }
+            else {
+	        var metaNode = self.META[object.type];
+                self.logger.error('creating new object: ' + object.name);
+                self.logger.error('\tof meta type: ' + object.type + ': '+metaNode);
+	        var parentNode = self.createdObjects[object.parentPath];
+                // don't want to create the same object multiple times
+	        if (self.createdObjects[objectPath] == undefined) {
+		    if (self.createdObjects[object.parentPath] == undefined) {
+		        // create parent
+		        parentNode = self.createObject(object.parentPath);
+		    }
+                    if (parentNode == null) {
+                        parentNode = self.rootNode;
+                        self.createdObjects[object.parentPath] = parentNode;
+                    }
+		    // create object
+		    newNode = self.core.createNode({
+		        parent: parentNode,
+		        base: metaNode
+		    });
+		    // configure attributes
+		    var attributes = Object.keys(object.attributes);
+		    attributes.map((attr) => {
+		        self.core.setAttribute(newNode, attr, object[attr]);
+		    });
+		    
+		    // add path of object to created objects list
+		    self.createdObjects[objectPath] = newNode;
+	        }
+	        else {
+		    newNode = self.createdObjects[objectPath];
+	        }
+            }
 	    return newNode;
 	}
     }

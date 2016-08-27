@@ -15,7 +15,7 @@
 if (compInfo.Types.length) {
   compInfo.Types.map(function(type) {
 -%>
-#include "<%- model.pathDict[type.parentPath].name %>/<%- type.name %>.h"
+#include "<%- objects[type.parentPath].name %>/<%- type.name %>.h"
 <%
     });
  }
@@ -88,7 +88,7 @@ if (compInfo.Subscriber_list) {
    *
    * <%- sub['Detailed Description'] %>
    */
-  void <%- sub.name %>_operation(const <%- model.pathDict[sub.Message.parentPath].name %>::<%- sub.Message.name %>::ConstPtr& received_data);
+  void <%- sub.name %>_operation(const <%- objects[sub.Message.parentPath].name %>::<%- sub.Message.name %>::ConstPtr& received_data);
 <%
     });
  }
@@ -108,7 +108,7 @@ if (compInfo.Server_list) {
    *
    * <%- srv['Detailed Description'] %>
    */
-  bool <%- srv.name %>_operation(const <%- model.pathDict[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Request &req, <%- model.pathDict[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Response &res);
+  bool <%- srv.name %>_operation(const <%- objects[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Request &req, <%- objects[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Response &res);
 <%
     });
  }

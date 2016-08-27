@@ -117,10 +117,11 @@ define([
 
 	loader.loadModel(self.core, projectNode)
 	    .then(function(projectModel) {
-		self.projectModel = projectModel;
+		self.projectModel = projectModel.root;
+                self.objectDict = projectModel.objects;
 		// check to make sure we have the right experiment
 		var expPath = self.core.getPath(self.activeNode);
-		self.selectedExperiment = self.projectModel.pathDict[expPath];
+		self.selectedExperiment = self.objectDict[expPath];
 		if (!self.selectedExperiment) {
 		    throw new String("Cannot find experiment!");
 		}

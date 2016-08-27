@@ -1,6 +1,6 @@
 {
-  "id": "Import",
-  "name": "Import",
+  "id": "Importer",
+  "name": "Importer",
   "version": "0.1.0",
   "description": "",
   "icon": {
@@ -15,7 +15,7 @@
 	  "name": "modelHash",
 	  "displayName": "Object JSON",
 	  "description": "JSON file exported by the Export plugin.",
-	  "value": '',
+	  "value": "",
 	  "valueType": "asset",
 	  "readOnly": false
       }

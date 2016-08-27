@@ -128,7 +128,8 @@ define([
 	utils.logger = self.logger;
       	loader.loadModel(self.core, projectNode)
   	    .then(function (projectModel) {
-		self.projectModel = projectModel;
+		self.projectModel = projectModel.root;
+                self.objectDict = projectModel.objects;
   	    })
 	    .then(function () {
 		return self.generateArtifacts();
@@ -320,7 +321,7 @@ define([
 						var topic = publisher.Message.name;
 						if (msg_map[topic].subscribers) {
 						    msg_map[topic].subscribers.map(function(subscriber) {
-							var subCompName= self.projectModel.pathDict[subscriber.parentPath].name;
+							var subCompName= self.objectDict[subscriber.parentPath].name;
 							if (interaction_tokens != '1`[\n') {
 							    interaction_tokens += ',\n';
 							}
@@ -368,7 +369,7 @@ define([
 						var service = client.Service.name;
 						if (srv_map[service].servers) {
 						    srv_map[service].servers.map(function(server) {
-							var serverCompName = self.projectModel.pathDict[server.parentPath].name;
+							var serverCompName = self.objectDict[server.parentPath].name;
 							if (interaction_tokens != '1`[\n') {
 							    interaction_tokens += ',\n';
 							}

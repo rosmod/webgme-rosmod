@@ -25,9 +25,9 @@
         "src": "src/plugins/Export",
         "test": "test/plugins/Export"
       },
-      "Import": {
-        "src": "src/plugins/Import",
-        "test": "test/plugins/Import"
+      "Importer": {
+        "src": "src/plugins/Importer",
+        "test": "test/plugins/Importer"
       }
     },
     "addons": {

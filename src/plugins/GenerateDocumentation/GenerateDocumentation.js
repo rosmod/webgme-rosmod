@@ -126,7 +126,8 @@ define([
 	utils.logger = self.logger;
       	loader.loadModel(self.core, projectNode)
   	    .then(function (projectModel) {
-		self.projectModel = projectModel;
+		self.projectModel = projectModel.root;
+                self.objectDict = projectModel.objects
   	    })
 	    .then(function () {
 		return self.generateArtifacts();
@@ -158,9 +159,9 @@ define([
 	// clear out any previous project files
 	child_process.execSync('rm -rf ' + utils.sanitizePath(self.gen_dir));
 
-	var paths = Object.keys(self.projectModel.pathDict);
+	var paths = Object.keys(self.objectDict);
 	var tasks = paths.map(function(path) {
-	    var obj = self.projectModel.pathDict[path];
+	    var obj = self.objectDict[path];
 	    if (obj.type != 'Documentation')
 		return self.generateObjectDocumentation(obj);
 	});

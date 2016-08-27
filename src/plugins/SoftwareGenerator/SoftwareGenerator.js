@@ -133,7 +133,7 @@ define([
 	utils.logger = self.logger;
       	loader.loadModel(self.core, projectNode)
   	    .then(function (projectModel) {
-		self.projectModel = projectModel;
+		self.projectModel = projectModel.root;
         	return self.generateArtifacts();
   	    })
 	    .then(function () {
