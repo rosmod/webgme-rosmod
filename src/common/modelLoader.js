@@ -102,6 +102,10 @@ define(['q'], function(Q) {
 		    var dst = objects[path];
 		    if (dst)
 			obj[pointer] = dst;
+                    else if (pointer != 'base' && path != null)
+                        self.logger.error(
+                            'Cannot save pointer to object outside tree: ' + 
+                                pointer + ', ' + path);
 		}
 		// follow set paths, these may not always be loaded!
 		for (var set in obj.sets) {
@@ -111,7 +115,11 @@ define(['q'], function(Q) {
                         var dst = objects[path];
 			if (dst)
 			    dsts.push(dst);
-		    });
+                        else if (path != null)
+                            self.logger.error(
+                                'Cannot save set member not in tree: ' + 
+                                    set + ', ' + path);
+                    });
 		    obj[set] = dsts;
 		}
 	    });
