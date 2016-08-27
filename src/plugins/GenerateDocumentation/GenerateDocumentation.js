@@ -315,15 +315,30 @@ define([
 
 	var deferred = Q.defer();
 	var terminal=  require('child_process').spawn('bash', [], {cwd:self.gen_dir});
-	terminal.stdout.on('data', function (data) {});
-	terminal.stderr.on('data', function (error) {
-	});
+        var stdout = '',
+        stderr = '';
+	terminal.stdout.on('data', function (data) { stdout += data; });
+	terminal.stderr.on('data', function (data) { stderr += data; });
 	terminal.on('exit', function(code) {
 	    if (code == 0) {
 		deferred.resolve(code);
 	    }
 	    else {
-		deferred.reject('buildDocs:: child process exited with code ' + code);
+                var files = {
+		    'docs.stdout.txt': stdout,
+		    'docs.stderr.txt': stderr
+		};
+		var fnames = Object.keys(files);
+		var tasks = fnames.map((fname) => {
+		    return self.blobClient.putFile(fname, files[fname])
+			.then((hash) => {
+			    self.result.addArtifact(hash);
+			});
+		});
+		return Q.all(tasks)
+                    .then(() => {
+		        deferred.reject('buildDocs:: child process exited with code ' + code);
+                    });
 	    }
 	});
 	var pdfName = self.projectName.replace(/ /g, '') + '.pdf';
