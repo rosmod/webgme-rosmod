@@ -66,7 +66,6 @@
 		"Destruction": {"name":"text/x-c++src", "useCPP":true},
 		"User Configuration": {"name":"application/json"},
 		"User Artifacts": {"name":"application/json"},
-		"User Parser": {"name":"text/javascript"},
 		"Authors": {"name":"markdown"},
 		"Brief Description": {"name":"markdown"},
 		"Detailed Description": {"name":"markdown"}
