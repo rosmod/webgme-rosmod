@@ -115,7 +115,7 @@ define([
 				    self.experimentName,
 				    'config');
 
-	loader.loadModel(self.core, projectNode)
+	loader.loadModel(self.core, projectNode, true)
 	    .then(function(projectModel) {
 		self.projectModel = projectModel.root;
                 self.objectDict = projectModel.objects;

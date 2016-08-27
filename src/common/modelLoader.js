@@ -3,9 +3,8 @@
 define(['q'], function(Q) {
     'use strict';
     return {
-	loadModel: function(core, modelNode) {
+	loadModel: function(core, modelNode, doProcessModel) {
 	    var self = this;
-	    var objects = {};   // used to store the objects for handling pointers
 
 	    var nodeName = core.getAttribute(modelNode, 'name'),
 	    nodePath = core.getPath(modelNode),
@@ -17,27 +16,31 @@ define(['q'], function(Q) {
 	    sets = core.getSetNames(modelNode);
 
 	    self.model = {
-		name: nodeName,
-		path: nodePath,
-		type: nodeType,
-		parentPath: parentPath,
-		childPaths: childPaths,
-		attributes: {},
-		pointers: {},
-		sets: {}
+		'objects': {
+		},
+		'root': {
+		    name: nodeName,
+		    path: nodePath,
+		    type: nodeType,
+		    parentPath: parentPath,
+		    childPaths: childPaths,
+		    attributes: {},
+		    pointers: {},
+		    sets: {}
+		}
 	    };
 	    attributes.map(function(attribute) {
 		var val = core.getAttribute(modelNode, attribute);
-		self.model.attributes[attribute] = val;
-		self.model[attribute] = val;
+		self.model.root.attributes[attribute] = val;
+		self.model.root[attribute] = val;
 	    });
 	    pointers.map(function(pointer) {
-		self.model.pointers[pointer] = core.getPointerPath(modelNode, pointer);
+		self.model.root.pointers[pointer] = core.getPointerPath(modelNode, pointer);
 	    });
 	    sets.map(function(set) {
-		self.model.sets[set] = core.getMemberPaths(modelNode, set);
+		self.model.root.sets[set] = core.getMemberPaths(modelNode, set);
 	    });
-	    objects[nodePath] = self.model;
+	    self.model.objects[nodePath] = self.model.root;
 	    return core.loadSubTree(modelNode)
 		.then(function(nodes) {
 		    nodes.map(function(node) {
@@ -70,14 +73,12 @@ define(['q'], function(Q) {
 			sets.map(function(set) {
 			    nodeObj.sets[set] = core.getMemberPaths(node, set);
 			});
-			objects[nodePath] = nodeObj;
+			self.model.objects[nodePath] = nodeObj;
 		    });
-		    self.resolvePointers(objects);
-		    self.processModel(self.model);
-		    return {
-			'objects': objects,
-			'root': self.model
-		    };
+		    self.resolvePointers(self.model.objects);
+		    if (doProcessModel)
+			self.processModel(self.model.root);
+		    return self.model;
 		});
 	},
 	resolvePointers: function(objects) {
@@ -128,7 +129,7 @@ define(['q'], function(Q) {
 	    // THIS FUNCTION HANDLES CREATION OF SOME CONVENIENCE MEMBERS
 	    // FOR SELECT OBJECTS IN THE MODEL
 	    // handle Component Required Types (convenience)
-	    if (model.Software_list) {
+	    if (model.Software_list !== undefined) {
 		var software_folder = model.Software_list[0];
 		if (software_folder && software_folder.Package_list) {
 		    software_folder.Package_list.map(function(pkgInfo) {
@@ -165,7 +166,7 @@ define(['q'], function(Q) {
 		}
 	    }
 	    // handle Interface IP assignment here (until META is updated)
-	    if (model.Systems_list) {
+	    if (model.Systems_list !== undefined) {
 		var systems_folder = model.Systems_list[0];
 		if (systems_folder && systems_folder.System_list) {
 		    systems_folder.System_list.map(function(system) {
