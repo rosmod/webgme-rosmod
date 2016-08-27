@@ -134,6 +134,7 @@ define([
       	loader.loadModel(self.core, projectNode)
   	    .then(function (projectModel) {
 		self.projectModel = projectModel.root;
+		self.projectObjects = projectModel.objects;
         	return self.generateArtifacts();
   	    })
 	    .then(function () {
@@ -220,14 +221,16 @@ define([
 		cmakeTemplate = TEMPLATES[self.FILES['cmakelists']];
 		self.artifacts[cmakeFileName] = ejs.render(cmakeTemplate, {
 		    'pkgInfo':pkgInfo, 
-		    'model': self.projectModel
+		    'model': self.projectModel,
+                    'objects': self.projectObjects
 		});
 
 		var packageXMLFileName = prefix + pkgInfo.name + '/package.xml',
 		packageXMLTemplate = TEMPLATES[self.FILES['package_xml']];
 		self.artifacts[packageXMLFileName] = ejs.render(packageXMLTemplate, {
 		    'pkgInfo': pkgInfo,
-		    'model': self.projectModel
+		    'model': self.projectModel,
+                    'objects': self.projectObjects
 		});
 	    });
 	}
@@ -273,12 +276,14 @@ define([
 	self.artifacts[inclFileName] = ejs.render(compHPPTemplate, {
 	    'compInfo': compInfo,
 	    'moment': moment,
-	    'model': self.projectModel
+	    'model': self.projectModel,
+            'objects': self.projectObjects
 	});
 	self.artifacts[srcFileName] = ejs.render(compCPPTemplate, {
 	    'compInfo': compInfo,
 	    'moment': moment,
-	    'model': self.projectModel
+	    'model': self.projectModel,
+            'objects': self.projectObjects
 	});
     };
 

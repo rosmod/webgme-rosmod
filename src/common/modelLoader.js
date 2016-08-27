@@ -128,7 +128,7 @@ define(['q'], function(Q) {
 	    // THIS FUNCTION HANDLES CREATION OF SOME CONVENIENCE MEMBERS
 	    // FOR SELECT OBJECTS IN THE MODEL
 	    // handle Component Required Types (convenience)
-	    if (model.Software_list != null) {
+	    if (model.Software_list) {
 		var software_folder = model.Software_list[0];
 		if (software_folder && software_folder.Package_list) {
 		    software_folder.Package_list.map(function(pkgInfo) {
@@ -165,7 +165,7 @@ define(['q'], function(Q) {
 		}
 	    }
 	    // handle Interface IP assignment here (until META is updated)
-	    if (model.Systems_list != null) {
+	    if (model.Systems_list) {
 		var systems_folder = model.Systems_list[0];
 		if (systems_folder && systems_folder.System_list) {
 		    systems_folder.System_list.map(function(system) {
