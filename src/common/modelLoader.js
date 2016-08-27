@@ -76,6 +76,7 @@ define(['q'], function(Q) {
 			self.model.objects[nodePath] = nodeObj;
 		    });
 		    self.resolvePointers(self.model.objects);
+                    self.model.root = self.model.objects[self.model.root.path];
 		    if (doProcessModel)
 			self.processModel(self.model.root);
 		    return self.model;
