@@ -83,6 +83,7 @@ define(['q'], function(Q) {
 		});
 	},
 	resolvePointers: function(objects) {
+	    var self = this;
             var objPaths = Object.keys(objects);
 	    objPaths.map(function(objPath) {
                 var obj = objects[objPath];
@@ -127,6 +128,7 @@ define(['q'], function(Q) {
 	    });
 	},
 	processModel: function(model) {
+	    var self = this;
 	    // THIS FUNCTION HANDLES CREATION OF SOME CONVENIENCE MEMBERS
 	    // FOR SELECT OBJECTS IN THE MODEL
 	    // handle Component Required Types (convenience)
