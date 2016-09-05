@@ -129,7 +129,7 @@ define([
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
 	self.artifacts = {}; // will be filled out and used by various parts of this plugin
 
-	loader.logger = self.logger;
+	loader.notify = function(level, msg) {self.notify(level, msg);}
 	utils.logger = self.logger;
       	loader.loadModel(self.core, projectNode, true)
   	    .then(function (projectModel) {

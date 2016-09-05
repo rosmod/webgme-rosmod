@@ -21,7 +21,7 @@ define([
     PluginBase,
     minify,
     MetaTypes,
-    modelLoader,
+    loader,
     Q) {
     'use strict';
 
@@ -88,11 +88,11 @@ define([
 
 	var nodeName = self.core.getAttribute(self.activeNode, 'name');
 	
-	modelLoader.logger = self.logger;
+	loader.notify = function(level, msg) {self.notify(level, msg);}
 
-	modelLoader.loadModel(self.core, self.activeNode)
+	loader.loadModel(self.core, self.activeNode)
 	    .then(function(model) {
-		return self.blobClient.putFile(nodeName+'.json', JSON.stringify(model, null, 2));
+		return self.blobClient.putFile(nodeName+'.json', JSON.stringify(model.objects, null, 2));
 	    })
 	    .then(function(hash) {
 		self.result.addArtifact(hash);

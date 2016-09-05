@@ -1,10 +1,16 @@
 
 
-define(['q'], function(Q) {
+define(['./meta','q'], function(metaTypes, Q) {
     'use strict';
     return {
 	loadModel: function(core, modelNode, doProcessModel) {
 	    var self = this;
+	    
+	    self.metaPaths = []
+	    for (var key in metaTypes) {
+		if (metaTypes.hasOwnProperty(key))
+		    self.metaPaths.push(core.getPath(metaTypes[key]));
+	    }
 
 	    var nodeName = core.getAttribute(modelNode, 'name'),
 	    nodePath = core.getPath(modelNode),
@@ -105,10 +111,10 @@ define(['q'], function(Q) {
 		    var dst = objects[path];
 		    if (dst)
 			obj[pointer] = dst;
-                    else if (pointer != 'base' && path != null)
-                        self.logger.error(
-                            'Cannot save pointer to object outside tree: ' + 
-                                pointer + ', ' + path);
+                    else if (path != null && self.metaPaths.indexOf(path) == -1)
+                        self.notify('error',
+				    'Cannot save pointer to object outside tree: ' + 
+                                    pointer + ', ' + path);
 		}
 		// follow set paths, these may not always be loaded!
 		for (var set in obj.sets) {
@@ -119,9 +125,9 @@ define(['q'], function(Q) {
 			if (dst)
 			    dsts.push(dst);
                         else if (path != null)
-                            self.logger.error(
-                                'Cannot save set member not in tree: ' + 
-                                    set + ', ' + path);
+                            self.notify('error',
+					'Cannot save set member not in tree: ' + 
+					set + ', ' + path);
                     });
 		    obj[set] = dsts;
 		}

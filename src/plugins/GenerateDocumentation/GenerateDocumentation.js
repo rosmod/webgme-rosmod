@@ -125,7 +125,7 @@ define([
         self.srcData = {};
         self.rstData = {};
 
-        loader.logger = self.logger;
+        loader.notify = function(level, msg) {self.notify(level, msg);}
         utils.logger = self.logger;
 
         loader.loadModel(self.core, projectNode, true)

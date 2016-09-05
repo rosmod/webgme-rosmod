@@ -96,7 +96,7 @@ define([
 	self.rosCorePort = Math.floor((Math.random() * (65535-1024) + 1024));
 	self.rosCoreIp = '';
 
-	loader.logger = self.logger;
+	loader.notify = function(level, msg) {self.notify(level, msg);}
 	utils.logger = self.logger;
 
 	// the active node for this plugin is experiment -> experiments -> project

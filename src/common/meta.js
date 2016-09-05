@@ -5,10 +5,10 @@
 define([], function () {
     'use strict';
     return {
-        'Capability': '/3/u',
+        'Capability': '/3/F',
         'Client': '/3/d',
         'Component': '/3/8',
-        'Constraint': '/3/N',
+        'Constraint': '/3/Jt',
         'Container': '/3/j',
         'Deployment': '/3/i',
         'Deployments': '/3/W',

@@ -86,7 +86,7 @@ define([
 	var currentConfig = self.getCurrentConfig();
 	self.modelHash = currentConfig.modelHash;
 	
-	modelImporter.logger = self.logger;
+	modelImporter.notify = function(level, msg) {self.notify(level, msg);}
 
 	return self.blobClient.getMetadata(self.modelHash)
 	    .then((modelMetadata) => {

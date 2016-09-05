@@ -1,42 +1,48 @@
 
 
-define(['q'], function(Q) {
+define(['./meta','q'], function(metaTypes, Q) {
     'use strict';
     return {
 	// create all model nodes and their attributes
 	// update all pointers and sets
 	importModel: function(core, META, model, rootNode) {
 	    var self = this;
+
 	    self.core = core;
+	    
 	    self.META = META;
+	    self.metaPaths = []
+	    for (var key in metaTypes) {
+		if (metaTypes.hasOwnProperty(key))
+		    self.metaPaths.push(core.getPath(metaTypes[key]));
+	    }
+
 	    self.model = model;
 	    self.rootNode = rootNode;
 
 	    self.createdObjects = {}; // map of path to WebGME Nodes
 
-	    var objectPaths = Object.keys(self.model.objects);
+	    var objectPaths = Object.keys(self.model);
             // create the objects
 	    objectPaths.map((objectPath) => {
 		self.createObject(objectPath);
 	    });
             // resolve references
             objectPaths.map((objectPath) => {
-                var object = self.model.objects[objectPath];
+                var object = self.model[objectPath];
                 var objNode = self.createdObjects[objectPath];
                 if (!objNode)
                     return; // couldn't create this object; can't resolve it's internal data
                 // resolve pointers
                 var pointerNames = Object.keys(object.pointers);
                 pointerNames.map((pointerName) => {
-                    if (pointerName == 'base')
-                        return;
                     var dstPath = object.pointers[pointerName];
                     var dstNode = self.createdObjects[dstPath];
-                    if (!dstNode) {
-                        self.logger.error('Couldnt recreate reference for pointer: ' + pointerName);
-                    }
-                    else {
+		    if (dstNode) {
                         self.core.setPointer(objNode, pointerName, dstNode);
+                    }
+		    else if (self.metaPaths.indexOf(dstPath) == -1) {
+                        self.notify('error', 'Couldnt recreate reference for pointer: ' + pointerName);
                     }
                 });
                 // resolve sets
@@ -46,7 +52,7 @@ define(['q'], function(Q) {
                     paths.map((path) => {
                         var dstNode = self.createdObjects[path];
                         if (!dstNode) {
-                            self.logger.error('Couldnt recreate reference for set: ' + setName);
+                            self.notify('error','Couldnt recreate reference for set: ' + setName);
                         }
                         else {
                             self.core.addMember(objNode, setName, dstNode);
@@ -59,9 +65,9 @@ define(['q'], function(Q) {
 	createObject: function(objectPath) {
 	    var self = this;
 	    var newNode = null;
-	    var object = self.model.objects[objectPath];
+	    var object = self.model[objectPath];
             if (object == null) {
-                self.logger.error('object is null: ' + objectPath);
+                self.notify('error','object is null: ' + objectPath);
             }
             else {
 	        var metaNode = self.META[object.type];
