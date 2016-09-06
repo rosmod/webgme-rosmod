@@ -35,7 +35,8 @@ config.requirejsPaths = {
   'panels/FloatingActionButton': './node_modules/webgme-fab/src/visualizers/panels/FloatingActionButton',
   'widgets/FloatingActionButton': './node_modules/webgme-fab/src/visualizers/widgets/FloatingActionButton',
   'panels/BreadcrumbHeader': './node_modules/webgme-breadcrumbheader/src/visualizers/panels/BreadcrumbHeader',
-  'widgets/BreadcrumbHeader': './node_modules/webgme-breadcrumbheader/'
+    'widgets/BreadcrumbHeader': './node_modules/webgme-breadcrumbheader/',
+    'plottable': './node_modules/plottable'
 };
 
 config.visualization.layout.default = 'NewDefaultLayout';

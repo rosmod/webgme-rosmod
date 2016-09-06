@@ -1,16 +1,66 @@
 
 
-define(['d3'], function() {
+define(['plottable/plottable', 'd3', 'css!plottable/plottable.css'], function(Plottable,d3) {
     'use strict';
     return {
 	plotData: function(plotId, data, offset) {
-	    if (_.isEmpty(data))
-		return;
+	    /*
+	    var msPerDay = 86400000;
+	    var dataObjects = [];
+	    var labelList = [];
+	    var lineRenderer;
 
-	    var names = Object.keys(data);
+	    var linear= {};
+	    linear.data = makeLinearData(2, 20, 2);
+	    linear.color = "#34b24c";
+	    var exponential = {};
+	    exponential.data = makeExponentialData(20, 1, 1.5);
+	    exponential.color = "#ffa500";
+	    var oscillate = {};
+	    oscillate.data = makeOscillatingData(50, .4);
+	    oscillate.color = "#551a8b";
+	    dataObjects = [linear, exponential, oscillate];
 
-	    var bandPos = [-1, -1];
-	    var pos;
+	    dataObjects.forEach(function(dataObject) {
+		dataObject.dataset = new Plottable.Dataset(dataObject.data, {"color": dataObject.color});
+		dataObject.include = true;
+	    });
+
+	    var xScale = new Plottable.Scales.Time();
+	    var xAxis = new Plottable.Axes.Time(xScale, "bottom");
+
+	    var yScale = new Plottable.Scales.Linear().domain([0, 40]);
+	    var yAxis = new Plottable.Axes.Numeric(yScale, "left");
+
+	    includeDatasets();
+
+	    var linLabel = makeLabel("☑ linear dataset");
+	    var expLabel = makeLabel("☑ exponential dataset");
+	    var oscLabel = makeLabel("☑ oscillating dataset");
+
+	    var labels = new Plottable.Components.Table([[linLabel], [expLabel], [oscLabel]]);
+	    var areaChart = new Plottable.Components.Table([[null, labels],
+							    [yAxis, lineRenderer],
+							    [null,  xAxis]]);
+
+	    areaChart.renderTo(plotId);
+
+	    new Plottable.Interactions.Click()
+		.onClick(function() {
+		    toggle(linLabel, linear)
+		})
+		.attachTo(linLabel);
+	    new Plottable.Interactions.Click()
+		.onClick(function() {
+		    toggle(expLabel, exponential)
+		})
+		.attachTo(expLabel);
+	    new Plottable.Interactions.Click()
+		.onClick(function() {
+		    toggle(oscLabel, oscillate)
+		})
+		.attachTo(oscLabel);
+	    */
 
 	    // extent returns array: [min, max]
 	    var maxXs = Object.keys(data).map(function(key) {
@@ -22,303 +72,72 @@ define(['d3'], function() {
 	    var xdomain = d3.max(maxXs);
 	    var ydomain = d3.max(maxYs); 
 
-	    var colors = ["steelblue", "green", "red", "purple", "lavender", "orange", "yellow", "blue", "grey"];
-	    var colorMap = {};
-	    var tmp =0;
-	    for (var key in data) {
-		colorMap[key] = colors[tmp];
-		tmp++;
-		if (tmp >= colors.length)
-		    tmp = 0;
-	    }
+	    var xScale = new Plottable.Scales.Linear();
+	    var yScale = new Plottable.Scales.Linear();
+	    var colorScale = new Plottable.Scales.Color();
 
-	    var margin = {
-		top: 40,
-		right: 40,
-		bottom: 50,
-		left: 60
-	    }
-	    var base_width = 760;
-	    var base_height = 250;
-	    var width = base_width - margin.left - margin.right;
-	    var height = base_height - margin.top - margin.bottom;
-	    var zoomArea = {
-		x1: 0,
-		y1: 0,
-		x2: xdomain,
-		y2: ydomain
-	    };
+	    var xAxis = new Plottable.Axes.Numeric(xScale, "bottom");
+	    var yAxis = new Plottable.Axes.Numeric(yScale, "left");
+	    var xLabel = new Plottable.Components.AxisLabel("Time (s)");
+	    var yLabel = new Plottable.Components.AxisLabel("Execution\nTime (s)", -90.0);
 
-	    var svg = d3.select(plotId)
-		.attr('preserveAspectRatio', 'xMinYMin meet')
-		.attr('viewBox', '0 0 '+(width+margin.left+margin.right) + ' '+(height +margin.bottom+margin.top))
-	    //.attr("width", "100%")
-	    //.attr("height", height + margin.top + margin.bottom)
-		.classed('svg-content-responsive', true)
-		.append("g")
-		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	    var legend = new Plottable.Components.Legend(colorScale).maxEntriesPerRow(3);
+	    var plots = new Plottable.Components.Group();
+	    
+	    var panZoom = new Plottable.Interactions.PanZoom();
+	    panZoom.addXScale(xScale);
+	    panZoom.addYScale(yScale);
+	    panZoom.attachTo(plots);
+	    var panZoomX = new Plottable.Interactions.PanZoom();
+	    panZoomX.addXScale(xScale);
+	    panZoomX.attachTo(xAxis);
+	    var panZoomY = new Plottable.Interactions.PanZoom();
+	    panZoomY.addYScale(yScale);
+	    panZoomY.attachTo(yAxis);
 
-
-	    // axes
-	    var x = d3.scale.linear()
-		.domain([0, xdomain])
-		.range([0, width]);
-
-	    var y = d3.scale.linear()
-		.domain([0, ydomain])
-		.range([height, 0]);
-
-	    var xAxis = d3.svg.axis()
-		.scale(x)
-		.orient("bottom");
-
-	    var yAxis = d3.svg.axis()
-		.scale(y)
-		.orient("left");
-
-	    // Line functions for data
-	    var line = d3.svg.line()
-	    //.interpolate("basis")  // Don't want to interpolate between points!
-		.x(function(d) {
-		    return x(d[0] - offset);
-		})
-		.y(function(d) {
-		    return y(d[1]);
-		});
-
-	    // add axes
-	    svg.append("g")
-		.attr("class", "x axis")
-		.call(xAxis)
-		.attr("transform", "translate(0," + height + ")");
-
-	    svg.append("text")
-		.attr("class", "x label")
-		.attr("text-anchor", "end")
-		.attr("x", base_width / 2)
-		.attr("y", base_height - margin.bottom - 6)
-		.text("Time (s)");
-
-	    svg.append("g")
-		.attr("class", "y axis")
-		.call(yAxis)
-
-	    svg.append("text")
-		.attr("class", "y label")
-		.attr("text-anchor", "end")
-		.attr("y", 6)
-		.attr("dy", ".75em")
-		.attr("transform", "rotate(-90)")
-		.attr("x", -margin.left/2)
-		.attr("y", -60)
-		.text("Execution Time (s)");
-
-	    // add clipping for plot
-	    svg.append("clipPath")
-		.attr("id", "clip")
-		.append("rect")
-		.attr("width", width)
-		.attr("height", height);
-
-	    // add data
 	    for (var alias in data) {
-		svg.append("path")
-		    .datum(data[alias].data)
-		    .attr("class", "line line" + plotId.replace('#','')+alias)
-		    .attr("clip-path", "url(#clip)")
-		    .style("opacity", 1)
-		    .style("stroke", colorMap[alias])
-		    //.attr("id", plotId+alias)
-		    .attr("d", line);
+		plots.append(new Plottable.Plots.Line()
+			     .addDataset(new Plottable.Dataset(data[alias].data))
+			     .x(function(d) { return d[0] - offset; }, xScale)
+			     .y(function(d) { return d[1]; }, yScale)
+			     .attr("stroke", colorScale.scale(alias))
+			     .attr("stroke-width", 1)
+			    );
 	    }
 
-	    var bandId = 'band_'+plotId.replace('#','');
-	    // handle zoom and its overlay
-	    var band = svg.append("rect")
-		.attr("id", bandId)
-		.attr("width", 0)
-		.attr("height", 0)
-		.attr("x", 0)
-		.attr("y", 0)
-		.attr("class", "band");
+	    var table = new Plottable.Components.Table([
+		[null,null, legend],
+		[yLabel,yAxis, plots],
+		[null,null, xAxis],
+		[null,null, xLabel]
+	    ]);
 
-	    var drag = d3.behavior.drag();
+	    var plotName = plotId.replace('#','');
+	    $("#pan-zoom-buttons_"+plotName+" li").on("click", function(event) {
+		event.preventDefault();
 
-	    var zoomOverlayId = 'zoomOverlay_'+plotId.replace('#','');
-	    var zoomOverlay = svg.append("rect")
-		.attr("id", zoomOverlayId)
-		.attr("width", width - 10)
-		.attr("height", height)
-		.attr("class", "zoomOverlay")
-		.call(drag);
-
-	    var zoomout = svg.append("g");
-
-	    zoomout.append("rect")
-		.attr("class", "zoomOut")
-		.attr("width", 75)
-		.attr("height", 40)
-		.attr("x", -12)
-		.attr("y", height + (margin.bottom - 20))
-		.on("click", function() {
-		    zoomOut();
-		});
-
-	    zoomout.append("text")
-		.attr("class", "zoomOutText")
-		.attr("width", 75)
-		.attr("height", 30)
-		.attr("x", -10)
-		.attr("y", height + (margin.bottom - 5))
-		.text("Zoom Out");
-
-	    zoom();
-
-	    drag.on("dragend", function() {
-		var pos = d3.mouse(this);
-		var x1 = x.invert(bandPos[0]);
-		var x2 = x.invert(pos[0]);
-
-		if (x1 < x2) {
-		    zoomArea.x1 = x1;
-		    zoomArea.x2 = x2;
+		$("#pan-zoom-buttons_"+plotName+" li").removeClass("selected");
+		var id = $(this).attr("id");
+		if (id == "pan-zoom-x") {
+		    panZoom.xScales([xScale]);
+		    panZoom.yScales([]);
+		    panZoomX.enabled(true);
+		    panZoomY.enabled(false);
+		} else if (id == "pan-zoom-y") {
+		    panZoom.xScales([]);
+		    panZoom.yScales([yScale]);
+		    panZoomX.enabled(false);
+		    panZoomY.enabled(true);
 		} else {
-		    zoomArea.x1 = x2;
-		    zoomArea.x2 = x1;
+		    panZoom.xScales([xScale]);
+		    panZoom.yScales([yScale]);
+		    panZoomX.enabled(true);
+		    panZoomY.enabled(true);
 		}
-
-		var y1 = y.invert(pos[1]);
-		var y2 = y.invert(bandPos[1]);
-
-		if (x1 < x2) {
-		    zoomArea.y1 = y1;
-		    zoomArea.y2 = y2;
-		} else {
-		    zoomArea.y1 = y2;
-		    zoomArea.y2 = y1;
-		}
-
-		bandPos = [-1, -1];
-
-		d3.select("#"+bandId).transition()
-		    .attr("width", 0)
-		    .attr("height", 0)
-		    .attr("x", bandPos[0])
-		    .attr("y", bandPos[1]);
-
-		zoom();
+		$(this).addClass("selected");
 	    });
 
-	    drag.on("drag", function() {
-
-		var pos = d3.mouse(this);
-
-		if (pos[0] < bandPos[0]) {
-		    d3.select("#"+bandId).
-			attr("transform", "translate(" + (pos[0]) + "," + bandPos[1] + ")");
-		}
-		if (pos[1] < bandPos[1]) {
-		    d3.select("#"+bandId).
-			attr("transform", "translate(" + (pos[0]) + "," + pos[1] + ")");
-		}
-		if (pos[1] < bandPos[1] && pos[0] > bandPos[0]) {
-		    d3.select("#"+bandId).
-			attr("transform", "translate(" + (bandPos[0]) + "," + pos[1] + ")");
-		}
-
-		//set new position of band when user initializes drag
-		if (bandPos[0] == -1) {
-		    bandPos = pos;
-		    d3.select("#"+bandId).attr("transform", "translate(" + bandPos[0] + "," + bandPos[1] + ")");
-		}
-
-		d3.select("#"+bandId).transition().duration(1)
-		    .attr("width", Math.abs(bandPos[0] - pos[0]))
-		    .attr("height", Math.abs(bandPos[1] - pos[1]));
-	    });
-
-	    function zoom() {
-		//recalculate domains
-		if (zoomArea.x1 > zoomArea.x2) {
-		    x.domain([zoomArea.x2, zoomArea.x1]);
-		} else {
-		    x.domain([zoomArea.x1, zoomArea.x2]);
-		}
-
-		if (zoomArea.y1 > zoomArea.y2) {
-		    y.domain([zoomArea.y2, zoomArea.y1]);
-		} else {
-		    y.domain([zoomArea.y1, zoomArea.y2]);
-		}
-
-		//update axis and redraw lines
-		var t = svg.transition().duration(750);
-		t.select(".x.axis").call(xAxis);
-		t.select(".y.axis").call(yAxis);
-
-		t.selectAll(".line").attr("d", line); 
-	    }
-
-	    var zoomOut = function() {
-		x.domain([0, xdomain]);
-		y.domain([0, ydomain]);
-
-		var t = svg.transition().duration(750);
-		t.select(".x.axis").call(xAxis);
-		t.select(".y.axis").call(yAxis);
-
-		t.selectAll(".line").attr("d", line);     
-	    }
-	    var longestName = names.sort(function (a, b) { return b.length - a.length; })[0];
-	    var legendWidth = longestName.length * 5 + 10;
-	    // add legend   
-	    var legend = svg.append("g")
-		.attr("class", "legend")
-		.attr("height", 100)
-		.attr("width", legendWidth * 2)
-		.attr('transform', 'translate(0, 0)');
-
-	    legend.selectAll('g').data(names)
-		.enter()
-		.append('g')
-		.each(function(d, i) {
-		    var g = d3.select(this);
-		    g.append("rect")
-			.attr("x", width - legendWidth)
-			.attr("y", i*25)
-			.attr("width", 10)
-			.attr("height", 10)
-			.style("fill", colorMap[d])
-			.on('click', function() {
-			    var active = data[d].active ? false : true,
-			    newOpacity = active ? 0 : 1,
-			    visibility = active ? 'hidden' : 'visible';
-			    d3.select('.line'+plotId.replace('#','')+d)
-				.transition().duration(100)
-				//.style("opacity", newOpacity);
-				.style('visibility', visibility);
-			    data[d].active = active;
-			});
-
-		    
-		    g.append("text")
-			.attr("x", width - legendWidth + 10)
-			.attr("y", i * 25 + 8)
-			.attr("height",30)
-			.attr("width",legendWidth)
-			.style("fill", "black")
-			.text(d)
-			.on('click', function() {
-			    var active = data[d].active ? false : true,
-			    newOpacity = active ? 0 : 1,
-			    visibility = active ? 'hidden' : 'visible';
-			    d3.select('.line'+plotId.replace('#','')+d)
-				.transition().duration(100)
-				//.style("opacity", newOpacity);
-				.style('visibility', visibility);
-			    data[d].active = active;
-			});
-		})
-	},
+	    table.renderTo(plotId);
+	}
     }
 });
