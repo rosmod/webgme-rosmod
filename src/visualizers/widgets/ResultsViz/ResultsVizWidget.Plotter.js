@@ -4,64 +4,6 @@ define(['plottable/plottable', 'd3', 'css!plottable/plottable.css'], function(Pl
     'use strict';
     return {
 	plotData: function(plotId, data, offset) {
-	    /*
-	    var msPerDay = 86400000;
-	    var dataObjects = [];
-	    var labelList = [];
-	    var lineRenderer;
-
-	    var linear= {};
-	    linear.data = makeLinearData(2, 20, 2);
-	    linear.color = "#34b24c";
-	    var exponential = {};
-	    exponential.data = makeExponentialData(20, 1, 1.5);
-	    exponential.color = "#ffa500";
-	    var oscillate = {};
-	    oscillate.data = makeOscillatingData(50, .4);
-	    oscillate.color = "#551a8b";
-	    dataObjects = [linear, exponential, oscillate];
-
-	    dataObjects.forEach(function(dataObject) {
-		dataObject.dataset = new Plottable.Dataset(dataObject.data, {"color": dataObject.color});
-		dataObject.include = true;
-	    });
-
-	    var xScale = new Plottable.Scales.Time();
-	    var xAxis = new Plottable.Axes.Time(xScale, "bottom");
-
-	    var yScale = new Plottable.Scales.Linear().domain([0, 40]);
-	    var yAxis = new Plottable.Axes.Numeric(yScale, "left");
-
-	    includeDatasets();
-
-	    var linLabel = makeLabel("☑ linear dataset");
-	    var expLabel = makeLabel("☑ exponential dataset");
-	    var oscLabel = makeLabel("☑ oscillating dataset");
-
-	    var labels = new Plottable.Components.Table([[linLabel], [expLabel], [oscLabel]]);
-	    var areaChart = new Plottable.Components.Table([[null, labels],
-							    [yAxis, lineRenderer],
-							    [null,  xAxis]]);
-
-	    areaChart.renderTo(plotId);
-
-	    new Plottable.Interactions.Click()
-		.onClick(function() {
-		    toggle(linLabel, linear)
-		})
-		.attachTo(linLabel);
-	    new Plottable.Interactions.Click()
-		.onClick(function() {
-		    toggle(expLabel, exponential)
-		})
-		.attachTo(expLabel);
-	    new Plottable.Interactions.Click()
-		.onClick(function() {
-		    toggle(oscLabel, oscillate)
-		})
-		.attachTo(oscLabel);
-	    */
-
 	    // extent returns array: [min, max]
 	    var maxXs = Object.keys(data).map(function(key) {
 		return d3.extent(data[key].data, function(xy) { return xy[0] - offset; })[1];
@@ -111,31 +53,6 @@ define(['plottable/plottable', 'd3', 'css!plottable/plottable.css'], function(Pl
 		[null,null, xAxis],
 		[null,null, xLabel]
 	    ]);
-
-	    var plotName = plotId.replace('#','');
-	    $("#pan-zoom-buttons_"+plotName+" li").on("click", function(event) {
-		event.preventDefault();
-
-		$("#pan-zoom-buttons_"+plotName+" li").removeClass("selected");
-		var id = $(this).attr("id");
-		if (id == "pan-zoom-x") {
-		    panZoom.xScales([xScale]);
-		    panZoom.yScales([]);
-		    panZoomX.enabled(true);
-		    panZoomY.enabled(false);
-		} else if (id == "pan-zoom-y") {
-		    panZoom.xScales([]);
-		    panZoom.yScales([yScale]);
-		    panZoomX.enabled(false);
-		    panZoomY.enabled(true);
-		} else {
-		    panZoom.xScales([xScale]);
-		    panZoom.yScales([yScale]);
-		    panZoomX.enabled(true);
-		    panZoomY.enabled(true);
-		}
-		$(this).addClass("selected");
-	    });
 
 	    table.renderTo(plotId);
 	}

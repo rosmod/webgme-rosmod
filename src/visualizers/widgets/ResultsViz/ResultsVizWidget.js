@@ -62,14 +62,8 @@ define([
 		var opacity = active ? 0 : 1;
 		var visibility = active ? 'hidden' : 'visible';
 		var display = active ? 'none' : 'block';
-		var buttons = active ? 'none' : 'flex';
 		d3.select('#plot_'+a)
-		    .transition().duration(100)
-		    .style('opacity', opacity)
-		//.style('visibility', visibility);
 		    .style('display', display);
-		d3.select('#pan-zoom-buttons_'+a)
-		    .style('display', buttons);
 		datas[a].active = active;
 	    };
 
@@ -154,9 +148,6 @@ define([
 
 			var p = this._el.find('#plot');
 			$(p).attr('id',"plot_" + a);
-
-			var pzb = this._el.find('#pan-zoom-buttons');
-			$(pzb).attr('id',"pan-zoom-buttons_" + a);
 
 			var data = datas[a];
 			var offset = first_time;
