@@ -54,7 +54,7 @@ define(['plottable/plottable', 'd3', 'css!plottable/plottable.css'], function(Pl
 		[null,null, xLabel]
 	    ]);
 
-	    table.renderTo(plotId);
+	    return table.renderTo(plotId);
 	}
     }
 });

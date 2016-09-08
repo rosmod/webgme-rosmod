@@ -31,6 +31,7 @@ define([
 	this._client = options.client;
 
         this.nodes = {};
+	this.plots = [];
         this._initialize();
 
         this._logger.debug('ctor finished');
@@ -47,6 +48,9 @@ define([
 
     ResultsVizWidget.prototype.onWidgetContainerResize = function (width, height) {
         //console.log('Widget is resizing...');
+	this.plots.map(function(plot) {
+	    plot.redraw()
+	});
     };
 
     // Adding/Removing/Updating items
@@ -156,7 +160,7 @@ define([
 			    aliases.map((key) => {
 				data[key].data.push([last_time, 0]);
 			    });
-			    Plotter.plotData('#plot_'+a, data, offset);
+			    this.plots.push(Plotter.plotData('#plot_'+a, data, offset));
 			}
 			else
 			    $(container).detach();
