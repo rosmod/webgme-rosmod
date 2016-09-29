@@ -54,6 +54,13 @@
         "panel": "src/visualizers/panels/ResultsViz",
         "secondary": false,
         "widget": "src/visualizers/widgets/ResultsViz"
+      },
+      "CommViz": {
+        "src": "panels/CommViz/CommVizPanel",
+        "title": "CommViz",
+        "panel": "src/visualizers/panels/CommViz",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/CommViz"
       }
     },
     "layouts": {

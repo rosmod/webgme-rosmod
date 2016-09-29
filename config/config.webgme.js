@@ -6,23 +6,24 @@
 var config = require('webgme/config/config.default'),
     validateConfig = require('webgme/config/validator');
 
-
 // The paths can be loaded from the webgme-setup.json
-config.plugin.basePaths.push('src/plugins');
-config.addOn.basePaths.push('src/addons');
-config.visualization.layout.basePaths.push('src/layouts');
-config.visualization.decoratorPaths.push('src/decorators');
+config.plugin.basePaths.push(__dirname + '/../src/plugins');
+config.addOn.basePaths.push(__dirname + '/../src/addons');
+config.visualization.layout.basePaths.push(__dirname + '/../src/layouts');
+config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
 
 config.addOn.enable = true;
 
-config.visualization.panelPaths.push('node_modules/webgme-breadcrumbheader/src/visualizers/panels');
-config.visualization.panelPaths.push('node_modules/webgme-fab/src/visualizers/panels');
-config.visualization.panelPaths.push('node_modules/webgme-codeeditor/src/visualizers/panels');
-config.visualization.panelPaths.push('src/visualizers/panels');
+config.visualization.panelPaths.push(__dirname + '/../node_modules/webgme-breadcrumbheader/src/visualizers/panels');
+config.visualization.panelPaths.push(__dirname + '/../node_modules/webgme-fab/src/visualizers/panels');
+config.visualization.panelPaths.push(__dirname + '/../node_modules/webgme-codeeditor/src/visualizers/panels');
+config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
+
+
 
 
 // Visualizer descriptors
-config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');
+config.visualization.visualizerDescriptors.push(__dirname + '/../src/visualizers/Visualizers.json');
 // Add requirejs paths
 config.requirejsPaths = {
   'CodeEditor': 'panels/CodeEditor/CodeEditorPanel',
@@ -35,8 +36,7 @@ config.requirejsPaths = {
   'panels/FloatingActionButton': './node_modules/webgme-fab/src/visualizers/panels/FloatingActionButton',
   'widgets/FloatingActionButton': './node_modules/webgme-fab/src/visualizers/widgets/FloatingActionButton',
   'panels/BreadcrumbHeader': './node_modules/webgme-breadcrumbheader/src/visualizers/panels/BreadcrumbHeader',
-    'widgets/BreadcrumbHeader': './node_modules/webgme-breadcrumbheader/',
-    'plottable': './node_modules/plottable'
+  'widgets/BreadcrumbHeader': './node_modules/webgme-breadcrumbheader/'
 };
 
 config.visualization.layout.default = 'NewDefaultLayout';
