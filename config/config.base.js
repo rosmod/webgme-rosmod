@@ -26,6 +26,8 @@ config.seedProjects.enable = true;
 config.seedProjects.basePaths = ["./src/seeds"]
 
 config.requirejsPaths.rosmod = "./src/common/"
+//config.requirejsPaths.cytoscape = "./node_modules/cytoscape/"
+config.requirejsPaths.plottable = "./node_modules/plottable/"
 
 // Default Project
 config.client.defaultProject = { name: 'ROSMOD+IntroductionToROSMOD' };
