@@ -190,6 +190,7 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 		    group: 'edges',
 		    data: {
 			id: desc.id + desc.connection.to,
+			type: desc.pointerName,
 			source: desc.parentId,
 			target: desc.connection.to
 		    }
@@ -201,6 +202,7 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 		    group: 'edges',
 		    data: {
 			id: desc.id + desc.connection.to,
+			type: desc.pointerName,
 			source: desc.connection.to,
 			target: desc.parentId
 		    }
