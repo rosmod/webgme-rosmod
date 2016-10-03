@@ -17,6 +17,7 @@ define(['./cytoscape.min','./cola.min','css!./styles/CommVizWidget.css'], functi
         this._el = container;
 
         this.nodes = {};
+	this.childNodes = {};
         this._initialize();
 
         this._logger.debug('ctor finished');
@@ -32,6 +33,37 @@ define(['./cytoscape.min','./cola.min','css!./styles/CommVizWidget.css'], functi
 
 	this._cy = cytoscape({
 	    container: this._el,
+
+	    /*
+            layout: {
+		name: 'grid'
+            },
+
+            style: [
+		{
+		    selector: 'node',
+		    style: {
+			'background-color': '#ad1a66'
+		    }
+		},
+
+		{
+		    selector: ':parent',
+		    style: {
+			'background-opacity': 0.333
+		    }
+		},
+
+		{
+		    selector: 'edge',
+		    style: {
+			'width': 3,
+			'line-color': '#ad1a66'
+		    }
+		},
+	    ],
+	    */
+	    
 	    style: [ // the stylesheet for the graph
 		{
 		    selector: 'node',
@@ -82,53 +114,56 @@ define(['./cytoscape.min','./cola.min','css!./styles/CommVizWidget.css'], functi
 	    motionBlurOpacity: 0.2,
 	    wheelSensitivity: 1,
 	    pixelRatio: 'auto'	    
-	});
-
-	/*
-        // Create a dummy header 
-        this._el.append('<h3>CommViz Events:</h3>');
-
-        // Registering to events can be done with jQuery (as normal)
-        this._el.on('dblclick', function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            self.onBackgroundDblClick();
-        });
-	*/
+	}); 
     };
 
     CommVizWidget.prototype.onWidgetContainerResize = function (width, height) {
         this._logger.debug('Widget is resizing...');
     };
 
+    CommVizWidget.prototype.createChildren = function(desc) {
+	var self = this;
+	if (self.childNodes[desc.id] && self.childNodes[desc.id].length) {
+	    self.childNodes[desc.id].map(function(childDesc) {
+		self._logger.error('creating node: '+childDesc.name +' with parent '+desc.name);
+		self._cy.add({
+		    group: 'nodes',
+		    data: {
+			id: childDesc.name,
+			parent: desc.name
+		    }
+		});
+		self.createChildren(childDesc);
+	    });
+	    self.childNodes[desc.id] = [];
+	}
+    };
+    
     // Adding/Removing/Updating items
     CommVizWidget.prototype.addNode = function (desc) {
+	var self = this;
         if (desc) {
             // Add node to a table of nodes
-            this.nodes[desc.id] = desc;
-
-	    this._cy.add({
-		group: 'nodes',
-		data: {
-		    id: desc.id,
-		    parent: desc.parentId
+            self.nodes[desc.id] = desc;
+	    self._logger.error('got node: '+desc.name);
+	    if (self.nodes[desc.parentId]) {
+		self._logger.error('creating node: '+desc.name +' with parent '+self.nodes[desc.parentId].name);
+		self._cy.add({
+		    group: 'nodes',
+		    data: {
+			id: desc.name,
+			parent: desc.name
+		    }
+		});
+		self.createChildren(desc);
+	    }
+	    else {
+		if (!self.childNodes[desc.parentId] || !self.childNodes[desc.parentId].length) {
+		    self.childNodes[desc.parentId] = [];
 		}
-	    });
-	    /*
-            var node = document.createElement('div'),
-                label = 'children';
-
-            if (desc.childrenIds.length === 1) {
-                label = 'child';
-            }
-
-            node.innerHTML = 'Adding node "' + desc.name + '" (click to view). It has ' + 
-                desc.childrenIds.length + ' ' + label + '.';
-
-            this._el.append(node);
-            node.onclick = this.onNodeClick.bind(this, desc.id);
-	    */
-        }
+		self.childNodes[desc.parentId].push(desc);
+	    }
+	}
     };
 
     CommVizWidget.prototype.removeNode = function (gmeId) {
@@ -145,11 +180,6 @@ define(['./cytoscape.min','./cola.min','css!./styles/CommVizWidget.css'], functi
     };
 
     /* * * * * * * * Visualizer event handlers * * * * * * * */
-
-    CommVizWidget.prototype.onNodeClick = function (/*id*/) {
-        // This currently changes the active node to the given id and
-        // this is overridden in the controller.
-    };
 
     CommVizWidget.prototype.onBackgroundDblClick = function () {
         this._el.append('<div>Background was double-clicked!!</div>');
