@@ -82,10 +82,21 @@
             // Update the territory
             self._client.updateTerritory(self._territoryId, self._selfPatterns);
 
-            self._selfPatterns[nodeId] = {children: 3};
+            self._selfPatterns[nodeId] = {children: 4};
             self._client.updateTerritory(self._territoryId, self._selfPatterns);
         }
     };
+
+    var validObjects = [
+	'Deployment',
+	'Container',
+	'Node',
+	'Component',
+	'Publisher',
+	'Subscriber',
+	'Client',
+	'Server'
+    ];
 
     // This next function retrieves the relevant node information for the widget
     CommVizControl.prototype._getObjectDescriptor = function (nodeId) {
@@ -97,6 +108,8 @@
 	    if (metaObj) {
 		metaName = metaObj.getAttribute(nodePropertyNames.Attributes.name);
 	    }
+	    if (validObjects.indexOf(metaName) == -1)
+		return null;
             objDescriptor = {
                 id: node.getId(),
 		type: metaName,
