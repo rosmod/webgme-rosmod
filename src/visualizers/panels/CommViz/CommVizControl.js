@@ -98,6 +98,21 @@
 	'Server'
     ];
 
+    var connectionTypes = [
+	'Publisher',
+	'Subscriber',
+	'Client',
+	'Server'
+    ];
+
+    var connectionToPtrMap = {
+	'Publisher': 'Message',
+	'Subscriber': 'Message',
+	'Client': 'Service',
+	'Server': 'Service'
+    };
+
+
     // This next function retrieves the relevant node information for the widget
     CommVizControl.prototype._getObjectDescriptor = function (nodeId) {
         var node = this._client.getNode(nodeId),
@@ -118,6 +133,10 @@
                 parentId: node.getParentId(),
                 isConnection: GMEConcepts.isConnection(nodeId)
             };
+	    if (connectionTypes.indexOf(objDescriptor.type) > -1) {
+		objDescriptor.pointerName = connectionToPtrMap[objDescriptor.type];
+		objDescriptor.connection = node.getPointer(objDescriptor.pointerName);
+	    }
 	    if (objDescriptor.type == 'Container') {
 		objDescriptor.parentId = null; // since we're not showing deployments, containers have no parent
 	    }
