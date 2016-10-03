@@ -92,13 +92,22 @@
         var node = this._client.getNode(nodeId),
             objDescriptor;
         if (node) {
+	    var metaObj = this._client.getNode(node.getMetaTypeId()),
+		metaName = undefined;
+	    if (metaObj) {
+		metaName = metaObj.getAttribute(nodePropertyNames.Attributes.name);
+	    }
             objDescriptor = {
                 id: node.getId(),
+		type: metaName,
                 name: node.getAttribute(nodePropertyNames.Attributes.name),
                 childrenIds: node.getChildrenIds(),
                 parentId: node.getParentId(),
                 isConnection: GMEConcepts.isConnection(nodeId)
             };
+	    if (objDescriptor.type == 'Container') {
+		objDescriptor.parentId = null; // since we're not showing deployments, containers have no parent
+	    }
         }
 
         return objDescriptor;
