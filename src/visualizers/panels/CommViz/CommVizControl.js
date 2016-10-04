@@ -137,7 +137,7 @@
 		objDescriptor.pointerName = connectionToPtrMap[objDescriptor.type];
 		objDescriptor.connection = node.getPointer(objDescriptor.pointerName);
 	    }
-	    if (objDescriptor.type == 'Container') {
+	    if (objDescriptor.type == 'Container' || objDescriptor.type == 'Deployment') {
 		objDescriptor.parentId = null; // since we're not showing deployments, containers have no parent
 	    }
         }

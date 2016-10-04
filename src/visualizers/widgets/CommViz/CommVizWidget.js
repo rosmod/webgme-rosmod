@@ -34,56 +34,11 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 
 	regCose( cytoscape );
 
-	this._cy = cytoscape({
+	this._graph_elements = [];
+
+	this._cytoscape_options = {
 	    container: this._el,
-
-	    /*
-            style: [
-		{
-		    selector: 'node',
-		    style: {
-			'background-color': '#ad1a66'
-		    }
-		},
-
-		{
-		    selector: ':parent',
-		    style: {
-			'background-opacity': 0.333
-		    }
-		},
-
-		{
-		    selector: 'edge',
-		    style: {
-			'width': 3,
-			'line-color': '#ad1a66'
-		    }
-		},
-	    ],
-	    */
 	    style: "\n\n\n* {\n    font-size: 10pt;\n}\n\nnode { /* all nodes */\n    content: data(label);\n    shape: roundrectangle;\n    text-valign: center;\n    text-halign: center;\n    width: 100px;\n    height: 60px;\n    text-wrap: wrap;\n    text-max-width: 90px;\n}\n\n$node > node { /* compounds. \"Nodes\" in meta model. $ selects the parent node that has a node instead of the node (as css would) */\n    padding-top: 10px;\n    padding-left: 10px;\n    padding-bottom: 10px;\n    padding-right: 10px;\n    text-valign: top;\n    text-halign: center;\n}\n\n[type=\"nodeGroup\"] {\n    events: no; /* disable click, drag etc as this is just a frame */\n}\n\n[type=\"node\"] {\n    background-color: #B4DCED;\n    color: #3399CC;\n    font-weight: bold;\n\n}\n\n[type=\"serviceInstance\"] {\n    background-color: #E8F8FF;\n    color: #3399CC;\n    font-weight: bold;\n    shadow-blur: 0;\n    shadow-color: #000;\n    shadow-offset-x: 2px;\n    shadow-offset-y: 2px;\n    shadow-opacity: 0.5;\n}\n[type=\"communicationInstance\"] {\n    color: #F4EFDC;\n    line-color: #3399CC;\n    target-arrow-color: #3399CC;\n}\n\n[type=\"nodeGroup\"] {\n    color: #3399CC;\n    background-color: white;\n    border-style: dotted;\n    border-color: #39588A;\n    border-width: 2px;\n    font-weight: bold;\n}\n\nedge {\n    label: data(label);\n    color: black;\n    font-weight: bold;\n    target-arrow-shape: triangle-backcurve;\n    curve-style: bezier; /* supports arrows */\n    width: 2px;\n}\n\n:selected {\n    background-color: black;\n    line-color: black;\n    target-arrow-color: black;\n    source-arrow-color: red;\n}\n\n:touch {\n    border-width: 2px;\n}\n\n\n",
-	    /*
-	    style: [ // the stylesheet for the graph
-		{
-		    selector: 'node',
-		    style: {
-			'background-color': '#666',
-			'label': 'data(id)'
-		    }
-		},
-
-		{
-		    selector: 'edge',
-		    style: {
-			'width': 3,
-			'line-color': '#ccc',
-			'target-arrow-color': '#ccc',
-			'target-arrow-shape': 'triangle'
-		    }
-		}
-	    ],
-	    */
 	    // interaction options:
 	    minZoom: 1e-50,
 	    maxZoom: 1e50,
@@ -109,13 +64,12 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 	    motionBlurOpacity: 0.2,
 	    wheelSensitivity: 1,
 	    pixelRatio: 'auto'	    
-	});
+	};
 
 	this._layout_options = {
-	    'name': 'grid'
-	    //'name': 'cose-bilkent',
-	    //tile: false
+	    'name': 'cose'
 	    /*
+	    'name': 'cose-bilkent',
 	    // Called on `layoutready`
 	    ready: function () {
 	    },
@@ -156,7 +110,8 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 	    gravityRange: 3.8
 	    */
 	};
-	this._cy.layout( this._layout_options );
+	this._cytoscape_options.layout = self._layout_options;
+	this._cy = cytoscape(self._cytoscape_options);
     };
 
     CommVizWidget.prototype.onWidgetContainerResize = function (width, height) {
@@ -175,6 +130,7 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 	if (connectionTypes.indexOf(desc.type) > -1) {
 	    if (!self.connections[desc.connection.to]) {
 		//self._logger.error('adding msg/srv ' + desc.connection.to);
+		//self._graph_elements.push({
 		self._cy.add({
 		    group: 'nodes',
 		    data: {
@@ -186,6 +142,7 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 	    self.connections[desc.connection.to].push(desc);
 	    if (desc.type == 'Publisher' || desc.type == 'Client') {
 		//self._logger.error('adding edge from pub/client ' + desc.name);
+		//self._graph_elements.push({
 		self._cy.add({
 		    group: 'edges',
 		    data: {
@@ -198,6 +155,7 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 	    }
 	    else {
 		//self._logger.error('adding edge from sub/serv ' + desc.name);
+		//self._graph_elements.push({
 		self._cy.add({
 		    group: 'edges',
 		    data: {
@@ -220,19 +178,12 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 		    label: desc.name,
 		}
 	    };
+	    //self._logger.error(node);
+	    self._graph_elements.push(node);
 	    self._cy.add(node);
 	    if (self.childNodes[desc.id] && self.childNodes[desc.id].length) {
 		self.childNodes[desc.id].map(function(childDesc) {
 		    self.createNode(childDesc);
-		    var edge = {
-			group: 'edges',
-			data: {
-			    id: desc.id + childDesc.id,
-			    source: desc.id,
-			    target: childDesc.id
-			}
-		    };
-		    //self._cy.add(edge);
 		});
 		self.childNodes[desc.id] = [];
 	    }
@@ -243,12 +194,13 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
     CommVizWidget.prototype.addNode = function (desc) {
 	var self = this;
         if (desc && desc.type != 'Deployment') {
-	    self._logger.debug(desc.name + ' parent: '+ desc.parentId);
+	    //self._logger.error(desc.name + ', ' + desc.id + ' parent: '+ desc.parentId);
             // Add node to a table of nodes
             self.nodes[desc.id] = desc;
 	    if (!desc.parentId || self.nodes[desc.parentId]) {
 		self.createNode(desc);
-	    	self._cy.layout(self._layout_options);
+		self._cytoscape_options.elements = self._graph_elements;
+		self._cy.layout(self._layout_options);
 	    }
 	    else {
 		if (self.childNodes[desc.parentId] === undefined) {
