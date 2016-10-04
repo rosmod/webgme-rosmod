@@ -124,69 +124,52 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 	'Client',
 	'Server'
     ];
+
+    CommVizWidget.prototype.createEdge = function(from, to, type) {
+	var self = this;
+	self._cy.add({
+	    group: 'edges',
+	    data: {
+		id: from.id + to.id,
+		type: type,
+		source: from.id,
+		target: to.id
+	    }
+	});
+    }
     
     CommVizWidget.prototype.createNode = function(desc) {
 	var self = this;
-	if (connectionTypes.indexOf(desc.type) > -1) {
-	    if (!self.connections[desc.connection.to]) {
-		//self._logger.error('adding msg/srv ' + desc.connection.to);
-		//self._graph_elements.push({
-		self._cy.add({
-		    group: 'nodes',
-		    data: {
-			id: desc.connection.to
-		    }
-		});
-		self.connections[desc.connection.to] = [];
+	var node = {
+	    group: 'nodes',
+	    data: {
+		id: desc.id,
+		parent: desc.parentId,
+		type: desc.type,
+		name: desc.name,
+		label: desc.name,
 	    }
-	    self.connections[desc.connection.to].push(desc);
-	    if (desc.type == 'Publisher' || desc.type == 'Client') {
-		//self._logger.error('adding edge from pub/client ' + desc.name);
-		//self._graph_elements.push({
-		self._cy.add({
-		    group: 'edges',
-		    data: {
-			id: desc.id + desc.connection.to,
-			type: desc.pointerName,
-			source: desc.parentId,
-			target: desc.connection.to
-		    }
-		});
-	    }
-	    else {
-		//self._logger.error('adding edge from sub/serv ' + desc.name);
-		//self._graph_elements.push({
-		self._cy.add({
-		    group: 'edges',
-		    data: {
-			id: desc.id + desc.connection.to,
-			type: desc.pointerName,
-			source: desc.connection.to,
-			target: desc.parentId
-		    }
-		});
-	    }
+	};
+	//self._logger.error(node);
+	self._graph_elements.push(node);
+	self._cy.add(node);
+	if (self.childNodes[desc.id] && self.childNodes[desc.id].length) {
+	    self.childNodes[desc.id].map(function(childDesc) {
+		self.createNode(childDesc);
+	    });
+	    self.childNodes[desc.id] = [];
 	}
-	else {
-	    var node = {
-		group: 'nodes',
-		data: {
-		    id: desc.id,
-		    parent: desc.parentId,
-		    type: desc.type,
-		    name: desc.name,
-		    label: desc.name,
+	if (self.connections[desc.id] && self.connections[desc.id].length) {
+	    for (var i=0; i< self.connections[desc.id].length; i++) {
+		var connDesc = self.connections[desc.id][i];
+		if (connDesc.type == 'Publisher' || connDesc.type == 'Client') {
+		    self.createEdge(self.nodes[connDesc.parentId], desc, connDesc.pointerName);
 		}
-	    };
-	    //self._logger.error(node);
-	    self._graph_elements.push(node);
-	    self._cy.add(node);
-	    if (self.childNodes[desc.id] && self.childNodes[desc.id].length) {
-		self.childNodes[desc.id].map(function(childDesc) {
-		    self.createNode(childDesc);
-		});
-		self.childNodes[desc.id] = [];
+		else {
+		    self.createEdge(desc, self.nodes[connDesc.parentId], connDesc.pointerName);
+		}
 	    }
+	    self.connections[desc.id] = [];
 	}
     };
 
@@ -197,7 +180,23 @@ define(['./cytoscape.min','./cola.min','cose_bilkent/cytoscape-cose-bilkent', 'q
 	    //self._logger.error(desc.name + ', ' + desc.id + ' parent: '+ desc.parentId);
             // Add node to a table of nodes
             self.nodes[desc.id] = desc;
-	    if (!desc.parentId || self.nodes[desc.parentId]) {
+	    if (connectionTypes.indexOf(desc.type) > -1) {
+		if (!self.nodes[desc.connection]) {
+		    if (self.connections[desc.connection] == undefined) {
+			self.connections[desc.connection] = [];
+		    }
+		    self.connections[desc.connection].push(desc);
+		}
+		else {
+		    if (desc.type == 'Publisher' || desc.type == 'Client') {
+			self.createEdge(self.nodes[desc.parentId], self.nodes[desc.connection], desc.pointerName);
+		    }
+		    else {
+			self.createEdge(self.nodes[desc.connection], self.nodes[desc.parentId], desc.pointerName);
+		    }
+		}
+	    }
+	    else if (!desc.parentId || self.nodes[desc.parentId]) {
 		self.createNode(desc);
 		self._cytoscape_options.elements = self._graph_elements;
 		self._cy.layout(self._layout_options);

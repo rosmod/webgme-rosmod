@@ -95,7 +95,9 @@
 	'Publisher',
 	'Subscriber',
 	'Client',
-	'Server'
+	'Server',
+	'Message',
+	'Service'
     ];
 
     var connectionTypes = [
@@ -135,9 +137,11 @@
             };
 	    if (connectionTypes.indexOf(objDescriptor.type) > -1) {
 		objDescriptor.pointerName = connectionToPtrMap[objDescriptor.type];
-		objDescriptor.connection = node.getPointer(objDescriptor.pointerName);
+		objDescriptor.connection = node.getPointer(objDescriptor.pointerName).to;
+		this._selfPatterns[objDescriptor.connection] = {children: 0};
+		this._client.updateTerritory(this._territoryId, this._selfPatterns)
 	    }
-	    if (objDescriptor.type == 'Container' || objDescriptor.type == 'Deployment') {
+	    if (objDescriptor.type == 'Container' || objDescriptor.type == 'Deployment' || objDescriptor.type == 'Message' || objDescriptor.type == 'Service') {
 		objDescriptor.parentId = null; // since we're not showing deployments, containers have no parent
 	    }
         }
