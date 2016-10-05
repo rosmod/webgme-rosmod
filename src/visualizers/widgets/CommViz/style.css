@@ -1,0 +1,78 @@
+* {
+    font-size: 10pt;
+}
+
+node { /* all nodes */
+    content: data(label);
+    shape: roundrectangle;
+    text-valign: center;
+    text-halign: center;
+    width: 100px;
+    height: 60px;
+    text-wrap: wrap;
+    text-max-width: 90px;
+}
+
+$node > node { /* compounds. \"Nodes\" in meta model. $ selects the parent node that has a node instead of the node (as css would) */
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    text-valign: top;
+    text-halign: center;
+}
+
+[type=\"nodeGroup\"] {
+    events: no; /* disable click, drag etc as this is just a frame */
+}
+[type=\"Node\"] {
+    background-color: #B4DCED;
+    color: #3399CC;
+    font-weight: bold;
+
+}
+[type=\"Component\"] {
+    background-color: #E8F8FF;
+    color: #3399CC;
+    font-weight: bold;
+    shadow-blur: 0;
+    shadow-color: #000;
+    shadow-offset-x: 2px;
+    shadow-offset-y: 2px;
+    shadow-opacity: 0.5;
+}
+[type=\"Message\"] {
+    background-color: #E8FFF8;
+    color: #33CC99;
+    font-weight: bold;
+    line-color: #A4FFB4;
+    target-arrow-color: #A4FFB4;
+}
+[type=\"Service\"] {
+    background-color: #FFE8F8;
+    color: #CC3399;
+    font-weight: bold;
+    line-color: #FFA4B4;
+    target-arrow-color: #FFA4B4;
+}
+edge {
+    label: data(label);
+    color: black;
+    font-weight: bold;
+    target-arrow-shape: triangle-backcurve;
+    curve-style: bezier; /* supports arrows */
+    width: 2px;
+}
+
+:selected {
+    background-color: black;
+    line-color: black;
+    target-arrow-color: black;
+    source-arrow-color: red;
+}
+
+:touch {
+    border-width: 2px;
+}
+
+

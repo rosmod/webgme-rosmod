@@ -28,6 +28,7 @@ config.seedProjects.basePaths = ["./src/seeds"]
 config.requirejsPaths.rosmod = "./src/common/"
 //config.requirejsPaths.cytoscape = "./node_modules/cytoscape/"
 config.requirejsPaths.plottable = "./node_modules/plottable/"
+config.requirejsPaths.handlebars = "./node_modules/handlebars/"
 config.requirejsPaths.cose_bilkent = "./node_modules/cytoscape-cose-bilkent/"
 
 // Default Project
