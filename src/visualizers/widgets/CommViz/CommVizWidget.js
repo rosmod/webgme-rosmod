@@ -153,7 +153,10 @@ define([
 	    var nhood = node.closedNeighborhood();
 
 	    self._cy.batch(function(){
-		self._cy.elements().not( nhood ).removeClass('highlighted').addClass('faded');
+		self._cy.elements("edge").not( nhood ).removeClass('highlighted').addClass('faded');
+		self._cy.elements('[NodeType="Component"]').not( nhood ).removeClass('highlighted').addClass('faded');
+		self._cy.elements('[NodeType="Message"]').not( nhood ).removeClass('highlighted').addClass('faded');
+		self._cy.elements('[NodeType="Service"]').not( nhood ).removeClass('highlighted').addClass('faded');
 		nhood.removeClass('faded').addClass('highlighted');
 		
 		var npos = node.position();

@@ -8,3 +8,8 @@
 
 .comm-viz {
   outline: none; }
+
+#cy {
+    active-bg-color: #fff;
+    active-bg-opacity: 0.333;
+}
