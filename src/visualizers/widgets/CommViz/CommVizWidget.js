@@ -19,430 +19,487 @@ define([
 	styleText,
 	Handlebars,
 	Q) {
-    'use strict';
+	'use strict';
 
-    var CommVizWidget,
-        WIDGET_CLASS = 'comm-viz';
+	var CommVizWidget,
+            WIDGET_CLASS = 'comm-viz';
 
-    CommVizWidget = function (logger, container) {
-        this._logger = logger.fork('Widget');
+	CommVizWidget = function (logger, container) {
+            this._logger = logger.fork('Widget');
 
-        this._el = container;
+            this._el = container;
 
-        this.nodes = {};
-	this.childNodes = {};
-	this.connections = {};
-        this._initialize();
+            this.nodes = {};
+	    this.dependencies = {
+		'nodes': {},
+		'edges': {}
+	    };
+	    this.waitingNodes = {};
+            this._initialize();
 
-        this._logger.debug('ctor finished');
-    };
-
-    CommVizWidget.prototype._initialize = function () {
-        var width = this._el.width(),
-            height = this._el.height(),
-            self = this;
-
-        // set widget class
-        this._el.addClass(WIDGET_CLASS);
-
-	regCose( cytoscape );
-
-	this._graph_elements = [];
-
-	this._cytoscape_options = {
-	    container: this._el,
-	    style: styleText,
-	    // interaction options:
-	    minZoom: 1e-50,
-	    maxZoom: 1e50,
-	    zoomingEnabled: true,
-	    userZoomingEnabled: true,
-	    panningEnabled: true,
-	    userPanningEnabled: true,
-	    boxSelectionEnabled: true,
-	    selectionType: 'single',
-	    touchTapThreshold: 8,
-	    desktopTapThreshold: 4,
-	    autolock: false,
-	    autoungrabify: false,
-	    autounselectify: false,
-
-	    // rendering options:
-	    headless: false,
-	    styleEnabled: true,
-	    hideEdgesOnViewport: false,
-	    hideLabelsOnViewport: false,
-	    textureOnViewport: false,
-	    motionBlur: false,
-	    motionBlurOpacity: 0.2,
-	    wheelSensitivity: 1,
-	    pixelRatio: 'auto'	    
+            this._logger.debug('ctor finished');
 	};
 
-	var self = this;
+	CommVizWidget.prototype._initialize = function () {
+            var width = this._el.width(),
+		height = this._el.height(),
+		self = this;
 
-	this._layout_options = {
-	    'name': 'cose',
-	    // Called on `layoutready`
-	    ready: function () {
-		self._cy.nodes().forEach(function(node) {
-		    var p = node.position();
-		    node.data('orgPos',{
-			x: p.x,
-			y: p.y
+            // set widget class
+            this._el.addClass(WIDGET_CLASS);
+
+	    this._el.append('<div id="cy"></div>');
+	    this._cy_container = this._el.find('#cy');
+
+	    // add reset and filter buttons
+	    this._el.append('<button id="reset" class="btn btn-default"><i class="fa fa-arrows-h"></i></button>');
+	    this._el.append('<button id="filter" class="btn btn-default" data-hasqtip="0"><i class="fa fa-filter"></i></button>');
+	    this._el.append('<button id="re_layout" class="btn btn-default"><i class="fa fa-align-justify"></i></button>');
+
+	    regCose( cytoscape );
+
+	    this._cytoscape_options = {
+		container: this._cy_container,
+		style: styleText,
+		// interaction options:
+		minZoom: 1e-50,
+		maxZoom: 1e50,
+		zoomingEnabled: true,
+		userZoomingEnabled: true,
+		panningEnabled: true,
+		userPanningEnabled: true,
+		boxSelectionEnabled: false,
+		selectionType: 'single',
+		touchTapThreshold: 8,
+		desktopTapThreshold: 4,
+		autolock: false,
+		autoungrabify: false,
+		autounselectify: false,
+
+		// rendering options:
+		headless: false,
+		styleEnabled: true,
+		hideEdgesOnViewport: false,
+		hideLabelsOnViewport: false,
+		textureOnViewport: false,
+		motionBlur: false,
+		motionBlurOpacity: 0.2,
+		wheelSensitivity: 1,
+		pixelRatio: 'auto'	    
+	    };
+
+	    var self = this;
+
+	    this._layout_options = {
+		'name': 'cose',
+		// Called on `layoutready`
+		ready: function () {
+		    self._cy.nodes().forEach(function(node) {
+			var p = node.position();
+			node.data('orgPos',{
+			    x: p.x,
+			    y: p.y
+			});
 		    });
+		},
+		/*
+		  'name': 'cose-bilkent',
+		  // Called on `layoutstop`
+		  stop: function () {
+		  },
+		  // Whether to fit the network view after when done
+		  fit: true,
+		  // Padding on fit
+		  padding: 10,
+		  // Whether to enable incremental mode
+		  randomize: true,
+		  // Node repulsion (non overlapping) multiplier
+		  nodeRepulsion: 4500,
+		  // Ideal edge (non nested) length
+		  idealEdgeLength: 50,
+		  // Divisor to compute edge forces
+		  edgeElasticity: 0.45,
+		  // Nesting factor (multiplier) to compute ideal edge length for nested edges
+		  nestingFactor: 0.1,
+		  // Gravity force (constant)
+		  gravity: 0.25,
+		  // Maximum number of iterations to perform
+		  numIter: 2500,
+		  // For enabling tiling
+		  tile: true,
+		  // Type of layout animation. The option set is {'during', 'end', false}
+		  animate: 'end',
+		  // Represents the amount of the vertical space to put between the zero degree members during the tiling operation(can also be a function)
+		  tilingPaddingVertical: 10,
+		  // Represents the amount of the horizontal space to put between the zero degree members during the tiling operation(can also be a function)
+		  tilingPaddingHorizontal: 10,
+		  // Gravity range (constant) for compounds
+		  gravityRangeCompound: 1.5,
+		  // Gravity force (constant) for compounds
+		  gravityCompound: 1.0,
+		  // Gravity range (constant)
+		  gravityRange: 3.8
+		*/
+	    };
+	    this._cytoscape_options.layout = self._layout_options;
+	    this._cy = cytoscape(self._cytoscape_options);
+
+	    // copied from the wine and cheese demo
+	    var infoTemplate = Handlebars.compile([
+		'<p class="ac-name">{{name}}</p>',
+		'<p class="ac-node-type"><i class="fa fa-info-circle"></i> {{NodeTypeFormatted}} {{#if Type}}({{Type}}){{/if}}</p>',
+		'{{#if Milk}}<p class="ac-milk"><i class="fa fa-angle-double-right"></i> {{Milk}}</p>{{/if}}',
+		'{{#if Country}}<p class="ac-country"><i class="fa fa-map-marker"></i> {{Country}}</p>{{/if}}',
+		'<p class="ac-more"><i class="fa fa-external-link"></i> <a target="_blank" href="https://duckduckgo.com/?q={{name}}">More information</a></p>'
+	    ].join(''));
+	    
+	    var layoutPadding = 50;
+	    var layoutDuration = 500;
+
+	    function highlight( node ){
+		var nhood = node.closedNeighborhood();
+
+		self._cy.batch(function(){
+		    self._cy.elements("edge").not( nhood ).removeClass('highlighted').addClass('faded');
+		    self._cy.elements('[NodeType="Component"]').not( nhood ).removeClass('highlighted').addClass('faded');
+		    self._cy.elements('[NodeType="Message"]').not( nhood ).removeClass('highlighted').addClass('faded');
+		    self._cy.elements('[NodeType="Service"]').not( nhood ).removeClass('highlighted').addClass('faded');
+		    nhood.removeClass('faded').addClass('highlighted');
+		    
+		    var npos = node.position();
+		    var w = window.innerWidth;
+		    var h = window.innerHeight;
+
+		    self._cy.stop().animate({
+			fit: {
+			    eles: self._cy.elements(),
+			    padding: layoutPadding
+			}
+		    }, {
+			duration: layoutDuration
+		    }).delay( layoutDuration, function(){
+			nhood.layout({
+			    name: 'concentric',
+			    padding: layoutPadding,
+			    animate: true,
+			    animationDuration: layoutDuration,
+			    boundingBox: {
+				x1: npos.x - w/2,
+				x2: npos.x + w/2,
+				y1: npos.y - w/2,
+				y2: npos.y + w/2
+			    },
+			    fit: true,
+			    concentric: function( n ){
+				if( node.id() === n.id() ){
+				    return 2;
+				} else {
+				    return 1;
+				}
+			    },
+			    levelWidth: function(){
+				return 1;
+			    }
+			});
+		    } );
+		    
 		});
-	    },
-	    /*
-	    'name': 'cose-bilkent',
-	    // Called on `layoutstop`
-	    stop: function () {
-	    },
-	    // Whether to fit the network view after when done
-	    fit: true,
-	    // Padding on fit
-	    padding: 10,
-	    // Whether to enable incremental mode
-	    randomize: true,
-	    // Node repulsion (non overlapping) multiplier
-	    nodeRepulsion: 4500,
-	    // Ideal edge (non nested) length
-	    idealEdgeLength: 50,
-	    // Divisor to compute edge forces
-	    edgeElasticity: 0.45,
-	    // Nesting factor (multiplier) to compute ideal edge length for nested edges
-	    nestingFactor: 0.1,
-	    // Gravity force (constant)
-	    gravity: 0.25,
-	    // Maximum number of iterations to perform
-	    numIter: 2500,
-	    // For enabling tiling
-	    tile: true,
-	    // Type of layout animation. The option set is {'during', 'end', false}
-	    animate: 'end',
-	    // Represents the amount of the vertical space to put between the zero degree members during the tiling operation(can also be a function)
-	    tilingPaddingVertical: 10,
-	    // Represents the amount of the horizontal space to put between the zero degree members during the tiling operation(can also be a function)
-	    tilingPaddingHorizontal: 10,
-	    // Gravity range (constant) for compounds
-	    gravityRangeCompound: 1.5,
-	    // Gravity force (constant) for compounds
-	    gravityCompound: 1.0,
-	    // Gravity range (constant)
-	    gravityRange: 3.8
-	    */
-	};
-	this._cytoscape_options.layout = self._layout_options;
-	this._cy = cytoscape(self._cytoscape_options);
+	    }
 
-	// copied from the wine and cheese demo
+	    function clear(){
+		self._cy.batch(function(){
+		    self._cy.$('.highlighted').forEach(function(n){
+			n.animate({
+			    position: n.data('orgPos')
+			});
+		    });
+		    
+		    self._cy.elements().removeClass('highlighted').removeClass('faded');
+		});
+	    }
 
-	
-	var infoTemplate = Handlebars.compile([
-	    '<p class="ac-name">{{name}}</p>',
-	    '<p class="ac-node-type"><i class="fa fa-info-circle"></i> {{NodeTypeFormatted}} {{#if Type}}({{Type}}){{/if}}</p>',
-	    '{{#if Milk}}<p class="ac-milk"><i class="fa fa-angle-double-right"></i> {{Milk}}</p>{{/if}}',
-	    '{{#if Country}}<p class="ac-country"><i class="fa fa-map-marker"></i> {{Country}}</p>{{/if}}',
-	    '<p class="ac-more"><i class="fa fa-external-link"></i> <a target="_blank" href="https://duckduckgo.com/?q={{name}}">More information</a></p>'
-	].join(''));
-	
-	var layoutPadding = 50;
-	var layoutDuration = 500;
+	    function showNodeInfo( node ){
+		$('#info').html( infoTemplate( node.data() ) ).show();
+	    }
+	    
+	    function hideNodeInfo(){
+		$('#info').hide();
+	    }
 
-	function highlight( node ){
-	    var nhood = node.closedNeighborhood();
-
-	    self._cy.batch(function(){
-		self._cy.elements("edge").not( nhood ).removeClass('highlighted').addClass('faded');
-		self._cy.elements('[NodeType="Component"]').not( nhood ).removeClass('highlighted').addClass('faded');
-		self._cy.elements('[NodeType="Message"]').not( nhood ).removeClass('highlighted').addClass('faded');
-		self._cy.elements('[NodeType="Service"]').not( nhood ).removeClass('highlighted').addClass('faded');
-		nhood.removeClass('faded').addClass('highlighted');
+	    
+	    self._cy.on('free', 'node', function( e ){
+		var n = e.cyTarget;
+		var p = n.position();
 		
-		var npos = node.position();
-		var w = window.innerWidth;
-		var h = window.innerHeight;
+		n.data('orgPos', {
+		    x: p.x,
+		    y: p.y
+		});
+	    });
+	    
+	    self._cy.on('tap', function(){
+		$('#search').blur();
+	    });
 
-		self._cy.stop().animate({
+	    self._cy.on('select', 'node', function(e){
+		var node = this;
+
+		highlight( node );
+		showNodeInfo( node );
+	    });
+
+	    self._cy.on('unselect', 'node', function(e){
+		var node = this;
+
+		clear();
+		hideNodeInfo();
+	    });
+
+	    self._el.find('#re_layout').on('click', function(){
+		self._cy.layout(self._layout_options);
+	    });
+	    
+	    self._el.find('#reset').on('click', function(){
+		self._cy.animate({
 		    fit: {
 			eles: self._cy.elements(),
 			padding: layoutPadding
-		    }
-		}, {
+		    },
 		    duration: layoutDuration
-		}).delay( layoutDuration, function(){
-		    nhood.layout({
-			name: 'concentric',
-			padding: layoutPadding,
-			animate: true,
-			animationDuration: layoutDuration,
-			boundingBox: {
-			    x1: npos.x - w/2,
-			    x2: npos.x + w/2,
-			    y1: npos.y - w/2,
-			    y2: npos.y + w/2
-			},
-			fit: true,
-			concentric: function( n ){
-			    if( node.id() === n.id() ){
-				return 2;
-			    } else {
-				return 1;
+		});
+	    });
+	    
+	    self._el.find('#filters').on('click', 'input', function(){
+		
+		var soft = $('#soft').is(':checked');
+		var semiSoft = $('#semi-soft').is(':checked');
+		var na = $('#na').is(':checked');
+		var semiHard = $('#semi-hard').is(':checked');
+		var hard = $('#hard').is(':checked');
+		
+		var red = $('#red').is(':checked');
+		var white = $('#white').is(':checked');
+		var cider = $('#cider').is(':checked');
+		
+		cy.batch(function(){
+		    
+		    cy.nodes().forEach(function( n ){
+			var type = n.data('NodeType');
+			
+			n.removeClass('filtered');
+			
+			var filter = function(){
+			    n.addClass('filtered');
+			};
+			
+			if( type === 'Cheese' ){
+			    
+			    var cType = n.data('Type');
+			    
+			    if( 
+				(cType === 'Soft' && !soft)
+				    || (cType === 'Semi-soft' && !semiSoft)
+				    || (cType === undefined && !na)
+				    || (cType === 'Semi-hard' && !semiHard)
+				    || (cType === 'Hard' && !hard)
+			    ){
+				filter();
 			    }
-			},
-			levelWidth: function(){
-			    return 1;
-			}
-		    });
-		} );
-		
-	    });
-	}
-
-	function clear(){
-	    self._cy.batch(function(){
-		self._cy.$('.highlighted').forEach(function(n){
-		    n.animate({
-			position: n.data('orgPos')
-		    });
-		});
-		
-		self._cy.elements().removeClass('highlighted').removeClass('faded');
-	    });
-	}
-
-	function showNodeInfo( node ){
-	    $('#info').html( infoTemplate( node.data() ) ).show();
-	}
-	
-	function hideNodeInfo(){
-	    $('#info').hide();
-	}
-
-	
-	self._cy.on('free', 'node', function( e ){
-	    var n = e.cyTarget;
-	    var p = n.position();
-	    
-	    n.data('orgPos', {
-		x: p.x,
-		y: p.y
-	    });
-	});
-	
-	self._cy.on('tap', function(){
-	    $('#search').blur();
-	});
-
-	self._cy.on('select', 'node', function(e){
-	    var node = this;
-
-	    highlight( node );
-	    showNodeInfo( node );
-	});
-
-	self._cy.on('unselect', 'node', function(e){
-	    var node = this;
-
-	    clear();
-	    hideNodeInfo();
-	});
-
-	$('#reset').on('click', function(){
-	    cy.animate({
-		fit: {
-		    eles: cy.elements(),
-		    padding: layoutPadding
-		},
-		duration: layoutDuration
-	    });
-	});
-	
-	$('#filters').on('click', 'input', function(){
-	    
-	    var soft = $('#soft').is(':checked');
-	    var semiSoft = $('#semi-soft').is(':checked');
-	    var na = $('#na').is(':checked');
-	    var semiHard = $('#semi-hard').is(':checked');
-	    var hard = $('#hard').is(':checked');
-	    
-	    var red = $('#red').is(':checked');
-	    var white = $('#white').is(':checked');
-	    var cider = $('#cider').is(':checked');
-	    
-	    cy.batch(function(){
-		
-		cy.nodes().forEach(function( n ){
-		    var type = n.data('NodeType');
-		    
-		    n.removeClass('filtered');
-		    
-		    var filter = function(){
-			n.addClass('filtered');
-		    };
-		    
-		    if( type === 'Cheese' ){
-			
-			var cType = n.data('Type');
-			
-			if( 
-			    (cType === 'Soft' && !soft)
-				|| (cType === 'Semi-soft' && !semiSoft)
-				|| (cType === undefined && !na)
-				|| (cType === 'Semi-hard' && !semiHard)
-				|| (cType === 'Hard' && !hard)
-			){
-			    filter();
+			    
+			} else if( type === 'RedWine' ){
+			    
+			    if( !red ){ filter(); }
+			    
+			} else if( type === 'WhiteWine' ){
+			    
+			    if( !white ){ filter(); }
+			    
+			} else if( type === 'Cider' ){
+			    
+			    if( !cider ){ filter(); }
+			    
 			}
 			
-		    } else if( type === 'RedWine' ){
-			
-			if( !red ){ filter(); }
-			
-		    } else if( type === 'WhiteWine' ){
-			
-			if( !white ){ filter(); }
-			
-		    } else if( type === 'Cider' ){
-			
-			if( !cider ){ filter(); }
-			
-		    }
+		    });
 		    
 		});
 		
 	    });
-	    
-	});
-    };
-
-    CommVizWidget.prototype.onWidgetContainerResize = function (width, height) {
-        this._logger.debug('Widget is resizing...');
-    };
-    
-    var connectionTypes = [
-	'Publisher',
-	'Subscriber',
-	'Client',
-	'Server'
-    ];
-
-    CommVizWidget.prototype.createEdge = function(from, to, type) {
-	var self = this;
-	self._cy.add({
-	    group: 'edges',
-	    data: {
-		id: from.id + to.id,
-		type: type,
-		interaction: type,
-		source: from.id,
-		target: to.id
-	    }
-	});
-    }
-    
-    CommVizWidget.prototype.createNode = function(desc) {
-	var self = this;
-	var node = {
-	    group: 'nodes',
-	    data: {
-		id: desc.id,
-		parent: desc.parentId,
-		type: desc.type,
-		NodeType: desc.type,
-		name: desc.name,
-		label: desc.name,
-		orgPos: null
-	    }
 	};
-	//self._logger.error(node);
-	self._graph_elements.push(node);
-	self._cy.add(node);
-	if (self.childNodes[desc.id] && self.childNodes[desc.id].length) {
-	    self.childNodes[desc.id].map(function(childDesc) {
-		self.createNode(childDesc);
-	    });
-	    self.childNodes[desc.id] = [];
-	}
-	if (self.connections[desc.id] && self.connections[desc.id].length) {
-	    for (var i=0; i< self.connections[desc.id].length; i++) {
-		var connDesc = self.connections[desc.id][i];
-		if (connDesc.type == 'Publisher' || connDesc.type == 'Client') {
-		    self.createEdge(self.nodes[connDesc.parentId], desc, connDesc.type);
-		}
-		else {
-		    self.createEdge(desc, self.nodes[connDesc.parentId], connDesc.type);
-		}
-	    }
-	    self.connections[desc.id] = [];
-	}
-    };
 
-    // Adding/Removing/Updating items
-    CommVizWidget.prototype.addNode = function (desc) {
-	var self = this;
-        if (desc && desc.type != 'Deployment') {
-	    //self._logger.error(desc.name + ', ' + desc.id + ' parent: '+ desc.parentId);
-            // Add node to a table of nodes
-            self.nodes[desc.id] = desc;
-	    if (connectionTypes.indexOf(desc.type) > -1) {
-		if (!self.nodes[desc.connection]) {
-		    if (self.connections[desc.connection] == undefined) {
-			self.connections[desc.connection] = [];
-		    }
-		    self.connections[desc.connection].push(desc);
-		}
-		else {
-		    if (desc.type == 'Publisher' || desc.type == 'Client') {
-			self.createEdge(self.nodes[desc.parentId], self.nodes[desc.connection], desc.pointerName);
+	CommVizWidget.prototype.onWidgetContainerResize = function (width, height) {
+            this._logger.debug('Widget is resizing...');
+	};
+	
+	var connectionTypes = [
+	    'Publisher',
+	    'Subscriber',
+	    'Client',
+	    'Server'
+	];
+
+	CommVizWidget.prototype.checkDependencies = function(desc) {
+	    var self = this;
+	    // dependencies will always be either parentId (nodes & edges) or connection (edges)
+	    var deps = [];
+	    if (desc.parentId && !self.nodes[desc.parentId]) {
+		deps.push(desc.parentId);
+	    }
+	    if (desc.connection && !self.nodes[desc.connection]) {
+		deps.push(desc.connection);
+	    }
+	    var depsMet = (deps.length == 0);
+	    if (!depsMet) {
+		if (connectionTypes.indexOf(desc.type) > -1)
+		    self.dependencies.edges[desc.id] = deps;
+		else
+		    self.dependencies.nodes[desc.id] = deps;
+	    }
+	    return depsMet;
+	};
+
+	CommVizWidget.prototype.updateDependencies = function() {
+	    var self = this;
+	    var nodePaths = Object.keys(self.dependencies.nodes);
+	    var edgePaths = Object.keys(self.dependencies.edges);
+	    // create any nodes whose depenencies are fulfilled now
+	    nodePaths.map(function(nodePath) {
+		var depPaths = self.dependencies.nodes[nodePath];
+		if (depPaths && depPaths.length > 0) {
+		    depPaths = depPaths.filter(function(objPath) { return self.nodes[objPath] == undefined; });
+		    if (!depPaths.length) {
+			var desc = self.waitingNodes[nodePath];
+			self.waitingNodes[nodePath] = undefined;
+			self.dependencies.nodes[nodePath] = undefined;
+			self.createNode(desc);
 		    }
 		    else {
-			self.createEdge(self.nodes[desc.connection], self.nodes[desc.parentId], desc.pointerName);
+			self.dependencies.nodes[nodePath] = depPaths;
+		    }
+		}
+		else {
+		    self.dependencies.nodes[nodePath] = undefined;
+		}
+	    });
+	    // Create any edges whose dependencies are fulfilled now
+	    edgePaths.map(function(edgePath) {
+		var depPaths = self.dependencies.edges[edgePath];
+		if (depPaths && depPaths.length > 0) {
+		    depPaths = depPaths.filter(function(objPath) { return self.nodes[objPath] == undefined; });
+		    if (!depPaths.length) {
+			var connDesc = self.waitingNodes[edgePath];
+			self.waitingNodes[edgePath] = undefined;
+			self.dependencies.edges[edgePath] = undefined;
+			self.createEdge(connDesc);
+		    }
+		    else {
+			self.dependencies.edges[edgePath] = depPaths;
+		    }
+		}
+		else {
+		    self.dependencies.edges[edgePath] = undefined;
+		}
+	    });
+	};
+
+	// pub, sub, client, server are all edges
+	CommVizWidget.prototype.createEdge = function(desc) {
+	    var self = this;
+	    var type = desc.type;
+	    var from = self.nodes[desc.from];
+	    var to   = self.nodes[desc.to];
+	    if (from && to) {
+		self._cy.add({
+		    group: 'edges',
+		    data: {
+			id: from.id + to.id,
+			type: type,
+			interaction: type,
+			source: from.id,
+			target: to.id
+		    }
+		});
+		self._cy.layout(self._layout_options);
+		self.nodes[desc.id] = desc;
+		self.updateDependencies();
+	    }
+	};
+
+	// nodes are components, nodes, containers, messages, services
+	CommVizWidget.prototype.createNode = function(desc) {
+	    var self = this;
+	    var node = {
+		group: 'nodes',
+		data: {
+		    id: desc.id,
+		    parent: desc.parentId,
+		    type: desc.type,
+		    NodeType: desc.type,
+		    name: desc.name,
+		    label: desc.name,
+		    orgPos: null
+		}
+	    };
+	    self._cy.add(node);
+	    self._cy.layout(self._layout_options);
+	    self.nodes[desc.id] = desc;
+	    self.updateDependencies();
+	};
+
+	// Adding/Removing/Updating items
+	CommVizWidget.prototype.addNode = function (desc) {
+	    var self = this;
+            if (desc && desc.type != 'Deployment') {
+		var depsMet = self.checkDependencies(desc);
+		// Add node to a table of nodes
+		if (connectionTypes.indexOf(desc.type) > -1) {  // if this is actually an edge
+		    if (depsMet) { // ready to make edge
+			self.createEdge(desc);
+		    }
+		    else { // missing some dependencies (either parentId or connection)
+			self.waitingNodes[desc.id] = desc;
+		    }
+		}
+		else {
+		    if (depsMet) { // ready to make node
+			self.createNode(desc);
+		    }
+		    else {
+			self.waitingNodes[desc.id] = desc;
 		    }
 		}
 	    }
-	    else if (!desc.parentId || self.nodes[desc.parentId]) {
-		self.createNode(desc);
-		self._cytoscape_options.elements = self._graph_elements;
-		self._cy.layout(self._layout_options);
-	    }
-	    else {
-		if (self.childNodes[desc.parentId] === undefined) {
-		    self.childNodes[desc.parentId] = [];
-		}
-		self.childNodes[desc.parentId].push(desc);
-	    }
-	}
-    };
+	};
 
-    CommVizWidget.prototype.removeNode = function (gmeId) {
-        var desc = this.nodes[gmeId];
-        this._logger.debug('Removing node ' + desc.name);
-        delete this.nodes[gmeId];
-    };
+	CommVizWidget.prototype.removeNode = function (gmeId) {
+            var desc = this.nodes[gmeId];
+            this._logger.debug('Removing node ' + desc.name);
+	    //this._cy.remove("[id == " + gmeId + "]");
+            delete this.nodes[gmeId];
+	};
 
-    CommVizWidget.prototype.updateNode = function (desc) {
-        if (desc) {
-            this._logger.debug('Updating node:', desc);
-        }
-    };
+	CommVizWidget.prototype.updateNode = function (desc) {
+            if (desc) {
+		this._logger.debug('Updating node:', desc);
+            }
+	};
 
-    /* * * * * * * * Visualizer event handlers * * * * * * * */
+	/* * * * * * * * Visualizer event handlers * * * * * * * */
 
-    CommVizWidget.prototype.onBackgroundDblClick = function () {
-    };
+	CommVizWidget.prototype.onBackgroundDblClick = function () {
+	};
 
-    /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
-    CommVizWidget.prototype.destroy = function () {
-    };
+	/* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
+	CommVizWidget.prototype.destroy = function () {
+	};
 
-    CommVizWidget.prototype.onActivate = function () {
-        this._logger.debug('CommVizWidget has been activated');
-    };
+	CommVizWidget.prototype.onActivate = function () {
+            console.log('CommVizWidget has been activated');
+	};
 
-    CommVizWidget.prototype.onDeactivate = function () {
-        this._logger.debug('CommVizWidget has been deactivated');
-    };
+	CommVizWidget.prototype.onDeactivate = function () {
+            console.log('CommVizWidget has been deactivated');
+	};
 
-    return CommVizWidget;
-});
+	return CommVizWidget;
+    });

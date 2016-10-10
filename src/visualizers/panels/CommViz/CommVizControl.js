@@ -27,8 +27,7 @@
         // Initialize core collections and variables
         this._widget = options.widget;
 
-        this._currentNodeId = null;
-        this._currentNodeParentId = undefined;
+        this.currentNodeInfo = {id: null, children: [], parentId: null};
 
         this._initWidgetEventHandlers();
 
@@ -47,43 +46,51 @@
     // defines the parts of the project that the visualizer is interested in
     // (this allows the browser to then only load those relevant parts).
     CommVizControl.prototype.selectedObjectChanged = function (nodeId) {
-        var desc = this._getObjectDescriptor(nodeId),
-            self = this;
+        var self = this,
+	desc,
+	nodeName;
 
         self._logger.debug('activeObject nodeId \'' + nodeId + '\'');
 
-        // Remove current territory patterns
-        if (self._currentNodeId) {
-            self._client.removeUI(self._territoryId);
-        }
-
-        self._currentNodeId = nodeId;
-        self._currentNodeParentId = undefined;
-
-        if (typeof self._currentNodeId === 'string') {
-            // Put new node's info into territory rules
-            self._selfPatterns = {};
-            self._selfPatterns[nodeId] = {children: 0};  // Territory "rule"
-
-            self._widget.setTitle(desc.name.toUpperCase());
-
-            if (typeof desc.parentId === 'string') {
-                self.$btnModelHierarchyUp.show();
-            } else {
-                self.$btnModelHierarchyUp.hide();
+        if (nodeId && nodeId != this.currentNodeInfo.id) {
+            // Remove current territory patterns
+            if (self._territoryId) {
+		self._client.removeUI(self._territoryId);
             }
 
-            self._currentNodeParentId = desc.parentId;
+            // Put new node's info into territory rules
+            self._selfPatterns = {};
 
+            this.currentNodeInfo.id = nodeId;
+            this.currentNodeInfo.parentId = undefined;
+
+            desc = this._getObjectDescriptor(nodeId);
+	    if (!desc) {
+		self._client.updateTerritory(self._territoryId, self._selfPatterns);
+		return;
+	    }
+            nodeName = (desc && desc.name);
+            if (desc) {
+                this.currentNodeInfo.parentId = desc.parentId;
+            }
+
+            this._refreshBtnModelHierarchyUp();
+
+            self._selfPatterns[nodeId] = {children: 4};  // Territory "rule"
             self._territoryId = self._client.addUI(self, function (events) {
                 self._eventCallback(events);
             });
 
             // Update the territory
             self._client.updateTerritory(self._territoryId, self._selfPatterns);
+        }
+    };
 
-            self._selfPatterns[nodeId] = {children: 4};
-            self._client.updateTerritory(self._territoryId, self._selfPatterns);
+    CommVizControl.prototype._refreshBtnModelHierarchyUp = function () {
+        if (this.currentNodeInfo.id) {
+            this.$btnModelHierarchyUp.show();
+        } else {
+            this.$btnModelHierarchyUp.hide();
         }
     };
 
@@ -107,6 +114,15 @@
 	'Server'
     ];
 
+    var srcConnTypes = [
+	'Publisher',
+	'Client'
+    ];
+    var dstConnTypes = [
+	'Subscriber',
+	'Server'
+    ];
+
     var connectionToPtrMap = {
 	'Publisher': 'Message',
 	'Subscriber': 'Message',
@@ -114,11 +130,21 @@
 	'Server': 'Service'
     };
 
+    CommVizControl.prototype._nodeToEdge = function (desc) {
+	if (srcConnTypes.indexOf(desc.type) > -1) {
+	    desc.from = desc.parentId;
+	    desc.to = desc.connection;
+	}
+	else {
+	    desc.from = desc.connection;
+	    desc.to = desc.parentId;
+	}
+    };
 
     // This next function retrieves the relevant node information for the widget
     CommVizControl.prototype._getObjectDescriptor = function (nodeId) {
         var node = this._client.getNode(nodeId),
-            objDescriptor;
+            objDescriptor = null;
         if (node) {
 	    var metaObj = this._client.getNode(node.getMetaTypeId()),
 		metaName = undefined;
@@ -138,11 +164,15 @@
 	    if (connectionTypes.indexOf(objDescriptor.type) > -1) {
 		objDescriptor.pointerName = connectionToPtrMap[objDescriptor.type];
 		objDescriptor.connection = node.getPointer(objDescriptor.pointerName).to;
+		this._nodeToEdge(objDescriptor);
 		this._selfPatterns[objDescriptor.connection] = {children: 0};
 		this._client.updateTerritory(this._territoryId, this._selfPatterns)
 	    }
-	    if (objDescriptor.type == 'Container' || objDescriptor.type == 'Deployment' || objDescriptor.type == 'Message' || objDescriptor.type == 'Service') {
-		objDescriptor.parentId = null; // since we're not showing deployments, containers have no parent
+	    if (objDescriptor.type == 'Container' ||
+		objDescriptor.type == 'Deployment' ||
+		objDescriptor.type == 'Message' ||
+		objDescriptor.type == 'Service') {
+		objDescriptor.parentId = null;
 	    }
         }
 
@@ -179,12 +209,14 @@
 
     CommVizControl.prototype._onLoad = function (gmeId) {
         var description = this._getObjectDescriptor(gmeId);
-        this._widget.addNode(description);
+	if (description)
+            this._widget.addNode(description);
     };
 
     CommVizControl.prototype._onUpdate = function (gmeId) {
         var description = this._getObjectDescriptor(gmeId);
-        this._widget.updateNode(description);
+	if (description)
+            this._widget.updateNode(description);
     };
 
     CommVizControl.prototype._onUnload = function (gmeId) {
