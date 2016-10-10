@@ -29,22 +29,6 @@ define([
 
             this._el = container;
 
-            this.nodes = {};
-	    this.dependencies = {
-		'nodes': {},
-		'edges': {}
-	    };
-	    this.waitingNodes = {};
-            this._initialize();
-
-            this._logger.debug('ctor finished');
-	};
-
-	CommVizWidget.prototype._initialize = function () {
-            var width = this._el.width(),
-		height = this._el.height(),
-		self = this;
-
             // set widget class
             this._el.addClass(WIDGET_CLASS);
 
@@ -57,6 +41,23 @@ define([
 	    this._el.append('<button id="re_layout" class="btn btn-default"><i class="fa fa-align-justify"></i></button>');
 
 	    regCose( cytoscape );
+	    
+            this._initialize();
+
+            this._logger.debug('ctor finished');
+	};
+
+	CommVizWidget.prototype._initialize = function () {
+            var width = this._el.width(),
+		height = this._el.height(),
+		self = this;
+	    
+            this.nodes = {};
+	    this.dependencies = {
+		'nodes': {},
+		'edges': {}
+	    };
+	    this.waitingNodes = {};
 
 	    this._cytoscape_options = {
 		container: this._cy_container,
@@ -474,7 +475,7 @@ define([
 	CommVizWidget.prototype.removeNode = function (gmeId) {
             var desc = this.nodes[gmeId];
             this._logger.debug('Removing node ' + desc.name);
-	    //this._cy.remove("[id == " + gmeId + "]");
+	    this._cy.remove("[id == " + gmeId + "]");
             delete this.nodes[gmeId];
 	};
 
@@ -494,11 +495,11 @@ define([
 	};
 
 	CommVizWidget.prototype.onActivate = function () {
-            console.log('CommVizWidget has been activated');
+            //console.log('CommVizWidget has been activated');
 	};
 
 	CommVizWidget.prototype.onDeactivate = function () {
-            console.log('CommVizWidget has been deactivated');
+            //console.log('CommVizWidget has been deactivated');
 	};
 
 	return CommVizWidget;

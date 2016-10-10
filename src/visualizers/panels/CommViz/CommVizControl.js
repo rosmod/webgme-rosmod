@@ -57,6 +57,9 @@
             if (self._territoryId) {
 		self._client.removeUI(self._territoryId);
             }
+	    if (this.currentNodeInfo.id) {
+		this._widget._initialize();
+	    }
 
             // Put new node's info into territory rules
             self._selfPatterns = {};
