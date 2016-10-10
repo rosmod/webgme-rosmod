@@ -103,6 +103,13 @@ define([
 		},
 		// Called on `layoutstop`
 		stop: function () {
+		    self._cy.nodes().forEach(function(node) {
+			var p = node.position();
+			node.data('orgPos',{
+			    x: p.x,
+			    y: p.y
+			});
+		    });
 		},
 		// Whether to fit the network view after when done
 		fit: true,
