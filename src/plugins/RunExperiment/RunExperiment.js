@@ -331,8 +331,16 @@ define([
 		    "Servers": {}
 		};
 		config['Artifacts'].concat(JSON.parse(JSON.minify(comp['User Artifacts'])));
-		config['Artifacts'].push(ci.Logging['Component Log FileName']);
-		config['Artifacts'].push(ci.Logging['ROSMOD Log FileName']);
+		if (comp.EnableLogging) {
+		    config['Artifacts'].push(ci.Logging['Component Log FileName']);
+		    config['Artifacts'].push(ci.Logging['ROSMOD Log FileName']);
+		}
+		else {
+		    self.notify('warning', 'Component: '+comp.name+' on Node: '+node.name+' does not have logging enabled (EnableLogging = false), will not produce trace or user logs!');
+		}
+		if (comp.LoggingUnit > 100) {
+		    self.notify('warning', 'Component: '+comp.name+' on Node: '+node.name+' has LoggingUnit > 1, not all logs may be captured.');
+		}
 		if (comp.Timer_list) {
 		    comp.Timer_list.map(function(timer) {
 			var ti = {
