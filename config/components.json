@@ -1,4 +1,34 @@
 {
+    "FloatingActionButton": {
+	"hideOnEmpty": true,
+	"pluginUIConfigs": {
+	    "SoftwareGenerator": {
+		"icon": "code",
+		"priority": 12,
+		"color": "blue"
+	    },
+	    "TimingAnalysis": {
+		"icon": "schedule",
+		"priority": 10,
+		"color": "yellow"
+	    },
+	    "GenerateDocumentation": {
+		"icon": "book",
+		"priority": 11,
+		"color": "gray"
+	    },
+	    "RunExperiment": {
+		"icon": "check_circle",
+		"priority": 11,
+		"color": "green"
+	    },
+	    "StopExperiment": {
+		"icon": "highlight_off",
+		"priority": 10,
+		"color": "red"
+	    }
+	}
+    },
     "CodeEditor": {
 	"theme": "default",
 	"keyBinding": "sublime",
