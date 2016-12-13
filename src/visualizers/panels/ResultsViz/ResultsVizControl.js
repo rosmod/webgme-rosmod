@@ -105,10 +105,10 @@ define(['js/Constants',
             objDescriptor.name = nodeObj.getAttribute(nodePropertyNames.Attributes.name);
 	    objDescriptor.parser = nodeObj.getAttribute('User Parser');
 	    objDescriptor.attributes = nodeObj.getAttributeNames().filter((e) => {
-		return e !== 'name' && e.indexOf('trace') > -1;
+		return e.indexOf('trace_log') > -1;
 	    });
 	    objDescriptor.userLogs = nodeObj.getAttributeNames().filter((e) => {
-		return e !== 'name' && e !== 'User Parser' && e.indexOf('user') > -1;
+		return e.indexOf('user_log') > -1;
 	    });
             objDescriptor.childrenIds = nodeObj.getChildrenIds();
             objDescriptor.childrenNum = objDescriptor.childrenIds.length;

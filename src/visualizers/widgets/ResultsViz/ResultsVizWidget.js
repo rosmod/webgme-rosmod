@@ -78,13 +78,12 @@ define([
 	    };
 
 	    var tasks = desc.attributes.map((key) => {
-		var deferred = Q.defer();
 		var a = key;
 		// load the attribute
 		var nodeObj = this._client.getNode(desc.id);
 		var logHash = nodeObj.getAttribute(a);
 		if (logHash) {
-		    this._blobClient.getObjectAsString(logHash)
+		    return this._blobClient.getObjectAsString(logHash)
 			.then((data) => {
 			    desc.logs[a] = data;
 			    // parse the logs
@@ -101,19 +100,16 @@ define([
 				    last_time = last_entry[0];
 				}
 			    });
-			    deferred.resolve();
 			});
-		    return deferred.promise;
 		}
 	    });
-	    tasks.concat(desc.userLogs.map((key) => {
-		var deferred = Q.defer();
+	    var userTasks = desc.userLogs.map((key) => {
 		var a = key;
 		// load the attribute
 		var nodeObj = this._client.getNode(desc.id);
 		var logHash = nodeObj.getAttribute(a);
 		if (logHash) {
-		    this._blobClient.getObjectAsString(logHash)
+		    return this._blobClient.getObjectAsString(logHash)
 			.then((data) => {
 			    desc.logs[a] = data;
 			    // parse the logs
@@ -130,12 +126,13 @@ define([
 				    last_time = last_entry[0];
 				}
 			    });
-			    deferred.resolve();
 			});
-		    return deferred.promise;
 		}
-	    }));
-	    return Q.all(tasks)
+	    });
+	    return Q.allSettled(tasks)
+		.then(() => {
+		    return Q.allSettled(userTasks);
+		})
 		.then(() => {
 		    for (var a in desc.logs) {
 			// setup the html
