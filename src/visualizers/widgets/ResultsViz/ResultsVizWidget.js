@@ -160,7 +160,7 @@ define([
 			    aliases.map((key) => {
 				data[key].data.push([last_time, 0]);
 			    });
-			    this.plots.push(Plotter.plotData('#plot_'+a, data, offset));
+			    this.plots.push(Plotter.plotData('plot_'+a, data, offset));
 			}
 			else
 			    $(container).detach();
