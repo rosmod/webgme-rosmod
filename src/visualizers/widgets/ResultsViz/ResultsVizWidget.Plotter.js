@@ -31,7 +31,7 @@ define(['./plotly.min', 'd3'], function(Plotly,d3) {
 		}
 	    };
 
-	    return Plotly.newPlot(plotId, pdata, layout);
+	    Plotly.newPlot(plotId, pdata, layout);
 	}
     }
 });

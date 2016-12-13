@@ -9,14 +9,20 @@ define([
     'text!./Plot.html',
     'blob/BlobClient',
     './ResultsVizWidget.Parser',
+    './ResultsVizWidget.UserParser',
     './ResultsVizWidget.Plotter',
+    './plotly.min',
+    'd3',
     'q',
     'css!./styles/ResultsVizWidget.css'
 ], function (
     PlotHtml,
     BlobClient,
     Parser,
+    UserParser,
     Plotter,
+    Plotly,
+    d3,
     Q) {
 
     var ResultsVizWidget,
@@ -31,7 +37,7 @@ define([
 	this._client = options.client;
 
         this.nodes = {};
-	this.plots = [];
+	this.plotIDs = [];
         this._initialize();
 
         this._logger.debug('ctor finished');
@@ -48,8 +54,8 @@ define([
 
     ResultsVizWidget.prototype.onWidgetContainerResize = function (width, height) {
         //console.log('Widget is resizing...');
-	this.plots.map(function(plot) {
-	    plot.redraw()
+	this.plotIDs.map(function(plotID) {
+	    Plotly.Plots.resize(d3.select(plotID).node());
 	});
     };
 
@@ -100,38 +106,35 @@ define([
 		    return deferred.promise;
 		}
 	    });
-	    if (desc.parser) {
-		tasks.concat(desc.userLogs.map((key) => {
-		    var deferred = Q.defer();
-		    var a = key;
-		    // load the attribute
-		    var nodeObj = this._client.getNode(desc.id);
-		    var logHash = nodeObj.getAttribute(a);
-		    var userParseFunc = eval(desc.parser.replace(/\n/gm,' '));
-		    if (logHash) {
-			this._blobClient.getObjectAsString(logHash)
-			    .then((data) => {
-				desc.logs[a] = data;
-				// parse the logs
-				datas[a] = userParseFunc(data);
-				var aliases = Object.keys(datas[a]);
-				aliases.map((key) => {
-				    var d = datas[a][key].data;
-				    var first_entry = d[0];
-				    var last_entry = d[d.length-1];
-				    if ( first_time === undefined || first_time > first_entry[0] ) {
-					first_time = first_entry[0];
-				    } 
-				    if ( last_time === undefined || last_time < last_entry[0] ) {
-					last_time = last_entry[0];
-				    }
-				});
-				deferred.resolve();
+	    tasks.concat(desc.userLogs.map((key) => {
+		var deferred = Q.defer();
+		var a = key;
+		// load the attribute
+		var nodeObj = this._client.getNode(desc.id);
+		var logHash = nodeObj.getAttribute(a);
+		if (logHash) {
+		    this._blobClient.getObjectAsString(logHash)
+			.then((data) => {
+			    desc.logs[a] = data;
+			    // parse the logs
+			    datas[a] = UserParser.getDataFromAttribute(data);
+			    var aliases = Object.keys(datas[a]);
+			    aliases.map((key) => {
+				var d = datas[a][key].data;
+				var first_entry = d[0];
+				var last_entry = d[d.length-1];
+				if ( first_time === undefined || first_time > first_entry[0] ) {
+				    first_time = first_entry[0];
+				} 
+				if ( last_time === undefined || last_time < last_entry[0] ) {
+				    last_time = last_entry[0];
+				}
 			    });
-			return deferred.promise;
-		    }
-		}));
-	    }
+			    deferred.resolve();
+			});
+		    return deferred.promise;
+		}
+	    }));
 	    return Q.all(tasks)
 		.then(() => {
 		    for (var a in desc.logs) {
@@ -160,7 +163,8 @@ define([
 			    aliases.map((key) => {
 				data[key].data.push([last_time, 0]);
 			    });
-			    this.plots.push(Plotter.plotData('plot_'+a, data, offset));
+			    Plotter.plotData('plot_'+a, data, offset);
+			    this.plotIDs.push('#plot_'+a);
 			}
 			else
 			    $(container).detach();
