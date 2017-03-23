@@ -6,8 +6,8 @@
  */
 
 define([
-    './cytoscape.min',
-    'cose_bilkent/cytoscape-cose-bilkent',
+    'cytoscape/cytoscape',
+    'cytoscape-cose-bilkent/cytoscape-cose-bilkent',
     'text!./style2.css',
     'handlebars/dist/handlebars',
     'q',
