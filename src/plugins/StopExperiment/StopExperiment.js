@@ -175,6 +175,7 @@ define([
 		    }
 		    else if (self.core.isTypeOf(node, self.META.FCO) && 
 			     !self.core.isTypeOf(node, self.META.Experiment) &&
+			     !self.core.isTypeOf(node, self.META.Documentation) &&
 			     !self.core.isTypeOf(node, self.META.Results)) {
 			self.core.deleteNode(node); // delete connections
 		    }
