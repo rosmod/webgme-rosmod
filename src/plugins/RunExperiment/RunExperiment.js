@@ -97,7 +97,7 @@ define([
 	self.rosCoreIp = '';
 
 	loader.notify = function(level, msg) {self.notify(level, msg);}
-	utils.logger = self.logger;
+	utils.notify = function(level, msg) {self.notify(level, msg);}
 
 	// the active node for this plugin is experiment -> experiments -> project
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));

@@ -125,7 +125,7 @@ define([
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
 
 	loader.notify = function(level, msg) {self.notify(level, msg);}
-	utils.logger = self.logger;
+	utils.notify = function(level, msg) {self.notify(level, msg);}
       	loader.loadModel(self.core, projectNode, true)
   	    .then(function (projectModel) {
 		self.projectModel = projectModel.root;

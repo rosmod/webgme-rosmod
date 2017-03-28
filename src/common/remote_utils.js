@@ -131,7 +131,8 @@ define(['q'], function(Q) {
 				});
 			})
 			.catch(function(err) {
-			    self.logger.error(err);
+			    self.notify('warning', 'Host ' + host['Device ID'] + '+' + host['Architecture'] + ': '+err);
+			    //self.notify('error',err);
 			});
 		});
 		return Q.all(tasks);

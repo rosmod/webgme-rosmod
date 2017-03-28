@@ -130,7 +130,7 @@ define([
 	self.artifacts = {}; // will be filled out and used by various parts of this plugin
 
 	loader.notify = function(level, msg) {self.notify(level, msg);}
-	utils.logger = self.logger;
+	utils.notify = function(level, msg) {self.notify(level, msg);}
       	loader.loadModel(self.core, projectNode, true)
   	    .then(function (projectModel) {
 		self.projectModel = projectModel.root;

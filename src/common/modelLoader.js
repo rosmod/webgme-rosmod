@@ -108,6 +108,8 @@ define(['./meta','q'], function(metaTypes, Q) {
 		// follow pointer paths, these may not always be loaded!
 		for (var pointer in obj.pointers) {
 		    var path = obj.pointers[pointer];
+		    if (path == null)
+			throw new String("Error: null pointer '" + pointer + "' in " + obj.type + " '" + obj.name + "'");
 		    var dst = objects[path];
 		    if (dst)
 			obj[pointer] = dst;

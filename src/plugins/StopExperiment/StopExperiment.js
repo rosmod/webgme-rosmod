@@ -95,7 +95,7 @@ define([
 	self.rosCoreIp = '';
 
 	loader.notify = function(level, msg) {self.notify(level, msg);}
-	utils.logger = self.logger;
+	utils.notify = function(level, msg) {self.notify(level, msg);}
 
 	// the active node for this plugin is experiment -> experiments -> project
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
@@ -115,7 +115,6 @@ define([
 				 'xml');
 
 	self.logger.info('loading project: ' + projectName);
-	utils.logger = self.logger;
 	return self.getActiveHosts()
 	    .then(function (ah) {
 		self.activeHosts = ah;
@@ -193,7 +192,8 @@ define([
 	    var user = host.user;
 	    var host_commands = [
 		'pkill roscore',
-		'pkill node_main'
+		'pkill node_main',
+		'rc_kill'
 	    ];
 	    self.logger.info('stopping processes on: '+ user.name + '@' + ip);
 	    return utils.executeOnHost(host_commands, ip, user);
