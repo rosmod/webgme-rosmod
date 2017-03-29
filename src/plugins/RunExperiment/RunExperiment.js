@@ -10,18 +10,18 @@ define([
     'plugin/PluginBase',
     'text!./metadata.json',
     'rosmod/minify.json',
-    'rosmod/meta',
     'rosmod/remote_utils',
-    'rosmod/modelLoader',
+    'webgme-to-json/webgme-to-json',
+    'rosmod/processor',
     'q'
 ], function (
     PluginConfig,
     PluginBase,
     pluginMetadata,
     minify,
-    MetaTypes,
     utils,
-    loader,
+    webgmeToJson,
+    processor,
     Q) {
     'use strict';
 
@@ -38,7 +38,6 @@ define([
         // Call base class' constructor.
         PluginBase.call(this);
 
-        this.metaTypes = MetaTypes;
 	this.pluginMetadata = pluginMetadata;
     };
 
@@ -85,7 +84,7 @@ define([
             return;
         }
 
-        self.updateMETA(self.metaTypes);
+        self.updateMETA({});
 
 	// What did the user select for our configuration?
 	var currentConfig = self.getCurrentConfig();
@@ -96,7 +95,7 @@ define([
 	self.rosCorePort = Math.floor((Math.random() * (65535-1024) + 1024));
 	self.rosCoreIp = '';
 
-	loader.notify = function(level, msg) {self.notify(level, msg);}
+	webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
 	utils.notify = function(level, msg) {self.notify(level, msg);}
 
 	// the active node for this plugin is experiment -> experiments -> project
@@ -115,8 +114,9 @@ define([
 				    self.experimentName,
 				    'config');
 
-	loader.loadModel(self.core, projectNode, true)
+	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true)
 	    .then(function(projectModel) {
+		processor.processModel(projectModel);
 		self.projectModel = projectModel.root;
                 self.objectDict = projectModel.objects;
 		// check to make sure we have the right experiment

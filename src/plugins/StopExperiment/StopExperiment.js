@@ -9,17 +9,13 @@ define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
     'text!./metadata.json',
-    'rosmod/meta',
     'rosmod/remote_utils',
-    'rosmod/modelLoader',
     'q'
 ], function (
     PluginConfig,
     PluginBase,
     pluginMetadata,
-    MetaTypes,
     utils,
-    loader,
     Q) {
     'use strict';
     pluginMetadata = JSON.parse(pluginMetadata);
@@ -36,7 +32,6 @@ define([
         PluginBase.call(this);
 
 	this.pluginMetadata = pluginMetadata;
-        this.metaTypes = MetaTypes;
     };
 
     StopExperiment.metadata = pluginMetadata;
@@ -82,7 +77,7 @@ define([
             return;
         }
 
-        self.updateMETA(self.metaTypes);
+        self.updateMETA({});
 
 	// What did the user select for our configuration?
 	var currentConfig = self.getCurrentConfig();
@@ -94,7 +89,6 @@ define([
 	self.rosCorePort = Math.floor((Math.random() * (65535-1024) + 1024));
 	self.rosCoreIp = '';
 
-	loader.notify = function(level, msg) {self.notify(level, msg);}
 	utils.notify = function(level, msg) {self.notify(level, msg);}
 
 	// the active node for this plugin is experiment -> experiments -> project

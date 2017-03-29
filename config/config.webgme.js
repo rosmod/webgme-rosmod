@@ -8,7 +8,6 @@ var config = require('webgme/config/config.default'),
 
 // The paths can be loaded from the webgme-setup.json
 config.plugin.basePaths.push(__dirname + '/../src/plugins');
-config.addOn.basePaths.push(__dirname + '/../src/addons');
 config.visualization.layout.basePaths.push(__dirname + '/../src/layouts');
 config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
 

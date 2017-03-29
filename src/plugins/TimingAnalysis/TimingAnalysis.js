@@ -12,9 +12,9 @@ define([
     'common/util/ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/TimingAnalysis/TimingAnalysis/Templates/Templates', // 
-    'rosmod/meta',
     'rosmod/remote_utils',
-    'rosmod/modelLoader',
+    'webgme-to-json/webgme-to-json',
+    'rosmod/processor',
     'q'
 ], function (
     PluginConfig,
@@ -25,7 +25,8 @@ define([
     TEMPLATES,
     MetaTypes,
     utils,
-    loader,
+    webgmeToJson,
+    processor,
     Q) {
     'use strict';
 
@@ -41,7 +42,6 @@ define([
     var TimingAnalysis = function () {
         // Call base class' constructor.
         PluginBase.call(this);
-        this.metaTypes = MetaTypes;
 	this.pluginMetadata = pluginMetadata;
         this.FILES = {
 	    'cpn': 'cpn.ejs'
@@ -116,18 +116,17 @@ define([
 				     self.projectName);
 	}
 	
-        self.updateMETA(self.metaTypes);
-
 	// the active node for this plugin is software -> project
 	var projectNode = self.activeNode;
 	self.projectName = self.core.getAttribute(projectNode, 'name');
 
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
 
-	loader.notify = function(level, msg) {self.notify(level, msg);}
+	webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
 	utils.notify = function(level, msg) {self.notify(level, msg);}
-      	loader.loadModel(self.core, projectNode, true)
+      	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true)
   	    .then(function (projectModel) {
+		processor.processModel(projectModel);
 		self.projectModel = projectModel.root;
                 self.objectDict = projectModel.objects;
   	    })

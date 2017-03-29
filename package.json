@@ -29,7 +29,8 @@
     "webgme": "^2.0.0",
     "webgme-breadcrumbheader": "dfst/webgme-breadcrumbheader",
     "webgme-codeeditor": "finger563/webgme-codeeditor",
-    "webgme-fab": "dfst/webgme-fab"
+    "webgme-fab": "dfst/webgme-fab",
+    "webgme-to-json": "^1.0.4"
   },
   "devDependencies": {
     "mocha": "^2.2.5",

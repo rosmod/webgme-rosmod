@@ -30,9 +30,7 @@ config.requirejsPaths.cytoscape = "./node_modules/cytoscape/dist"
 config.requirejsPaths.plottable = "./node_modules/plottable/"
 config.requirejsPaths.handlebars = "./node_modules/handlebars/"
 config.requirejsPaths['cytoscape-cose-bilkent'] = "./node_modules/cytoscape-cose-bilkent/"
-
-// Default Project
-config.client.defaultProject = { name: 'ROSMOD+IntroductionToROSMOD' };
+config.requirejsPaths['webgme-to-json'] = "./node_modules/webgme-to-json/"
 
 config.client.log.level = 'info';
 

@@ -12,9 +12,9 @@ define([
     'common/util/ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/GenerateDocumentation/GenerateDocumentation/Templates/Templates', // 
-    'rosmod/meta',
     'rosmod/remote_utils',
-    'rosmod/modelLoader',
+    'webgme-to-json/webgme-to-json',
+    'rosmod/processor',
     'q'
 ], function (
     PluginConfig,
@@ -23,9 +23,9 @@ define([
     ejs,
     Converter,
     TEMPLATES,
-    MetaTypes,
     utils,
-    loader,
+    webgmeToJson,
+    processor,
     Q) {
     'use strict';
 
@@ -42,7 +42,6 @@ define([
         // Call base class' constructor.
         PluginBase.call(this);
         this.pluginMetadata = pluginMetadata;
-        this.metaTypes = MetaTypes;
         this.FILES = {
             'conf': 'conf.py.ejs'
         };
@@ -105,8 +104,6 @@ define([
             return;
         }
         
-        self.updateMETA(self.metaTypes);
-
         var path = require('path');
 
         // the active node for this plugin is project
@@ -125,11 +122,12 @@ define([
         self.srcData = {};
         self.rstData = {};
 
-        loader.notify = function(level, msg) {self.notify(level, msg);}
+        webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
         utils.notify = function(level, msg) {self.notify(level, msg);}
 
-        loader.loadModel(self.core, projectNode, true)
+        webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true)
             .then(function (projectModel) {
+		processor.processModel(projectModel);
                 self.projectModel = projectModel.root;
                 self.objectDict = projectModel.objects
             })

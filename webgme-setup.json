@@ -21,19 +21,8 @@
         "src": "src/plugins/GenerateDocumentation",
         "test": "test/plugins/GenerateDocumentation"
       },
-      "Export": {
-        "src": "src/plugins/Export",
-        "test": "test/plugins/Export"
-      },
-      "Importer": {
-        "src": "src/plugins/Importer",
-        "test": "test/plugins/Importer"
-      }
     },
     "addons": {
-      "ExperimentMonitor": {
-        "src": "src\\addons\\ExperimentMonitor"
-      }
     },
     "decorators": {
       "DocumentDecorator": {
