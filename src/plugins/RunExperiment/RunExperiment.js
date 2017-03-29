@@ -100,9 +100,9 @@ define([
 
 	// the active node for this plugin is experiment -> experiments -> project
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
-	var projectName = utils.sanitizePath(self.core.getAttribute(projectNode, 'name'));
+	var projectName = self.core.getAttribute(projectNode, 'name');
 
-	self.experimentName = utils.sanitizePath(self.core.getAttribute(self.activeNode, 'name'));
+	self.experimentName = self.core.getAttribute(self.activeNode, 'name');
 	var path = require('path');
 	self.root_dir = path.join(process.cwd(), 
 				  'generated', 
@@ -487,7 +487,8 @@ define([
 	    var host_commands = [
 		'pkill node_main',
 		'pkill roscore',
-		'rm -rf ' + deployment_dir
+		'rc_kill',
+		'rm -rf ' + utils.sanitizePath(deployment_dir)
 	    ];
 	    return utils.deployOnHost(host_commands, ip, user);
 	});
@@ -526,7 +527,7 @@ define([
 					   'experiments',
 					   self.experimentName);
 	    var host_commands = [
-		'cd ' + deployment_dir,
+		'cd ' + utils.sanitizePath(deployment_dir),
 		'source '+host.host['ROS Install']+'/setup.bash',
 		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH',
 		'export ROS_IP='+ip,

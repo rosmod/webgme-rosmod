@@ -93,9 +93,9 @@ define([
 
 	// the active node for this plugin is experiment -> experiments -> project
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
-	var projectName = utils.sanitizePath(self.core.getAttribute(projectNode, 'name'));
+	var projectName = self.core.getAttribute(projectNode, 'name');
 
-	self.experimentName = utils.sanitizePath(self.core.getAttribute(self.activeNode, 'name'));
+	self.experimentName = self.core.getAttribute(self.activeNode, 'name');
 	var path = require('path');
 	self.root_dir = path.join(process.cwd(), 
 				  'generated', 

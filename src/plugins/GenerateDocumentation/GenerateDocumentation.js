@@ -108,7 +108,7 @@ define([
 
         // the active node for this plugin is project
         var projectNode = self.activeNode;
-        self.projectName = utils.sanitizePath(self.core.getAttribute(projectNode, 'name'));
+        self.projectName = self.core.getAttribute(projectNode, 'name');
         // Setting up variables that will be used by various functions of this plugin
         self.gen_dir = path.join(process.cwd(),
                                  'generated',

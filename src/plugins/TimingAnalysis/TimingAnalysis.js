@@ -117,7 +117,7 @@ define([
 	
 	// the active node for this plugin is software -> project
 	var projectNode = self.activeNode;
-	self.projectName = utils.sanitizePath(self.core.getAttribute(projectNode, 'name'));
+	self.projectName = self.core.getAttribute(projectNode, 'name');
 
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
 

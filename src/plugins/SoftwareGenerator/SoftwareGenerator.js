@@ -114,7 +114,7 @@ define([
 
 	// the active node for this plugin is software -> project
 	var projectNode = self.activeNode;
-	self.projectName = utils.sanitizePath(self.core.getAttribute(projectNode, 'name'));
+	self.projectName = self.core.getAttribute(projectNode, 'name');
 
 	// Setting up variables that will be used by various functions of this plugin
 	self.gen_dir = path.join(process.cwd(),
@@ -449,7 +449,7 @@ define([
 	if ( data.indexOf('error:') > -1 ) {
 	    var compileErrors = utils.parseMakeErrorOutput(
 		data,
-		compile_dir + '/src/'
+		path.join(compile_dir, 'src')
 	    );
 	    var tasks = compileErrors.map(function(compileError) {
 		var compName = compileError.fileName.split('.')[0];
@@ -484,7 +484,7 @@ define([
 	else if ( data.indexOf('warning:') > -1 ) {
 	    var compileErrors = utils.parseMakeErrorOutput(
 		data,
-		compile_dir + '/src/'
+		path.join(compile_dir, 'src')
 	    );
 	    compileErrors.map(function(compileError) {
 		var msg = 'Build Warning:: package: ' + compileError.packageName + ', component:' +
