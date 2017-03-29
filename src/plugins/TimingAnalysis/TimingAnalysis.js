@@ -117,7 +117,7 @@ define([
 	
 	// the active node for this plugin is software -> project
 	var projectNode = self.activeNode;
-	self.projectName = self.core.getAttribute(projectNode, 'name');
+	self.projectName = utils.sanitizePath(self.core.getAttribute(projectNode, 'name'));
 
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
 
@@ -454,7 +454,7 @@ define([
 	var child_process = require('child_process');
 
 	// clear out any previous project files
-	child_process.execSync('rm -rf ' + utils.sanitizePath(dir));
+	child_process.execSync('rm -rf ' + dir);
 
 	// Get the dummy cpn template
 	var file_url = 'https://github.com/rosmod/rosmod-cpn/releases/download/v1.0.0/cpn.zip';

@@ -93,9 +93,9 @@ define([
 
 	// the active node for this plugin is experiment -> experiments -> project
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
-	var projectName = self.core.getAttribute(projectNode, 'name');
+	var projectName = utils.sanitizePath(self.core.getAttribute(projectNode, 'name'));
 
-	self.experimentName = self.core.getAttribute(self.activeNode, 'name');
+	self.experimentName = utils.sanitizePath(self.core.getAttribute(self.activeNode, 'name'));
 	var path = require('path');
 	self.root_dir = path.join(process.cwd(), 
 				  'generated', 
@@ -203,7 +203,7 @@ define([
 
 	var child_process = require('child_process');
 	// clear out any previous config files
-	child_process.execSync('rm -rf ' + utils.sanitizePath(localDir));
+	child_process.execSync('rm -rf ' + localDir);
 	// re-create it
 	mkdirp.sync(localDir);
 
@@ -211,8 +211,8 @@ define([
 	    var ip = host.intf.IP;
 	    var user = host.user;
 	    var remoteDir = path.join(user.Directory,
-				 'experiments',
-				 self.experimentName);
+				      'experiments',
+				      self.experimentName);
 	    self.notify('info', 'Copying experiment data from ' + ip);
 	    var artTasks = host.artifacts.map(function(artifact) {
 		return utils.copyFromHost(remoteDir + '/' + artifact, localDir + '/.', ip, user)

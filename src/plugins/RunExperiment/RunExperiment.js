@@ -100,9 +100,9 @@ define([
 
 	// the active node for this plugin is experiment -> experiments -> project
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
-	var projectName = self.core.getAttribute(projectNode, 'name');
+	var projectName = utils.sanitizePath(self.core.getAttribute(projectNode, 'name'));
 
-	self.experimentName = self.core.getAttribute(self.activeNode, 'name');
+	self.experimentName = utils.sanitizePath(self.core.getAttribute(self.activeNode, 'name'));
 	var path = require('path');
 	self.root_dir = path.join(process.cwd(), 
 				  'generated', 
@@ -405,7 +405,7 @@ define([
 
 	var child_process = require('child_process');
 	// clear out any previous config files
-	child_process.execSync('rm -rf ' + utils.sanitizePath(self.config_dir));
+	child_process.execSync('rm -rf ' + self.config_dir);
 
 	self.experiment.map(function (containerToHostMap) {
 	    var container = containerToHostMap[0]; // container is [0], host is [1]

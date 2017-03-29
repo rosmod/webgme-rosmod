@@ -108,7 +108,7 @@ define([
 
         // the active node for this plugin is project
         var projectNode = self.activeNode;
-        self.projectName = self.core.getAttribute(projectNode, 'name');
+        self.projectName = utils.sanitizePath(self.core.getAttribute(projectNode, 'name'));
         // Setting up variables that will be used by various functions of this plugin
         self.gen_dir = path.join(process.cwd(),
                                  'generated',
@@ -166,7 +166,7 @@ define([
         );
         
         // clear out any previous project files
-        child_process.execSync('rm -rf ' + utils.sanitizePath(self.gen_dir));
+        child_process.execSync('rm -rf ' + self.gen_dir);
 
         var paths = Object.keys(self.objectDict);
         var tasks = paths.map(function(path) {

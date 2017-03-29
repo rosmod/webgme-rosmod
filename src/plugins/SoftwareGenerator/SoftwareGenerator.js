@@ -114,7 +114,7 @@ define([
 
 	// the active node for this plugin is software -> project
 	var projectNode = self.activeNode;
-	self.projectName = self.core.getAttribute(projectNode, 'name');
+	self.projectName = utils.sanitizePath(self.core.getAttribute(projectNode, 'name'));
 
 	// Setting up variables that will be used by various functions of this plugin
 	self.gen_dir = path.join(process.cwd(),
@@ -174,8 +174,8 @@ define([
 	var child_process = require('child_process');
 
 	// clear out any previous project files
-	child_process.execSync('rm -rf ' + utils.sanitizePath(path.join(self.gen_dir,'bin')));
-	child_process.execSync('rm -rf ' + utils.sanitizePath(path.join(self.gen_dir,'src')));
+	child_process.execSync('rm -rf ' + path.join(self.gen_dir,'bin'));
+	child_process.execSync('rm -rf ' + path.join(self.gen_dir,'src'));
 
 	self.artifacts[self.projectModel.name + '.json'] = JSON.stringify(self.projectModel, null, 2);
         self.artifacts[self.projectModel.name + '_metadata.json'] = JSON.stringify({
@@ -328,7 +328,7 @@ define([
 
 	var docPath = path.join(self.gen_dir, 'doc');
 	// clear out any previous documentation
-	child_process.execSync('rm -rf ' + utils.sanitizePath(docPath));
+	child_process.execSync('rm -rf ' + docPath);
 
 	var deferred = Q.defer();
 	var terminal = child_process.spawn('bash', [], {cwd:self.gen_dir});
@@ -347,7 +347,7 @@ define([
 	    terminal.stdin.write('doxygen doxygen_config\n');
 	    terminal.stdin.write('make -C ./doc/latex/ pdf\n');
 	    terminal.stdin.write('mv ./doc/latex/refman.pdf ' + 
-				 utils.sanitizePath(self.projectModel.name) + '.pdf');
+				 self.projectName + '.pdf');
 	    terminal.stdin.end();
 	}, 1000);
 	return deferred.promise;
@@ -523,7 +523,7 @@ define([
 	    'rm -rf devel build',
 	];
 
-	child_process.execSync('rm -rf ' + utils.sanitizePath(archBinPath));
+	child_process.execSync('rm -rf ' + archBinPath);
 
 	// make the compile dir
 	var t1 = new Promise(function(resolve,reject) {
@@ -634,7 +634,7 @@ define([
 	var child_process = require('child_process');
 
 	// clear out any previous binaries
-	child_process.execSync('rm -rf ' + utils.sanitizePath(binPath));
+	child_process.execSync('rm -rf ' + binPath);
 
 	for (var arch in validHostList) {
 	    var hosts = validHostList[arch];
@@ -658,7 +658,7 @@ define([
 		self.notify('info', 'Compiled binaries.');
 	    })
 	    .catch(function(err) {
-		child_process.execSync('rm -rf ' + utils.sanitizePath(binPath));
+		child_process.execSync('rm -rf ' + binPath);
 		var tasks = selectedHosts.map(function (host) {
 		    return self.cleanHost(host);
 		});
