@@ -284,7 +284,19 @@ define([
 	var path = require('path');
 	var fs = require('fs');
 	var platforms = [];
+	var binaries = ['node_main'];
 	self.experiment.map(function (containerToHostMap) {
+	    // get the components required
+	    var container = containerToHostMap[0];
+	    container.Node_list.map(function(node) {
+		var nodeConf = self.getNodeConfig(node);
+		nodeConf['Component Instances'].map(function(ci) {
+		    if (binaries.indexOf(ci.Definition) == -1) {
+			binaries.push(ci.Definition);
+		    }
+		});
+	    })
+	    // get the platforms required
 	    var host = containerToHostMap[1];
 	    var devType = utils.getDeviceType(host.host);
 	    if (platforms.indexOf(devType) == -1)
@@ -294,12 +306,16 @@ define([
 	    var platformBinPath = path.join(self.root_dir,
 					    'bin',
 					    platform);
-	    try {
-		fs.accessSync(platformBinPath);
-	    }
-	    catch (err) {
+	    if (!fs.existsSync(platformBinPath)) {
 		throw new String(platform + ' does not have compiled binaries!');
 	    }
+	    binaries.map(function(binary) {
+		var libPath = platformBinPath + '/' + binary;
+		if (!fs.existsSync(libPath)) {
+		    var binName = path.basename(libPath);
+		    throw new String(platform + ' missing compiled binary : ' + binName);
+		}
+	    });
 	});
 	return Q.all(tasks);
     };
