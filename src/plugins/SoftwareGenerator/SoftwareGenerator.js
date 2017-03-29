@@ -297,7 +297,7 @@ define([
 	self.notify('info', 'Downloading Source Libraries');
 
 	// where is the rosmod-actor executable?
-	var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.4/rosmod-node.zip';
+	var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.5/rosmod-actor.zip';
 	var tasks = [];
 	if (self.projectModel.Software_list[0]['Source Library_list']) {
 	    tasks = self.projectModel.Software_list[0]['Source Library_list'].map(function(lib) {
