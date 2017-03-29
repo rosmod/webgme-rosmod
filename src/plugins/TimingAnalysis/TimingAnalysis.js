@@ -23,7 +23,6 @@ define([
     ejs,
     Converter,
     TEMPLATES,
-    MetaTypes,
     utils,
     webgmeToJson,
     processor,
