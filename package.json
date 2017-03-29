@@ -1,5 +1,5 @@
 {
-  "name": "rosmod",
+  "name": "webgme-rosmod",
   "scripts": {
     "start": "node app.js",
     "start-dev": "NODE_ENV=dev node app.js",
@@ -28,14 +28,37 @@
     "unzip": "0.1.x",
     "url": "0.11.x",
     "webgme": "^2.0.0",
-    "webgme-breadcrumbheader": "dfst/webgme-breadcrumbheader",
-    "webgme-codeeditor": "finger563/webgme-codeeditor",
-    "webgme-fab": "dfst/webgme-fab",
+    "webgme-breadcrumbheader": "github:dfst/webgme-breadcrumbheader",
+    "webgme-codeeditor": "github:finger563/webgme-codeeditor",
+    "webgme-fab": "github:dfst/webgme-fab",
     "webgme-to-json": "^1.0.4"
   },
   "devDependencies": {
     "mocha": "^2.2.5",
     "rimraf": "^2.4.0",
     "chai": "^3.0.0"
-  }
+  },
+  "description": "This repository contains the implementation of ROSMOD-GUI, based on [WebGME](http://github.com/webgme/webgme), a live demo of which can be found on [WebGME.org](http://webgme.org).",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosmod/webgme-rosmod.git"
+  },
+  "keywords": [
+    "webgme",
+    "rosmod",
+    "ros",
+    "distributed",
+    "robotics",
+    "model-driven-development"
+  ],
+  "author": "William Emfinger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rosmod/webgme-rosmod/issues"
+  },
+  "homepage": "https://github.com/rosmod/webgme-rosmod#readme"
 }
