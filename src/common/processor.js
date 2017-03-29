@@ -5,76 +5,72 @@ define([], function() {
     return {
 	processModel: function(collection) {
 	    var self = this;
-	    self.makeConvenienceMembers(collection.root);
-	    self.checkPointers(collection.objects);
+	    self.checkObjects(collection.objects);
+	    self.makeConvenienceMembers(collection.objects);
 	},
-	makeConvenienceMembers: function(root) {
+	makeConvenienceMembers: function(objects) {
 	    var self = this;
-	    // THIS FUNCTION HANDLES CREATION OF SOME CONVENIENCE MEMBERS
-	    // FOR SELECT OBJECTS IN THE MODEL
-	    // handle Component Required Types (convenience)
-	    if (root.Software_list !== undefined) {
-		var software_folder = root.Software_list[0];
-		if (software_folder && software_folder.Package_list) {
-		    software_folder.Package_list.map(function(pkgInfo) {
-			if (pkgInfo.Component_list) {
-			    pkgInfo.Component_list.map(function(compInfo) {
-				compInfo.Types = []; 
-				if (compInfo.Publisher_list) {
-				    compInfo.Publisher_list.map(function(obj) {
-					if ( compInfo.Types.indexOf(obj.Message) == -1)
-					    compInfo.Types.push(obj.Message);
-				    });
-				}
-				if (compInfo.Subscriber_list) {
-				    compInfo.Subscriber_list.map(function(obj) {
-					if ( compInfo.Types.indexOf(obj.Message) == -1)
-					    compInfo.Types.push(obj.Message);
-				    });
-				}
-				if (compInfo.Client_list) {
-				    compInfo.Client_list.map(function(obj) {
-					if ( compInfo.Types.indexOf(obj.Service) == -1)
-					    compInfo.Types.push(obj.Service);
-				    });
-				}
-				if (compInfo.Server_list) {
-				    compInfo.Server_list.map(function(obj) {
-					if ( compInfo.Types.indexOf(obj.Service) == -1)
-					    compInfo.Types.push(obj.Service);
-				    });
-				}
-			    });
-			}
-		    });
+	    var objPaths = Object.keys(objects);
+	    objPaths.map(function(objPath) {
+		var obj = objects[objPath];
+		if (obj.type == 'Component') {
+		    // make components have 'Types' which provide their messages/services
+		    obj.Types = []; 
+		    if (obj.Publisher_list) {
+			obj.Publisher_list.map(function(pub) {
+			    if ( obj.Types.indexOf(pub.Message) == -1)
+				obj.Types.push(pub.Message);
+			});
+		    }
+		    if (obj.Subscriber_list) {
+			obj.Subscriber_list.map(function(sub) {
+			    if ( obj.Types.indexOf(sub.Message) == -1)
+				obj.Types.push(sub.Message);
+			});
+		    }
+		    if (obj.Client_list) {
+			obj.Client_list.map(function(cli) {
+			    if ( obj.Types.indexOf(cli.Service) == -1)
+				obj.Types.push(cli.Service);
+			});
+		    }
+		    if (obj.Server_list) {
+			obj.Server_list.map(function(srv) {
+			    if ( obj.Types.indexOf(srv.Service) == -1)
+				obj.Types.push(srv.Service);
+			});
+		    }
+		} else if (obj.type == 'Link') {
+		    // copy the Link's address to the interface to which it's connected
+		    var intf = obj.src;
+		    intf.IP = obj.IP;
 		}
-	    }
-	    // handle Interface IP assignment here (until META is updated)
-	    if (root.Systems_list !== undefined) {
-		var systems_folder = root.Systems_list[0];
-		if (systems_folder && systems_folder.System_list) {
-		    systems_folder.System_list.map(function(system) {
-			if (system.Host_list) {
-			    system.Host_list.map(function(host) {
-				if (host.Interface_list) {
-				    host.Interface_list.map(function(intf) {
-					if (system.Link_list) {
-					    var link = system.Link_list.filter(function(l) {
-						return l.src == intf;
-					    })[0];
-					    if (link) {
-						intf.IP = link.IP;
-					    }
-					}
-				    });
-				}
-			    });
-			}
-		    });
+	    });
+	},
+	checkObjects: function(objects) {
+	    var self = this;
+
+	    self.checkPointers(objects);
+
+	    // check objects by type
+	    var objPaths = Object.keys(objects);
+	    objPaths.map(function(objPath) {
+		var obj = objects[objPath];
+		if (obj.type == 'Host') {
+		    self.checkHost(obj);
+		} else if (obj.type == 'Message') {
+		    self.checkMessage(obj);
+		} else if (obj.type == 'Service') {
+		    self.checkService(obj);
+		} else if (obj.type == 'Node') {
+		    self.checkNode(obj);
+		} else if (obj.type == 'Container') {
+		    self.checkContainer(obj);
 		}
-	    }
+	    });
 	},
 	checkPointers: function(objects) {
+	    // checks all objects' pointers to ensure no pointers are null and all pointers are to loaded objects
 	    var objPaths = Object.keys(objects);
 	    objPaths.map(function(objPath) {
 		var obj = objects[objPath];
@@ -93,6 +89,40 @@ define([], function() {
 		    }
 		}
 	    });
+	},
+	checkHost: function(host) {
+	    // checks host to ensure that it has at least one user and network interface
+	    if (host.Interface_list === undefined) {
+		throw new String("Error: " + host.name + ' has no defined network interfaces, make sure to add at least one in the model and connect it to a network!');
+	    } else if (host.sets['Users'].length == 0) {
+		throw new String("Error: " + host.name + " has no defined users, make sure to add one through the host's SetEditor visualizer!");
+	    }
+	},
+	checkMessage: function(message) {
+	    // checks message definition to ensure it has no ';'
+	    if (message.Definition.indexOf(';') != -1) {
+		throw new String("Error: " + message.name + " contains invalid symbol ';', ROS message definitions don't have ';' at the end of their lines!");
+	    }
+	},
+	checkService: function(service) {
+	    // checks message definition to ensure it has no ';' and that it has '---' to delineate input/output
+	    if (service.Definition.indexOf(';') != -1) {
+		throw new String("Error: " + service.name + " contains invalid symbol ';', ROS service definitions don't have ';' at the end of their lines!");
+	    } else if (service.Definition.indexOf('---') == -1) {
+		throw new String("Error: " + service.name + " does not contain '---', which must be on its own line separating the input (above) from the output (below)!");
+	    }
+	},
+	checkNode: function(node) {
+	    // checks node to ensure that there is at least one component
+	    if (node.Component_list === undefined) {
+		throw new String("Error: " + node.name + ' contains no component instances, make sure to add at least one in the model!');
+	    }
+	},
+	checkContainer: function(container) {
+	    // checks container to ensure that there is at least one node
+	    if (container.Node_list === undefined) {
+		throw new String("Error: "+container.name+' has no nodes, make sure to add at least one in the model!');
+	    }
 	},
     }
 });
