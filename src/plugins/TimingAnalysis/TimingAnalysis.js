@@ -12,7 +12,7 @@ define([
     'common/util/ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/TimingAnalysis/TimingAnalysis/Templates/Templates', // 
-    'rosmod/remote_utils',
+    'remote-utils/remote-utils',
     'webgme-to-json/webgme-to-json',
     'rosmod/processor',
     'q'

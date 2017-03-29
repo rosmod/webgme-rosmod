@@ -10,7 +10,7 @@ define([
     'plugin/PluginBase',
     'text!./metadata.json',
     'rosmod/minify.json',
-    'rosmod/remote_utils',
+    'remote-utils/remote-utils',
     'webgme-to-json/webgme-to-json',
     'rosmod/processor',
     'q'

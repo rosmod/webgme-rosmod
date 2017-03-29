@@ -9,7 +9,7 @@ define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
     'text!./metadata.json',
-    'rosmod/remote_utils',
+    'remote-utils/remote-utils',
     'q'
 ], function (
     PluginConfig,
@@ -108,7 +108,7 @@ define([
 	self.xml_dir = path.join(self.exp_dir,
 				 'xml');
 
-	self.logger.info('loading project: ' + projectName);
+	self.notify('info', 'loading project: ' + projectName);
 	return self.getActiveHosts()
 	    .then(function (ah) {
 		self.activeHosts = ah;
@@ -128,7 +128,7 @@ define([
 	    })
 	    .then(function() {
 		// This will save the changes. If you don't want to save;
-		self.logger.info('saving updates to model');
+		self.notify('info', 'saving updates to model');
 		return self.save('StopExperiment updated model.');
 	    })
 	    .then(function (err) {
@@ -189,7 +189,7 @@ define([
 		'pkill node_main',
 		'rc_kill'
 	    ];
-	    self.logger.info('stopping processes on: '+ user.name + '@' + ip);
+	    self.notify('info', 'stopping processes on: '+ user.name + '@' + ip);
 	    return utils.executeOnHost(host_commands, ip, user);
 	});
 	return Q.all(tasks);
@@ -213,7 +213,7 @@ define([
 	    var remoteDir = path.join(user.Directory,
 				 'experiments',
 				 self.experimentName);
-	    self.logger.info('Copying experiment data from ' + ip);
+	    self.notify('info', 'Copying experiment data from ' + ip);
 	    var artTasks = host.artifacts.map(function(artifact) {
 		return utils.copyFromHost(remoteDir + '/' + artifact, localDir + '/.', ip, user)
 		    .catch(function(err) {
@@ -261,7 +261,7 @@ define([
 	    var user = host.user;
 	    var remoteDir = path.join(user.Directory,
 				      'experiments');
-	    self.logger.info('Removing experiment data on ' + ip);
+	    self.notify('info', 'Removing experiment data on ' + ip);
 	    return utils.executeOnHost(['rm -rf ' + remoteDir], ip, user);
 	});
 	return Q.all(tasks);
@@ -271,7 +271,7 @@ define([
 	var self = this;
 	
 	if (!self.returnZip) {
-            self.createMessage(self.activeNode, 'Skipping compression.');
+            self.notify('info','Skipping compression.');
 	    return;
 	}
 	
@@ -281,7 +281,7 @@ define([
 	    fstream = require('fstream'),
 	    input = self.exp_dir;
 
-	    self.logger.info('zipping ' + input);
+	    self.notify('info', 'zipping ' + input);
 
 	    var bufs = [];
 
@@ -298,7 +298,7 @@ define([
 		    self.blobClient.putFile(name+'.tar.gz',buf)
 			.then(function (hash) {
 			    self.result.addArtifact(hash);
-			    self.logger.info('compression complete');
+			    self.notify('info', 'compression complete');
 			    resolve();
 			})
 			.catch(function(err) {

@@ -31,6 +31,7 @@ config.requirejsPaths.plottable = "./node_modules/plottable/"
 config.requirejsPaths.handlebars = "./node_modules/handlebars/"
 config.requirejsPaths['cytoscape-cose-bilkent'] = "./node_modules/cytoscape-cose-bilkent/"
 config.requirejsPaths['webgme-to-json'] = "./node_modules/webgme-to-json/"
+config.requirejsPaths['remote-utils'] = "./node_modules/remote-utils/"
 
 config.client.log.level = 'info';
 
