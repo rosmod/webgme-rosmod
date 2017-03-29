@@ -15,7 +15,15 @@ void <%- compInfo.name %>::init_timer_operation(const NAMESPACE::TimerEvent& eve
 {
   // User Initialization Code
   //::::<%- compInfo.path %>::::Initialization::::
+  try {
   <%- compInfo.Initialization %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::initialization: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::initialization");
+  }
   init_timer.stop();
 }
 
@@ -27,7 +35,15 @@ if (compInfo.Timer_list) {
 void <%- compInfo.name %>::<%- tmr.name %>_operation(const NAMESPACE::TimerEvent& event)
 {
   //::::<%- tmr.path %>::::Operation::::
+  try {
   <%- tmr.Operation %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- tmr.name %>_operation: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- tmr.name %>_operation");
+  }
 }
 <%
   });
@@ -42,7 +58,15 @@ if (compInfo.Subscriber_list) {
 void <%- compInfo.name %>::<%- sub.name %>_operation(const <%- objects[sub.Message.parentPath].name %>::<%- sub.Message.name %>::ConstPtr& received_data)
 {
   //::::<%- sub.path %>::::Operation::::
+  try {
   <%- sub.Operation %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- sub.name %>_operation: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- sub.name %>_operation");
+  }
 }
 <%
   });
@@ -57,7 +81,15 @@ if (compInfo.Server_list) {
 bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- objects[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Request &req, <%- objects[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Response &res )
 {
   //::::<%- srv.path %>::::Operation::::
+  try {
   <%- srv.Operation %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- srv.name %>_operation: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_operation");
+  }
   return true;
 }
 <%
