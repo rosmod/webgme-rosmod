@@ -11,7 +11,7 @@ define([
     './ResultsVizWidget.Parser',
     './ResultsVizWidget.UserParser',
     './ResultsVizWidget.Plotter',
-    './plotly.min',
+    'plotly-js/plotly.min',
     'd3',
     'q',
     'css!./styles/ResultsVizWidget.css'
