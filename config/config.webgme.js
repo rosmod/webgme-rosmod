@@ -11,7 +11,7 @@ config.plugin.basePaths.push(__dirname + '/../src/plugins');
 config.visualization.layout.basePaths.push(__dirname + '/../src/layouts');
 config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
 
-config.addOn.enable = true;
+
 
 config.visualization.panelPaths.push(__dirname + '/../node_modules/webgme-breadcrumbheader/src/visualizers/panels');
 config.visualization.panelPaths.push(__dirname + '/../node_modules/webgme-fab/src/visualizers/panels');
@@ -25,9 +25,6 @@ config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
 config.visualization.visualizerDescriptors.push(__dirname + '/../src/visualizers/Visualizers.json');
 // Add requirejs paths
 config.requirejsPaths = {
-  'CodeEditor': 'panels/CodeEditor/CodeEditorPanel',
-  'FloatingActionButton': 'panels/FloatingActionButton/FloatingActionButtonPanel',
-  'BreadcrumbHeader': 'panels/BreadcrumbHeader/BreadcrumbHeaderPanel',
   'panels': './src/visualizers/panels',
   'widgets': './src/visualizers/widgets',
   'panels/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/panels/CodeEditor',
