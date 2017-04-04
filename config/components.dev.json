@@ -35,6 +35,12 @@
         "autoSaveInterval": "2000",
 	"rootType": "Project",
 	"loadDepth": 5,
+	"excludeTypes": [
+	    "Deployments",
+	    "Experiments",
+	    "Systems",
+	    "Documentation"
+	],
 	"syntaxToModeMap": {
 	    "C++": { "name": "text/x-c++src", "useCPP": true },
 	    "JSON": { "name": "application/json" },

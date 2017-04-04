@@ -34,6 +34,12 @@
 	"keyBinding": "sublime",
         "autoSaveInterval": "2000",
 	"rootType": "Project",
+	"excludeTypes": [
+	    "Deployments",
+	    "Experiments",
+	    "Systems",
+	    "Documentation"
+	],
 	"loadDepth": 5,
 	"syntaxToModeMap": {
 	    "C++": { "name": "text/x-c++src", "useCPP": true },
