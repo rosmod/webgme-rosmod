@@ -36,7 +36,6 @@
 	"rootType": "Project",
 	"loadDepth": 5,
 	"excludeTypes": [
-	    "Deployments",
 	    "Experiments",
 	    "Systems",
 	    "Documentation"
