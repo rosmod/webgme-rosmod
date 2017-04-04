@@ -30,7 +30,7 @@
     "url": "0.11.x",
     "webgme": "^2.0.0",
     "webgme-breadcrumbheader": "github:dfst/webgme-breadcrumbheader",
-    "webgme-codeeditor": "github:finger563/webgme-codeeditor",
+    "webgme-codeeditor": "^3.0.0",
     "webgme-fab": "github:dfst/webgme-fab",
     "webgme-to-json": "^1.0.4"
   },
