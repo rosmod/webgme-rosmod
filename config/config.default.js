@@ -8,8 +8,5 @@ config.visualization.visualizerDescriptors = ['./src/visualizers/Visualizers.jso
 config.visualization.panelPaths.push('./src/visualizers/panels');
 config.visualization.layout.basePaths.push('./src/layouts');
 
-// UI
-config.visualization.layout.default = 'NewDefaultLayout';
-
 validateConfig(config);
 module.exports = config;

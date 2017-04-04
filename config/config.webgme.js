@@ -35,7 +35,6 @@ config.requirejsPaths = {
   'widgets/BreadcrumbHeader': './node_modules/webgme-breadcrumbheader/'
 };
 
-config.visualization.layout.default = 'NewDefaultLayout';
 config.mongo.uri = 'mongodb://127.0.0.1:27017/rosmod';
 validateConfig(config);
 module.exports = config;

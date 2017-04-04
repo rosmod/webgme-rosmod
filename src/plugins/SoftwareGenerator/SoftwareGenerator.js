@@ -400,9 +400,9 @@ define([
 
     SoftwareGenerator.prototype.getObjectAttributeFromBuild = function (pkgName, compName, fileName, fileLineNumber) {
 	var self = this;
-	var deferred = Q.defer();
 	var path = require('path');
 	// find correct file
+	fileName = path.basename(fileName);
 	var fileKey = path.join('src', 
 				pkgName,
 				(fileName.split('.')[1] == 'hpp') ? 'include' : 'src',
@@ -425,18 +425,26 @@ define([
 		    break;
 		}
 	    }
-	    self.core.loadByPath(self.rootNode, path, function (err, node) {
-		if (err) {
-		    deferred.reject(err);
-		    return;
-		}
-		else {
-		    deferred.resolve({node: node, attr: attr, lineNumber: attrLineNumber});
-		}
-	    });
-	    return deferred.promise;
+	    var node = self.projectObjects[path];
+	    self.logger.info(self.projectObjects);
+	    self.logger.info(path);
+	    self.logger.info(node);
+	    return {node: node, attr: attr, lineNumber: attrLineNumber};
 	}
-	return null;
+	else {
+	    self.logger.info('couldnt get filedata');
+	    return {node: null, attr: null, lineNumber: null};
+	}
+    };
+
+    SoftwareGenerator.prototype.parseCompilePercent = function (host, data) {
+	var self = this;
+	var percent = utils.parseMakePercentOutput(data);
+	if (percent.length && percent[0] > 0 && (percent[0] % 10) == 0 ) {
+	    var msg = 'Build on ' + utils.getDeviceType(host.host) + ': ' + percent[0] + '%';
+	    self.notify('info', msg);
+	}
+	return false;
     };
 
     SoftwareGenerator.prototype.parseCompileStdErr = function (host, data) {
@@ -446,49 +454,45 @@ define([
 	var base_compile_dir = path.join(host.user.Directory, 'compilation');
 	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
 
+	var removeDir = path.join(compile_dir, 'src/')
 	if ( data.indexOf('error:') > -1 ) {
-	    var compileErrors = utils.parseMakeErrorOutput(
-		data,
-		path.join(compile_dir, 'src')
-	    );
-	    var tasks = compileErrors.map(function(compileError) {
-		var compName = compileError.fileName.split('.')[0];
-		var msg = 'Build Error:: package: ' + compileError.packageName + ', component: ' +
-		    compName + ' :\n\t' +
+	    var compileErrors = utils.parseMakeErrorOutput(data);
+	    compileErrors.map(function(compileError) {
+		var baseName = compileError.fileName.replace(removeDir, '');
+		var packageName = baseName.split('/')[0];
+		var compName = path.basename(compileError.fileName).split('.')[0];
+		var msg = 'Build Error:: package: ' + packageName + ', component: ' +
+		    compName + ':\n\t' +
 		    compileError.text + '\n';
 		self.notify('error', msg);
-		return self.getObjectAttributeFromBuild(compileError.packageName, 
-							compName,
-							compileError.fileName, 
-							compileError.line)
-		    .then(function( info ) {
-			var node = info.node,
-			attr = info.attr,
-			lineNum = info.lineNumber;
-			if (node) {
-			    var nodeName = self.core.getAttribute(node, 'name');
-			    self.notify('error', 'Error in Package: ' + compileError.packageName + 
-					', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
-					', at line: ' + lineNum, node);
-			}
-			else {
-			    self.notify('error', 'Library ' + compileError.packageName + ' has error!');
-			}
-		    });
-		});
-	    return Q.all(tasks)
-		.then(function () {
-		    return true;
-		});
+		var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
+								compName,
+								compileError.fileName, 
+								compileError.line);
+		var node = nodeInfo.node,
+		    attr = nodeInfo.attr,
+		    lineNum = nodeInfo.lineNumber;
+		if (node) {
+		    var nodeName = node.name;
+		    self.notify('error', 'Error in Package: ' + packageName + 
+				', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
+				', at line: ' + lineNum, node);
+		}
+		else {
+		    self.notify('error', 'Library ' + packageName + ' has error!');
+		}
+	    });
+	    return true;
 	}
 	else if ( data.indexOf('warning:') > -1 ) {
-	    var compileErrors = utils.parseMakeErrorOutput(
-		data,
-		path.join(compile_dir, 'src')
-	    );
+	    var compileErrors = utils.parseMakeErrorOutput(data);
 	    compileErrors.map(function(compileError) {
-		var msg = 'Build Warning:: package: ' + compileError.packageName + ', component:' +
-		    compileError.fileName.split('.')[0] + ' :\n\t' +
+		var baseName = compileError.fileName;
+		baseName.replace(removeDir, '');
+		var packageName = baseName.split('/')[0];
+		var compName = path.basename(compileError.fileName).split('.')[0];
+		var msg = 'Build Warning:: package: ' + packageName + ', component:' +
+		    compName + ' :\n\t' +
 		    compileError.text + '\n';
 		self.notify('warning', msg);
 	    });
@@ -526,7 +530,7 @@ define([
 	child_process.execSync('rm -rf ' + archBinPath);
 
 	// make the compile dir
-	var t1 = new Promise(function(resolve,reject) {
+	return new Promise(function(resolve,reject) {
 	    self.notify('info', 'making compilation directory on: ' + host.intf.IP);
 	    utils.mkdirRemote(compile_dir, host.intf.IP, host.user)
 		.then(function() {
@@ -535,25 +539,28 @@ define([
 		.catch(function() {
 		    reject("Couldn't make remote compilation dir!");
 		});
-	});
-	// copy the sources to remote
-	var t2 = t1.then(function() {
+	})
+	.then(function() {
+	    // copy the sources to remote
 	    self.notify('info', 'copying compilation sources to: ' + host.intf.IP);
 	    return utils.copyToHost(self.gen_dir, compile_dir, host.intf.IP, host.user);
-	});
-	// run the compile step
-	var t3 = t2.then(function() {
+	})
+	.then(function() {
+	    // run the compile step
 	    self.notify('info', 'compiling on: ' + host.intf.IP + ' into '+compile_dir);
 	    host.stdErr = '';
 	    host.stdOut = '';
 	    var stdErrCB = function(host) {
 		return function(data) {
 		    host.stdErr += data;
-		    return self.parseCompileStdErr(host,data);
+		    return self.parseCompileStdErr(host, data);
 		};
 	    }(host);
 	    var stdOutCB = function(host) {
-		return function(data) { host.stdOut += data; };
+		return function(data) {
+		    host.stdOut += data;
+		    return self.parseCompilePercent(host, data);
+		};
 	    }(host);
 	    return utils.executeOnHost(compile_commands, 
 				       host.intf.IP, 
@@ -572,39 +579,37 @@ define([
 			return self.blobClient.putFile(fname, files[fname])
 			    .then((hash) => {
 				self.result.addArtifact(hash);
+			    })
+			    .then(() => {
+				throw new String('Compilation failed on ' + host.intf.IP);
 			    });
 		    });
-		    return Q.all(tasks)
-			.then(() => {
-			    throw new String('Compilation failed on ' + host.intf.IP);
-			});
+		    return Q.all(tasks);
 		});
-	});
-	// make the local binary folder for the architecture
-	var t4 = t3.then(function() {
+	})
+	.then(function() {
+	    // make the local binary folder for the architecture
 	    mkdirp.sync(archBinPath);
-	    return true;
-	});
-	// copy the compiled binaries from remote into the local bin folder
-	var t5 = t4.then(function() {
+	})
+	.then(function() {
+	    // copy the compiled binaries from remote into the local bin folder
 	    self.notify('info', 'copying from ' + host.intf.IP + ' into local storage.');
 	    return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
 				      archBinPath + '/.',
 				      host.intf.IP,
 				      host.user);
+	})
+	.then(function() {
+	    // remove the remote folders
+	    return self.cleanHost(host);
 	});
-	// remove the remote folders
-	var t6 = t5.then(function() {
-	    self.notify('info', 'removing compilation artifacts off: ' + host.intf.IP);
-	    return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.IP, host.user);
-	});
-	return Q.all([t1,t2,t3,t4,t5,t6]);
     };
     
     SoftwareGenerator.prototype.cleanHost = function(host) {
 	var self = this;
 	var path = require('path');
 	var base_compile_dir = path.join(host.user.Directory, 'compilation');
+	self.notify('info', 'removing compilation artifacts off: ' + host.intf.IP);
 	return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.IP, host.user);
     };
 
@@ -664,7 +669,7 @@ define([
 		});
 		return Q.all(tasks)
 		    .then(function () {
-			throw err;
+			throw new String(err);
 		    });
 	    });
     };
