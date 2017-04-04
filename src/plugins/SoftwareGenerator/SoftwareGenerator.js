@@ -426,13 +426,9 @@ define([
 		}
 	    }
 	    var node = self.projectObjects[path];
-	    self.logger.info(self.projectObjects);
-	    self.logger.info(path);
-	    self.logger.info(node);
 	    return {node: node, attr: attr, lineNumber: attrLineNumber};
 	}
 	else {
-	    self.logger.info('couldnt get filedata');
 	    return {node: null, attr: null, lineNumber: null};
 	}
     };
