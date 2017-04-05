@@ -24,11 +24,27 @@ define([
     var NewDefaultLayout = function(params) {
         this._logger = (params && params.logger) || Logger.create('gme:Layouts:NewDefaultLayout',
 								  WebGMEGlobal.gmeConfig.client.log);
-        this.panels = CONFIG.panels;
+
+        this._config = CONFIG;
+        ComponentSettings.resolveWithWebGMEGlobal(this._config, NewDefaultLayout.getComponentId());
+
+        this.panels = this._config.panels;
         this._template = (params && params.template) || defaultLayoutTemplate;
 
         //this._body = null;
         //this._panelToContainer = {};
+    };
+
+    NewDefaultLayout.getName = function () {
+        return 'NewDefaultLayout';
+    };
+
+    NewDefaultLayout.getVersion = function () {
+        return '0.1.0';
+    };
+
+    NewDefaultLayout.getComponentId = function () {
+        return 'NewDefaultLayout';
     };
 
     /**
