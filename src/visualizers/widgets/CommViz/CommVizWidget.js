@@ -246,7 +246,9 @@ define([
 
 	    self._cy.on('select', 'node', function(e){
 		var node = this;
-
+		if (node.id()) {
+		    WebGMEGlobal.State.registerActiveSelection([node.id()]);
+		}
 		highlight( node );
 		showNodeInfo( node );
 	    });
