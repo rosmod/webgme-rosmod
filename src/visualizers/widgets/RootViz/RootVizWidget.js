@@ -271,6 +271,8 @@ define([
     };
 
     RootVizWidget.prototype.onNodeSelect = function (id) {
+	if (id)
+	    WebGMEGlobal.State.registerActiveSelection([id]);
     };
 
     RootVizWidget.prototype.onNodeClick = function (id) {
