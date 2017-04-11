@@ -15,6 +15,13 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 	    var pdata = [];
 	    var annotations = [];
 
+	    var findAnnotations = function(x, y) {
+		var foundAnnotations = annotations.filter(function(ann) {
+		    return ann.x == x && ann.y == y;
+		});
+		return foundAnnotations;
+	    };
+
 	    Object.keys(data).map(function(key) {
 		if (data[key].annotations.length) {
 		    data[key].annotations.map(function(ann) {
@@ -34,12 +41,17 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		pdata.push({
 		    x : data[key].data.map(function(xy) { return xy[0]; }),
 		    y : data[key].data.map(function(xy) { return xy[1]; }),
-		    mode: 'lines',
+		    mode: !data[key].annotations.length ? 'lines' : 'markers+lines',
                     type: 'scatter',
 		    name: key,
                     marker: {
                         maxdisplayed: 1000,
-                        size: 12,
+                        size: !data[key].annotations.length ? [] : data[key].data.map(function(xy) {
+			    if (findAnnotations(xy[0], xy[1]).length > 0)
+				return 15;
+			    else
+				return 1;
+			}),
                         /*
                           color: "rgb(164, 194, 244)",
                           line: {
@@ -119,10 +131,8 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 
 	    myPlot.on('plotly_click', function(data){
 		var point = data.points[0];
-		var foundAnnotations = annotations.filter(function(ann) {
-		    return ann.x == point.xaxis.d2l(point.x) &&
-			ann.y == point.yaxis.d2l(point.y);
-		});
+		var foundAnnotations = findAnnotations(point.xaxis.d2l(point.x),
+						       point.yaxis.d2l(point.y));
 		if (foundAnnotations.length) {
 		    foundAnnotations.map((foundAnn) => {
 			var newAnnotation = {
