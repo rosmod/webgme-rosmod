@@ -10,8 +10,8 @@ define([], function() {
 	    //var re = /ROSMOD::(.+)::(\d+)::(-?\d+(?:\.\d+)?)/gi;
 	    var re = /ROSMOD::(.+)::(\d+)::(.+)/gi;
 	    var result = re.exec(attribute);
-	    var annY = 0;
-	    var annYIncrement = 0.5;
+	    var annY = 1;
+	    var annYIncrement = 0;
 	    while(result != null) {
 		var alias = result[1];
 		if (!log_data[alias]) {
@@ -32,6 +32,7 @@ define([], function() {
 			text: result[3]
 		    });
 		    annY += annYIncrement;
+		    log_data[alias].data.push([time, annY]);
 		}
 		else {
 		    // a number was successfully parsed from the log, plot it

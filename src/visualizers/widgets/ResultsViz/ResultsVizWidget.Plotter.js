@@ -16,7 +16,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 	    var annotations = [];
 
 	    Object.keys(data).map(function(key) {
-		if (data[key].annotations && data[key].annotations.length) {
+		if (data[key].annotations.length) {
 		    data[key].annotations.map(function(ann) {
 			annotations.push({
 			    x: ann.x,
@@ -32,16 +32,16 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		    });
 		}
 		pdata.push({
-		    x : data[key].data.map(function(xy) { return new Date(xy[0]); }),
+		    x : data[key].data.map(function(xy) { return xy[0]; }),
 		    y : data[key].data.map(function(xy) { return xy[1]; }),
 		    mode: 'lines',
                     type: 'scatter',
 		    name: key,
                     marker: {
-                        maxdisplayed: 1000 // ,
+                        maxdisplayed: 1000,
+                        size: 12,
                         /*
                           color: "rgb(164, 194, 244)",
-                          size: 12,
                           line: {
                           color: "white",
                           width: 0.5
@@ -58,7 +58,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
                 legend: {
                     xanchor: 'right'
                 },
-		annotations: annotations,
+		//annotations: annotations,
                 margin: {
                     pad: 0,
                     l: 50,
@@ -71,6 +71,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
                 showlegend: true
 	    };
 
+	    var id = '#'+plotId;
 	    Plotly.plot(plotId, pdata, layout, {
 		modeBarButtons: [[{
 		    'name': 'toImage',
@@ -78,7 +79,6 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		    'icon': Plotly.Icons.camera,
 		    'click': function(gd) {
 			var format = 'png';
-			var id = '#'+plotId;
 
 			/*
 			  Plotly.Lib.notifier('Taking snapshot - this may take a few seconds', 'long');
@@ -98,7 +98,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 				//Plotly.Lib.notifier('Snapshot succeeded - ' + filename, 'long');
 			    })
 			    .catch(function() {
-				//Plotly.Lib.notifier('Sorry there was a problem downloading your snapshot!', 'long');
+				//Plotly.Lib.notifier('Sorry there was a problem downloading your snapshot!', 'long')
 			    });
 		    }
 		}],[
@@ -113,22 +113,52 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		    'hoverClosestCartesian',
 		    'hoverCompareCartesian'
 		]],
-		/*
-		  modeBarButtonsToRemove: ['toImage', 'sendDataToCloud'],
-		  modeBarButtonsToAdd: [{
-		  name: 'toImage2',
-		  icon: Plotly.Icons.camera,
-		  click: function(gd) {
-		  console.log($('#'+plotId).height());
-		  console.log($('#'+plotId).width());
-		  Plotly.downloadImage(gd, {
-		  height: $('#'+plotId).height(),
-		  width: $('#'+plotId).width(),
-		  });
-		  }
-		  }],
-		*/
 	    });
+
+	    var myPlot = document.getElementById(plotId);
+
+	    myPlot.on('plotly_click', function(data){
+		var point = data.points[0];
+		var foundAnnotations = annotations.filter(function(ann) {
+		    return ann.x == point.xaxis.d2l(point.x) &&
+			ann.y == point.yaxis.d2l(point.y);
+		});
+		if (foundAnnotations.length) {
+		    foundAnnotations.map((foundAnn) => {
+			var newAnnotation = {
+			    x: point.xaxis.d2l(point.x),
+			    y: point.yaxis.d2l(point.y),
+			    arrowhead: 6,
+			    ax: 0,
+			    ay: -80,
+			    bgcolor: 'rgba(255, 255, 255, 0.9)',
+			    //arrowcolor: point.fullData.marker.color,
+			    font: {size:12},
+			    //bordercolor: point.fullData.marker.color,
+			    borderwidth: 3,
+			    borderpad: 4,
+			    text: foundAnn.text
+			},
+			    divId = document.getElementById(plotId),
+			    newIndex = (divId.layout.annotations || []).length;
+			// delete instead if clicked twice
+			if(newIndex) {
+			    var foundCopy = false;
+			    divId.layout.annotations.forEach(function(ann, sameIndex) {
+				if(ann.text === newAnnotation.text ) {
+				    Plotly.relayout(plotId, 'annotations[' + sameIndex + ']', 'remove');
+				    foundCopy = true;
+				}
+			    });
+			    if(foundCopy) return;
+			}
+			Plotly.relayout(plotId, 'annotations[' + newIndex + ']', newAnnotation);
+		    });
+		}
+	    })
+		.on('plotly_clickannotation', function(event, data) {
+		    Plotly.relayout(plotId, 'annotations[' + data.index + ']', 'remove');
+		});
 	}
     };
 });
