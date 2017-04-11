@@ -329,16 +329,25 @@ define([
 	config['Artifacts'] = [];
 	if (node.Component_list) {
 	    node.Component_list.map(function(comp) {
+		// make the component instance configuration
+		// NOTE: this currently supports both the old and new meta
+		// TODO: update projects to conform to new meta.
 		var ci = {
 		    "Name": comp.name,
 		    "Definition": "lib" + comp.base.name + ".so",
 		    "SchedulingScheme": comp.SchedulingScheme,
 		    "User Configuration": JSON.parse(JSON.minify(comp['User Configuration'])),
-		    "Logging": { 
-			"Enabled": comp.EnableLogging, 
-			"Unit": comp.LoggingUnit,
-			"Component Log FileName": node.name + '.' + comp.name + '.user.log',
-			"ROSMOD Log FileName": node.name + '.' + comp.name + '.trace.log'
+		    "Logging": {
+			"Component Logger": {
+			    "FileName": node.name + '.' + comp.name + '.user.log',
+			    "Enabled": comp.Logging_UserEnable || comp.EnableLogging, 
+			    "Unit": comp.Logging_UserUnit || comp.LoggingUnit,
+			},
+			"ROSMOD Logger": {
+			    "FileName": node.name + '.' + comp.name + '.trace.log'
+			    "Enabled": comp.Logging_TraceEnable || comp.EnableLogging,
+			    "Unit": comp.Logging_TraceUnit || comp.LoggingUnit,
+			}
 		    },
 		    "Timers": {},
 		    "Publishers": [],
@@ -347,16 +356,45 @@ define([
 		    "Servers": {}
 		};
 		config['Artifacts'].concat(JSON.parse(JSON.minify(comp['User Artifacts'])));
-		if (comp.EnableLogging) {
-		    config['Artifacts'].push(ci.Logging['Component Log FileName']);
-		    config['Artifacts'].push(ci.Logging['ROSMOD Log FileName']);
+
+		// warn about user logging settings
+		if (comp.Logging_UserEnable) {
+		    config['Artifacts'].push(ci.Logging['Component Logger']['FileName']);
+		    if (comp.Logging_UserUnit > 1) {
+			self.notify(
+			    'warning',
+			    'Component: ' + comp.name +
+				' on Node: ' + node.name +
+				' has Logging_UserUnit > 1, not all user logs may be captured.');
+		    }
 		}
 		else {
-		    self.notify('warning', 'Component: '+comp.name+' on Node: '+node.name+' does not have logging enabled (EnableLogging = false), will not produce trace or user logs!');
+		    self.notify(
+			'warning',
+			'Component: ' + comp.name +
+			    ' on Node: ' + node.name +
+			    ' does not have Logging_UserEnable set, will not produce user logs!');
 		}
-		if (comp.LoggingUnit > 100) {
-		    self.notify('warning', 'Component: '+comp.name+' on Node: '+node.name+' has LoggingUnit > 1, not all logs may be captured.');
+
+		// warn about trace logging settings
+		if (comp.Logging_TraceEnable)
+		    config['Artifacts'].push(ci.Logging['ROSMOD Logger']['FileName']);
+		    if (comp.Logging_TraceUnit > 1) {
+			self.notify(
+			    'warning',
+			    'Component: ' + comp.name +
+				' on Node: ' + node.name +
+				' has Logging_TraceUnit > 1, not all trace logs may be captured.');
+		    }
 		}
+		else {
+		    self.notify(
+			'warning',
+			'Component: ' + comp.name +
+			    ' on Node: ' + node.name +
+			    ' does not have Logging_UserEnable set, will not produce user logs!');
+		}
+
 		if (comp.Timer_list) {
 		    comp.Timer_list.map(function(timer) {
 			var ti = {
@@ -649,7 +687,7 @@ define([
 	    fstream = require('fstream'),
 	    input = self.config_dir;
 
-	    self.logger.info('zipping ' + input);
+	    //self.logger.info('zipping ' + input);
 
 	    var bufs = [];
 
@@ -660,13 +698,13 @@ define([
 		.on('error', function(e) { reject(e); })
 		.on('data', function(d) { bufs.push(d); })
 		.on('end', function() {
-		    self.logger.debug('gzip ended.');
+		    //self.logger.debug('gzip ended.');
 		    var buf = Buffer.concat(bufs);
 		    var name = self.projectName + '+' + self.experimentName + '+Config';
 		    self.blobClient.putFile(name+'.tar.gz',buf)
 			.then(function (hash) {
 			    self.result.addArtifact(hash);
-			    self.logger.info('compression complete');
+			    //self.logger.info('compression complete');
 			    resolve();
 			})
 			.catch(function(err) {

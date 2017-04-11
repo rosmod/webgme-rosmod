@@ -237,13 +237,17 @@ define([
 	self.core.setRegistry(rn, 'position', {x: 100, y:50});
 	var tasks = logs.map(function(log) {
 	    var logName = log.split('/').slice(-1)[0].replace(/\./g, '_');
-	    self.logger.info('setting meta attr for '+logName);
+	    self.notify('info', 'Adding ' + logName + ' to Results.');
+	    //self.logger.info('setting meta attr for '+logName);
 	    self.core.setAttributeMeta(rn, logName, {'type':'asset'});
-	    self.logger.info('set meta attr for '+logName);
+	    //self.logger.info('set meta attr for '+logName);
 	    return self.blobClient.putFile(log, fs.readFileSync(localDir + '/' + log, 'utf8'))
 		.then(function (hash) {
-		    self.logger.info('got hash for '+log+': ' + hash);
+		    //self.logger.info('got hash for '+log+': ' + hash);
 		    self.core.setAttribute(rn, logName, hash);
+		    self.notify(
+			'info',
+			logName + ' added to results and backed up in webgme_rosmod/blob-local-storage at ' + hash);
 		});
 	});
 	return Q.all(tasks)
@@ -292,7 +296,7 @@ define([
 		.on('error', function(e) { reject(e); })
 		.on('data', function(d) { bufs.push(d); })
 		.on('end', function() {
-		    self.logger.debug('gzip ended.');
+		    //self.logger.debug('gzip ended.');
 		    var buf = Buffer.concat(bufs);
 		    var name = self.projectName + '+' + self.experimentName + '+Results';
 		    self.blobClient.putFile(name+'.tar.gz',buf)

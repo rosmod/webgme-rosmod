@@ -157,15 +157,15 @@ void <%- compInfo.name %>::startUp()
   ros::Duration deadline;
   bool isOneShot;
 
-  logger->create_file(workingDir + '/' + config["Logging"]["Component Log FileName"].asString());
-  logger->set_is_periodic(config["Logging"]["Enabled"].asBool());
-  logger->set_max_log_unit(config["Logging"]["Unit"].asInt());
+  logger->create_file(workingDir + '/' + config["Logging"]["Component Logger"]["FileName"].asString());
+  logger->set_is_periodic(config["Logging"]["Component Logger"]["Enabled"].asBool());
+  logger->set_max_log_unit(config["Logging"]["Component Logger"]["Unit"].asInt());
 
 #ifdef USE_ROSMOD
-  if ( config["Logging"]["Enabled"].asBool() ) {
+  if ( config["Logging"]["ROSMOD Logger"]["Enabled"].asBool() ) {
     comp_queue.ROSMOD_LOGGER->enable_logging();
-    comp_queue.ROSMOD_LOGGER->create_file( workingDir + '/' + config["Logging"]["ROSMOD Log FileName"].asString());
-    comp_queue.ROSMOD_LOGGER->set_max_log_unit(config["Logging"]["Unit"].asInt());
+    comp_queue.ROSMOD_LOGGER->create_file( workingDir + '/' + config["Logging"]["ROSMOD Logger"]["FileName"].asString());
+    comp_queue.ROSMOD_LOGGER->set_max_log_unit(config["Logging"]["ROSMOD Logger"]["Unit"].asInt());
   }
 #endif    
   
