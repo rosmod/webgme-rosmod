@@ -36,7 +36,8 @@ config.requirejsPaths['plotly-js'] = "./node_modules/plotly.js/dist/"
 
 config.client.log.level = 'info';
 
-config.visualization.svgDirs = ["./src/svgs"]  
+var path = require('path');
+config.visualization.svgDirs = [path.join(__dirname, '..', "./src/svgs")];
 
 validateConfig(config);
 module.exports = config;
