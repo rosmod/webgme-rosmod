@@ -344,7 +344,7 @@ define([
 			    "Unit": comp.Logging_UserUnit || comp.LoggingUnit,
 			},
 			"ROSMOD Logger": {
-			    "FileName": node.name + '.' + comp.name + '.trace.log'
+			    "FileName": node.name + '.' + comp.name + '.trace.log',
 			    "Enabled": comp.Logging_TraceEnable || comp.EnableLogging,
 			    "Unit": comp.Logging_TraceUnit || comp.LoggingUnit,
 			}
@@ -358,9 +358,9 @@ define([
 		config['Artifacts'].concat(JSON.parse(JSON.minify(comp['User Artifacts'])));
 
 		// warn about user logging settings
-		if (comp.Logging_UserEnable) {
+		if (ci.Logging['Component Logger'].Enabled) {
 		    config['Artifacts'].push(ci.Logging['Component Logger']['FileName']);
-		    if (comp.Logging_UserUnit > 1) {
+		    if (ci.Logging['Component Logger'].Unit > 1) {
 			self.notify(
 			    'warning',
 			    'Component: ' + comp.name +
@@ -377,9 +377,9 @@ define([
 		}
 
 		// warn about trace logging settings
-		if (comp.Logging_TraceEnable)
+		if (ci.Logging['ROSMOD Logger'].Enabled) {
 		    config['Artifacts'].push(ci.Logging['ROSMOD Logger']['FileName']);
-		    if (comp.Logging_TraceUnit > 1) {
+		    if (ci.Logging['ROSMOD Logger'].Unit > 1) {
 			self.notify(
 			    'warning',
 			    'Component: ' + comp.name +
@@ -392,7 +392,7 @@ define([
 			'warning',
 			'Component: ' + comp.name +
 			    ' on Node: ' + node.name +
-			    ' does not have Logging_UserEnable set, will not produce user logs!');
+			    ' does not have Logging_TraceEnable set, will not produce trace logs!');
 		}
 
 		if (comp.Timer_list) {
@@ -464,7 +464,7 @@ define([
 	var tasks = fnames.map(function(f) {
 	    var deferred = Q.defer();
 	    var fname = path.join(self.config_dir, f),
-	    data = filesToAdd[f];
+		data = filesToAdd[f];
 	    filendir.writeFile(fname, data, function(err) {
 		if (err) {
 		    deferred.reject(err);
@@ -574,8 +574,8 @@ define([
 	    ];
 	    if (container.Node_list) {
 		container.Node_list.map(function(node) {
-		host_commands.push('DISPLAY=:0.0 ./node_main --config ' +
-				   node.name + '.config &');
+		    host_commands.push('DISPLAY=:0.0 ./node_main --config ' +
+				       node.name + '.config &');
 		});
 	    }
 	    //host_commands.push('sleep 10');
@@ -604,8 +604,7 @@ define([
 		return self.startProcesses();
 	    })
 	    .then(function() {
-		var msg = 'Successfully started experiment.';
-		self.notify('info', msg);
+		self.notify('info', 'Successfully started experiment.');
 	    })
 	    .catch(function (err) {
 		var tasks = self.experiment.map(function(link) {
@@ -672,7 +671,7 @@ define([
 	    // optionally use self.core.setPointerMetaTarget(node, name, targe, min(opt), max(opt));
 	});
     };
-			      
+    
     RunExperiment.prototype.createZip = function() {
 	var self = this;
 	
@@ -683,9 +682,9 @@ define([
 	
 	return new Promise(function(resolve, reject) {
 	    var zlib = require('zlib'),
-	    tar = require('tar'),
-	    fstream = require('fstream'),
-	    input = self.config_dir;
+		tar = require('tar'),
+		fstream = require('fstream'),
+		input = self.config_dir;
 
 	    //self.logger.info('zipping ' + input);
 
