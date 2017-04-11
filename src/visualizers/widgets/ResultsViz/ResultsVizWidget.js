@@ -63,8 +63,6 @@ define([
     ResultsVizWidget.prototype.addNode = function (desc) {
         if (desc) {
 	    var datas = {};
-	    var first_time = undefined;
-	    var last_time = undefined;
 	    desc.logs = {};
 
 	    var hidePlotFunc = function(a) {
@@ -77,7 +75,8 @@ define([
 		datas[a].active = active;
 	    };
 
-	    var tasks = desc.attributes.map((key) => {
+	    var attributes = desc.attributes.concat(desc.userLogs);
+	    var tasks = attributes.map((key) => {
 		var a = key;
 		// load the attribute
 		var nodeObj = this._client.getNode(desc.id);
@@ -87,52 +86,14 @@ define([
 			.then((data) => {
 			    desc.logs[a] = data;
 			    // parse the logs
-			    datas[a] = Parser.getDataFromAttribute(data);
-			    var aliases = Object.keys(datas[a]);
-			    aliases.map((key) => {
-				var d = datas[a][key].data;
-				var first_entry = d[0];
-				var last_entry = d[d.length-1];
-				if ( first_time === undefined || first_time > first_entry[0] ) {
-				    first_time = first_entry[0];
-				} 
-				if ( last_time === undefined || last_time < last_entry[0] ) {
-				    last_time = last_entry[0];
-				}
-			    });
-			});
-		}
-	    });
-	    var userTasks = desc.userLogs.map((key) => {
-		var a = key;
-		// load the attribute
-		var nodeObj = this._client.getNode(desc.id);
-		var logHash = nodeObj.getAttribute(a);
-		if (logHash) {
-		    return this._blobClient.getObjectAsString(logHash)
-			.then((data) => {
-			    desc.logs[a] = data;
-			    // parse the logs
-			    datas[a] = UserParser.getDataFromAttribute(data);
-			    var aliases = Object.keys(datas[a]);
-			    aliases.map((key) => {
-				var d = datas[a][key].data;
-				var first_entry = d[0];
-				var last_entry = d[d.length-1];
-				if ( first_time === undefined || first_time > first_entry[0] ) {
-				    first_time = first_entry[0];
-				} 
-				if ( last_time === undefined || last_time < last_entry[0] ) {
-				    last_time = last_entry[0];
-				}
-			    });
+			    var parsed = Parser.getDataFromAttribute(data);
+			    if (_.isEmpty(parsed))
+				parsed = UserParser.getDataFromAttribute(data);
+			    datas[a] = parsed;
 			});
 		}
 	    });
 	    return Q.allSettled(tasks)
-		.then(() => {
-		    return Q.allSettled(userTasks);
-		})
 		.then(() => {
 		    for (var a in desc.logs) {
 			// setup the html
@@ -154,13 +115,8 @@ define([
 			$(p).attr('id',"plot_" + a);
 
 			var data = datas[a];
-			var offset = first_time;
 			if (!_.isEmpty(data)) {
-			    var aliases = Object.keys(data);
-			    aliases.map((key) => {
-				data[key].data.push([last_time, 0]);
-			    });
-			    Plotter.plotData('plot_'+a, data, offset);
+			    Plotter.plotData('plot_'+a, data);
 			    this.plotIDs.push('#plot_'+a);
 			}
 			else

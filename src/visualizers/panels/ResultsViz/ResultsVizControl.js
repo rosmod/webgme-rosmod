@@ -64,11 +64,13 @@ define(['js/Constants',
 
             self._widget.setTitle(desc.name.toUpperCase());
 
+	    /*
             if (desc.parentId || desc.parentId === CONSTANTS.PROJECT_ROOT_ID) {
                 self.$btnModelHierarchyUp.show();
             } else {
                 self.$btnModelHierarchyUp.hide();
             }
+	    */
 
             self._currentNodeParentId = desc.parentId;
 
@@ -167,7 +169,7 @@ define(['js/Constants',
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
     ResultsVizControl.prototype.destroy = function () {
         this._detachClientEventListeners();
-        this._removeToolbarItems();
+        //this._removeToolbarItems();
     };
 
     ResultsVizControl.prototype._attachClientEventListeners = function () {
@@ -181,12 +183,12 @@ define(['js/Constants',
 
     ResultsVizControl.prototype.onActivate = function () {
         this._attachClientEventListeners();
-        this._displayToolbarItems();
+        //this._displayToolbarItems();
     };
 
     ResultsVizControl.prototype.onDeactivate = function () {
         this._detachClientEventListeners();
-        this._hideToolbarItems();
+        //this._hideToolbarItems();
     };
 
     /* * * * * * * * * * Updating the toolbar * * * * * * * * * */

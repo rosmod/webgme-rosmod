@@ -1,12 +1,10 @@
-
-
 define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
     'use strict';
     return {
-	plotData: function(plotId, data, offset) {
+	plotData: function(plotId, data) {
 	    // extent returns array: [min, max]
 	    var maxXs = Object.keys(data).map(function(key) {
-		return d3.extent(data[key].data, function(xy) { return xy[0] - offset; })[1];
+		return d3.extent(data[key].data, function(xy) { return xy[0]; })[1];
 	    });
 	    var maxYs = Object.keys(data).map(function(key) {
 		return d3.extent(data[key].data, function(xy) { return xy[1]; })[1];
@@ -15,16 +13,32 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 	    var ydomain = d3.max(maxYs);
 
 	    var pdata = [];
+	    var annotations = [];
 
 	    Object.keys(data).map(function(key) {
+		if (data[key].annotations && data[key].annotations.length) {
+		    data[key].annotations.map(function(ann) {
+			annotations.push({
+			    x: ann.x,
+			    y: ann.y,
+			    xref: 'x',
+			    yref: 'y',
+			    text: ann.text,
+			    showarrow: true,
+			    arrowhead: 7,
+			    ax: 0,
+			    ay: -40
+			});
+		    });
+		}
 		pdata.push({
-		    x : data[key].data.map(function(xy) { return xy[0] - offset; }),
+		    x : data[key].data.map(function(xy) { return new Date(xy[0]); }),
 		    y : data[key].data.map(function(xy) { return xy[1]; }),
 		    mode: 'lines',
                     type: 'scatter',
 		    name: key,
                     marker: {
-                        maxdisplayed: 1000,
+                        maxdisplayed: 1000 // ,
                         /*
                           color: "rgb(164, 194, 244)",
                           size: 12,
@@ -44,6 +58,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
                 legend: {
                     xanchor: 'right'
                 },
+		annotations: annotations,
                 margin: {
                     pad: 0,
                     l: 50,
@@ -77,7 +92,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 			Plotly.downloadImage(gd, {
 			    'format': format,
 			    'width': $(id).width(),
-			    'width': $(id).width(),
+			    'height': $(id).height(),
 			})
 			    .then(function(filename) {
 				//Plotly.Lib.notifier('Snapshot succeeded - ' + filename, 'long');
@@ -115,5 +130,5 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		*/
 	    });
 	}
-    }
+    };
 });

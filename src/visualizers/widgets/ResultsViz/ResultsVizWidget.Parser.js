@@ -1,6 +1,3 @@
-
-
-
 define([], function() {
     'use strict';
     return {
@@ -14,10 +11,11 @@ define([], function() {
 		    log_data[alias] = {
 			name : alias,
 			data : [],
+			annotations: []
 		    };
 		}
-		var enq = parseFloat(result[2]);
-		var comp = parseFloat(result[4]);
+		var enq = parseFloat(result[2]) * 1000.0;
+		var comp = parseFloat(result[4]) * 1000.0;
 		var exec_time = parseFloat(result[5]);
 		log_data[alias].data.push([enq,  0]);
 		log_data[alias].data.push([enq,  exec_time]);
@@ -26,6 +24,6 @@ define([], function() {
 		result = re.exec(attribute);
 	    }
 	    return log_data;
-	},
-    }
+	}
+    };
 });
