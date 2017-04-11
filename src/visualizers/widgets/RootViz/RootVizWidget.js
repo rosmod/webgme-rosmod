@@ -84,7 +84,7 @@ define([
 	panelId = desc.id.replace(/\//g,'-');
 
 	row = this.$el.find('#rowClass' + this._currentRow);
-	row.append('<td style="width: '+100/this._numElementsPerRow+'%; vertical-align: top; padding-top: 10px; padding-bottom: 10px; padding-right: 10px; padding-left: 10px;" id="colClass'+panelId+'"></td>');
+	row.append('<td style="width: '+5000+'px; vertical-align: top; padding-top: 10px; padding-bottom: 10px; padding-right: 10px; padding-left: 10px;" id="colClass'+panelId+'"></td>');
 
 	this.updateNodeEntry(desc);
 	this._numNodes++;
