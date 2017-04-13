@@ -14,9 +14,19 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 
 	    var pdata = [];
 	    var annotations = [];
+	    var tzOffset = new Date().getTimezoneOffset();
+	    // convert from minutes to milliseconds
+	    tzOffset = tzOffset * 60000;
+	    
 
-	    var findAnnotations = function(x, y) {
+	    var findAnnotations = function(x, y, floorAnn) {
 		var foundAnnotations = annotations.filter(function(ann) {
+		    //console.log('comparing x,y point ('+x+', '+y+')');
+		    //console.log('           to ann   ('+ann.x+', '+ann.y+')');
+		    if (floorAnn === undefined)
+			floorAnn = false;
+		    if (floorAnn)
+			return Math.floor(ann.x) == x && ann.y == y;
 		    return ann.x == x && ann.y == y;
 		});
 		return foundAnnotations;
@@ -39,7 +49,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		    });
 		}
 		pdata.push({
-		    x : data[key].data.map(function(xy) { return xy[0]; }),
+		    x : data[key].data.map(function(xy) { return new Date(xy[0]); }),
 		    y : data[key].data.map(function(xy) { return xy[1]; }),
 		    mode: !data[key].annotations.length ? 'lines' : 'markers+lines',
                     type: 'scatter',
@@ -131,16 +141,19 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 
 	    myPlot.on('plotly_click', function(data){
 		var point = data.points[0];
-		var foundAnnotations = findAnnotations(point.xaxis.d2l(point.x),
-						       point.yaxis.d2l(point.y));
+		var foundAnnotations = findAnnotations(point.xaxis.d2l(point.x) + tzOffset,
+						       point.yaxis.d2l(point.y),
+						       true);
 		if (foundAnnotations.length) {
+		    var yOffset = 0;
+		    var yIncrement = 20;
 		    foundAnnotations.map((foundAnn) => {
 			var newAnnotation = {
-			    x: point.xaxis.d2l(point.x),
-			    y: point.yaxis.d2l(point.y),
+			    x: foundAnn.x,
+			    y: foundAnn.y,
 			    arrowhead: 6,
 			    ax: 0,
-			    ay: -80,
+			    ay: -80 - yOffset,
 			    bgcolor: 'rgba(255, 255, 255, 0.9)',
 			    //arrowcolor: point.fullData.marker.color,
 			    font: {size:12},
@@ -162,6 +175,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 			    });
 			    if(foundCopy) return;
 			}
+			yOffset += yIncrement;
 			Plotly.relayout(plotId, 'annotations[' + newIndex + ']', newAnnotation);
 		    });
 		}

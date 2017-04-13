@@ -18,7 +18,8 @@ define([], function() {
 		    log_data[alias] = {
 			name : alias,
 			data : [],
-			annotations: []
+			annotations: [],
+			_lastAnnX: 0
 		    };
 		}
 		var time = parseFloat(result[2]);
@@ -26,11 +27,14 @@ define([], function() {
 		var data = parseFloat(result[3]);
 		if (isNaN(data)) {
 		    // the data/text didn't start with a number, so must be annotation
+		    //if (Math.floor(time) == Math.floor(log_data[alias]._lastAnnX))
+		    //time += 1; // make a minor difference to annotations can be clicked
 		    log_data[alias].annotations.push({
 			x: time,
 			y: annY,
 			text: result[3]
 		    });
+		    //log_data[alias]._lastAnnX = time;
 		    annY += annYIncrement;
 		    log_data[alias].data.push([time, annY]);
 		}
