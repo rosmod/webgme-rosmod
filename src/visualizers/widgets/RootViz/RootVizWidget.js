@@ -129,7 +129,7 @@ define([
 	column.append(projectHtml);
 
 	function divClicked() {
-	    var divHtml = $(this).html();
+	    var divHtml = $(this).text();
 	    var attribute = $(this).attr('class');
 	    var editableText = $("<textarea />");
 	    editableText.val(divHtml);
@@ -143,15 +143,16 @@ define([
 	}
 
 	function editableTextBlurred() {
-	    var html = $(this).val();
+	    var text = $(this).val();
 	    var attribute = $(this).attr('class');
 	    var viewableText = $("<div>");
-	    viewableText.html(html);
+	    viewableText.text(text);
+	    viewableText.attr('class', attribute);
 	    $(this).replaceWith(viewableText);
 	    // setup the click event for this new div
 	    viewableText.on('dblclick', divClicked);
 	    // save the attribute
-	    self._client.setAttribute(gmeId, attribute, html);
+	    self._client.setAttribute(gmeId, attribute, text);
 	}
 
 	// editable authors area
