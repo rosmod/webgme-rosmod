@@ -17,7 +17,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 	    var tzOffset = new Date().getTimezoneOffset();
 	    // convert from minutes to milliseconds
 	    tzOffset = tzOffset * 60000;
-	    
+	    console.log(tzOffset);
 
 	    var findAnnotations = function(x, y, floorAnn) {
 		var foundAnnotations = annotations.filter(function(ann) {
@@ -102,25 +102,14 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		    'click': function(gd) {
 			var format = 'png';
 
-			/*
-			  Plotly.Lib.notifier('Taking snapshot - this may take a few seconds', 'long');
-
-			  if(Plotly.Lib.isIE()) {
-			  Plotly.Lib.notifier('IE only supports svg.  Changing format to svg.', 'long');
-			  format = 'svg';
-			  }
-			*/
-			
 			Plotly.downloadImage(gd, {
 			    'format': format,
 			    'width': $(id).width(),
 			    'height': $(id).height(),
 			})
 			    .then(function(filename) {
-				//Plotly.Lib.notifier('Snapshot succeeded - ' + filename, 'long');
 			    })
 			    .catch(function() {
-				//Plotly.Lib.notifier('Sorry there was a problem downloading your snapshot!', 'long')
 			    });
 		    }
 		}],[
@@ -168,7 +157,9 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 			if(newIndex) {
 			    var foundCopy = false;
 			    divId.layout.annotations.forEach(function(ann, sameIndex) {
-				if(ann.text === newAnnotation.text ) {
+				if(ann.text === newAnnotation.text &&
+				   ann.x == newAnnotation.x &&
+				   ann.y == newAnnotation.y) {
 				    Plotly.relayout(plotId, 'annotations[' + sameIndex + ']', 'remove');
 				    foundCopy = true;
 				}
