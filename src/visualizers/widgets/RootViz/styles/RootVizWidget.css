@@ -9,6 +9,11 @@
 .root-viz {
   outline: none; }
 
+textarea {
+    width: 100%;
+    height: 100%;
+}
+
 .root-viz-project-panel {
     display: inline-block,
     height: 100%

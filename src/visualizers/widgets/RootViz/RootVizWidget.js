@@ -91,20 +91,23 @@ define([
     };
 
     RootVizWidget.prototype.updateNodeEntry = function(desc) {
+	var self = this;
 	var column,
-	projectHtml,
-	panelId,
-	title,
-	icon,
-	authors,
-	brief,
-	detailed,
-	svg,
-	htmlId,
-	html;
+	    projectHtml,
+	    gmeId,
+	    panelId,
+	    title,
+	    icon,
+	    authors,
+	    brief,
+	    detailed,
+	    svg,
+	    htmlId,
+	    html;
 	
 	title = desc.name;
-	panelId = desc.id.replace(/\//g,'-');
+	gmeId = desc.id;
+	panelId = gmeId.replace(/\//g,'-');
 	icon = desc.icon;
 	if (!icon) {
 	    icon = DefaultIcon;
@@ -125,6 +128,39 @@ define([
 	column.empty();
 	column.append(projectHtml);
 
+	function divClicked() {
+	    var divHtml = $(this).html();
+	    var attribute = $(this).attr('class');
+	    var editableText = $("<textarea />");
+	    editableText.val(divHtml);
+	    editableText.attr('class', attribute);
+	    $(this).replaceWith(editableText);
+	    editableText.focus();
+	    // setup the blur event for this new textarea
+	    editableText.blur(editableTextBlurred);
+	    event.stopPropagation();
+	    event.preventDefault();
+	}
+
+	function editableTextBlurred() {
+	    var html = $(this).val();
+	    var attribute = $(this).attr('class');
+	    var viewableText = $("<div>");
+	    viewableText.html(html);
+	    $(this).replaceWith(viewableText);
+	    // setup the click event for this new div
+	    viewableText.on('dblclick', divClicked);
+	    // save the attribute
+	    self._client.setAttribute(gmeId, attribute, html);
+	}
+
+	// editable authors area
+	$('#'+panelId+'-authors').on('dblclick', divClicked);
+	// editable brief area
+	$('#'+panelId+'-brief').on('dblclick', divClicked);
+	// editable detailed area
+	$('#'+panelId+'-detailed').on('dblclick', divClicked);
+
 	svg = column.find('svg');
 	svg.css('height', '120px');
 	svg.css('width', 'auto');
@@ -142,6 +178,14 @@ define([
 	    html.removeClass('panel-primary');
 	});
 	html.on('click', (event) => {
+	    this.onNodeSelect(desc.id);
+	    event.stopPropagation();
+	    event.preventDefault();
+	});
+	html.on('contextmenu', (event) => {
+	    // handle right click here
+	    // make menu with copy option
+	    // make menu with delete option
 	    this.onNodeSelect(desc.id);
 	    event.stopPropagation();
 	    event.preventDefault();

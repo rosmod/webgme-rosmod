@@ -6,20 +6,8 @@
     <div style="text-align:center;">
       <%- icon %>
     </div>
-<% if (authors) { -%>
-    <div class="authors"><b>Authors:</b> 
-      <%= authors %>
-    </div>
-<% } -%>
-<% if (brief) { -%>
-    <div class="brief"><b>Brief Description:</b> 
-      <%= brief %>
-    </div>
-<% } -%>
-<% if (detailed) { -%>
-    <div class="description"><b>Detailed Description:</b> 
-      <%= detailed %>
-    </div>
-<% } -%>
+    <div class="Authors"><b>Authors:</b></div><div id="<%= id %>-authors" class="Authors"><%= authors %></div>
+    <div class="Brief Description"><b>Brief Description:</b></div><div id="<%= id %>-brief" class="Brief Description"><%= brief %></div>
+    <div class="Detailed Description"><b>Detailed Description:</b></div><div id="<%= id %>-detailed" class="Detailed Description"><%= detailed %></div>
   </div>
 </div>
