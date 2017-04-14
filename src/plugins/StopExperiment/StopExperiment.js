@@ -105,8 +105,8 @@ define([
 	self.exp_dir = path.join(self.root_dir,
 				 'experiments', 
 				 self.experimentName);
-	self.xml_dir = path.join(self.exp_dir,
-				 'xml');
+	self.resultsName = 'Results-'+(new Date()).toUTCString();
+	self.results_dir = path.join(self.exp_dir, self.resultsName);
 
 	self.notify('info', 'loading project: ' + projectName);
 	return self.getActiveHosts()
@@ -198,13 +198,10 @@ define([
     StopExperiment.prototype.copyLogs = function() {
 	var self = this;
 	var path = require('path');
-	var localDir = path.join(self.exp_dir, 'results');
 	var mkdirp = require('mkdirp');
+	var localDir = self.results_dir;
 
-	var child_process = require('child_process');
-	// clear out any previous config files
-	child_process.execSync('rm -rf ' + localDir);
-	// re-create it
+	// create the new results dir
 	mkdirp.sync(localDir);
 
 	var tasks = self.activeHosts.map(function(host) {
@@ -231,7 +228,7 @@ define([
 	var path = require('path');
 	var fs = require('fs');
 	var resultsNode = self.META['Results'];
-	var localDir = path.join(self.exp_dir, 'results');
+	var localDir = self.results_dir;
 	var logs = fs.readdirSync(localDir);
 	var rn = self.core.createNode({parent: self.activeNode, base: resultsNode});
 	self.core.setRegistry(rn, 'position', {x: 100, y:50});
@@ -247,13 +244,12 @@ define([
 		    self.core.setAttribute(rn, logName, hash);
 		    self.notify(
 			'info',
-			logName + ' added to results and backed up in webgme_rosmod/blob-local-storage at ' + hash);
+			logName + ' added to results and backed up in ' + self.results_dir);
 		});
 	});
 	return Q.all(tasks)
 	    .then(() => {
-		var d = new Date();
-		self.core.setAttribute(rn, 'name', 'Results-'+d.toUTCString());
+		self.core.setAttribute(rn, 'name', self.resultsName);
 	    });
     };
 
@@ -283,7 +279,7 @@ define([
 	    var zlib = require('zlib'),
 	    tar = require('tar'),
 	    fstream = require('fstream'),
-	    input = self.exp_dir;
+	    input = self.results_dir;
 
 	    self.notify('info', 'zipping ' + input);
 

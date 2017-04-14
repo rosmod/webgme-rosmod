@@ -112,7 +112,7 @@ define([
 	self.config_dir = path.join(self.root_dir,
 				    'experiments', 
 				    self.experimentName,
-				    'config');
+				    'config-'+(new Date()).toUTCString());
 
 	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true)
 	    .then(function(projectModel) {
@@ -143,11 +143,15 @@ define([
 		return self.deployExperiment();
 	    })
 	    .then(function() {
-		// create experiment nodes in the model corresponding to created experiment mapping
+		// create experiment nodes in the model corresponding
+		// to created experiment mapping
 		return self.createModelArtifacts();
 	    })
 	    .then(function() {
 		return self.createZip();
+	    })
+	    .then(function() {
+		return self.removeTempFiles();
 	    })
 	    .then(function() {
 		// This will save the changes. If you don't want to save;
@@ -162,6 +166,7 @@ define([
 		callback(null, self.result);
 	    })
 	    .catch(function(err) {
+		self.removeTempFiles();
 		if (self.experiment.length) { // if we made a host to container map
 		    return self.stopHosts()
 			.then(function() {
@@ -441,10 +446,6 @@ define([
 
 	var projectName = self.projectModel.name;
 
-	var child_process = require('child_process');
-	// clear out any previous config files
-	child_process.execSync('rm -rf ' + self.config_dir);
-
 	self.experiment.map(function (containerToHostMap) {
 	    var container = containerToHostMap[0]; // container is [0], host is [1]
 	    var host = containerToHostMap[1]; // container is [0], host is [1]
@@ -455,6 +456,8 @@ define([
 		    var nodeConfigName = prefix + node.name + '.config';
 		    var config = self.getNodeConfig(node);
 		    host.artifacts = host.artifacts.concat(config.Artifacts);
+		    // want stopExperiment to copy the config back as well
+                    host.artifacts.push(nodeConfigName);
 		    filesToAdd[nodeConfigName] = JSON.stringify( config, null, 2 );
 		});
 	    }
@@ -722,6 +725,14 @@ define([
 	    .then(function() {
 		self.notify('info', 'Created archive.');
 	    });
+    };
+
+    RunExperiment.prototype.removeTempFiles = function() {
+	var self = this;
+	var child_process = require('child_process');
+	// clear out the temp files
+	self.notify('info','Removing temporary files.');
+	child_process.execSync('rm -rf ' + utils.sanitizePath(self.config_dir));
     };
 
     return RunExperiment;
