@@ -128,6 +128,15 @@ define([
 	column.empty();
 	column.append(projectHtml);
 
+	var i = document.getElementById("root-viz-menu").style;
+	var menuFadeTimeMs = 100;
+	function menu(x, y) {
+	    i.top = y + "px";
+	    i.left = x + "px";
+	    i.visibility = "visible";
+	    i.opacity = "1";
+	}
+
 	function divClicked() {
 	    var divHtml = $(this).text();
 	    var attribute = $(this).attr('class');
@@ -179,7 +188,17 @@ define([
 	    html.removeClass('panel-primary');
 	});
 	html.on('click', (event) => {
+	    i.opacity = "0";
+	    setTimeout(function() {
+		i.visibility = "hidden";
+	    }, menuFadeTimeMs);
+	    
 	    this.onNodeSelect(desc.id);
+	    //event.stopPropagation();
+	    //event.preventDefault();
+	});
+	html.on('dblclick', (event) => {
+	    this.onNodeClick(desc.id);
 	    event.stopPropagation();
 	    event.preventDefault();
 	});
@@ -187,14 +206,26 @@ define([
 	    // handle right click here
 	    // make menu with copy option
 	    // make menu with delete option
+	    var posX = event.clientX;
+	    var posY = event.clientY;
+	    menu(posX, posY);
 	    this.onNodeSelect(desc.id);
 	    event.stopPropagation();
 	    event.preventDefault();
 	});
-	html.on('dblclick', (event) => {
-	    this.onNodeClick(desc.id);
+	// default handlers for the rest of the viz space
+	this.$el.on('contextmenu', (event) => {
+	    var posX = event.clientX;
+	    var posY = event.clientY;
+	    menu(posX, posY);
 	    event.stopPropagation();
 	    event.preventDefault();
+	});
+	this.$el.on('click', (event) => {
+	    i.opacity = "0";
+	    setTimeout(function() {
+		i.visibility = "hidden";
+	    }, menuFadeTimeMs);
 	});
 
 	this.nodes[desc.id] = desc;
