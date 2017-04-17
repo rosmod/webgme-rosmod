@@ -186,7 +186,7 @@ define([
 	    var user = host.user;
 	    var host_commands = [
 		'pkill roscore',
-		'pkill node_main',
+		'pkill rosmod_actor',
 		'rc_kill'
 	    ];
 	    self.notify('info', 'stopping processes on: '+ user.name + '@' + ip);
@@ -220,7 +220,12 @@ define([
 	    });
 	    return Q.all(artTasks);
 	});
-	return Q.all(tasks);
+	return Q.all(tasks)
+	    .then(function() {
+		self.notify(
+		    'info',
+		    'Logs and Configs placed in ' + self.exp_dir);
+	    });
     };
 
     StopExperiment.prototype.createResults = function() {
@@ -242,9 +247,6 @@ define([
 		.then(function (hash) {
 		    //self.logger.info('got hash for '+log+': ' + hash);
 		    self.core.setAttribute(rn, logName, hash);
-		    self.notify(
-			'info',
-			logName + ' added to results and backed up in ' + self.results_dir);
 		});
 	});
 	return Q.all(tasks)

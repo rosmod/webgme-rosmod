@@ -16,16 +16,7 @@ else()
     message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-ADD_DEFINITIONS(-DNAMESPACE=${NAMESPACE})
-if (${NAMESPACE} STREQUAL "rosmod")
-  find_package(catkin REQUIRED COMPONENTS rosmod std_msgs message_generation)
-  ADD_DEFINITIONS(-DUSE_ROSMOD)
-ELSEIF(${NAMESPACE} STREQUAL "ros")
-  find_package(catkin REQUIRED COMPONENTS roscpp std_msgs message_generation)
-  ADD_DEFINITIONS(-DUSE_ROSCPP)
-ELSE()
-  message(FATAL_ERROR "Some error something wrong")
-ENDIF()
+find_package(catkin REQUIRED COMPONENTS rosmod rosmod_component rosmod_jsoncpp std_msgs message_generation)
 
 <% 
 if (pkgInfo.Service_list) { 
@@ -109,7 +100,6 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ../../devel/include
-  ../node/include
 <% 
 if (pkgInfo.Component_list) {
   var indexedPackages = [];

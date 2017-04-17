@@ -289,7 +289,7 @@ define([
 	var path = require('path');
 	var fs = require('fs');
 	var platforms = [];
-	var binaries = ['node_main'];
+	var binaries = [];
 	self.experiment.map(function (containerToHostMap) {
 	    // get the components required
 	    var container = containerToHostMap[0];
@@ -526,7 +526,7 @@ define([
 	    var deployment_dir = path.join(user.Directory,
 					   'experiments');
 	    var host_commands = [
-		'pkill node_main',
+		'pkill rosmod_actor',
 		'pkill roscore',
 		'rc_kill',
 		'rm -rf ' + utils.sanitizePath(deployment_dir)
@@ -577,7 +577,7 @@ define([
 	    ];
 	    if (container.Node_list) {
 		container.Node_list.map(function(node) {
-		    host_commands.push('DISPLAY=:0.0 ./node_main --config ' +
+		    host_commands.push('DISPLAY=:0.0 rosmod_actor --config ' +
 				       node.name + '.config &');
 		});
 	    }

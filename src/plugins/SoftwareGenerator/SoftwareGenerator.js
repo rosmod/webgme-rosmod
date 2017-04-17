@@ -296,8 +296,6 @@ define([
 
 	self.notify('info', 'Downloading Source Libraries');
 
-	// where is the rosmod-actor executable?
-	var file_url = 'https://github.com/rosmod/rosmod-actor/releases/download/v0.3.5/rosmod-actor.zip';
 	var tasks = [];
 	if (self.projectModel.Software_list[0]['Source Library_list']) {
 	    tasks = self.projectModel.Software_list[0]['Source Library_list'].map(function(lib) {
@@ -306,10 +304,7 @@ define([
 	    });
 	}
 
-	return Q.all(tasks)
-	    .then(function() {
-		return utils.wgetAndUnzipLibrary(file_url, dir); // get rosmod-actor
-	    });
+	return Q.all(tasks);
     };
 
     SoftwareGenerator.prototype.generateDocumentation = function () 
@@ -516,10 +511,9 @@ define([
 	    'cd ' + compile_dir,
 	    'rm -rf bin',
 	    'source '+host.host['ROS Install']+'/setup.bash',
-	    'catkin_make -DNAMESPACE=rosmod',
+	    'catkin_make',
 	    'mkdir bin',
 	    'cp devel/lib/*.so bin/.',
-	    'cp devel/lib/node/node_main bin/.',
 	    'rm -rf devel build',
 	];
 

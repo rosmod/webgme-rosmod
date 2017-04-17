@@ -6,7 +6,7 @@
 
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
-#include "node/Component.hpp"
+#include "rosmod_actor/Component.hpp"
 
 /**
  * Component Message and Service Headers
@@ -21,13 +21,7 @@ if (compInfo.Types.length) {
  }
 -%>
 
-#ifdef USE_ROSMOD
-  #include "rosmod/rosmod_ros.h"
-#else
-  #ifdef USE_ROSCPP
-    #include "ros/ros.h"
-  #endif
-#endif
+#include "rosmod/rosmod_ros.h"
 
 /**
  * Forward declarations
@@ -54,7 +48,7 @@ public:
    * @param[in] event a oneshot timer event
    * @see startUp()
    */
-  void init_timer_operation(const NAMESPACE::TimerEvent& event);
+  void init_timer_operation(const rosmod::TimerEvent& event);
 
 <%
 if (compInfo.Timer_list) {
@@ -69,7 +63,7 @@ if (compInfo.Timer_list) {
    *
    * <%- tmr['Detailed Description'] %>
    */
-  void <%- tmr.name %>_operation(const NAMESPACE::TimerEvent& event);
+  void <%- tmr.name %>_operation(const rosmod::TimerEvent& event);
 <%
     });
  }
@@ -132,7 +126,7 @@ private:
 if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
-  NAMESPACE::Timer <%- tmr.name %>;  /*!< <%- tmr.name %> Component Timer */
+  rosmod::Timer <%- tmr.name %>;  /*!< <%- tmr.name %> Component Timer */
 <%
     });
  }
@@ -141,7 +135,7 @@ if (compInfo.Timer_list) {
 if (compInfo.Server_list) {
   compInfo.Server_list.map(function(srv) {
 -%>
-  NAMESPACE::ServiceServer <%- srv.name %>;  /*!< <%- srv.name %> Component Server */
+  rosmod::ServiceServer <%- srv.name %>;  /*!< <%- srv.name %> Component Server */
 <%
     });
  }
@@ -150,7 +144,7 @@ if (compInfo.Server_list) {
 if (compInfo.Client_list) {
   compInfo.Client_list.map(function(clt) {
  -%>
-  NAMESPACE::ServiceClient <%- clt.name %>;  /*!< <%- clt.name %> Component Client */
+  rosmod::ServiceClient <%- clt.name %>;  /*!< <%- clt.name %> Component Client */
 <%
     });
  }
@@ -159,7 +153,7 @@ if (compInfo.Client_list) {
 if (compInfo.Publisher_list) {
   compInfo.Publisher_list.map(function(pub) {
  -%>
-  NAMESPACE::Publisher <%- pub.name %>;  /*!< <%- pub.name %> Component Publisher */
+  rosmod::Publisher <%- pub.name %>;  /*!< <%- pub.name %> Component Publisher */
 <%
     });
  }
@@ -168,7 +162,7 @@ if (compInfo.Publisher_list) {
 if (compInfo.Subscriber_list) {
   compInfo.Subscriber_list.map(function(sub) {
  -%>
-  NAMESPACE::Subscriber <%- sub.name %>;  /*!< <%- sub.name %> Component Subscriber */
+  rosmod::Subscriber <%- sub.name %>;  /*!< <%- sub.name %> Component Subscriber */
 <%
     });
  }
