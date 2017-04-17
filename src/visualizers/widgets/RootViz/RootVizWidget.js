@@ -161,15 +161,16 @@ define([
 	    // setup the click event for this new div
 	    viewableText.on('dblclick', divClicked);
 	    // save the attribute
-	    self._client.setAttribute(gmeId, attribute, text);
+	    if (text != "undefined")
+		self._client.setAttribute(gmeId, attribute, text);
 	}
 
 	// editable authors area
-	$('#'+panelId+'-authors').on('dblclick', divClicked);
+	this.$el.find('#'+panelId+'-authors').on('dblclick', divClicked);
 	// editable brief area
-	$('#'+panelId+'-brief').on('dblclick', divClicked);
+	this.$el.find('#'+panelId+'-brief').on('dblclick', divClicked);
 	// editable detailed area
-	$('#'+panelId+'-detailed').on('dblclick', divClicked);
+	this.$el.find('#'+panelId+'-detailed').on('dblclick', divClicked);
 
 	svg = column.find('svg');
 	svg.css('height', '120px');
