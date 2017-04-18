@@ -443,8 +443,11 @@ define([
     SoftwareGenerator.prototype.parseCompilePercent = function (host, data) {
 	var self = this;
 	var percent = utils.parseMakePercentOutput(data);
-	if (percent.length && percent[0] > 0 && (percent[0] % 10) == 0 ) {
+	if (host.__lastPercent === undefined)
+	    host.__lastPercent = 0;
+	if (percent.length && percent[0] > 0 && (percent[0] - host.__lastPercent) > 4 ) {
 	    var msg = 'Build on ' + utils.getDeviceType(host.host) + ': ' + percent[0] + '%';
+	    host.__lastPercent = percent[0];
 	    self.notify('info', msg);
 	}
 	return false;
