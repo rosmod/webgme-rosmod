@@ -79,9 +79,10 @@ define([
         // Default fails
         self.result.success = false;
 
+	self.runningOnClient = false;
+
         if (typeof WebGMEGlobal !== 'undefined') {
-            callback(new Error('Client-side execution is not supported'), self.result);
-            return;
+	    self.runningOnClient = true;
         }
 
         self.updateMETA({});
@@ -94,6 +95,7 @@ define([
 	self.experiment = [];
 	self.rosCorePort = Math.floor((Math.random() * (65535-1024) + 1024));
 	self.rosCoreIp = '';
+	self.artifacts = {};
 
 	webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
 	utils.notify = function(level, msg) {self.notify(level, msg);}
@@ -103,16 +105,19 @@ define([
 	var projectName = self.core.getAttribute(projectNode, 'name');
 
 	self.experimentName = self.core.getAttribute(self.activeNode, 'name');
-	var path = require('path');
-	self.root_dir = path.join(process.cwd(), 
-				  'generated', 
-				  self.project.projectId, 
-				  self.branchName,
-				  projectName);
-	self.config_dir = path.join(self.root_dir,
-				    'experiments', 
-				    self.experimentName,
-				    'config-'+(new Date()).toUTCString());
+
+	if (!self.runningOnClient) {
+	    var path = require('path');
+	    self.root_dir = path.join(process.cwd(), 
+				      'generated', 
+				      self.project.projectId, 
+				      self.branchName,
+				      projectName);
+	    self.config_dir = path.join(self.root_dir,
+					'experiments', 
+					self.experimentName,
+					'config-'+(new Date()).toUTCString());
+	}
 
 	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true)
 	    .then(function(projectModel) {
@@ -148,7 +153,10 @@ define([
 		return self.createModelArtifacts();
 	    })
 	    .then(function() {
-		return self.createZip();
+		if (self.runningOnClient)
+		    return self.returnConfigs();
+		else
+		    return self.createZip();
 	    })
 	    .then(function() {
 		return self.removeTempFiles();
@@ -196,7 +204,18 @@ define([
 	if (!containers || !host_list) {
 	    throw new String('System must have hosts and Deployment must have containers!');
 	}
-	return utils.getAvailableHosts(host_list)
+	var tasks = [];
+	if (!self.runningOnClient)
+	    tasks = utils.getAvailableHosts(host_list);
+	else {
+	    tasks = host_list.map(function(host) {
+		var intf = host.Interface_list[0];
+		var user = host.Users[0];
+		return {host: host, intf: intf, user: user};
+	    });
+	}
+	
+	return Q.all(tasks)
 	    .then(function(hosts) {
 		self.notify('info', containers.length + ' mapping to ' + hosts.length);
 		if (hosts.length < containers.length) {
@@ -205,11 +224,16 @@ define([
 				     ' available hosts.');
 		}
 		var sortedContainers = [];
+		/*
 		// TEMPORARY: ADD CONSTRAINTS JSON TO RESULT FOR SUBHAV
-		self.blobClient.putFile('constraints.json', JSON.stringify({containers: containers, hosts: hosts},null,2))
+		self.blobClient.putFile(
+		    'constraints.json',
+		    JSON.stringify({containers: containers, hosts: hosts},null,2)
+		)
 		    .then(function (hash) {
 			self.result.addArtifact(hash);
 		    });
+		*/
 		// figure out which containers have which constraints;
 		containers.map(function(container) {
 		    container.constraints = [];
@@ -286,6 +310,12 @@ define([
 
     RunExperiment.prototype.checkBinaries = function() {
 	var self = this;
+
+	if (self.runningOnClient) {
+	    self.notify('info', 'Skipping binary check in client mode.');
+	    return;
+	}
+	
 	var path = require('path');
 	var fs = require('fs');
 	var platforms = [];
@@ -439,9 +469,6 @@ define([
 
     RunExperiment.prototype.generateArtifacts = function () {
 	var self = this;
-	var path = require('path');
-	var filendir = require('filendir');
-	var filesToAdd = {};
 	var prefix = '';
 
 	var projectName = self.projectModel.name;
@@ -458,16 +485,23 @@ define([
 		    host.artifacts = host.artifacts.concat(config.Artifacts);
 		    // want stopExperiment to copy the config back as well
                     host.artifacts.push(nodeConfigName);
-		    filesToAdd[nodeConfigName] = JSON.stringify( config, null, 2 );
+		    self.artifacts[nodeConfigName] = JSON.stringify( config, null, 2 );
 		});
 	    }
 	});
 
-	var fnames = Object.keys(filesToAdd);
+	if (self.runningOnClient) {
+	    self.notify('info', 'Skipping config generation in client mode.');
+	    return;
+	}	
+
+	var fnames = Object.keys(self.artifacts);
 	var tasks = fnames.map(function(f) {
+	    var path = require('path');
+	    var filendir = require('filendir');
 	    var deferred = Q.defer();
 	    var fname = path.join(self.config_dir, f),
-		data = filesToAdd[f];
+		data = self.artifacts[f];
 	    filendir.writeFile(fname, data, function(err) {
 		if (err) {
 		    deferred.reject(err);
@@ -486,6 +520,7 @@ define([
 
     RunExperiment.prototype.copyArtifactsToHosts = function () {
 	var self = this;
+
 	var path = require('path');
 	var tasks = self.experiment.map(function(link) {
 	    var container = link[0];
@@ -597,6 +632,12 @@ define([
 
     RunExperiment.prototype.deployExperiment = function () {
 	var self = this;
+
+	if (self.runningOnClient) {
+	    self.notify('info', 'Not deploying experiment in client mode.');
+	    return;
+	}
+
 	return self.copyArtifactsToHosts()
 	    .then(function () {
 		self.notify('info','Copied artifacts to hosts.');
@@ -623,6 +664,12 @@ define([
 
     RunExperiment.prototype.createModelArtifacts = function () {
 	var self=this;
+
+	if (self.runningOnClient) {
+	    // cant deploy experiment so no real map exists
+	    return;
+	}
+
 	var metaNodes = self.core.getAllMetaNodes(self.activeNode);
 	var fcoNode = self.core.getBaseRoot(self.activeNode);
 
@@ -673,6 +720,19 @@ define([
 	    self.core.setPointer(ln, 'dst', hn);
 	    // optionally use self.core.setPointerMetaTarget(node, name, targe, min(opt), max(opt));
 	});
+    };
+
+    RunExperiment.prototype.returnConfigs = function() {
+	var self = this;
+	var tasks = Object.keys(self.artifacts).map(function(key) {
+	    var fname = key;
+	    var fdata = self.artifacts[key];
+	    return self.blobClient.putFile(fname, fdata)
+		.then(function(hash) {
+		    self.result.addArtifact(hash);
+		});
+	});
+	return Q.all(tasks);
     };
     
     RunExperiment.prototype.createZip = function() {
@@ -729,6 +789,10 @@ define([
 
     RunExperiment.prototype.removeTempFiles = function() {
 	var self = this;
+
+	if (self.runningOnClient)
+	    return;
+
 	var child_process = require('child_process');
 	// clear out the temp files
 	self.notify('info','Removing temporary files.');
