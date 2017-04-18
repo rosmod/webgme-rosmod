@@ -580,6 +580,7 @@ define([
 	var host = link[1];
 	var ip = host.intf.IP;
 	self.rosCoreIp = ip;
+	host.runningRoscore = true;
 	var user = host.user;
 	var host_commands = [
 	    'source '+host.host['ROS Install']+'/setup.bash',
@@ -709,6 +710,10 @@ define([
 	    //    value here can be any valid JS object (even nested types);
 	    self.core.setAttribute(cn, 'name', container.name);
 	    self.core.setAttribute(hn, 'name', host.host.name);
+	    if (host.runningRoscore) {
+		self.core.setAttributeMeta(hn, 'RunningRoscore', {type: 'boolean'});
+		self.core.setAttribute(hn, 'RunningRoscore', host.runningRoscore);
+	    }
 	    self.core.setAttribute(hn, 'Host', host.host);
 	    self.core.setAttribute(hn, 'Artifacts', host.artifacts);
 	    self.core.setAttribute(hn, 'User', host.user);

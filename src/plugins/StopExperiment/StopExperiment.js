@@ -157,10 +157,18 @@ define([
 		    var node = nodes[i];
 		    if (self.core.isTypeOf(node, self.META.Host)) {
 			var host = self.core.getAttribute(node, 'Host'),
-			artifacts = self.core.getAttribute(node, 'Artifacts'),
-			user = self.core.getAttribute(node, 'User'),
-			intf = self.core.getAttribute(node, 'Interface');
-			ah.push({host:host, user:user, intf:intf, artifacts: artifacts});
+			    artifacts = self.core.getAttribute(node, 'Artifacts'),
+			    user = self.core.getAttribute(node, 'User'),
+			    intf = self.core.getAttribute(node, 'Interface'),
+			    runningRoscore = self.core.getAttribute(node, 'RunningRoscore');
+			
+			ah.push({
+			    host: host,
+			    user: user,
+			    intf: intf,
+			    artifacts: artifacts,
+			    RunningRoscore: runningRoscore
+			});
 			self.core.deleteNode(node);
 		    }
 		    else if (self.core.isTypeOf(node, self.META.Container)) {
@@ -195,6 +203,30 @@ define([
 	return Q.all(tasks);
     };
 
+    StopExperiment.prototype.copyRosLogs = function(host) {
+	var self = this;
+	var ip = host.intf.IP;
+	var user = host.user;
+	var path = require('path');
+	var mkdirp = require('mkdirp');
+	var localDir = self.results_dir;
+	// copy the ros logs back over
+	var rosLogDir = '~/.ros/log/latest';
+	self.notify('info', 'Copying ROS logs from ' + ip);
+	return utils.copyFromHost(rosLogDir, localDir + '/.', ip, user)
+	    .then(function() {
+		// now that we have the logs, we need to zip them up and remove the dir
+		var child_process = require('child_process');
+		child_process.execSync('tar -zcvf rosLogs.tar.gz latest',
+				       {cwd: localDir});
+		child_process.execSync('rm -rf latest',
+				       {cwd: localDir});
+	    })
+	    .catch(function(err) {
+		self.notify('warning', 'ROS logs not found on ' + ip);
+	    });
+    };
+
     StopExperiment.prototype.copyLogs = function() {
 	var self = this;
 	var path = require('path');
@@ -212,13 +244,19 @@ define([
 				      self.experimentName);
 	    self.notify('info', 'Copying experiment data from ' + ip);
 	    var artTasks = host.artifacts.map(function(artifact) {
-		return utils.copyFromHost(remoteDir + '/' + artifact, localDir + '/.', ip, user)
+		return utils.copyFromHost(remoteDir + '/' + artifact,
+					  localDir + '/.', ip, user)
 		    .catch(function(err) {
 			self.notify('warning', artifact + ' not found on ' + ip);
 		    });
 
 	    });
-	    return Q.all(artTasks);
+	    return Q.all(artTasks)
+		.then(function() {
+		    if (host.RunningRoscore) {
+			return self.copyRosLogs(host);
+		    }
+		});
 	});
 	return Q.all(tasks)
 	    .then(function() {
