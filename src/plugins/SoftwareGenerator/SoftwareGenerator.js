@@ -215,16 +215,20 @@ define([
 		    });
 		}
 
-		var	cmakeFileName = prefix + pkgInfo.name + '/CMakeLists.txt',
-		cmakeTemplate = TEMPLATES[self.FILES['cmakelists']];
+		var cmakeFileName = [prefix,
+				     pkgInfo.name,
+				     'CMakeLists.txt'].join('/'),
+		    cmakeTemplate = TEMPLATES[self.FILES['cmakelists']];
 		self.artifacts[cmakeFileName] = ejs.render(cmakeTemplate, {
 		    'pkgInfo':pkgInfo, 
 		    'model': self.projectModel,
                     'objects': self.projectObjects
 		});
 
-		var packageXMLFileName = prefix + pkgInfo.name + '/package.xml',
-		packageXMLTemplate = TEMPLATES[self.FILES['package_xml']];
+		var packageXMLFileName = [prefix,
+					  pkgInfo.name,
+					  'package.xml'].join('/'),
+		    packageXMLTemplate = TEMPLATES[self.FILES['package_xml']];
 		self.artifacts[packageXMLFileName] = ejs.render(packageXMLTemplate, {
 		    'pkgInfo': pkgInfo,
 		    'model': self.projectModel,
