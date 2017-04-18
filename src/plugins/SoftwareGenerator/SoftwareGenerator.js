@@ -106,25 +106,32 @@ define([
 
         if (typeof WebGMEGlobal !== 'undefined') {
 	    self.runningOnClient = true;
-	    callback(new Error('Cannot run ' + self.getName() + ' in the browser!'), self.result);
-	    return;
+	    self.compileCode = self.generateDocs = false;
         }
 	
-	var path = require('path');
-
+	
 	// the active node for this plugin is software -> project
 	var projectNode = self.activeNode;
 	self.projectName = self.core.getAttribute(projectNode, 'name');
 
-	// Setting up variables that will be used by various functions of this plugin
-	self.gen_dir = path.join(process.cwd(),
-				 'generated',
-				 self.project.projectId,
-				 self.branchName,
-				 self.projectName);
+	if (!self.runningOnClient) {
+	    var path = require('path');
+	    // Setting up variables that will be used by various functions of this plugin
+	    self.gen_dir = path.join(process.cwd(),
+				     'generated',
+				     self.project.projectId,
+				     self.branchName,
+				     self.projectName);
+	}
 
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
 	self.artifacts = {}; // will be filled out and used by various parts of this plugin
+	self.artifactName = self.projectName + "+Software";
+	if (self.compileCode)
+	    self.artifactName += '+Binaries';
+	if (self.generateDocs)
+	    self.artifactName += '+Docs';
+
 
 	webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
 	utils.notify = function(level, msg) {self.notify(level, msg);}
@@ -145,7 +152,10 @@ define([
 		return self.generateDocumentation();
 	    })
 	    .then(function () {
-		return self.createZip();
+		if (self.runningOnClient)
+		    return self.returnSource();
+		else
+		    return self.createZip();
 	    })
 	    .then(function () {
         	self.result.setSuccess(true);
@@ -160,24 +170,9 @@ define([
     };
 
     SoftwareGenerator.prototype.generateArtifacts = function () {
-	var self = this;
-	if ( self.runningOnClient ) {
-	    var msg = 'Skipping code generation.'
-	    self.notify('info', msg);
-	    return;
-	}
-	var path = require('path'),
-	    filendir = require('filendir'),
-	    prefix = 'src/';
+	var self = this,
+	    prefix = 'src';
 
-	var path = require('path');
-	var child_process = require('child_process');
-
-	// clear out any previous project files
-	child_process.execSync('rm -rf ' + path.join(self.gen_dir,'bin'));
-	child_process.execSync('rm -rf ' + path.join(self.gen_dir,'src'));
-
-	self.artifacts[self.projectModel.name + '.json'] = JSON.stringify(self.projectModel, null, 2);
         self.artifacts[self.projectModel.name + '_metadata.json'] = JSON.stringify({
     	    projectID: self.project.projectId,
             commitHash: self.commitHash,
@@ -204,13 +199,18 @@ define([
 
 		if (pkgInfo.Message_list) {
 		    pkgInfo.Message_list.map(function(msgInfo) {
-			var msgFileName = prefix + pkgInfo.name + '/msg/' + msgInfo.name + '.msg';
+			var msgFileName = [prefix,
+					   pkgInfo.name,
+					   'msg',
+					   msgInfo.name + '.msg'].join('/');
 			self.artifacts[msgFileName] = msgInfo.Definition;
 		    });
 		}
 		if (pkgInfo.Service_list) {
 		    pkgInfo.Service_list.map(function(srvInfo) {
-			var srvFileName = prefix + pkgInfo.name + '/srv/' + srvInfo.name + '.srv';
+			var srvFileName = [prefix,
+					   pkgInfo.name,'srv',
+					   srvInfo.name + '.srv'].join('/');
 			self.artifacts[srvFileName] = srvInfo.Definition;
 		    });
 		}
@@ -232,6 +232,20 @@ define([
 		});
 	    });
 	}
+
+	if ( self.runningOnClient ) {
+	    self.notify('info', 'Generated code in client.');
+	    return;
+	}
+
+	// put the files on the FS
+	var path = require('path'),
+	    filendir = require('filendir'),
+	    child_process = require('child_process');
+
+	// clear out any previous project files
+	child_process.execSync('rm -rf ' + path.join(self.gen_dir,'bin'));
+	child_process.execSync('rm -rf ' + path.join(self.gen_dir,'src'));
 
 	var fileNames = Object.keys(self.artifacts);
 	var tasks = fileNames.map(function(fileName) {
@@ -257,29 +271,25 @@ define([
 
     SoftwareGenerator.prototype.generateComponentFiles = function (prefix, pkgInfo, compInfo) {
 	var self = this;
-	var path = require('path');
-	var moment = require('moment');
-	var inclFileName = path.join(prefix,
-				     pkgInfo.name,
-				     'include',
-				     pkgInfo.name,
-				     compInfo.name + '.hpp'),
-	    srcFileName = path.join(prefix,
-				    pkgInfo.name,
-				    'src',
-				    pkgInfo.name,
-				    compInfo.name + '.cpp'),
+	var inclFileName = [prefix,
+			    pkgInfo.name,
+			    'include',
+			    pkgInfo.name,
+			    compInfo.name + '.hpp'].join('/'),
+	    srcFileName = [prefix,
+			   pkgInfo.name,
+			   'src',
+			   pkgInfo.name,
+			   compInfo.name + '.cpp'].join('/'),
 	    compCPPTemplate = TEMPLATES[this.FILES['component_cpp']],
 	    compHPPTemplate = TEMPLATES[this.FILES['component_hpp']];
 	self.artifacts[inclFileName] = ejs.render(compHPPTemplate, {
 	    'compInfo': compInfo,
-	    'moment': moment,
 	    'model': self.projectModel,
             'objects': self.projectObjects
 	});
 	self.artifacts[srcFileName] = ejs.render(compCPPTemplate, {
 	    'compInfo': compInfo,
-	    'moment': moment,
 	    'model': self.projectModel,
             'objects': self.projectObjects
 	});
@@ -289,8 +299,10 @@ define([
     {
 	var self = this;
 	if (self.runningOnClient) {
+	    self.notify('info', 'Skipping source library download in client mode.');
 	    return;
 	}
+
 	var path = require('path'),
 	dir = path.join(self.gen_dir, 'src');
 
@@ -664,6 +676,27 @@ define([
 	    });
     };
 			      
+    SoftwareGenerator.prototype.returnSource = function() {
+	var self = this;
+	var artifact = self.blobClient.createArtifact(self.artifactName);
+	var deferred = new Q.defer();
+	artifact.addFiles(self.artifacts, function(err) {
+	    if (err) {
+		deferred.reject(err.message);
+		return;
+	    }
+	    self.blobClient.saveAllArtifacts(function(err, hashes) {
+		if (err) {
+		    deferred.reject(err.message);
+		    return;
+		}
+		self.result.addArtifact(hashes[0]);
+		deferred.resolve();
+	    });
+	});
+	return deferred.promise;
+    };
+
     SoftwareGenerator.prototype.createZip = function() {
 	var self = this;
 	
@@ -689,12 +722,7 @@ define([
 		.on('data', function(d) { bufs.push(d); })
 		.on('end', function() {
 		    var buf = Buffer.concat(bufs);
-		    var name = self.projectName + "+Software";
-		    if (self.compileCode)
-			name += '+Binaries';
-		    if (self.generateDocs)
-			name += '+Docs';
-		    self.blobClient.putFile(name+'.tar.gz',buf)
+		    self.blobClient.putFile(self.artifactName+'.tar.gz',buf)
 			.then(function (hash) {
 			    self.result.addArtifact(hash);
 			    resolve();

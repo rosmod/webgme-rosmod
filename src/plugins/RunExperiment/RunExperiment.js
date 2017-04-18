@@ -103,8 +103,9 @@ define([
 	// the active node for this plugin is experiment -> experiments -> project
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
 	var projectName = self.core.getAttribute(projectNode, 'name');
-
+	
 	self.experimentName = self.core.getAttribute(self.activeNode, 'name');
+	self.artifactName = self.experimentName + '+Configs';
 
 	if (!self.runningOnClient) {
 	    var path = require('path');
@@ -398,17 +399,17 @@ define([
 		    if (ci.Logging['Component Logger'].Unit > 1) {
 			self.notify(
 			    'warning',
-			    'Component: ' + comp.name +
-				' on Node: ' + node.name +
-				' has Logging_UserUnit > 1, not all user logs may be captured.');
+			    node.name + ' : ' +
+				comp.name + ' : ' +
+				' not all user logs may be captured.');
 		    }
 		}
 		else {
 		    self.notify(
 			'warning',
-			'Component: ' + comp.name +
-			    ' on Node: ' + node.name +
-			    ' does not have Logging_UserEnable set, will not produce user logs!');
+			node.name + ' : ' +
+			    comp.name + ' : ' +
+			    ' will not produce user logs!');
 		}
 
 		// warn about trace logging settings
@@ -417,17 +418,17 @@ define([
 		    if (ci.Logging['ROSMOD Logger'].Unit > 1) {
 			self.notify(
 			    'warning',
-			    'Component: ' + comp.name +
-				' on Node: ' + node.name +
-				' has Logging_TraceUnit > 1, not all trace logs may be captured.');
+			    node.name + ' : ' +
+				comp.name + ' : ' +
+				' not all trace logs may be captured.');
 		    }
 		}
 		else {
 		    self.notify(
 			'warning',
-			'Component: ' + comp.name +
-			    ' on Node: ' + node.name +
-			    ' does not have Logging_TraceEnable set, will not produce trace logs!');
+			    node.name + ' : ' +
+				comp.name + ' : ' +
+			    ' will not produce trace logs!');
 		}
 
 		if (comp.Timer_list) {
@@ -724,15 +725,23 @@ define([
 
     RunExperiment.prototype.returnConfigs = function() {
 	var self = this;
-	var tasks = Object.keys(self.artifacts).map(function(key) {
-	    var fname = key;
-	    var fdata = self.artifacts[key];
-	    return self.blobClient.putFile(fname, fdata)
-		.then(function(hash) {
-		    self.result.addArtifact(hash);
-		});
+	var artifact = self.blobClient.createArtifact(self.artifactName);
+	var deferred = new Q.defer();
+	artifact.addFiles(self.artifacts, function(err) {
+	    if (err) {
+		deferred.reject(err.message);
+		return;
+	    }
+	    self.blobClient.saveAllArtifacts(function(err, hashes) {
+		if (err) {
+		    deferred.reject(err.message);
+		    return;
+		}
+		self.result.addArtifact(hashes[0]);
+		deferred.resolve();
+	    });
 	});
-	return Q.all(tasks);
+	return deferred.promise;
     };
     
     RunExperiment.prototype.createZip = function() {
