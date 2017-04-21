@@ -15,10 +15,15 @@ define([], function() {
 		    };
 		}
 		var enq = parseFloat(result[2]) * 1000.0;
+		var deq = parseFloat(result[3]) * 1000.0;
 		var comp = parseFloat(result[4]) * 1000.0;
-		var exec_time = parseFloat(result[5]);
+		var wait_time = parseFloat(result[3]) - parseFloat(result[2]);
+		var exec_time = parseFloat(result[5]) - wait_time;
+		var deadline  = parseFloat(result[6]);
 		log_data[alias].data.push([enq,  0]);
-		log_data[alias].data.push([enq,  exec_time]);
+		log_data[alias].data.push([enq,  wait_time]);
+		log_data[alias].data.push([deq,  wait_time]);
+		log_data[alias].data.push([deq,  exec_time]);
 		log_data[alias].data.push([comp, exec_time]);
 		log_data[alias].data.push([comp, 0]);
 		result = re.exec(attribute);
