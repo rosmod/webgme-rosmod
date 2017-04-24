@@ -1,48 +1,62 @@
 # ROSMOD
 
+This repository contains the implementation of ROSMOD, built on
+[WebGME](http://github.com/webgme/webgme).
+
 ROSMOD is a web-based, collaborative, modeling and execution
 environment for distributed embedded applications built using
 [ROS](http://www.ros.org).
 
+An example server running ROSMOD can be found on
+[rosmod.rcps.isis.vanderbilt.edu](http://rosmod.rcps.isis.vanderbilt.edu).
+
 ## Contents
 
 1. [What is ROSMOD](#what-is-rosmod)
-  1. [Motivation](#motivation)
-  2. [Implementation](#implementation)
-  3. [Features](#features)
+    1. [Motivation](#motivation)
+	2. [Implementation](#implementation)
+	3. [Features](#features)
 2. [How to set up ROSMOD](#how-to-set-up-rosmod)
-  1. [Setting up the ROSMOD server](#setting-up-the-rosmod-server)
-  2. [Setting up target systems to run ROSMOD](#setting-up-target-systems-to-run-rosmod)
+    1. [Setting up the ROSMOD server](#setting-up-the-rosmod-server)
+	2. [Setting up target systems to run ROSMOD](#setting-up-target-systems-to-run-rosmod)
 3. [How to use ROSMOD](#how-to-use-rosmod)
-  1. [Creating a ROSMOD project](#creating-a-rosmod-project)
-  2. [Modeling the Software](#modeling-the-software)
-  3. [Modeling the Systems](#modeling-the-systems)
-  4. [Creating a Deployment](#creating-a-deployment)
-  5. [Running an Experiment](#running-an-experiment)
+    1. [Creating a ROSMOD project](#creating-a-rosmod-project)
+	2. [Modeling the Software](#modeling-the-software)
+	3. [Modeling the Systems](#modeling-the-systems)
+	4. [Creating a Deployment](#creating-a-deployment)
+	5. [Running an Experiment](#running-an-experiment)
 4. [Keeping ROSMOD up to date](#keeping-rosmod-up-to-date)
 
 
 ## What is ROSMOD?
 
-This repository contains the implementation of ROSMOD-GUI, based on
-[WebGME](http://github.com/webgme/webgme), a live demo of which can be
-found on [WebGME.org](http://webgme.org).
+The Robot Operating System Model-driven development tool suite,
+(ROSMOD) an integrated development environment for rapid prototyping
+component-based software for the Robot Operating System (ROS)
+middleware.
 
-An example server running ROSMOD-GUI can be found on
-[rosmod.rcps.isis.vanderbilt.edu](http://rosmod.rcps.isis.vanderbilt.edu).
-RCPS is a BeagleBone Black cluster at the Vanderbilt University
-Institute for Software Integrated Systems (ISIS), on which we run
-resilient, distributed CPS research.  Please note that guest accounts
-are not allowed to run any processes on the cluster (such as
-compilation or experiment deployments), but are allowed to create
-models and download the generated artifacts from those models (such as
-code source and deployment files).
+ROSMOD consists of 
+1. The *ROSMOD Server*, which provides collaborative model-driven
+   development, and
+2. The *ROSMOD Comm* layer, which extends ROS to provide a more well
+   defined component execution model with support for prioritization
+   of component event triggers.
 
 ### Motivation
 
 ### Implementation
 
 ### Features
+
+* Collaborative, automatically versioned web-based development
+* Model-based framework for developing hardware and software
+* Fully integrated code development, with documentation generation
+* Fully integrated code generation, compilation, and deployment
+* Interactive deployment visualization
+* Embeddable documentation at every level of the model
+* Distributed debugging enabled by automatic trace logging and
+  plotting of trace and user logs
+* Automatic load management of embedded targets
 
 ## How to set up ROSMOD
 
