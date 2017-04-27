@@ -106,6 +106,10 @@ define([
 
         if (typeof WebGMEGlobal !== 'undefined') {
 	    self.runningOnClient = true;
+	    if (self.compileCode)
+		self.notify('error', 'Cannot compile while running in client! Please re-run the plugin and enable server execution!');
+	    if (self.generateDocs)
+		self.notify('error', 'Cannot generate documentation while running in client! Please re-run the plugin and enable server execution!');
 	    self.compileCode = self.generateDocs = false;
         }
 	
