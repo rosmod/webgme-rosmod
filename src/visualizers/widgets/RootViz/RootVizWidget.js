@@ -128,13 +128,17 @@ define([
 	column.empty();
 	column.append(projectHtml);
 
-	var i = document.getElementById("root-viz-menu").style;
+	var i = document.getElementById("root-viz-menu");
+	if (i)
+	    i = i.style;
 	var menuFadeTimeMs = 100;
 	function menu(x, y) {
-	    i.top = y + "px";
-	    i.left = x + "px";
-	    i.visibility = "visible";
-	    i.opacity = "1";
+	    if (i) {
+		i.top = y + "px";
+		i.left = x + "px";
+		i.visibility = "visible";
+		i.opacity = "1";
+	    }
 	}
 
 	function divClicked() {
