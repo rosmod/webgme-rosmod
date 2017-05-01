@@ -33,7 +33,9 @@
 	"theme": "default",
 	"keyBinding": "sublime",
         "autoSaveInterval": "2000",
-	"rootType": "Project",
+	"rootTypes": [
+            "Project"
+        ],
 	"loadDepth": 5,
 	"excludeTypes": [
 	    "Experiments",
