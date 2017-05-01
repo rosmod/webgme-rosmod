@@ -129,6 +129,11 @@ define(['js/Constants',
 			.then(function(data) {
 			    objDescriptor.icon = data;
 			    resolve(objDescriptor);
+			})
+			.catch(function(err) {
+			    console.error('Couldnt get icon for ' + objDescriptor.name);
+			    console.error(err);
+			    resolve(objDescriptor);
 			});
 		}
 		else {

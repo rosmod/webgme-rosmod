@@ -108,10 +108,7 @@ define([
 	title = desc.name;
 	gmeId = desc.id;
 	panelId = gmeId.replace(/\//g,'-');
-	icon = desc.icon;
-	if (!icon) {
-	    icon = DefaultIcon;
-	}
+	icon = desc.icon || DefaultIcon;
 	authors = desc.authors;
 	brief = desc.brief;
 	detailed = desc.detailed;
