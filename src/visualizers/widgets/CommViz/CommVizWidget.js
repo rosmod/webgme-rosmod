@@ -239,6 +239,8 @@ define([
 		    y: p.y
 		});
 	    });
+
+      self._cy.on('add', _.debounce(self.reLayout.bind(self), 250));
 	    
 	    self._cy.on('tap', function(){
 		$('#search').blur();
@@ -261,7 +263,7 @@ define([
 	    });
 
 	    self._el.find('#re_layout').on('click', function(){
-		self._cy.layout(self._layout_options);
+		self.reLayout();
 	    });
 	    
 	    self._el.find('#reset').on('click', function(){
@@ -407,6 +409,11 @@ define([
 	    });
 	};
 
+        CommVizWidget.prototype.reLayout = function() {
+            var self = this;
+            self._cy.layout(self._layout_options);
+        };
+
 	// pub, sub, client, server are all edges
 	CommVizWidget.prototype.createEdge = function(desc) {
 	    var self = this;
@@ -424,7 +431,6 @@ define([
 			target: to.id
 		    }
 		});
-		self._cy.layout(self._layout_options);
 		self.nodes[desc.id] = desc;
 		self.updateDependencies();
 	    }
@@ -446,7 +452,6 @@ define([
 		}
 	    };
 	    self._cy.add(node);
-	    self._cy.layout(self._layout_options);
 	    self.nodes[desc.id] = desc;
 	    self.updateDependencies();
 	};
