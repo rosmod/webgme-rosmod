@@ -345,24 +345,40 @@ define([
 	// clear out any previous documentation
 	child_process.execSync('rm -rf ' + docPath);
 
+	var stdOut = '';
+	var stdErr = '';
+
 	var deferred = Q.defer();
 	var terminal = child_process.spawn('bash', [], {cwd:self.gen_dir});
-	terminal.stdout.on('data', function (data) {});
-	terminal.stderr.on('data', function (error) {
-	});
+	terminal.stdout.on('data', function (data) { stdOut += data; });
+	terminal.stderr.on('data', function (data) { stdErr += data; });
 	terminal.on('exit', function (code) {
 	    if (code == 0) {
 		deferred.resolve(code);
 	    }
 	    else {
-		deferred.reject('document generation:: child process exited with code ' + code);
+		var files = {
+		    'documentation.stdout.txt': stdOut,
+		    'documentation.stderr.txt': stdErr
+		};
+		var fnames = Object.keys(files);
+		var tasks = fnames.map((fname) => {
+		    return self.blobClient.putFile(fname, files[fname])
+			.then((hash) => {
+			    self.result.addArtifact(hash);
+			});
+		});
+		return Q.all(tasks)
+		    .then(() => {
+			deferred.reject('document generation:: child process exited with code ' + code);
+		    });
 	    }
 	});
 	setTimeout(function() {
 	    terminal.stdin.write('doxygen doxygen_config\n');
 	    terminal.stdin.write('make -C ./doc/latex/ pdf\n');
 	    terminal.stdin.write('mv ./doc/latex/refman.pdf ' + 
-				 self.projectName + '.pdf');
+				 utils.sanitizeName(self.projectName) + '.pdf');
 	    terminal.stdin.end();
 	}, 1000);
 	return deferred.promise;
