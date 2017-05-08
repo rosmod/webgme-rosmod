@@ -4,8 +4,8 @@
  *  @brief   This file declares the <%- compInfo.name %> class; <%- compInfo['Brief Description'] %>
  */
 
-#ifndef CLIENT_HPP
-#define CLIENT_HPP
+#ifndef <%- compInfo.name.toUpperCase() %>_INCLUDE_GUARD
+#define <%- compInfo.name.toUpperCase() %>_INCLUDE_GUARD
 #include "rosmod_component/Component.hpp"
 
 /**
@@ -175,5 +175,5 @@ if (compInfo.Subscriber_list) {
   <%- compInfo.Members %>
 };
 
-#endif
+#endif // <%- compInfo.name.toUpperCase() %>_INCLUDE_GUARD
 
