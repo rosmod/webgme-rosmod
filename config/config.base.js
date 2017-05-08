@@ -25,6 +25,10 @@ config.plugin.allowServerExecution = true;
 config.seedProjects.enable = true;
 config.seedProjects.basePaths = ["./src/seeds"]
 
+// Merging config
+config.storage.autoMerge.enable = true;
+
+// RequireJS paths
 config.requirejsPaths.rosmod = "./src/common/"
 config.requirejsPaths.cytoscape = "./node_modules/cytoscape/dist"
 config.requirejsPaths.plottable = "./node_modules/plottable/"
