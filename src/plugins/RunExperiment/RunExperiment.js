@@ -90,6 +90,7 @@ define([
 	// What did the user select for our configuration?
 	var currentConfig = self.getCurrentConfig();
 	self.returnZip = currentConfig.returnZip;
+	self.roscoreDelay = currentConfig.roscoreDelay;
 	
 	// will be filled out by the plugin
 	self.experiment = [];
@@ -588,7 +589,7 @@ define([
 	    'export ROS_MASTER_URI=http://'+ip+':'+self.rosCorePort,
 	    'roscore --port=' + self.rosCorePort + ' &'
 	];
-	host_commands.push('sleep 10');
+	host_commands.push('sleep ' + self.roscoreDelay);
 	self.notify('info','Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
 	return utils.deployOnHost(host_commands, ip, user);
     };
