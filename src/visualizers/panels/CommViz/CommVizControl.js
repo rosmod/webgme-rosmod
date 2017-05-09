@@ -77,8 +77,6 @@
                 this.currentNodeInfo.parentId = desc.parentId;
             }
 
-            this._refreshBtnModelHierarchyUp();
-
             self._selfPatterns[nodeId] = {children: 4};  // Territory "rule"
             self._territoryId = self._client.addUI(self, function (events) {
                 self._eventCallback(events);
@@ -86,14 +84,6 @@
 
             // Update the territory
             self._client.updateTerritory(self._territoryId, self._selfPatterns);
-        }
-    };
-
-    CommVizControl.prototype._refreshBtnModelHierarchyUp = function () {
-        if (this.currentNodeInfo.id) {
-            this.$btnModelHierarchyUp.show();
-        } else {
-            this.$btnModelHierarchyUp.hide();
         }
     };
 
@@ -237,7 +227,6 @@
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
     CommVizControl.prototype.destroy = function () {
         this._detachClientEventListeners();
-        this._removeToolbarItems();
     };
 
     CommVizControl.prototype._attachClientEventListeners = function () {
@@ -251,7 +240,6 @@
 
     CommVizControl.prototype.onActivate = function () {
         this._attachClientEventListeners();
-        this._displayToolbarItems();
 
         if (typeof this._currentNodeId === 'string') {
             WebGMEGlobal.State.registerSuppressVisualizerFromNode(true);
@@ -262,70 +250,6 @@
 
     CommVizControl.prototype.onDeactivate = function () {
         this._detachClientEventListeners();
-        this._hideToolbarItems();
-    };
-
-    /* * * * * * * * * * Updating the toolbar * * * * * * * * * */
-    CommVizControl.prototype._displayToolbarItems = function () {
-
-        if (this._toolbarInitialized === true) {
-            for (var i = this._toolbarItems.length; i--;) {
-                this._toolbarItems[i].show();
-            }
-        } else {
-            this._initializeToolbar();
-        }
-    };
-
-    CommVizControl.prototype._hideToolbarItems = function () {
-
-        if (this._toolbarInitialized === true) {
-            for (var i = this._toolbarItems.length; i--;) {
-                this._toolbarItems[i].hide();
-            }
-        }
-    };
-
-    CommVizControl.prototype._removeToolbarItems = function () {
-
-        if (this._toolbarInitialized === true) {
-            for (var i = this._toolbarItems.length; i--;) {
-                this._toolbarItems[i].destroy();
-            }
-        }
-    };
-
-    CommVizControl.prototype._initializeToolbar = function () {
-        var self = this,
-            toolBar = WebGMEGlobal.Toolbar;
-
-        this._toolbarItems = [];
-
-        this._toolbarItems.push(toolBar.addSeparator());
-
-        /************** Go to hierarchical parent button ****************/
-        this.$btnModelHierarchyUp = toolBar.addButton({
-            title: 'Go to parent',
-            icon: 'glyphicon glyphicon-circle-arrow-up',
-            clickFn: function (/*data*/) {
-                WebGMEGlobal.State.registerActiveObject(self._currentNodeParentId);
-            }
-        });
-        this._toolbarItems.push(this.$btnModelHierarchyUp);
-        this.$btnModelHierarchyUp.hide();
-
-        /************** Checkbox example *******************/
-
-        this.$cbShowConnection = toolBar.addCheckBox({
-            title: 'toggle checkbox',
-            icon: 'gme icon-gme_diagonal-arrow',
-            checkChangedFn: function (data, checked) {
-                self._logger.debug('Checkbox has been clicked!');
-            }
-        });
-        this._toolbarItems.push(this.$cbShowConnection);
-
-        this._toolbarInitialized = true;
     };
 
     return CommVizControl;
