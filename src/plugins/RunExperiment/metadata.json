@@ -11,14 +11,6 @@
   "disableBrowserSideExecution": false,
   "configStructure": [
       {
-	  "name": "roscoreDelay",
-	  "displayName": "ROSCORE Wait Time (s).",
-	  "description": "Amount of time (in seconds) to wait for ROSCORE to start up.",
-	  "value": 30,
-	  "valueType": "integer",
-	  "readOnly": false
-      },
-      {
 	  "name": "returnZip",
 	  "displayName": "Zip and return generated artifacts.",
 	  "description": "If true, it enables the client to download a zip of the artifacts.",
