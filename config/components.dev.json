@@ -39,8 +39,7 @@
 	"loadDepth": 5,
 	"excludeTypes": [
 	    "Experiments",
-	    "Systems",
-	    "Documentation"
+	    "Systems"
 	],
 	"syntaxToModeMap": {
 	    "C++": { "name": "text/x-c++src", "useCPP": true },
@@ -69,6 +68,9 @@
 	    }
 	},
 	"attrToSyntaxMap": {
+	    "Documentation": {
+		"documentation": "gfm"
+	    },
 	    "Project": {
 		"Authors": "gfm",
 		"Brief Description": "gfm",

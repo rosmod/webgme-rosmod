@@ -38,8 +38,7 @@
         ],
 	"excludeTypes": [
 	    "Experiments",
-	    "Systems",
-	    "Documentation"
+	    "Systems"
 	],
 	"loadDepth": 5,
 	"syntaxToModeMap": {
@@ -69,6 +68,9 @@
 	    }
 	},
 	"attrToSyntaxMap": {
+	    "Documentation": {
+		"documentation": "gfm"
+	    },
 	    "Project": {
 		"Authors": "gfm",
 		"Brief Description": "gfm",
