@@ -335,7 +335,7 @@ define([
 	};
 
 	CommVizWidget.prototype.onWidgetContainerResize = function (width, height) {
-            this._logger.debug('Widget is resizing...');
+	    this._cy.resize();
 	};
 	
 	var connectionTypes = [
