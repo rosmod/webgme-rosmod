@@ -152,7 +152,7 @@ which enables the `META` visualizer.
 
 1. Install [ROS](http://www.ros.org) onto the target platform.
    
-   *NOTE:* only *ros-<version>-ros-base* is required, but any install
+   *NOTE:* only *ros-\<version\>-ros-base* is required, but any install
     target works.
    
 2. Install [ROSMOD-COMM](http://github.com/rosmod/rosmod-comm) onto
