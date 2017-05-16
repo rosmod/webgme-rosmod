@@ -97,14 +97,37 @@ compilation and deployment as requested by the users.
 ### Features
 
 * Collaborative, automatically versioned web-based development
+
+	![Project history view with branching and tagging](./img/versioning.png)
+
 * Model-based framework for developing hardware and software
+
+	![Graphical modeling](./img/model.png)
+
 * Fully integrated code development, with documentation generation
+
+	![Integrated code editing with syntax highlighting](./img/codeEditor.png)
+
 * Fully integrated code generation, compilation, and deployment
+
+	![Code generation and compilation](./img/compilation.png)
+
 * Interactive deployment visualization
+
+	![Interactive deployment visualization](./img/commViz.png)
+
 * Embeddable documentation at every level of the model
+
+	![Documentation supporting markdown rendering](./img/documentation.png)
+
 * Distributed debugging enabled by automatic trace logging and
   plotting of trace and user logs
+
+	![Automatic results logc parsing and plotting](./img/resultsViz.png)
+
 * Automatic load management of embedded targets
+
+	I don't have a picture here because it's in the backend :)
 
 ## How to set up ROSMOD
 
@@ -160,10 +183,22 @@ which enables the `META` visualizer.
 3. Ensure the target has *SSH capabilities*; configure an ssh key that
    the ROSMOD server can use to remotely access the target device.
    
-*NOTE:* password-based authentication is not allowed for ROSMOD
- targets.
+   *NOTE:* password-based authentication is not allowed for ROSMOD
+    targets.
 
 ## How to use ROSMOD
+
+This section serves as a short guide for users who want to develop
+robotics with ROSMOD. A more complete guide into what each of the
+elements of a ROSMOD model is can be found in the
+[Samples Seed](./src/seeds/samples.webgmex), which contains some
+example projects for robots, autonomous cars, and automous planes, as
+well as a simple `Introduction to ROSMOD` sample which is fully
+documented (within the model using `Documentation` objects that render
+[Markdown](https://en.wikipedia.org/wiki/Markdown) within the
+model. This sample is hosted on the live server listed at the top of
+this page, but can also be used as the base for any project created in
+any deployment of the server since it is part of this repository.
 
 ### Creating a ROSMOD Project
 
