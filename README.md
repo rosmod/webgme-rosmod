@@ -151,6 +151,10 @@ which enables the `META` visualizer.
 ### Setting up target systems to run ROSMOD
 
 1. Install [ROS](http://www.ros.org) onto the target platform.
+   
+   *NOTE:* only *ros-<version>-ros-base* is required, but any install
+    target works.
+   
 2. Install [ROSMOD-COMM](http://github.com/rosmod/rosmod-comm) onto
    the target platform.
 3. Ensure the target has *SSH capabilities*; configure an ssh key that
