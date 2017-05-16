@@ -45,7 +45,54 @@ ROSMOD consists of
 
 ### Motivation
 
+Robotics is a discipline that involves integration between
+heterogeneous fields such as electronics, mechanics, computer science,
+control theory and artificial intelligence. During the design,
+development and deployment of robotic systems, the components that
+belong to the various sub-systems, e.g., image processing software,
+servo-motors, power distribution system, etc., must work congruously
+to achieve a common goal. As systems increase in complexity, software
+development platforms must enable the creation of such components in a
+rapid, reliable, and reusable manner while also providing
+systems-level design, analysis, and deployment.
+
+In other similar systems, users are often tasked with developing the
+models, generating the code, and then manually touching the generated
+code to implement the business logic for the various operations their
+system needs to perform (e.g. periodic or event-triggered
+functions). The injection and management of this user-developed code
+inside the generated code can increase the learning curve for new
+users as it adds some extra file management and build-system
+overhead. Additionally, almost all other similar projects require
+installation on the users' computers, which means they mey need to
+troubleshoot setting up the IDE, the compiler, and any other required
+libraries (e.g. catkin, python, ssh, etc.) which will increase the
+time it takes to configure their system and increase the number of
+failure points in their configuration process (not to mention
+increasing the platform and version control support nightmare).
+
+To combat these issues, we wanted ROSMOD to act as a lightweight (from
+the users' perspectives) IDE which does not require *any*
+installation, and can be run cross-platform since it only relies on a
+web-browser (even smartPhones can act as interfaces!). In this way,
+the development of robotics with ROSMOD is done in a
+**decentralized**, **collaborative**, **automatically versioned
+development** , with **centralized management** of the infrastructure
+(including any compatibility, package version management, and build /
+deployment infrastructure management).
+
 ### Implementation
+
+ROSMOD is implemented as a web-based graphical interface to a
+versioned, git-like database of models with integrated code. Along
+with this database exist server-side plugins which enable the
+generation, compilation, and deployment of executable code. This
+executable code is fully complete without the need for users to touch
+or even download the files. These plugins have accses to the
+file-system on the server, where the sys-admin for the ROSMOD
+webserver has already configured the build system and deployment
+infrastructure so that these plugins can automatically perform the
+compilation and deployment as requested by the users.
 
 ### Features
 
