@@ -1,8 +1,8 @@
 # ROSMOD
 
 This repository contains the implementation of
-[ROSMOD](http://www.mdpi.com/2079-9292/5/3/53), built on
-[WebGME](http://github.com/webgme/webgme).
+[ROSMOD - Journal of Electronics](http://www.mdpi.com/2079-9292/5/3/53),
+built on [WebGME](http://github.com/webgme/webgme).
 
 ROSMOD is a web-based, collaborative, modeling and execution
 environment for distributed embedded applications built using
