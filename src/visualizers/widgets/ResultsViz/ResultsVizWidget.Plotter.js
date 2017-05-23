@@ -153,7 +153,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 			    borderpad: 4,
 			    text: foundAnn.text
 			},
-			    divId = document.getElementById(plotId),
+			    divId = d3.selectAll(container).select(id).node(),
 			    newIndex = (divId.layout.annotations || []).length;
 			// delete instead if clicked twice
 			if(newIndex) {
@@ -162,19 +162,19 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 				if(ann.text === newAnnotation.text &&
 				   ann.x == newAnnotation.x &&
 				   ann.y == newAnnotation.y) {
-				    Plotly.relayout(plotId, 'annotations[' + sameIndex + ']', 'remove');
+				    Plotly.relayout(myPlot, 'annotations[' + sameIndex + ']', 'remove');
 				    foundCopy = true;
 				}
 			    });
 			    if(foundCopy) return;
 			}
 			yOffset += yIncrement;
-			Plotly.relayout(plotId, 'annotations[' + newIndex + ']', newAnnotation);
+			Plotly.relayout(myPlot, 'annotations[' + newIndex + ']', newAnnotation);
 		    });
 		}
 	    })
 		.on('plotly_clickannotation', function(event, data) {
-		    Plotly.relayout(plotId, 'annotations[' + data.index + ']', 'remove');
+		    Plotly.relayout(myPlot, 'annotations[' + data.index + ']', 'remove');
 		});
 	}
     };
