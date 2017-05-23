@@ -54,13 +54,17 @@ define([
 
     ResultsVizWidget.prototype.onWidgetContainerResize = function (width, height) {
         //console.log('Widget is resizing...');
+	var self = this;
 	this.plotIDs.map(function(plotID) {
-	    Plotly.Plots.resize(d3.select(plotID).node());
+	    var n = d3.selectAll(self._el).select(plotID).node();
+	    if (n && $(self._el).find(plotID).css('display') != 'none')
+		Plotly.Plots.resize(n);
 	});
     };
 
     // Adding/Removing/Updating items
     ResultsVizWidget.prototype.addNode = function (desc) {
+	var self = this;
         if (desc) {
 	    var datas = {};
 	    desc.logs = {};
@@ -70,8 +74,8 @@ define([
 		var opacity = active ? 0 : 1;
 		var visibility = active ? 'hidden' : 'visible';
 		var display = active ? 'none' : 'block';
-		d3.select('#plot_'+a)
-		    .style('display', display);
+		self._el.find('#plot_'+a)
+		    .css('display', display);
 		datas[a].active = active;
 	    };
 
@@ -99,12 +103,13 @@ define([
 			// setup the html
 			this._el.append(PlotHtml);
 			var container = this._el.find('#log');
-			$(container).attr('id', 'log_'+a);
+			container.attr('id', 'log_'+a);
 			
 			var title = this._el.find('#title');
-			$(title).attr('id','title_'+a)
+			title.attr('id','title_'+a)
 			    .on('click', function(_a) {
 				return function() {
+				    self._onClick(desc.id);
 				    hidePlotFunc(_a);
 				};
 			    }(a));
@@ -112,15 +117,18 @@ define([
 			title.append('<b>'+a+'</b>');
 
 			var p = this._el.find('#plot');
-			$(p).attr('id',"plot_" + a);
+			p.attr('id',"plot_" + a);
+			p.click(function() {
+			    self._onClick(desc.id);
+			});
 
 			var data = datas[a];
 			if (!_.isEmpty(data)) {
-			    Plotter.plotData('plot_'+a, data);
+			    Plotter.plotData(self._el, 'plot_'+a, data, this._onClick.bind(this, desc.id) );
 			    this.plotIDs.push('#plot_'+a);
 			}
 			else
-			    $(container).detach();
+			    container.detach();
 		    }
 		    this.nodes[desc.id] = desc;
 		});
@@ -129,23 +137,27 @@ define([
 
     ResultsVizWidget.prototype.removeNode = function (gmeId) {
         var desc = this.nodes[gmeId];
-        this._el.append('<div>Removing node "'+desc.name+'"</div>');
-        delete this.nodes[gmeId];
+	if (desc) { // if this is our results object
+	    this._el.empty();
+            delete this.nodes[gmeId];
+	}
     };
 
     ResultsVizWidget.prototype.updateNode = function (desc) {
-        if (desc) {
-            //console.log('Updating node:', desc);
-            this._el.append('<div>Updating node "'+desc.name+'"</div>');
+	if (this.nodes[desc.id]) { // if this is our results object
+	    // remove old data
+	    this.removeNode(desc.id);
+	    // recreate with new data
+	    this.addNode(desc);
         }
     };
 
-    /* * * * * * * * Visualizer event handlers * * * * * * * */
-
-    ResultsVizWidget.prototype.onNodeClick = function (id) {
-        // This currently changes the active node to the given id and
-        // this is overridden in the controller.
+    ResultsVizWidget.prototype._onClick = function (id) {
+	this.onActivate();
+	WebGMEGlobal.State.registerActiveSelection([id]);
     };
+
+    /* * * * * * * * Visualizer event handlers * * * * * * * */
 
     ResultsVizWidget.prototype.onBackgroundDblClick = function () {
     };

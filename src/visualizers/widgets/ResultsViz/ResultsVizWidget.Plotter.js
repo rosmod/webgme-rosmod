@@ -1,7 +1,7 @@
 define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
     'use strict';
     return {
-	plotData: function(plotId, data) {
+	plotData: function(container, plotId, data, onclick) {
 	    // extent returns array: [min, max]
 	    var maxXs = Object.keys(data).map(function(key) {
 		return d3.extent(data[key].data, function(xy) { return xy[0]; })[1];
@@ -17,7 +17,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 	    var tzOffset = new Date().getTimezoneOffset();
 	    // convert from minutes to milliseconds
 	    tzOffset = tzOffset * 60000;
-	    console.log(tzOffset);
+	    //console.log(tzOffset);
 
 	    var findAnnotations = function(x, y, floorAnn) {
 		var foundAnnotations = annotations.filter(function(ann) {
@@ -94,7 +94,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 	    };
 
 	    var id = '#'+plotId;
-	    Plotly.plot(plotId, pdata, layout, {
+	    Plotly.plot(d3.selectAll(container).select(id).node(), pdata, layout, {
 		modeBarButtons: [[{
 		    'name': 'toImage',
 		    'title': 'Download plot as png',
@@ -102,10 +102,11 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		    'click': function(gd) {
 			var format = 'png';
 
+			var n = d3.selectAll(container).select(id).node();
 			Plotly.downloadImage(gd, {
 			    'format': format,
-			    'width': $(id).width(),
-			    'height': $(id).height(),
+			    'width': n.width(),
+			    'height': n.height(),
 			})
 			    .then(function(filename) {
 			    })
@@ -126,9 +127,10 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		]],
 	    });
 
-	    var myPlot = document.getElementById(plotId);
+	    var myPlot = d3.selectAll(container).select(id).node();
 
 	    myPlot.on('plotly_click', function(data){
+		onclick();
 		var point = data.points[0];
 		var foundAnnotations = findAnnotations(point.xaxis.d2l(point.x) + tzOffset,
 						       point.yaxis.d2l(point.y),
