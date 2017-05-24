@@ -183,6 +183,12 @@ define(['js/Constants',
 
     ResultsVizControl.prototype.onActivate = function () {
         this._attachClientEventListeners();
+
+        if (this._currentNodeId) {
+
+            WebGMEGlobal.State.registerActiveObject(this._currentNodeId, {suppressVisualizerFromNode: true});
+
+        }
         //this._displayToolbarItems();
     };
 
