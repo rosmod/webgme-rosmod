@@ -102,7 +102,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		    'click': function(gd) {
 			var format = 'png';
 
-			var n = d3.selectAll(container).select(id).node();
+			var n = $(container).find(id);
 			Plotly.downloadImage(gd, {
 			    'format': format,
 			    'width': n.width(),
