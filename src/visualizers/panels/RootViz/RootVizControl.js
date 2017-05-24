@@ -68,12 +68,6 @@ define(['js/Constants',
 		    self._selfPatterns = {};
 		    self._selfPatterns[nodeId] = {children: 0};  // Territory "rule"
 
-		    if (desc.parentId || desc.parentId === CONSTANTS.PROJECT_ROOT_ID) {
-			self.$btnModelHierarchyUp.show();
-		    } else {
-			self.$btnModelHierarchyUp.hide();
-		    }
-
 		    self._currentNodeParentId = desc.parentId;
 
 		    self._territoryId = self._client.addUI(self, function (events) {
@@ -204,7 +198,6 @@ define(['js/Constants',
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
     RootVizControl.prototype.destroy = function () {
         this._detachClientEventListeners();
-        this._removeToolbarItems();
     };
 
     RootVizControl.prototype._attachClientEventListeners = function () {
@@ -218,7 +211,6 @@ define(['js/Constants',
 
     RootVizControl.prototype.onActivate = function () {
         this._attachClientEventListeners();
-        this._displayToolbarItems();
 	if (typeof this._currentNodeId === 'string') {  
 	    WebGMEGlobal.State.registerActiveObject(
 		this._currentNodeId,
@@ -229,59 +221,6 @@ define(['js/Constants',
 
     RootVizControl.prototype.onDeactivate = function () {
         this._detachClientEventListeners();
-        this._hideToolbarItems();
-    };
-
-    /* * * * * * * * * * Updating the toolbar * * * * * * * * * */
-    RootVizControl.prototype._displayToolbarItems = function () {
-
-        if (this._toolbarInitialized === true) {
-            for (var i = this._toolbarItems.length; i--;) {
-                this._toolbarItems[i].show();
-            }
-        } else {
-            this._initializeToolbar();
-        }
-    };
-
-    RootVizControl.prototype._hideToolbarItems = function () {
-
-        if (this._toolbarInitialized === true) {
-            for (var i = this._toolbarItems.length; i--;) {
-                this._toolbarItems[i].hide();
-            }
-        }
-    };
-
-    RootVizControl.prototype._removeToolbarItems = function () {
-
-        if (this._toolbarInitialized === true) {
-            for (var i = this._toolbarItems.length; i--;) {
-                this._toolbarItems[i].destroy();
-            }
-        }
-    };
-
-    RootVizControl.prototype._initializeToolbar = function () {
-        var self = this,
-            toolBar = WebGMEGlobal.Toolbar;
-
-        this._toolbarItems = [];
-
-        this._toolbarItems.push(toolBar.addSeparator());
-
-        /************** Go to hierarchical parent button ****************/
-        this.$btnModelHierarchyUp = toolBar.addButton({
-            title: 'Go to parent',
-            icon: 'glyphicon glyphicon-circle-arrow-up',
-            clickFn: function (/*data*/) {
-                WebGMEGlobal.State.registerActiveObject(self._currentNodeParentId);
-            }
-        });
-        this._toolbarItems.push(this.$btnModelHierarchyUp);
-        this.$btnModelHierarchyUp.hide();
-
-        this._toolbarInitialized = true;
     };
 
     return RootVizControl;
