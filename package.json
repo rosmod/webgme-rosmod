@@ -3,7 +3,7 @@
   "scripts": {
     "start": "node app.js",
     "start-dev": "NODE_ENV=dev node app.js",
-      "test": "node ./node_modules/mocha/bin/mocha --recursive test"
+    "test": "node ./node_modules/mocha/bin/mocha --recursive test"
   },
   "version": "1.0.0",
   "dependencies": {
@@ -12,26 +12,15 @@
     "filendir": "1.x.x",
     "fs": "0.0.2",
     "fstream": "1.0.x",
-    "handlebars": "^4.0.5",
-    "memory-streams": "^0.1.0",
+    "handlebars": "^4.0.10",
     "mkdirp": "^0.5.1",
-    "moment": "^2.12.0",
-    "mustache": "^2.2.1",
-    "node-pandoc": "^0.2.0",
     "path": "0.11.x",
-    "ping": "^0.1.10",
     "plotly.js": "^1.25.2",
-    "plottable": "^2.2.0",
-    "remote-utils": "^1.0.0",
-    "scp2": "^0.2.2",
-    "ssh2": "^0.5.0",
+    "remote-utils": "^1.0.6",
     "tar": "^2.2.1",
     "unzip": "0.1.x",
-    "url": "0.11.x",
     "webgme": "^2.0.0",
-    "webgme-breadcrumbheader": "github:dfst/webgme-breadcrumbheader",
     "webgme-codeeditor": "^3.0.0",
-    "webgme-fab": "github:dfst/webgme-fab",
     "webgme-to-json": "^1.0.4"
   },
   "devDependencies": {

@@ -1,21 +1,9 @@
 {
   "panels": [
     {
-      "id": "Header",
-      "panel": "BreadcrumbHeader/BreadcrumbHeaderPanel",
-      "container": "header",
-      "DEBUG_ONLY": false
-    },
-    {
       "id": "Footer",
       "panel": "FooterControls/FooterControlsPanel",
       "container": "footer",
-      "DEBUG_ONLY": false
-    },
-    {
-      "id": "PluginButton",
-      "panel": "FloatingActionButton/FloatingActionButton",
-      "container": "float",
       "DEBUG_ONLY": false
     },
     {
