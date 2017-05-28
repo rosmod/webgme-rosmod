@@ -64,7 +64,7 @@ functions). The injection and management of this user-developed code
 inside the generated code can increase the learning curve for new
 users as it adds some extra file management and build-system
 overhead. Additionally, almost all other similar projects require
-installation on the users' computers, which means they mey need to
+installation on the users' computers, which means they may need to
 troubleshoot setting up the IDE, the compiler, and any other required
 libraries (e.g. catkin, python, ssh, etc.) which will increase the
 time it takes to configure their system and increase the number of
