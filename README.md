@@ -268,6 +268,20 @@ switch to the `Model` *Visualizer*. With the project open in the
 this `Software` object will be the root of the sub-tree that describes
 all of the software for this project.
 
+Within the software object, you can create any number of ROS
+`Packages`, `Source Libraries`, and `System Libraries`.
+
+Within a `Package`, you can define any number of ROS `Messages` and
+ROS `Services`, as well as any number of ROSMOD `Components`.
+
+Within a `Component`, you can define any number of ROS `Publishers`,
+ROS `Subscribers`, ROS `Clients`, ROS `Servers`, and ROS `Timers`.
+
+To edit the code defining any of these objects, click the `CodeEditor`
+visualizer, which will bring up the CodeEditor's code attribute tree
+on the left (in the active visualizer) and the code being edited on
+the right.
+
 ### Modeling the Systems
 
 Having created a ROSMOD project, double click on the project icon to
@@ -276,6 +290,11 @@ switch to the `Model` *Visualizer*. With the project open in the
 `Model` visualizer, drag a `Systems` object into the center panel,
 this `Systems` object will be the root of the sub-tree that describes
 all of the systems for which this project has been developed.
+
+Double click the `Systems` object to open it. Within this aspect, you
+can drag a `System` object to describe a single system. A **System**
+is a collection of `Hosts` connected by one or more `Networks` and a
+collection of `Users` which may have access to certain `Hosts`.
 
 ### Creating a Deployment
 
@@ -286,14 +305,40 @@ switch to the `Model` *Visualizer*. With the project open in the
 this `Deployments` object will be the root of the sub-tree that describes
 all of the deployment configurations for this project.
 
+Double click on the `Deployments` object to open it. Within this
+aspect, you can drag a `Deployment` object to describe a single
+deployment. A **Deployment** is a collection of `Component Instances`
+which are colocated into `Nodes` ( *POSIX processes* ), which are
+themselves colocated into `Containers`. **Containers** are abstract
+representations of computing hardware.
+
 ### Creating an Experiment
 
 Having created a ROSMOD project, double click on the project icon to
 open the project within the `Visualizer`, which will automatically
 switch to the `Model` *Visualizer*. With the project open in the
-`Model` visualizer, drag a `Software` object into the center panel,
-this `Software` object will be the root of the sub-tree that describes
-all of the software for this project.
+`Model` visualizer, drag an `Experiments` object into the center
+panel, this `Experiments` object will be the root of the sub-tree that
+contains all of the current experiments, past experiments, and their
+results for this project.
+
+Double click on the `Experiments` object to open it. Within this
+aspect, you can drag an `Experiment` object to describe an experiment
+you wish to run. *An experiment maps a* `Deployment` *to a*
+`System`. To configure the experiment with the deployment you want to
+run and the system on which you wish to run it, you can drag from the
+`Object Browser` in the right panel a `Deployment` and a `System`
+(that must be within the same ROSMOD project onto the `Experiment`
+object you have created. The `Experiment` will turn green while your
+drag is over it, indicating the `Experiment` is a valid drop target
+for the object you are dragging. This will set the respective `System`
+or `Deployment` **pointer** within the `Experiment` object. To view
+(or set or clear) the value for these pointers, single click on the
+`Experiment` to select it within the `Property Editor` panel. With the
+`Experiment` active in the `Property Editor`, press the property
+editor's `Pointers` tab, which will show the pointers the object has.
+
+**NOTE: Never alter an object's base pointer!**
 
 #### Running an Experiment
 
