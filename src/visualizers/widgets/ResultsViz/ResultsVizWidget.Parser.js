@@ -16,8 +16,12 @@ define([], function() {
 		}
 		var enq = parseFloat(result[2]) * 1000.0;
 		var deq = parseFloat(result[3]) * 1000.0;
+		if (deq < enq)
+		    deq = enq;
 		var comp = parseFloat(result[4]) * 1000.0;
 		var wait_time = parseFloat(result[3]) - parseFloat(result[2]);
+		if (wait_time < 0)
+		    wait_time = 0;
 		var exec_time = parseFloat(result[5]) - wait_time;
 		var deadline  = parseFloat(result[6]);
 		log_data[alias].data.push([enq,  0]);
