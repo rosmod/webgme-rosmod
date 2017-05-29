@@ -22,10 +22,13 @@ An example server running ROSMOD can be found on
 	2. [Setting up target systems to run ROSMOD](#setting-up-target-systems-to-run-rosmod)
 3. [How to use ROSMOD](#how-to-use-rosmod)
     1. [Creating a ROSMOD project](#creating-a-rosmod-project)
+       1. [Creating a WebGME project](#creating-a-webgme-project)
+       2. [Creating a Single ROSMOD project](#creating-a-single-rosmod-project)
 	2. [Modeling the Software](#modeling-the-software)
 	3. [Modeling the Systems](#modeling-the-systems)
 	4. [Creating a Deployment](#creating-a-deployment)
 	5. [Running an Experiment](#running-an-experiment)
+	6. [Stopping a Running Experiment](#running-a-running-experiment)
 4. [Keeping ROSMOD up to date](#keeping-rosmod-up-to-date)
 
 
@@ -202,6 +205,59 @@ any deployment of the server since it is part of this repository.
 
 ### Creating a ROSMOD Project
 
+In ROSMOD, there are two different types of `Projects`:
+
+1. A WebGME Project which can contain any number of ROSMOD Projects,
+   and which is the granularity at which you can authenticate for user
+   / organization RWD access.
+2. A ROSMOD Project, which is a self-contained model tree which
+   describes the `Software`, `Systems`, `Deployments`, and
+   `Experiments`.
+
+#### Creating a WebGME project
+
+To create a WebGME project, you open your web-browser (**NOTE: Google
+Chrome is the fully-supported browser, YMMV with any other browser**)
+and navigate to the web address of the ROSMOD server.
+
+After you login (if authentication is enabled) you will be presented
+with the WebGME landing page, which will show you the available
+projects you have access to on the ROSMOD server, and will provide a
+`Create New` button in the bottom left of the modal dialog that allows
+you to create your own project. When creating a WebGME project, you
+can either use one of the ROSMOD seeds (`base` or `samples`) as the
+basis for your project or you can duplicate an existing project on the
+server (that you have access to). The seeds provide the meta-model
+that defines ROSMOD, and all projects made on the ROSMOD server start
+out with one of the two seeds as a base.
+
+#### Creating a single ROSMOD Project
+
+Having created a WebGME project, you will see the ROSMOD Project Root
+view, which shows all ROSMOD projects contained within the WebGME
+project. If you copied an empty WebGME project or used the `base`
+seed, then the page will be empty.
+
+To create a ROSMOD project, you simply drag and drop the `Project`
+object from the left panel (the `Part Browser`) into the empty space,
+and a new ROSMOD Project will show up.
+
+*Note:* single clicking within the project's space in the center panel
+ will select the project within the `Property Editor` in the right
+ panel which allows you to edit the Project attributes.
+
+*Note:* to edit the `Authors`, `Brief Description`, or `Detailed
+ Description` project attributes, you can double click on the text for
+ those attributes within the center panel (the `Visualizer`) or you
+ can single click on the attribute in the `Property Editor` in the
+ right panel. 
+ 
+*Note:* to edit the icon the displays for the project, you should
+ click the `New Document` icon that is on the far right side of the
+ `Icon` attribute in the `Property Editor` in the right panel. This
+ will bring up a file upload dialog where you should select the **SVG
+ Icon** you wish to associate with this project.
+
 ### Modeling the Software
 
 ### Modeling the Systems
@@ -210,4 +266,21 @@ any deployment of the server since it is part of this repository.
 
 ### Running an Experiment
 
+### Stopping a Running Experiment
+
 ## Keeping ROSMOD Up-to-Date
+
+To keep ROSMOD up to date, you simply need to periodically stop the
+server, pull from the repository, update the npm packages, and then
+restart the server.
+
+``` bash
+# 1. within the terminal that is runnin the server press ctrl+c to stop the server
+^C
+# 2. pull
+git pull
+# 3. update
+npm update
+# 4. restart
+npm start
+```
