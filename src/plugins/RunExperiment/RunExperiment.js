@@ -118,7 +118,7 @@ define([
 	    self.config_dir = path.join(self.root_dir,
 					'experiments', 
 					self.experimentName,
-					'config-'+(new Date()).toUTCString());
+					'config-'+(new Date()).toUTCString().replace(/:/gm, '-'));
 	}
 
 	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true)
