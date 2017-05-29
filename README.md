@@ -27,8 +27,9 @@ An example server running ROSMOD can be found on
 	2. [Modeling the Software](#modeling-the-software)
 	3. [Modeling the Systems](#modeling-the-systems)
 	4. [Creating a Deployment](#creating-a-deployment)
-	5. [Running an Experiment](#running-an-experiment)
-	6. [Stopping a Running Experiment](#running-a-running-experiment)
+	4. [Creating an Experiment](#creating-an-experiment)
+	   1. [Running an Experiment](#running-an-experiment)
+	   2. [Stopping a Running Experiment](#stopping-a-running-experiment)
 4. [Keeping ROSMOD up to date](#keeping-rosmod-up-to-date)
 
 
@@ -260,13 +261,43 @@ and a new ROSMOD Project will show up.
 
 ### Modeling the Software
 
+Having created a ROSMOD project, double click on the project icon to
+open the project within the `Visualizer`, which will automatically
+switch to the `Model` *Visualizer*. With the project open in the
+`Model` visualizer, drag a `Software` object into the center panel,
+this `Software` object will be the root of the sub-tree that describes
+all of the software for this project.
+
 ### Modeling the Systems
+
+Having created a ROSMOD project, double click on the project icon to
+open the project within the `Visualizer`, which will automatically
+switch to the `Model` *Visualizer*. With the project open in the
+`Model` visualizer, drag a `Systems` object into the center panel,
+this `Systems` object will be the root of the sub-tree that describes
+all of the systems for which this project has been developed.
 
 ### Creating a Deployment
 
-### Running an Experiment
+Having created a ROSMOD project, double click on the project icon to
+open the project within the `Visualizer`, which will automatically
+switch to the `Model` *Visualizer*. With the project open in the
+`Model` visualizer, drag a `Deployments` object into the center panel,
+this `Deployments` object will be the root of the sub-tree that describes
+all of the deployment configurations for this project.
 
-### Stopping a Running Experiment
+### Creating an Experiment
+
+Having created a ROSMOD project, double click on the project icon to
+open the project within the `Visualizer`, which will automatically
+switch to the `Model` *Visualizer*. With the project open in the
+`Model` visualizer, drag a `Software` object into the center panel,
+this `Software` object will be the root of the sub-tree that describes
+all of the software for this project.
+
+#### Running an Experiment
+
+#### Stopping a Running Experiment
 
 ## Keeping ROSMOD Up-to-Date
 
