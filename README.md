@@ -204,6 +204,8 @@ model. This sample is hosted on the live server listed at the top of
 this page, but can also be used as the base for any project created in
 any deployment of the server since it is part of this repository.
 
+![ROSMOD / WebGME interface](./img/interface.png)
+
 ### Creating a ROSMOD Project
 
 In ROSMOD, there are two different types of `Projects`:
