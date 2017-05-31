@@ -353,7 +353,7 @@ server, pull from the repository, update the npm packages, and then
 restart the server.
 
 ``` bash
-# 1. within the terminal that is runnin the server press ctrl+c to stop the server
+# 1. within the terminal that is running the server press ctrl+c to stop the server
 ^C
 # 2. pull
 git pull
