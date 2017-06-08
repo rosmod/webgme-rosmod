@@ -50,16 +50,19 @@ define([
     RunExperiment.prototype.notify = function(level, msg) {
 	var self = this;
 	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
-	if (level=='error')
-	    self.logger.error(msg);
-	else if (level=='debug')
-	    self.logger.debug(msg);
-	else if (level=='info')
-	    self.logger.info(msg);
-	else if (level=='warning')
-	    self.logger.warn(msg);
-	self.createMessage(self.activeNode, msg, level);
-	self.sendNotification(prefix+msg);
+	var lines = msg.split('\n');
+	lines.map(function(line) {
+	    if (level=='error')
+		self.logger.error(line);
+	    else if (level=='debug')
+		self.logger.debug(line);
+	    else if (level=='info')
+		self.logger.info(line);
+	    else if (level=='warning')
+		self.logger.warn(line);
+	    self.createMessage(self.activeNode, line, level);
+	    self.sendNotification(prefix+line);
+	});
     };
 
     /**
@@ -369,11 +372,23 @@ define([
 		// make the component instance configuration
 		// NOTE: this currently supports both the old and new meta
 		// TODO: update projects to conform to new meta.
+		var userConfig = {};
+		var userArtifacts = [];
+		try {
+		    userConfig = JSON.parse(JSON.minify(comp['User Configuration']));
+		} catch (e) {
+		    throw new String("Component " + comp.name + " has improperly formatted User Configuration JSON:\n" + e);
+		}
+		try {
+		    userArtifacts = JSON.parse(JSON.minify(comp['User Artifacts']));
+		} catch (e) {
+		    throw new String("Component " + comp.name + " has improperly formatted User Artifacts array:\n" + e);
+		}
 		var ci = {
 		    "Name": comp.name,
 		    "Definition": "lib" + comp.base.name + ".so",
 		    "SchedulingScheme": comp.SchedulingScheme,
-		    "User Configuration": JSON.parse(JSON.minify(comp['User Configuration'])),
+		    "User Configuration": userConfig,
 		    "Logging": {
 			"Component Logger": {
 			    "FileName": node.name + '.' + comp.name + '.user.log',
@@ -392,7 +407,7 @@ define([
 		    "Clients": [],
 		    "Servers": {}
 		};
-		config['Artifacts'].concat(JSON.parse(JSON.minify(comp['User Artifacts'])));
+		config['Artifacts'].concat(userArtifacts);
 
 		// warn about user logging settings
 		if (ci.Logging['Component Logger'].Enabled) {

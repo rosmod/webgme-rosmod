@@ -60,24 +60,19 @@ define([
     SoftwareGenerator.prototype.notify = function(level, msg) {
 	var self = this;
 	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
-	var max_msg_len = 100;
-	if (level=='error')
-	    self.logger.error(msg);
-	else if (level=='debug')
-	    self.logger.debug(msg);
-	else if (level=='info')
-	    self.logger.info(msg);
-	else if (level=='warning')
-	    self.logger.warn(msg);
-	self.createMessage(self.activeNode, msg, level);
-	if (msg.length < max_msg_len)
-	    self.sendNotification(prefix+msg);
-	else {
-	    var splitMsgs = utils.chunkString(msg, max_msg_len);
-	    splitMsgs.map(function(splitMsg) {
-		self.sendNotification(prefix+splitMsg);
-	    });
-	}
+	var lines = msg.split('\n');
+	lines.map(function(line) {
+	    if (level=='error')
+		self.logger.error(line);
+	    else if (level=='debug')
+		self.logger.debug(line);
+	    else if (level=='info')
+		self.logger.info(line);
+	    else if (level=='warning')
+		self.logger.warn(line);
+	    self.createMessage(self.activeNode, line, level);
+	    self.sendNotification(prefix+line);
+	});
     };
 
     /**
@@ -556,6 +551,8 @@ define([
 	    'rm -rf devel build',
 	];
 
+	var compilationFailed = false;
+
 	child_process.execSync('rm -rf ' + archBinPath);
 
 	// make the compile dir
@@ -597,8 +594,7 @@ define([
 				       stdErrCB,
 				       stdOutCB)
 		.catch(function(err) {
-		    //self.notify('error', "STDOUT: " +host.stdOut);
-		    //self.notify('error', "STDERR: " +host.stdErr);
+		    compilationFailed = true;
 		    var files = {
 			'compile.stdout.txt': host.stdOut,
 			'compile.stderr.txt': host.stdErr
@@ -608,9 +604,6 @@ define([
 			return self.blobClient.putFile(fname, files[fname])
 			    .then((hash) => {
 				self.result.addArtifact(hash);
-			    })
-			    .then(() => {
-				throw new String('Compilation failed on ' + host.intf.IP);
 			    });
 		    });
 		    return Q.all(tasks);
@@ -618,6 +611,9 @@ define([
 	})
 	.then(function() {
 	    // make the local binary folder for the architecture
+	    if (compilationFailed) {
+		throw new String('Compilation failed on ' + host.intf.IP);
+	    }
 	    mkdirp.sync(archBinPath);
 	})
 	.then(function() {

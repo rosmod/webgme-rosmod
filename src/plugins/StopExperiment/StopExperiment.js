@@ -43,16 +43,19 @@ define([
     StopExperiment.prototype.notify = function(level, msg) {
 	var self = this;
 	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
-	if (level=='error')
-	    self.logger.error(msg);
-	else if (level=='debug')
-	    self.logger.debug(msg);
-	else if (level=='info')
-	    self.logger.info(msg);
-	else if (level=='warning')
-	    self.logger.warn(msg);
-	self.createMessage(self.activeNode, msg, level);
-	self.sendNotification(prefix+msg);
+	var lines = msg.split('\n');
+	lines.map(function(line) {
+	    if (level=='error')
+		self.logger.error(line);
+	    else if (level=='debug')
+		self.logger.debug(line);
+	    else if (level=='info')
+		self.logger.info(line);
+	    else if (level=='warning')
+		self.logger.warn(line);
+	    self.createMessage(self.activeNode, line, level);
+	    self.sendNotification(prefix+line);
+	});
     };
 
     /**
