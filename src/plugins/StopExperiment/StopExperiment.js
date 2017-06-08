@@ -108,7 +108,7 @@ define([
 	self.exp_dir = path.join(self.root_dir,
 				 'experiments', 
 				 self.experimentName);
-	self.resultsName = 'Results-'+(new Date()).toUTCString();
+	self.resultsName = 'Results-'+(new Date()).toUTCString().replace(/:/gm, '-');
 	self.results_dir = path.join(self.exp_dir, self.resultsName);
 
 	self.notify('info', 'loading project: ' + projectName);

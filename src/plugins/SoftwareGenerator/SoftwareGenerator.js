@@ -373,7 +373,7 @@ define([
 	    terminal.stdin.write('doxygen doxygen_config\n');
 	    terminal.stdin.write('make -C ./doc/latex/ pdf\n');
 	    terminal.stdin.write('mv ./doc/latex/refman.pdf ' + 
-				 utils.sanitizeName(self.projectName) + '.pdf');
+				 utils.sanitizePath(self.projectName) + '.pdf');
 	    terminal.stdin.end();
 	}, 1000);
 	return deferred.promise;

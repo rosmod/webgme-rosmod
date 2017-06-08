@@ -22,10 +22,14 @@ An example server running ROSMOD can be found on
 	2. [Setting up target systems to run ROSMOD](#setting-up-target-systems-to-run-rosmod)
 3. [How to use ROSMOD](#how-to-use-rosmod)
     1. [Creating a ROSMOD project](#creating-a-rosmod-project)
+       1. [Creating a WebGME project](#creating-a-webgme-project)
+       2. [Creating a Single ROSMOD project](#creating-a-single-rosmod-project)
 	2. [Modeling the Software](#modeling-the-software)
 	3. [Modeling the Systems](#modeling-the-systems)
 	4. [Creating a Deployment](#creating-a-deployment)
-	5. [Running an Experiment](#running-an-experiment)
+	4. [Creating an Experiment](#creating-an-experiment)
+	   1. [Running an Experiment](#running-an-experiment)
+	   2. [Stopping a Running Experiment](#stopping-a-running-experiment)
 4. [Keeping ROSMOD up to date](#keeping-rosmod-up-to-date)
 
 
@@ -64,7 +68,7 @@ functions). The injection and management of this user-developed code
 inside the generated code can increase the learning curve for new
 users as it adds some extra file management and build-system
 overhead. Additionally, almost all other similar projects require
-installation on the users' computers, which means they mey need to
+installation on the users' computers, which means they may need to
 troubleshoot setting up the IDE, the compiler, and any other required
 libraries (e.g. catkin, python, ssh, etc.) which will increase the
 time it takes to configure their system and increase the number of
@@ -200,14 +204,161 @@ model. This sample is hosted on the live server listed at the top of
 this page, but can also be used as the base for any project created in
 any deployment of the server since it is part of this repository.
 
+![ROSMOD / WebGME interface](./img/interface.png)
+
 ### Creating a ROSMOD Project
+
+In ROSMOD, there are two different types of `Projects`:
+
+1. A WebGME Project which can contain any number of ROSMOD Projects,
+   and which is the granularity at which you can authenticate for user
+   / organization RWD access.
+2. A ROSMOD Project, which is a self-contained model tree which
+   describes the `Software`, `Systems`, `Deployments`, and
+   `Experiments`.
+
+#### Creating a WebGME project
+
+To create a WebGME project, you open your web-browser (**NOTE: Google
+Chrome is the fully-supported browser, YMMV with any other browser**)
+and navigate to the web address of the ROSMOD server.
+
+After you login (if authentication is enabled) you will be presented
+with the WebGME landing page, which will show you the available
+projects you have access to on the ROSMOD server, and will provide a
+`Create New` button in the bottom left of the modal dialog that allows
+you to create your own project. When creating a WebGME project, you
+can either use one of the ROSMOD seeds (`base` or `samples`) as the
+basis for your project or you can duplicate an existing project on the
+server (that you have access to). The seeds provide the meta-model
+that defines ROSMOD, and all projects made on the ROSMOD server start
+out with one of the two seeds as a base.
+
+#### Creating a single ROSMOD Project
+
+Having created a WebGME project, you will see the ROSMOD Project Root
+view, which shows all ROSMOD projects contained within the WebGME
+project. If you copied an empty WebGME project or used the `base`
+seed, then the page will be empty.
+
+To create a ROSMOD project, you simply drag and drop the `Project`
+object from the left panel (the `Part Browser`) into the empty space,
+and a new ROSMOD Project will show up.
+
+*Note:* single clicking within the project's space in the center panel
+ will select the project within the `Property Editor` in the right
+ panel which allows you to edit the Project attributes.
+
+*Note:* to edit the `Authors`, `Brief Description`, or `Detailed
+ Description` project attributes, you can double click on the text for
+ those attributes within the center panel (the `Visualizer`) or you
+ can single click on the attribute in the `Property Editor` in the
+ right panel. 
+ 
+*Note:* to edit the icon the displays for the project, you should
+ click the `New Document` icon that is on the far right side of the
+ `Icon` attribute in the `Property Editor` in the right panel. This
+ will bring up a file upload dialog where you should select the **SVG
+ Icon** you wish to associate with this project.
 
 ### Modeling the Software
 
+Having created a ROSMOD project, double click on the project icon to
+open the project within the `Visualizer`, which will automatically
+switch to the `Model` *Visualizer*. With the project open in the
+`Model` visualizer, drag a `Software` object into the center panel,
+this `Software` object will be the root of the sub-tree that describes
+all of the software for this project.
+
+Within the software object, you can create any number of ROS
+`Packages`, `Source Libraries`, and `System Libraries`.
+
+Within a `Package`, you can define any number of ROS `Messages` and
+ROS `Services`, as well as any number of ROSMOD `Components`.
+
+Within a `Component`, you can define any number of ROS `Publishers`,
+ROS `Subscribers`, ROS `Clients`, ROS `Servers`, and ROS `Timers`.
+
+To edit the code defining any of these objects, click the `CodeEditor`
+visualizer, which will bring up the CodeEditor's code attribute tree
+on the left (in the active visualizer) and the code being edited on
+the right.
+
 ### Modeling the Systems
+
+Having created a ROSMOD project, double click on the project icon to
+open the project within the `Visualizer`, which will automatically
+switch to the `Model` *Visualizer*. With the project open in the
+`Model` visualizer, drag a `Systems` object into the center panel,
+this `Systems` object will be the root of the sub-tree that describes
+all of the systems for which this project has been developed.
+
+Double click the `Systems` object to open it. Within this aspect, you
+can drag a `System` object to describe a single system. A **System**
+is a collection of `Hosts` connected by one or more `Networks` and a
+collection of `Users` which may have access to certain `Hosts`.
 
 ### Creating a Deployment
 
-### Running an Experiment
+Having created a ROSMOD project, double click on the project icon to
+open the project within the `Visualizer`, which will automatically
+switch to the `Model` *Visualizer*. With the project open in the
+`Model` visualizer, drag a `Deployments` object into the center panel,
+this `Deployments` object will be the root of the sub-tree that describes
+all of the deployment configurations for this project.
+
+Double click on the `Deployments` object to open it. Within this
+aspect, you can drag a `Deployment` object to describe a single
+deployment. A **Deployment** is a collection of `Component Instances`
+which are colocated into `Nodes` ( *POSIX processes* ), which are
+themselves colocated into `Containers`. **Containers** are abstract
+representations of computing hardware.
+
+### Creating an Experiment
+
+Having created a ROSMOD project, double click on the project icon to
+open the project within the `Visualizer`, which will automatically
+switch to the `Model` *Visualizer*. With the project open in the
+`Model` visualizer, drag an `Experiments` object into the center
+panel, this `Experiments` object will be the root of the sub-tree that
+contains all of the current experiments, past experiments, and their
+results for this project.
+
+Double click on the `Experiments` object to open it. Within this
+aspect, you can drag an `Experiment` object to describe an experiment
+you wish to run. *An experiment maps a* `Deployment` *to a*
+`System`. To configure the experiment with the deployment you want to
+run and the system on which you wish to run it, you can drag from the
+`Object Browser` in the right panel a `Deployment` and a `System`
+(that must be within the same ROSMOD project onto the `Experiment`
+object you have created. The `Experiment` will turn green while your
+drag is over it, indicating the `Experiment` is a valid drop target
+for the object you are dragging. This will set the respective `System`
+or `Deployment` **pointer** within the `Experiment` object. To view
+(or set or clear) the value for these pointers, single click on the
+`Experiment` to select it within the `Property Editor` panel. With the
+`Experiment` active in the `Property Editor`, press the property
+editor's `Pointers` tab, which will show the pointers the object has.
+
+**NOTE: Never alter an object's base pointer!**
+
+#### Running an Experiment
+
+#### Stopping a Running Experiment
 
 ## Keeping ROSMOD Up-to-Date
+
+To keep ROSMOD up to date, you simply need to periodically stop the
+server, pull from the repository, update the npm packages, and then
+restart the server.
+
+``` bash
+# 1. within the terminal that is running the server press ctrl+c to stop the server
+^C
+# 2. pull
+git pull
+# 3. update
+npm update
+# 4. restart
+npm start
+```
