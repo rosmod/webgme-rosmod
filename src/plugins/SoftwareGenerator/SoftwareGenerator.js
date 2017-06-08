@@ -487,8 +487,9 @@ define([
 		var packageName = baseName.split('/')[0];
 		var compName = path.basename(compileError.fileName).split('.')[0];
 		var msg = 'Build Error:: package: ' + packageName + ', component: ' +
-		    compName + ':\n\t' +
-		    compileError.text + '\n';
+		    compName + ':';
+		self.notify('error', msg);
+		msg = '<pre><code>'+ compileError.text + '</code></pre>';
 		self.notify('error', msg);
 		var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
 								compName,
