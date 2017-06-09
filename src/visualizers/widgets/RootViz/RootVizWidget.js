@@ -166,12 +166,14 @@ define([
 		self._client.setAttribute(gmeId, attribute, text);
 	}
 
-	// editable authors area
-	this.$el.find('#'+panelId+'-authors').on('dblclick', divClicked);
-	// editable brief area
-	this.$el.find('#'+panelId+'-brief').on('dblclick', divClicked);
-	// editable detailed area
-	this.$el.find('#'+panelId+'-detailed').on('dblclick', divClicked);
+	if (!this._client.isProjectReadOnly()) {
+	    // editable authors area
+	    this.$el.find('#'+panelId+'-authors').on('dblclick', divClicked);
+	    // editable brief area
+	    this.$el.find('#'+panelId+'-brief').on('dblclick', divClicked);
+	    // editable detailed area
+	    this.$el.find('#'+panelId+'-detailed').on('dblclick', divClicked);
+	}
 
 	svg = column.find('svg');
 	svg.css('height', '120px');
