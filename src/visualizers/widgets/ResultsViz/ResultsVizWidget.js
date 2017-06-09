@@ -68,6 +68,7 @@ define([
         if (desc) {
 	    var datas = {};
 	    desc.logs = {};
+	    desc.displayNames = {};
 
 	    var hidePlotFunc = function(a) {
 		var active = datas[a].active ? false : true;
@@ -94,6 +95,11 @@ define([
 			    if (_.isEmpty(parsed))
 				parsed = UserParser.getDataFromAttribute(data);
 			    datas[a] = parsed;
+			    return this._blobClient.getMetadata(logHash);
+			})
+			.then((metadata) => {
+			    // get the name of the file <node>.<comp>.<user/trace>.log
+			    desc.displayNames[a] = metadata.name;
 			});
 		}
 	    });
@@ -106,6 +112,11 @@ define([
 			container.attr('id', 'log_'+a);
 			
 			var title = this._el.find('#title');
+			var displayTitle = desc.displayNames[a];
+			displayTitle = displayTitle.replace(/\.user\.log/gm, ' User Log');
+			displayTitle = displayTitle.replace(/\.trace\.log/gm, ' Trace Log');
+			displayTitle = displayTitle.replace(/\./gm, '::');
+
 			title.attr('id','title_'+a)
 			    .on('click', function(_a) {
 				return function() {
@@ -114,7 +125,7 @@ define([
 				};
 			    }(a));
 
-			title.append('<b>'+a+'</b>');
+			title.append('<b>'+displayTitle+'</b>');
 
 			var p = this._el.find('#plot');
 			p.attr('id',"plot_" + a);
