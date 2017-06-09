@@ -486,11 +486,10 @@ define([
 		var baseName = compileError.fileName.replace(removeDir, '');
 		var packageName = baseName.split('/')[0];
 		var compName = path.basename(compileError.fileName).split('.')[0];
-		var msg = 'Build Error:: package: ' + packageName + ', component: ' +
-		    compName + ':';
-		self.notify('error', msg);
-		msg = '<pre><code>'+ compileError.text + '</code></pre>';
-		self.notify('error', msg);
+		var msg = '<details><summary>Build Error:: package: ' + packageName + ', component: ' +
+		    compName + ':</summary>' +
+		    '<pre><code>'+ compileError.text + '</code></pre></details>';
+		self.createMessage(self.activeNode, msg, 'error');
 		var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
 								compName,
 								compileError.fileName, 
@@ -596,6 +595,14 @@ define([
 				       stdOutCB)
 		.catch(function(err) {
 		    compilationFailed = true;
+		    // ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
+		    var msg = '<details><summary>Compile STDOUT from '+host.intf.IP+':</summary>' +
+			'<pre><code>'+ host.stdOut + '</code></pre></details>';
+		    self.createMessage(self.activeNode, msg, 'error');
+		    msg = '<details><summary>Compile STDERR from '+host.intf.IP+':</summary>' +
+			'<pre><code>'+ host.stdErr + '</code></pre></details>';
+		    self.createMessage(self.activeNode, msg, 'error');
+		    // ADD STDOUT / STDERR TO RESULTS AS BLOBS
 		    var files = {
 			'compile.stdout.txt': host.stdOut,
 			'compile.stderr.txt': host.stdErr

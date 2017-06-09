@@ -384,9 +384,10 @@ define([
 		try {
 		    userArtifacts = JSON.parse(JSON.minify(comp['User Artifacts']));
 		} catch (e) {
-		    var msg = "Component " + comp.name + " has improperly formatted User Artifacts array:";
-		    var msg2 = '<pre><code>'+ e + '</code></pre>';
-		    throw new String(msg + msg2);
+		    var msg = "<details><summary>Component "
+			+ comp.name + " has improperly formatted User Artifacts array:</summary>" +
+			'<pre><code>'+ e + '</code></pre></details>';
+		    throw new String(msg);
 		}
 		var ci = {
 		    "Name": comp.name,
