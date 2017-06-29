@@ -36,8 +36,6 @@ define([
 	this._blobClient = new BlobClient({logger: options.logger.fork('BlobClient')});
 	this._client = options.client;
 
-        this.nodes = {};
-	this.plotIDs = [];
         this._initialize();
 
         this._logger.debug('ctor finished');
@@ -47,6 +45,9 @@ define([
         var width = this._el.width(),
             height = this._el.height(),
             self = this;
+
+        this.nodes = {};
+	this.plotIDs = [];
 
         // set widget class
         this._el.addClass(WIDGET_CLASS);
@@ -65,7 +66,7 @@ define([
     // Adding/Removing/Updating items
     ResultsVizWidget.prototype.addNode = function (desc) {
 	var self = this;
-        if (desc) {
+        if (desc && !this.nodes[desc.id]) {
 	    var datas = {};
 	    desc.logs = {};
 	    desc.displayNames = {};
