@@ -1,46 +1,18 @@
 {
-    "FloatingActionButton": {
-	"hideOnEmpty": true,
-	"pluginUIConfigs": {
-	    "SoftwareGenerator": {
-		"icon": "code",
-		"priority": 12,
-		"color": "blue"
-	    },
-	    "TimingAnalysis": {
-		"icon": "schedule",
-		"priority": 10,
-		"color": "yellow"
-	    },
-	    "GenerateDocumentation": {
-		"icon": "book",
-		"priority": 11,
-		"color": "gray"
-	    },
-	    "RunExperiment": {
-		"icon": "check_circle",
-		"priority": 11,
-		"color": "green"
-	    },
-	    "StopExperiment": {
-		"icon": "highlight_off",
-		"priority": 10,
-		"color": "red"
-	    }
-	}
-    },
     "CodeEditor": {
 	"theme": "default",
+	"enableThemeSelection": true,
 	"keyBinding": "sublime",
+	"enableKeybindingSelection": true,
         "autoSaveInterval": "2000",
 	"rootTypes": [
             "Project"
         ],
-	"loadDepth": 5,
 	"excludeTypes": [
 	    "Experiments",
 	    "Systems"
 	],
+	"loadDepth": 5,
 	"syntaxToModeMap": {
 	    "C++": { "name": "text/x-c++src", "useCPP": true },
 	    "JSON": { "name": "application/json" },
@@ -132,6 +104,22 @@
 	"projectMenuClass": "",
 	"branchMenuClass": ""
     },
+    "GenericUIWebGMEStart": {
+	"pageTitle": "ROSMOD",
+	"disableProjectsDialog": false,
+	"nodeAtOpen": "/v"
+    },
+    "GenericUITreeBrowserControl": {
+	"filters": {
+	    "toggled": {
+		"hideConnections": false,
+		"hideAbstracts": false,
+		"hideLeaves": false,
+		"hideLibraries": false
+	    }
+	},
+	"treeRoot": "/v"
+    },
     "GenericUIDefaultLayout": {
 	"panels": [
 	    {
@@ -176,7 +164,7 @@
 	"panels": [
 	    {
 		"id": "Header",
-		"panel": "BreadcrumbHeader/BreadcrumbHeaderPanel",
+		"panel": "Header/HeaderPanel",
 		"container": "header",
 		"DEBUG_ONLY": false
 	    },
