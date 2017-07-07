@@ -639,8 +639,10 @@ define([
 	    ];
 	    if (container.Node_list) {
 		container.Node_list.map(function(node) {
+		    var redirect_command = ' > ' + node.name + '.stdout.log' +
+			' 2> ' + node.name + '.stderr.log';
 		    host_commands.push('DISPLAY=:0.0 rosmod_actor --config ' +
-				       node.name + '.config &');
+				       node.name + '.config' + redirect_command +' &');
 		});
 	    }
 	    //host_commands.push('sleep 10');
