@@ -685,6 +685,9 @@ define([
 	    }
 	}
 
+	if (selectedHosts.length == 0)
+	    throw new String('No hosts could be found for compilation!');
+
 	var tasks = selectedHosts.map(function (host) {
 	    var msg = 'Compiling for ' + utils.getDeviceType(host.host) + ' on ' + host.user.name + '@' + host.intf.IP;
 	    self.notify('info', msg);
