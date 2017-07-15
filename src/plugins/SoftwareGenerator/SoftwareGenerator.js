@@ -161,7 +161,8 @@ define([
         	callback(null, self.result);
 	    })
 	    .catch(function (err) {
-		self.notify('error', err);
+		if (typeof err === 'string')
+		    self.notify('error', err);
         	self.result.setSuccess(false);
         	callback(err, self.result);
 	    })
