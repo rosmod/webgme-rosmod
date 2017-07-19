@@ -39,11 +39,16 @@
     },
     "keywords": [
 	"webgme",
+	"webgme-domain",
 	"rosmod",
+	"model-driven-development",
 	"ros",
-	"distributed",
 	"robotics",
-	"model-driven-development"
+	"distributed",
+	"cyber",
+	"physical",
+	"systems",
+	"CPS"
     ],
     "author": "William Emfinger",
     "license": "MIT",
