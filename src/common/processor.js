@@ -56,7 +56,8 @@ define([], function() {
 	    var objPaths = Object.keys(objects);
 	    objPaths.map(function(objPath) {
 		var obj = objects[objPath];
-		if (obj.type == 'Host') {
+		var parent = objects[ obj.parentPath ];
+		if (obj.type == 'Host' && parent && parent.type == 'System') {
 		    self.checkHost(obj);
 		} else if (obj.type == 'Message') {
 		    self.checkMessage(obj);
@@ -64,7 +65,7 @@ define([], function() {
 		    self.checkService(obj);
 		} else if (obj.type == 'Node') {
 		    self.checkNode(obj);
-		} else if (obj.type == 'Container') {
+		} else if (obj.type == 'Container' && parent && parent.type == 'Deployment') {
 		    self.checkContainer(obj);
 		}
 	    });
@@ -120,7 +121,7 @@ define([], function() {
 	},
 	checkContainer: function(container) {
 	    // checks container to ensure that there is at least one node
-	    if (container.Node_list === undefined) {
+	    if (container.Node_list === undefined && ) {
 		throw new String("Error: "+container.name+' has no nodes, make sure to add at least one in the model!');
 	    }
 	},
