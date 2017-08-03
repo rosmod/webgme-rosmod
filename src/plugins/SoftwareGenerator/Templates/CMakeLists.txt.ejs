@@ -16,7 +16,7 @@ else()
     message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-find_package(catkin REQUIRED COMPONENTS rosmod rosmod_component rosmod_jsoncpp std_msgs message_generation)
+find_package(catkin REQUIRED COMPONENTS std_msgs message_generation rosmod rosmod_actor)
 
 <% 
 if (pkgInfo.Service_list) { 
