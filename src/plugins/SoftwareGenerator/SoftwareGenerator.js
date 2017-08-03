@@ -460,6 +460,77 @@ define([
 	}
     };
 
+    SoftwareGenerator.prototype.parseCompileData = function(host, data) {
+	var self = this;
+
+	var path = require('path');
+	var stripANSI = require('strip-ansi');
+	var base_compile_dir = path.join(host.user.Directory, 'compilation');
+	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
+	var removeDir = path.join(compile_dir, 'src/')
+
+	var strippedData = stripANSI(data);
+	
+	console.log(strippedData);
+	
+	if (host.hasError || strippedData.indexOf('Errors     << ') > -1) {
+	    host.hasError = true;
+	    host.stdErr += data;
+	    // see if it's a make error
+	    if ( strippedData.indexOf('error:') > -1 ) {
+		var compileErrors = utils.parseMakeErrorOutput(strippedData);
+		compileErrors.map(function(compileError) {
+		    var baseName = compileError.fileName.replace(removeDir, '');
+		    var packageName = baseName.split('/')[0];
+		    var compName = path.basename(compileError.fileName).split('.')[0];
+		    var msg = '<details><summary><b>Build Error:: package: ' + packageName + ', component: ' +
+			compName + ':</b></summary>' +
+			'<pre><code>'+ compileError.text + '</code></pre></details>';
+		    self.createMessage(self.activeNode, msg, 'error');
+		    var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
+								    compName,
+								    compileError.fileName, 
+								    compileError.line);
+		    var node = nodeInfo.node,
+			attr = nodeInfo.attr,
+			lineNum = nodeInfo.lineNumber;
+		    if (node) {
+			var nodeName = node.name;
+			self.notify('error', 'Error in Package: ' + packageName + 
+				    ', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
+				    ', at line: ' + lineNum, node);
+		    }
+		    else {
+			self.notify('error', 'Library ' + packageName + ' has error!');
+		    }
+		});
+		return true;
+	    }	    
+	}
+	else {
+	    host.stdOut += data;
+	    // see if it's a make warning
+	    if ( strippedData.indexOf('warning:') > -1 ) {
+		var compileErrors = utils.parseMakeErrorOutput(strippedData);
+		compileErrors.map(function(compileError) {
+		    var baseName = compileError.fileName;
+		    baseName.replace(removeDir, '');
+		    var packageName = baseName.split('/')[0];
+		    var compName = path.basename(compileError.fileName).split('.')[0];
+		    var msg = 'Build Warning:: package: ' + packageName + ', component:' +
+			compName + ' :\n\t' +
+			compileError.text + '\n';
+		    self.notify('warning', msg);
+		});
+	    }
+	    else {
+		// see if we can parse percent from it
+		self.parseCompilePercent(host, strippedData);
+	    }
+	}
+	return false;
+    };
+
     SoftwareGenerator.prototype.parseCompilePercent = function (host, data) {
 	var self = this;
 	var percent = utils.parseMakePercentOutput(data);
@@ -469,66 +540,6 @@ define([
 	    var msg = 'Build on ' + utils.getDeviceType(host.host) + ': ' + percent[0] + '%';
 	    host.__lastPercent = percent[0];
 	    self.notify('info', msg);
-	}
-	return false;
-    };
-
-    SoftwareGenerator.prototype.parseCompileStdErr = function (host, data) {
-	// returns true if the error should halt the build, false otherwise
-	var self = this;
-	var path = require('path');
-	var base_compile_dir = path.join(host.user.Directory, 'compilation');
-	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
-
-	var removeDir = path.join(compile_dir, 'src/')
-	if ( data.indexOf('error:') > -1 ) {
-	    var compileErrors = utils.parseMakeErrorOutput(data);
-	    compileErrors.map(function(compileError) {
-		var baseName = compileError.fileName.replace(removeDir, '');
-		var packageName = baseName.split('/')[0];
-		var compName = path.basename(compileError.fileName).split('.')[0];
-		var msg = '<details><summary><b>Build Error:: package: ' + packageName + ', component: ' +
-		    compName + ':</b></summary>' +
-		    '<pre><code>'+ compileError.text + '</code></pre></details>';
-		self.createMessage(self.activeNode, msg, 'error');
-		var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
-								compName,
-								compileError.fileName, 
-								compileError.line);
-		var node = nodeInfo.node,
-		    attr = nodeInfo.attr,
-		    lineNum = nodeInfo.lineNumber;
-		if (node) {
-		    var nodeName = node.name;
-		    self.notify('error', 'Error in Package: ' + packageName + 
-				', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
-				', at line: ' + lineNum, node);
-		}
-		else {
-		    self.notify('error', 'Library ' + packageName + ' has error!');
-		}
-	    });
-	    return true;
-	}
-	else if ( data.indexOf('warning:') > -1 ) {
-	    var compileErrors = utils.parseMakeErrorOutput(data);
-	    compileErrors.map(function(compileError) {
-		var baseName = compileError.fileName;
-		baseName.replace(removeDir, '');
-		var packageName = baseName.split('/')[0];
-		var compName = path.basename(compileError.fileName).split('.')[0];
-		var msg = 'Build Warning:: package: ' + packageName + ', component:' +
-		    compName + ' :\n\t' +
-		    compileError.text + '\n';
-		self.notify('warning', msg);
-	    });
-	    return false;
-	}
-	else {
-	    // handle errors that may come before make gets invoked
-	    var msg = 'Build Error:: ' + data;
-	    self.notify('error', msg);
-	    return true;
 	}
     };
 
@@ -576,25 +587,19 @@ define([
 	.then(function() {
 	    // run the compile step
 	    self.notify('info', 'compiling on: ' + host.intf.IP + ' into '+compile_dir);
+	    host.hasError = false;
 	    host.stdErr = '';
 	    host.stdOut = '';
-	    var stdErrCB = function(host) {
+	    var compileDataCallback = function(host) {
 		return function(data) {
-		    host.stdErr += data;
-		    return self.parseCompileStdErr(host, data);
-		};
-	    }(host);
-	    var stdOutCB = function(host) {
-		return function(data) {
-		    host.stdOut += data;
-		    return self.parseCompilePercent(host, data);
+		    return self.parseCompileData(host, data);
 		};
 	    }(host);
 	    return utils.executeOnHost(compile_commands, 
 				       host.intf.IP, 
 				       host.user, 
-				       stdErrCB,
-				       stdOutCB)
+				       compileDataCallback,
+				       compileDataCallback)
 		.catch(function(err) {
 		    compilationFailed = true;
 		    // ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
@@ -619,7 +624,9 @@ define([
 		    return Q.all(tasks);
 		});
 	})
-	.then(function() {
+	    .then(function(output) {
+		if (output.returnCode != 0)
+		    compilationFailed = true;
 	    // make the local binary folder for the architecture
 	    if (compilationFailed) {
 		throw new String('Compilation failed on ' + host.intf.IP);
