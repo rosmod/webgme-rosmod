@@ -185,7 +185,7 @@ define([
 	var doxygenConfigName = 'doxygen_config',
 	    doxygenTemplate = TEMPLATES[self.FILES['doxygen_config']];
 	self.artifacts[doxygenConfigName] = ejs.render(doxygenTemplate, 
-						   {'projectName': self.projectName});
+						       {'projectName': self.projectName});
 
 	var software_folder = self.projectModel.Software_list[0];
 	if (software_folder && software_folder.Package_list) {
@@ -308,7 +308,7 @@ define([
 	}
 
 	var path = require('path'),
-	dir = path.join(self.gen_dir, 'src');
+	    dir = path.join(self.gen_dir, 'src');
 
 	self.notify('info', 'Downloading Source Libraries');
 
@@ -335,7 +335,7 @@ define([
 	self.notify('info', msg);
 
 	var path = require('path'),
-	child_process = require('child_process');
+	    child_process = require('child_process');
 
 	var docPath = path.join(self.gen_dir, 'doc');
 	// clear out any previous documentation
@@ -382,7 +382,7 @@ define([
 
     SoftwareGenerator.prototype.getValidArchitectures = function() {
 	var self = this,
-	validArchs = {};
+	    validArchs = {};
 	var systems_folder = self.projectModel.Systems_list[0];
 	if (systems_folder && systems_folder.System_list) {
 	    systems_folder.System_list.map(function(system) {
@@ -471,8 +471,6 @@ define([
 
 	var strippedData = stripANSI(data);
 	
-	console.log(strippedData);
-	
 	if (host.hasError || strippedData.indexOf('Errors     << ') > -1) {
 	    host.hasError = true;
 	    host.stdErr += data;
@@ -558,7 +556,7 @@ define([
 	    'rm -rf bin',
 	    'catkin config --extend ' + host.host['Build Workspace'],
 	    'catkin clean -b',
-	    'catkin build',
+	    'catkin build --no-status',
 	    'mkdir bin',
 	    'cp devel/lib/*.so bin/.',
 	    'rm -rf devel build',
@@ -579,72 +577,86 @@ define([
 		    reject("Couldn't make remote compilation dir!");
 		});
 	})
-	.then(function() {
-	    // copy the sources to remote
-	    self.notify('info', 'copying compilation sources to: ' + host.intf.IP);
-	    return utils.copyToHost(self.gen_dir, compile_dir, host.intf.IP, host.user);
-	})
-	.then(function() {
-	    // run the compile step
-	    self.notify('info', 'compiling on: ' + host.intf.IP + ' into '+compile_dir);
-	    host.hasError = false;
-	    host.stdErr = '';
-	    host.stdOut = '';
-	    var compileDataCallback = function(host) {
-		return function(data) {
-		    return self.parseCompileData(host, data);
-		};
-	    }(host);
-	    return utils.executeOnHost(compile_commands, 
-				       host.intf.IP, 
-				       host.user, 
-				       compileDataCallback,
-				       compileDataCallback)
-		.catch(function(err) {
-		    compilationFailed = true;
-		    // ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
-		    var msg = '<details><summary><b>Compile STDOUT from '+host.intf.IP+':</b></summary>' +
-			'<pre><code>'+ host.stdOut + '</code></pre></details>';
-		    self.createMessage(self.activeNode, msg, 'error');
-		    msg = '<details><summary><b>Compile STDERR from '+host.intf.IP+':</b></summary>' +
-			'<pre><code>'+ host.stdErr + '</code></pre></details>';
-		    self.createMessage(self.activeNode, msg, 'error');
-		    // ADD STDOUT / STDERR TO RESULTS AS BLOBS
-		    var files = {
-			'compile.stdout.txt': host.stdOut,
-			'compile.stderr.txt': host.stdErr
+	    .then(function() {
+		// copy the sources to remote
+		self.notify('info', 'copying compilation sources to: ' + host.intf.IP);
+		return utils.copyToHost(self.gen_dir, compile_dir, host.intf.IP, host.user);
+	    })
+	    .then(function() {
+		// run the compile step
+		self.notify('info', 'compiling on: ' + host.intf.IP + ' into '+compile_dir);
+		host.hasError = false;
+		host.stdErr = '';
+		host.stdOut = '';
+		var compileDataCallback = function(host) {
+		    return function(data) {
+			return self.parseCompileData(host, data);
 		    };
-		    var fnames = Object.keys(files);
-		    var tasks = fnames.map((fname) => {
-			return self.blobClient.putFile(fname, files[fname])
-			    .then((hash) => {
-				self.result.addArtifact(hash);
+		}(host);
+		return utils.executeOnHost(compile_commands, 
+					   host.intf.IP, 
+					   host.user, 
+					   compileDataCallback,
+					   compileDataCallback)
+		    .catch(function(err) {
+			compilationFailed = true;
+		    })
+			.finally(function() {
+			    var Convert = require('ansi-to-html');
+			    var convert = new Convert();
+			    // ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
+			    var msg = '<details><summary><b>Compile STDOUT from '+host.intf.IP+':</b></summary>' +
+				'<pre>' +
+				'<code>'+
+				convert.toHtml(host.stdOut) + 
+				'</code>'+
+				'</pre>' +
+				'</details>';
+			    self.createMessage(self.activeNode, msg, 'error');
+			    msg = '<details><summary><b>Compile STDERR from '+host.intf.IP+':</b></summary>' +
+				'<pre>' +
+				'<code>'+
+				convert.toHtml(host.stdErr) + 
+				'</code>' +
+				'</pre>' +
+				'</details>';
+			    self.createMessage(self.activeNode, msg, 'error');
+			    // ADD STDOUT / STDERR TO RESULTS AS BLOBS
+			    var files = {};
+			    var stripANSI = require('strip-ansi');
+			    files[ host.intf.IP + '.compile.stdout.txt' ] = stripANSI(host.stdOut);
+			    files[ host.intf.IP + '.compile.stderr.txt' ] = stripANSI(host.stdErr);
+			    var fnames = Object.keys(files);
+			    var tasks = fnames.map((fname) => {
+				return self.blobClient.putFile(fname, files[fname])
+				    .then((hash) => {
+					self.result.addArtifact(hash);
+				    });
 			    });
-		    });
-		    return Q.all(tasks);
-		});
-	})
+			    return Q.all(tasks);
+			})
+			    })
 	    .then(function(output) {
 		if (output.returnCode != 0)
 		    compilationFailed = true;
-	    // make the local binary folder for the architecture
-	    if (compilationFailed) {
-		throw new String('Compilation failed on ' + host.intf.IP);
-	    }
-	    mkdirp.sync(archBinPath);
-	})
-	.then(function() {
-	    // copy the compiled binaries from remote into the local bin folder
-	    self.notify('info', 'copying from ' + host.intf.IP + ' into local storage.');
-	    return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
-				      archBinPath + '/.',
-				      host.intf.IP,
-				      host.user);
-	})
-	.then(function() {
-	    // remove the remote folders
-	    return self.cleanHost(host);
-	});
+		// make the local binary folder for the architecture
+		if (compilationFailed) {
+		    throw new String('Compilation failed on ' + host.intf.IP);
+		}
+		mkdirp.sync(archBinPath);
+	    })
+	    .then(function() {
+		// copy the compiled binaries from remote into the local bin folder
+		self.notify('info', 'copying from ' + host.intf.IP + ' into local storage.');
+		return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
+					  archBinPath + '/.',
+					  host.intf.IP,
+					  host.user);
+	    })
+	    .then(function() {
+		// remove the remote folders
+		return self.cleanHost(host);
+	    });
     };
     
     SoftwareGenerator.prototype.cleanHost = function(host) {
@@ -718,7 +730,7 @@ define([
 		    });
 	    });
     };
-			      
+    
     SoftwareGenerator.prototype.returnSource = function() {
 	var self = this;
 	var artifact = self.blobClient.createArtifact(self.artifactName);
@@ -752,9 +764,9 @@ define([
 	
 	return new Promise(function(resolve, reject) {
 	    var zlib = require('zlib'),
-	    tar = require('tar'),
-	    fstream = require('fstream'),
-	    input = self.gen_dir;
+		tar = require('tar'),
+		fstream = require('fstream'),
+		input = self.gen_dir;
 
 	    var bufs = [];
 	    var packer = tar.Pack()
