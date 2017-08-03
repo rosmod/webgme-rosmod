@@ -545,8 +545,9 @@ define([
 	var compile_commands = [
 	    'cd ' + compile_dir,
 	    'rm -rf bin',
-	    'source '+host.host['ROS Install']+'/setup.bash',
-	    'catkin_make',
+	    'catkin config --extend ' + host.host['Build Workspace'],
+	    'catkin clean -b',
+	    'catkin build',
 	    'mkdir bin',
 	    'cp devel/lib/*.so bin/.',
 	    'rm -rf devel build',

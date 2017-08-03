@@ -607,7 +607,7 @@ define([
 	host.runningRoscore = true;
 	var user = host.user;
 	var host_commands = [
-	    'source '+host.host['ROS Install']+'/setup.bash',
+	    'source '+host.host['Build Workspace']+'/setup.bash',
 	    'export ROS_IP='+ip,
 	    'export ROS_MASTER_URI=http://'+ip+':'+self.rosCorePort,
 	    'roscore --port=' + self.rosCorePort + ' &',
@@ -631,7 +631,7 @@ define([
 					   self.experimentName);
 	    var host_commands = [
 		'cd ' + utils.sanitizePath(deployment_dir),
-		'source '+host.host['ROS Install']+'/setup.bash',
+		'source '+host.host['Build Workspace']+'/setup.bash',
 		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH',
 		'export ROS_IP='+ip,
 		'export ROS_MASTER_URI=http://'+self.rosCoreIp+':'+self.rosCorePort,
