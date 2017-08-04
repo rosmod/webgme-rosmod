@@ -97,6 +97,7 @@ define([
 	self.compileCode = currentConfig.compile;
 	self.generateDocs = currentConfig.generate_docs;
 	self.returnZip = currentConfig.returnZip;
+	self.usePTY = currentConfig.usePTY;
 	self.runningOnClient = false;
 
         if (typeof WebGMEGlobal !== 'undefined') {
@@ -674,7 +675,8 @@ define([
 					   host.intf.IP, 
 					   host.user, 
 					   compileErrorCallback,
-					   compileDataCallback)
+					   compileDataCallback,
+					   self.usePTY)
 		    .catch(function(err) {
 			compilationFailed = true;
 		    })
