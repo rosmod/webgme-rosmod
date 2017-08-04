@@ -248,8 +248,13 @@ define([
 	    child_process = require('child_process');
 
 	// clear out any previous project files
-	child_process.execSync('rm -rf ' + path.join(self.gen_dir,'bin'));
-	child_process.execSync('rm -rf ' + path.join(self.gen_dir,'src'));
+	var binDir = utils.sanitizePath(path.join(self.gen_dir,'bin'));
+	self.notify('info','Clearing out previous binaries.');
+	child_process.execSync('rm -rf ' + binDir);
+
+	var srcDir = utils.sanitizePath(path.join(self.gen_dir,'src'));
+	self.notify('info','Clearing out previous generated code.');
+	child_process.execSync('rm -rf ' + srcDir);
 
 	var fileNames = Object.keys(self.artifacts);
 	var tasks = fileNames.map(function(fileName) {
@@ -337,7 +342,7 @@ define([
 	var path = require('path'),
 	    child_process = require('child_process');
 
-	var docPath = path.join(self.gen_dir, 'doc');
+	var docPath = utils.sanitizePath(path.join(self.gen_dir, 'doc'));
 	// clear out any previous documentation
 	child_process.execSync('rm -rf ' + docPath);
 
@@ -460,7 +465,93 @@ define([
 	}
     };
 
-    SoftwareGenerator.prototype.parseCompileData = function(host, data) {
+    SoftwareGenerator.prototype.compileHasError = function(data) {
+	return data.indexOf('Errors     << ') > -1 ||
+	    data.indexOf('Traceback (most recent call last):') > -1 ||
+	    data.indexOf('error:') > -1;
+    };
+
+    SoftwareGenerator.prototype.convertCompileMessage = function(host, data) {
+	var self = this;
+
+	var path = require('path');
+	var stripANSI = require('strip-ansi');
+	var base_compile_dir = path.join(host.user.Directory, 'compilation');
+	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
+	var removeDir = path.join(compile_dir, 'src/');
+
+	var strippedData = stripANSI(data);
+
+	if (strippedData.indexOf('error:') > -1)
+	{
+	    var compileErrors = utils.parseMakeErrorOutput(strippedData);
+	    compileErrors.map(function(compileError) {
+		var baseName = compileError.fileName.replace(removeDir, '');
+		var packageName = baseName.split('/')[0];
+		var compName = path.basename(compileError.fileName).split('.')[0];
+		var msg = '<details><summary><b>Build Error:: package: ' + packageName + ', component: ' +
+		    compName + ':</b></summary>' +
+		    '<pre><code>'+
+		    compileError.text +
+		    '</code></pre>'+
+		    '</details>';
+		self.createMessage(self.activeNode, msg, 'error');
+		var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
+								compName,
+								compileError.fileName, 
+								compileError.line);
+		var node = nodeInfo.node,
+		    attr = nodeInfo.attr,
+		    lineNum = nodeInfo.lineNumber;
+		if (node) {
+		    var nodeName = node.name;
+		    self.notify('error', 'Error in Package: ' + packageName + 
+				', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
+				', at line: ' + lineNum, node);
+		}
+		else {
+		    self.notify('error', 'Library ' + packageName + ' has error!');
+		}
+	    });
+	}
+	else if (strippedData.indexOf('warning:') > -1)
+	{
+	    var compileErrors = utils.parseMakeErrorOutput(strippedData);
+	    compileErrors.map(function(compileError) {
+		var baseName = compileError.fileName;
+		baseName.replace(removeDir, '');
+		var packageName = baseName.split('/')[0];
+		var compName = path.basename(compileError.fileName).split('.')[0];
+		var msg = '<details><summary><b>Build Warning:: package: ' + packageName + ', component: ' +
+		    compName + ':</b></summary>' +
+		    '<pre><code>'+
+		    compileError.text +
+		    '</code></pre>'+
+		    '</details>';
+
+		self.createMessage(self.activeNode, msg, 'warning');
+		var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
+								compName,
+								compileError.fileName, 
+								compileError.line);
+		var node = nodeInfo.node,
+		    attr = nodeInfo.attr,
+		    lineNum = nodeInfo.lineNumber;
+		if (node) {
+		    var nodeName = node.name;
+		    self.notify('warning', 'Warning in Package: ' + packageName + 
+				', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
+				', at line: ' + lineNum, node);
+		}
+		else {
+		    // show errors in libraries?
+		    self.notify('warning', 'Library ' + packageName + ' has warning!');
+		}
+	    });
+	}
+    };
+
+    SoftwareGenerator.prototype.parseCompileError = function(host, data) {
 	var self = this;
 
 	var path = require('path');
@@ -470,56 +561,37 @@ define([
 	var removeDir = path.join(compile_dir, 'src/')
 
 	var strippedData = stripANSI(data);
+
+	host.stdErr += data;
 	
-	if (host.hasError || strippedData.indexOf('Errors     << ') > -1) {
+	if (host.hasError || self.compileHasError(strippedData)) {
 	    host.hasError = true;
-	    host.stdErr += data;
 	    // see if it's a make error
 	    if ( strippedData.indexOf('error:') > -1 ) {
-		var compileErrors = utils.parseMakeErrorOutput(strippedData);
-		compileErrors.map(function(compileError) {
-		    var baseName = compileError.fileName.replace(removeDir, '');
-		    var packageName = baseName.split('/')[0];
-		    var compName = path.basename(compileError.fileName).split('.')[0];
-		    var msg = '<details><summary><b>Build Error:: package: ' + packageName + ', component: ' +
-			compName + ':</b></summary>' +
-			'<pre><code>'+ compileError.text + '</code></pre></details>';
-		    self.createMessage(self.activeNode, msg, 'error');
-		    var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
-								    compName,
-								    compileError.fileName, 
-								    compileError.line);
-		    var node = nodeInfo.node,
-			attr = nodeInfo.attr,
-			lineNum = nodeInfo.lineNumber;
-		    if (node) {
-			var nodeName = node.name;
-			self.notify('error', 'Error in Package: ' + packageName + 
-				    ', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
-				    ', at line: ' + lineNum, node);
-		    }
-		    else {
-			self.notify('error', 'Library ' + packageName + ' has error!');
-		    }
-		});
-		return true;
-	    }	    
+		self.convertCompileMessage(host, data);
+		//return true;
+	    }
+	    else if ( strippedData.indexOf('Traceback (most recent call last):') > -1) {
+		//return true;
+	    }
+	}
+	return false;
+    };
+
+    SoftwareGenerator.prototype.parseCompileData = function(host, data) {
+	var self = this;
+
+	var stripANSI = require('strip-ansi');
+	var strippedData = stripANSI(data);
+	
+	if (host.hasError || self.compileHasError(strippedData)) {
+	    return self.parseCompileError(host, data);
 	}
 	else {
 	    host.stdOut += data;
 	    // see if it's a make warning
 	    if ( strippedData.indexOf('warning:') > -1 ) {
-		var compileErrors = utils.parseMakeErrorOutput(strippedData);
-		compileErrors.map(function(compileError) {
-		    var baseName = compileError.fileName;
-		    baseName.replace(removeDir, '');
-		    var packageName = baseName.split('/')[0];
-		    var compName = path.basename(compileError.fileName).split('.')[0];
-		    var msg = 'Build Warning:: package: ' + packageName + ', component:' +
-			compName + ' :\n\t' +
-			compileError.text + '\n';
-		    self.notify('warning', msg);
-		});
+		self.convertCompileMessage(host, data);
 	    }
 	    else {
 		// see if we can parse percent from it
@@ -552,10 +624,10 @@ define([
 	var archBinPath = path.join(self.gen_dir, 'bin' , utils.getDeviceType(host.host));
 
 	var compile_commands = [
-	    'cd ' + compile_dir,
+	    'cd ' + utils.sanitizePath(compile_dir),
 	    'rm -rf bin',
 	    'catkin config --extend ' + host.host['Build Workspace'],
-	    'catkin clean -b',
+	    'catkin clean -b --yes',
 	    'catkin build --no-status',
 	    'mkdir bin',
 	    'cp devel/lib/*.so bin/.',
@@ -564,7 +636,7 @@ define([
 
 	var compilationFailed = false;
 
-	child_process.execSync('rm -rf ' + archBinPath);
+	child_process.execSync('rm -rf ' + utils.sanitizePath(archBinPath));
 
 	// make the compile dir
 	return new Promise(function(resolve,reject) {
@@ -593,10 +665,15 @@ define([
 			return self.parseCompileData(host, data);
 		    };
 		}(host);
+		var compileErrorCallback = function(host) {
+		    return function(data) {
+			return self.parseCompileError(host, data);
+		    };
+		}(host);
 		return utils.executeOnHost(compile_commands, 
 					   host.intf.IP, 
 					   host.user, 
-					   compileDataCallback,
+					   compileErrorCallback,
 					   compileDataCallback)
 		    .catch(function(err) {
 			compilationFailed = true;
@@ -637,7 +714,7 @@ define([
 			})
 			    })
 	    .then(function(output) {
-		if (output.returnCode != 0)
+		if (host.hasError || output == undefined || output.returnCode != 0)
 		    compilationFailed = true;
 		// make the local binary folder for the architecture
 		if (compilationFailed) {
@@ -662,7 +739,7 @@ define([
     SoftwareGenerator.prototype.cleanHost = function(host) {
 	var self = this;
 	var path = require('path');
-	var base_compile_dir = path.join(host.user.Directory, 'compilation');
+	var base_compile_dir = utils.sanitizePath(path.join(host.user.Directory, 'compilation'));
 	self.notify('info', 'removing compilation artifacts off: ' + host.intf.IP);
 	return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.IP, host.user);
     };
@@ -689,7 +766,7 @@ define([
 	var selectedHosts = [];
 
 	var path = require('path');
-	var binPath = path.join(self.gen_dir, 'bin');
+	var binPath = utils.sanitizePath(path.join(self.gen_dir, 'bin'));
 	var child_process = require('child_process');
 
 	// clear out any previous binaries
