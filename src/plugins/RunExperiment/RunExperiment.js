@@ -93,12 +93,17 @@ define([
 	// What did the user select for our configuration?
 	var currentConfig = self.getCurrentConfig();
 	self.returnZip = currentConfig.returnZip;
-	//self.roscoreDelay = currentConfig.roscoreDelay;
+	self.rosMasterURI = currentConfig.rosMasterURI;
 	
 	// will be filled out by the plugin
 	self.experiment = [];
-	self.rosCorePort = Math.floor((Math.random() * (65535-1024) + 1024));
-	self.rosCoreIp = '';
+	if (self.deployRosMaster()) {
+	    var port = int(self.rosMasterURI.split(':')[-1]);
+	    self.rosCorePort = port > 0 ? port : 11311;//Math.floor((Math.random() * (65535-1024) + 1024));
+	}
+	else {
+	    self.rosCorePort = 11311;
+	}
 	self.artifacts = {};
 
 	webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
@@ -603,18 +608,18 @@ define([
 	var container = link[0];
 	var host = link[1];
 	var ip = host.intf.IP;
-	self.rosCoreIp = ip;
 	host.runningRoscore = true;
+	self.rosMasterURI = 'http://'+ip+':'+self.rosCorePort;
 	var user = host.user;
 	var host_commands = [
 	    'source '+host.host['ROS Install']+'/setup.bash',
 	    'export ROS_IP='+ip,
-	    'export ROS_MASTER_URI=http://'+ip+':'+self.rosCorePort,
+	    'export ROS_MASTER_URI='+self.rosMasterURI,
 	    'roscore --port=' + self.rosCorePort + ' &',
 	    'until pids=$(pidof rosout); do sleep 1; done'
 	];
 	//host_commands.push('sleep ' + self.roscoreDelay);
-	self.notify('info','Starting ROSCORE at: ' + self.rosCoreIp+':'+self.rosCorePort);
+	self.notify('info','Starting ROSCORE at: ' + self.rosMasterURI);
 	return utils.deployOnHost(host_commands, ip, user);
     };
 
@@ -634,7 +639,7 @@ define([
 		'source '+host.host['ROS Install']+'/setup.bash',
 		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH',
 		'export ROS_IP='+ip,
-		'export ROS_MASTER_URI=http://'+self.rosCoreIp+':'+self.rosCorePort,
+		'export ROS_MASTER_URI='+self.rosMasterURI,
 		'export DISPLAY=:0.0'
 	    ];
 	    if (container.Node_list) {
@@ -650,6 +655,11 @@ define([
 	    return utils.deployOnHost(host_commands, ip, user);
 	});
 	return Q.all(tasks);
+    };
+
+    RunExperiment.prototype.deployRosMaster = function() {
+	var self = this;
+	return self.rosMasterURI.length > 0;
     };
     
     RunExperiment.prototype.cleanHost = function(host) {
@@ -670,10 +680,10 @@ define([
 	return self.copyArtifactsToHosts()
 	    .then(function () {
 		self.notify('info','Copied artifacts to hosts.');
-		return self.startRosCore();
+		if (self.deployRosMaster())
+		    return self.startRosCore();
 	    })
 	    .then(function () {
-		self.notify('info','Started roscore.');
 		return self.startProcesses();
 	    })
 	    .then(function() {

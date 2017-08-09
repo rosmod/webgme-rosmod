@@ -1,22 +1,30 @@
 {
-  "id": "RunExperiment",
-  "name": "Run Experiment",
-  "version": "1.0.0",
-  "description": "Maps the containers to available hosts and runs the experiment.",
-  "icon": {
-    "class": "glyphicon glyphicon-ok-circle",
-    "src": ""
-  },
-  "disableServerSideExecution": false,
-  "disableBrowserSideExecution": false,
-  "configStructure": [
-      {
-	  "name": "returnZip",
-	  "displayName": "Zip and return generated artifacts.",
-	  "description": "If true, it enables the client to download a zip of the artifacts.",
-	  "value": false,
-	  "valueType": "boolean",
-	  "readOnly": false
-      }
-  ]
+    "id": "RunExperiment",
+    "name": "Run Experiment",
+    "version": "1.0.0",
+    "description": "Maps the containers to available hosts and runs the experiment.",
+    "icon": {
+	"class": "glyphicon glyphicon-ok-circle",
+	"src": ""
+    },
+    "disableServerSideExecution": false,
+    "disableBrowserSideExecution": false,
+    "configStructure": [
+	{
+	    "name": "rosMasterURI",
+	    "displayName": "ROS Master URI.",
+	    "description": "Connect to ROS MASTER URI if not blank, else start new ROS Master."
+	    "value": "",
+	    "valueType": "string",
+	    "readOnly": false
+	},	
+	{
+	    "name": "returnZip",
+	    "displayName": "Zip and return generated artifacts.",
+	    "description": "If true, it enables the client to download a zip of the artifacts.",
+	    "value": false,
+	    "valueType": "boolean",
+	    "readOnly": false
+	}
+    ]
 }
