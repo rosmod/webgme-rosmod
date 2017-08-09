@@ -13,7 +13,7 @@
 	{
 	    "name": "rosMasterURI",
 	    "displayName": "ROS Master URI.",
-	    "description": "Connect to ROS MASTER URI if not blank, else start new ROS Master."
+	    "description": "Connect to ROS MASTER URI if not blank, else start new ROS Master.",
 	    "value": "",
 	    "valueType": "string",
 	    "readOnly": false

@@ -96,10 +96,20 @@ define([
 	self.rosMasterURI = currentConfig.rosMasterURI;
 	
 	// will be filled out by the plugin
+	self.hasStartedDeploying = false;
 	self.experiment = [];
-	if (self.deployRosMaster()) {
-	    var port = int(self.rosMasterURI.split(':')[-1]);
-	    self.rosCorePort = port > 0 ? port : 11311;//Math.floor((Math.random() * (65535-1024) + 1024));
+	if (!self.deployRosMaster()) {
+	    var port = 11311;
+	    var splitArr = self.rosMasterURI.split(':');
+	    if (splitArr.length) {
+		var portStr = splitArr[splitArr.length-1];
+		if (portStr && portStr.length > 0) {
+		    var parsed = parseInt(portStr);
+		    if (parsed > 0)
+			port = parsed;
+		}
+	    }
+	    self.rosCorePort = port;
 	}
 	else {
 	    self.rosCorePort = 11311;
@@ -185,7 +195,7 @@ define([
 	    })
 	    .catch(function(err) {
 		self.removeTempFiles();
-		if (self.experiment.length) { // if we made a host to container map
+		if (self.experiment.length && self.hasStartedDeploying) { // if we made a host to container map
 		    return self.stopHosts()
 			.then(function() {
         		    self.notify('error', err);
@@ -659,11 +669,13 @@ define([
 
     RunExperiment.prototype.deployRosMaster = function() {
 	var self = this;
-	return self.rosMasterURI.length > 0;
+	return self.rosMasterURI.length == 0;
     };
     
     RunExperiment.prototype.cleanHost = function(host) {
 	var self = this;
+	if (!self.hasStartedDeploying)
+	    return;
 	var path = require('path');
 	var base_dir = path.join(host.user.Directory, 'experiments');
 	return utils.executeOnHost(['rm -rf ' + base_dir], host.intf.IP, host.user);
@@ -677,11 +689,16 @@ define([
 	    return;
 	}
 
+	self.hasStartedDeploying = true;
 	return self.copyArtifactsToHosts()
 	    .then(function () {
 		self.notify('info','Copied artifacts to hosts.');
 		if (self.deployRosMaster())
 		    return self.startRosCore();
+		else {
+		    self.notify('info', 'Using user-provided ROS_MASTER_URI: ' + self.rosMasterURI);
+		    self.notify('info', '  with port: ' + self.rosCorePort);
+		}
 	    })
 	    .then(function () {
 		return self.startProcesses();
