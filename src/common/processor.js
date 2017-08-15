@@ -14,6 +14,9 @@ define([], function() {
 	    objPaths.map(function(objPath) {
 		var obj = objects[objPath];
 		if (obj.type == 'Component') {
+                    // make .Package convenience member for rendering code
+                    var parent = objects[obj.parentPath];
+                    obj.Package = parent.name;
 		    // make components have 'Types' which provide their messages/services
 		    obj.Types = []; 
 		    if (obj.Publisher_list) {
@@ -40,6 +43,14 @@ define([], function() {
 				obj.Types.push(srv.Service);
 			});
 		    }
+                } else if (obj.type == 'Message' || obj.type == 'Service') {
+                    // make .Package convenience member for rendering code
+                    var parent = objects[obj.parentPath];
+                    obj.Package = parent.name;
+                } else if (obj.type == 'External Definitions') {
+                    // this object is a child of the Software object
+                    // and contains external message and service
+                    // definitions, should make them easier to access.
 		} else if (obj.type == 'Link') {
 		    // copy the Link's address to the interface to which it's connected
 		    var intf = obj.src;
