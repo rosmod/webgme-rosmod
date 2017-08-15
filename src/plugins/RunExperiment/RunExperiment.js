@@ -625,13 +625,15 @@ define([
 				       'experiments',
 				       self.experimentName);
 	var host_commands = [
+            'setopt NO_HUP',
+            'setopt NO_CHECK_JOBS',
             'cd ' + utils.sanitizePath(deployment_dir),
             'catkin config -d '+host.host['Build Workspace'],
             '. `catkin locate --shell-verbs`',
             'catkin source',
 	    'export ROS_IP='+ip,
 	    'export ROS_MASTER_URI='+self.rosMasterURI,
-	    'roscore --port=' + self.rosCorePort + ' &',
+	    'nohup roscore --port=' + self.rosCorePort + ' & disown',
 	    'until pids=$(pidof rosout); do sleep 1; done'
 	];
 	//host_commands.push('sleep ' + self.roscoreDelay);
@@ -651,6 +653,8 @@ define([
 					   'experiments',
 					   self.experimentName);
 	    var host_commands = [
+                'setopt NO_HUP',
+                'setopt NO_CHECK_JOBS',
 		'cd ' + utils.sanitizePath(deployment_dir),
                 'catkin config -d '+host.host['Build Workspace'],
                 '. `catkin locate --shell-verbs`',
@@ -664,8 +668,8 @@ define([
 		container.Node_list.map(function(node) {
 		    var redirect_command = ' > ' + node.name + '.stdout.log' +
 			' 2> ' + node.name + '.stderr.log';
-		    host_commands.push('DISPLAY=:0.0 rosmod_actor --config ' +
-				       node.name + '.config' + redirect_command +' &');
+		    host_commands.push('nohup rosmod_actor --config ' +
+				       node.name + '.config' + redirect_command +' & disown');
 		});
 	    }
 	    //host_commands.push('sleep 10');
