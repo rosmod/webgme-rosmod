@@ -16,7 +16,27 @@ else()
     message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-find_package(catkin REQUIRED COMPONENTS rosmod rosmod_component rosmod_jsoncpp std_msgs message_generation)
+find_package(catkin REQUIRED COMPONENTS  std_msgs message_generation rosmod rosmod_actor
+# external messages that we depend on
+<%
+if (pkgInfo.Component_list) {
+  pkgInfo.Component_list.map(function(cmp) {
+    if (cmp.Types.length) {
+      var indexedPackages = [];
+      cmp.Types.map(function(type) {
+        var packageName = type.Package;
+        if (type.type.indexOf('External') > -1 && indexedPackages.indexOf(packageName) == -1) {
+          indexedPackages.push(packageName);
+-%>
+<%- packageName %>
+<%
+        }
+      });
+    }
+  });
+} 
+-%>
+)
 
 <% 
 if (pkgInfo.Service_list) { 
@@ -107,7 +127,7 @@ if (pkgInfo.Component_list) {
     // GET ALL REQUIRED TYPES (MSG/SRV) INCLUDES
     if (cmp.Types.length) {
       cmp.Types.map(function(type) { 
-        var packageName = objects[type.parentPath].name;
+        var packageName = type.Package;
         if (indexedPackages.indexOf(packageName) == -1) {
           indexedPackages.push(packageName);
 -%>
@@ -173,7 +193,7 @@ add_dependencies(<%- cmp.name %>
 <%
       var indexedPackages = [];
       cmp.Types.map(function(type) {
-        var packageName = objects[type.parentPath].name;
+        var packageName = type.Package;
         if (indexedPackages.indexOf(packageName) == -1) {
           indexedPackages.push(packageName);
 -%>

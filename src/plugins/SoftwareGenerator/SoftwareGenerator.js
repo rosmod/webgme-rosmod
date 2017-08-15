@@ -97,6 +97,7 @@ define([
 	self.compileCode = currentConfig.compile;
 	self.generateDocs = currentConfig.generate_docs;
 	self.returnZip = currentConfig.returnZip;
+	self.usePTY = currentConfig.usePTY;
 	self.runningOnClient = false;
 
         if (typeof WebGMEGlobal !== 'undefined') {
@@ -185,7 +186,7 @@ define([
 	var doxygenConfigName = 'doxygen_config',
 	    doxygenTemplate = TEMPLATES[self.FILES['doxygen_config']];
 	self.artifacts[doxygenConfigName] = ejs.render(doxygenTemplate, 
-						   {'projectName': self.projectName});
+						       {'projectName': self.projectName});
 
 	var software_folder = self.projectModel.Software_list[0];
 	if (software_folder && software_folder.Package_list) {
@@ -248,8 +249,13 @@ define([
 	    child_process = require('child_process');
 
 	// clear out any previous project files
-	child_process.execSync('rm -rf ' + path.join(self.gen_dir,'bin'));
-	child_process.execSync('rm -rf ' + path.join(self.gen_dir,'src'));
+	var binDir = utils.sanitizePath(path.join(self.gen_dir,'bin'));
+	self.notify('info','Clearing out previous binaries.');
+	child_process.execSync('rm -rf ' + binDir);
+
+	var srcDir = utils.sanitizePath(path.join(self.gen_dir,'src'));
+	self.notify('info','Clearing out previous generated code.');
+	child_process.execSync('rm -rf ' + srcDir);
 
 	var fileNames = Object.keys(self.artifacts);
 	var tasks = fileNames.map(function(fileName) {
@@ -308,7 +314,7 @@ define([
 	}
 
 	var path = require('path'),
-	dir = path.join(self.gen_dir, 'src');
+	    dir = path.join(self.gen_dir, 'src');
 
 	self.notify('info', 'Downloading Source Libraries');
 
@@ -335,9 +341,9 @@ define([
 	self.notify('info', msg);
 
 	var path = require('path'),
-	child_process = require('child_process');
+	    child_process = require('child_process');
 
-	var docPath = path.join(self.gen_dir, 'doc');
+	var docPath = utils.sanitizePath(path.join(self.gen_dir, 'doc'));
 	// clear out any previous documentation
 	child_process.execSync('rm -rf ' + docPath);
 
@@ -382,7 +388,7 @@ define([
 
     SoftwareGenerator.prototype.getValidArchitectures = function() {
 	var self = this,
-	validArchs = {};
+	    validArchs = {};
 	var systems_folder = self.projectModel.Systems_list[0];
 	if (systems_folder && systems_folder.System_list) {
 	    systems_folder.System_list.map(function(system) {
@@ -460,36 +466,36 @@ define([
 	}
     };
 
-    SoftwareGenerator.prototype.parseCompilePercent = function (host, data) {
-	var self = this;
-	var percent = utils.parseMakePercentOutput(data);
-	if (host.__lastPercent === undefined)
-	    host.__lastPercent = 0;
-	if (percent.length && percent[0] > 0 && (percent[0] - host.__lastPercent) > 4 ) {
-	    var msg = 'Build on ' + utils.getDeviceType(host.host) + ': ' + percent[0] + '%';
-	    host.__lastPercent = percent[0];
-	    self.notify('info', msg);
-	}
-	return false;
+    SoftwareGenerator.prototype.compileHasError = function(data) {
+	return data.indexOf('Errors     << ') > -1 ||
+	    data.indexOf('Traceback (most recent call last):') > -1 ||
+	    data.indexOf('error:') > -1;
     };
 
-    SoftwareGenerator.prototype.parseCompileStdErr = function (host, data) {
-	// returns true if the error should halt the build, false otherwise
+    SoftwareGenerator.prototype.convertCompileMessage = function(host, data) {
 	var self = this;
+
 	var path = require('path');
+	var stripANSI = require('strip-ansi');
 	var base_compile_dir = path.join(host.user.Directory, 'compilation');
 	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
+	var removeDir = path.join(compile_dir, 'src/');
 
-	var removeDir = path.join(compile_dir, 'src/')
-	if ( data.indexOf('error:') > -1 ) {
-	    var compileErrors = utils.parseMakeErrorOutput(data);
+	var strippedData = stripANSI(data);
+
+	if (strippedData.indexOf('error:') > -1)
+	{
+	    var compileErrors = utils.parseMakeErrorOutput(strippedData);
 	    compileErrors.map(function(compileError) {
 		var baseName = compileError.fileName.replace(removeDir, '');
 		var packageName = baseName.split('/')[0];
 		var compName = path.basename(compileError.fileName).split('.')[0];
 		var msg = '<details><summary><b>Build Error:: package: ' + packageName + ', component: ' +
 		    compName + ':</b></summary>' +
-		    '<pre><code>'+ compileError.text + '</code></pre></details>';
+		    '<pre><code>'+
+		    compileError.text +
+		    '</code></pre>'+
+		    '</details>';
 		self.createMessage(self.activeNode, msg, 'error');
 		var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
 								compName,
@@ -508,27 +514,103 @@ define([
 		    self.notify('error', 'Library ' + packageName + ' has error!');
 		}
 	    });
-	    return true;
 	}
-	else if ( data.indexOf('warning:') > -1 ) {
-	    var compileErrors = utils.parseMakeErrorOutput(data);
+	else if (strippedData.indexOf('warning:') > -1)
+	{
+	    var compileErrors = utils.parseMakeErrorOutput(strippedData);
 	    compileErrors.map(function(compileError) {
 		var baseName = compileError.fileName;
 		baseName.replace(removeDir, '');
 		var packageName = baseName.split('/')[0];
 		var compName = path.basename(compileError.fileName).split('.')[0];
-		var msg = 'Build Warning:: package: ' + packageName + ', component:' +
-		    compName + ' :\n\t' +
-		    compileError.text + '\n';
-		self.notify('warning', msg);
+		var msg = '<details><summary><b>Build Warning:: package: ' + packageName + ', component: ' +
+		    compName + ':</b></summary>' +
+		    '<pre><code>'+
+		    compileError.text +
+		    '</code></pre>'+
+		    '</details>';
+
+		self.createMessage(self.activeNode, msg, 'warning');
+		var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
+								compName,
+								compileError.fileName, 
+								compileError.line);
+		var node = nodeInfo.node,
+		    attr = nodeInfo.attr,
+		    lineNum = nodeInfo.lineNumber;
+		if (node) {
+		    var nodeName = node.name;
+		    self.notify('warning', 'Warning in Package: ' + packageName + 
+				', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
+				', at line: ' + lineNum, node);
+		}
+		else {
+		    // show errors in libraries?
+		    self.notify('warning', 'Library ' + packageName + ' has warning!');
+		}
 	    });
-	    return false;
+	}
+    };
+
+    SoftwareGenerator.prototype.parseCompileError = function(host, data) {
+	var self = this;
+
+	var path = require('path');
+	var stripANSI = require('strip-ansi');
+	var base_compile_dir = path.join(host.user.Directory, 'compilation');
+	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
+	var removeDir = path.join(compile_dir, 'src/')
+
+	var strippedData = stripANSI(data);
+
+	host.stdErr += data;
+	
+	if (host.hasError || self.compileHasError(strippedData)) {
+	    host.hasError = true;
+	    // see if it's a make error
+	    if ( strippedData.indexOf('error:') > -1 ) {
+		self.convertCompileMessage(host, data);
+		//return true;
+	    }
+	    else if ( strippedData.indexOf('Traceback (most recent call last):') > -1) {
+		//return true;
+	    }
+	}
+	return false;
+    };
+
+    SoftwareGenerator.prototype.parseCompileData = function(host, data) {
+	var self = this;
+
+	var stripANSI = require('strip-ansi');
+	var strippedData = stripANSI(data);
+	
+	if (host.hasError || self.compileHasError(strippedData)) {
+	    return self.parseCompileError(host, data);
 	}
 	else {
-	    // handle errors that may come before make gets invoked
-	    var msg = 'Build Error:: ' + data;
-	    self.notify('error', msg);
-	    return true;
+	    host.stdOut += data;
+	    // see if it's a make warning
+	    if ( strippedData.indexOf('warning:') > -1 ) {
+		self.convertCompileMessage(host, data);
+	    }
+	    else {
+		// see if we can parse percent from it
+		self.parseCompilePercent(host, strippedData);
+	    }
+	}
+	return false;
+    };
+
+    SoftwareGenerator.prototype.parseCompilePercent = function (host, data) {
+	var self = this;
+	var percent = utils.parseMakePercentOutput(data);
+	if (host.__lastPercent === undefined)
+	    host.__lastPercent = 0;
+	if (percent.length && percent[0] > 0 && (percent[0] - host.__lastPercent) > 4 ) {
+	    var msg = 'Build on ' + utils.getDeviceType(host.host) + ': ' + percent[0] + '%';
+	    host.__lastPercent = percent[0];
+	    self.notify('info', msg);
 	}
     };
 
@@ -543,10 +625,11 @@ define([
 	var archBinPath = path.join(self.gen_dir, 'bin' , utils.getDeviceType(host.host));
 
 	var compile_commands = [
-	    'cd ' + compile_dir,
+	    'cd ' + utils.sanitizePath(compile_dir),
 	    'rm -rf bin',
-	    'source '+host.host['ROS Install']+'/setup.bash',
-	    'catkin_make',
+	    'catkin config --extend ' + host.host['Build Workspace'],
+	    'catkin clean -b --yes',
+	    'catkin build --no-status',
 	    'mkdir bin',
 	    'cp devel/lib/*.so bin/.',
 	    'rm -rf devel build',
@@ -554,7 +637,7 @@ define([
 
 	var compilationFailed = false;
 
-	child_process.execSync('rm -rf ' + archBinPath);
+	child_process.execSync('rm -rf ' + utils.sanitizePath(archBinPath));
 
 	// make the compile dir
 	return new Promise(function(resolve,reject) {
@@ -567,82 +650,98 @@ define([
 		    reject("Couldn't make remote compilation dir!");
 		});
 	})
-	.then(function() {
-	    // copy the sources to remote
-	    self.notify('info', 'copying compilation sources to: ' + host.intf.IP);
-	    return utils.copyToHost(self.gen_dir, compile_dir, host.intf.IP, host.user);
-	})
-	.then(function() {
-	    // run the compile step
-	    self.notify('info', 'compiling on: ' + host.intf.IP + ' into '+compile_dir);
-	    host.stdErr = '';
-	    host.stdOut = '';
-	    var stdErrCB = function(host) {
-		return function(data) {
-		    host.stdErr += data;
-		    return self.parseCompileStdErr(host, data);
-		};
-	    }(host);
-	    var stdOutCB = function(host) {
-		return function(data) {
-		    host.stdOut += data;
-		    return self.parseCompilePercent(host, data);
-		};
-	    }(host);
-	    return utils.executeOnHost(compile_commands, 
-				       host.intf.IP, 
-				       host.user, 
-				       stdErrCB,
-				       stdOutCB)
-		.catch(function(err) {
-		    compilationFailed = true;
-		    // ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
-		    var msg = '<details><summary><b>Compile STDOUT from '+host.intf.IP+':</b></summary>' +
-			'<pre><code>'+ host.stdOut + '</code></pre></details>';
-		    self.createMessage(self.activeNode, msg, 'error');
-		    msg = '<details><summary><b>Compile STDERR from '+host.intf.IP+':</b></summary>' +
-			'<pre><code>'+ host.stdErr + '</code></pre></details>';
-		    self.createMessage(self.activeNode, msg, 'error');
-		    // ADD STDOUT / STDERR TO RESULTS AS BLOBS
-		    var files = {
-			'compile.stdout.txt': host.stdOut,
-			'compile.stderr.txt': host.stdErr
+	    .then(function() {
+		// copy the sources to remote
+		self.notify('info', 'copying compilation sources to: ' + host.intf.IP);
+		return utils.copyToHost(self.gen_dir, compile_dir, host.intf.IP, host.user);
+	    })
+	    .then(function() {
+		// run the compile step
+		self.notify('info', 'compiling on: ' + host.intf.IP + ' into '+compile_dir);
+		host.hasError = false;
+		host.stdErr = '';
+		host.stdOut = '';
+		var compileDataCallback = function(host) {
+		    return function(data) {
+			return self.parseCompileData(host, data);
 		    };
-		    var fnames = Object.keys(files);
-		    var tasks = fnames.map((fname) => {
-			return self.blobClient.putFile(fname, files[fname])
-			    .then((hash) => {
-				self.result.addArtifact(hash);
+		}(host);
+		var compileErrorCallback = function(host) {
+		    return function(data) {
+			return self.parseCompileError(host, data);
+		    };
+		}(host);
+		return utils.executeOnHost(compile_commands, 
+					   host.intf.IP, 
+					   host.user, 
+					   compileErrorCallback,
+					   compileDataCallback,
+					   self.usePTY)
+		    .catch(function(err) {
+			compilationFailed = true;
+		    })
+			.finally(function() {
+			    var Convert = require('ansi-to-html');
+			    var convert = new Convert();
+			    // ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
+			    var msg = '<details><summary><b>Compile STDOUT from '+host.intf.IP+':</b></summary>' +
+				'<pre>' +
+				'<code>'+
+				convert.toHtml(host.stdOut) + 
+				'</code>'+
+				'</pre>' +
+				'</details>';
+			    self.createMessage(self.activeNode, msg, 'error');
+			    msg = '<details><summary><b>Compile STDERR from '+host.intf.IP+':</b></summary>' +
+				'<pre>' +
+				'<code>'+
+				convert.toHtml(host.stdErr) + 
+				'</code>' +
+				'</pre>' +
+				'</details>';
+			    self.createMessage(self.activeNode, msg, 'error');
+			    // ADD STDOUT / STDERR TO RESULTS AS BLOBS
+			    var files = {};
+			    var stripANSI = require('strip-ansi');
+			    files[ host.intf.IP + '.compile.stdout.txt' ] = stripANSI(host.stdOut);
+			    files[ host.intf.IP + '.compile.stderr.txt' ] = stripANSI(host.stdErr);
+			    var fnames = Object.keys(files);
+			    var tasks = fnames.map((fname) => {
+				return self.blobClient.putFile(fname, files[fname])
+				    .then((hash) => {
+					self.result.addArtifact(hash);
+				    });
 			    });
-		    });
-		    return Q.all(tasks);
-		});
-	})
-	.then(function() {
-	    // make the local binary folder for the architecture
-	    if (compilationFailed) {
-		throw new String('Compilation failed on ' + host.intf.IP);
-	    }
-	    mkdirp.sync(archBinPath);
-	})
-	.then(function() {
-	    // copy the compiled binaries from remote into the local bin folder
-	    self.notify('info', 'copying from ' + host.intf.IP + ' into local storage.');
-	    return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
-				      archBinPath + '/.',
-				      host.intf.IP,
-				      host.user);
-	})
-	.then(function() {
-	    // remove the remote folders
-	    return self.cleanHost(host);
-	});
+			    return Q.all(tasks);
+			})
+			    })
+	    .then(function(output) {
+		if (host.hasError || output == undefined || output.returnCode != 0)
+		    compilationFailed = true;
+		// make the local binary folder for the architecture
+		if (compilationFailed) {
+		    throw new String('Compilation failed on ' + host.intf.IP);
+		}
+		mkdirp.sync(archBinPath);
+	    })
+	    .then(function() {
+		// copy the compiled binaries from remote into the local bin folder
+		self.notify('info', 'copying from ' + host.intf.IP + ' into local storage.');
+		return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
+					  archBinPath + '/.',
+					  host.intf.IP,
+					  host.user);
+	    })
+	    .then(function() {
+		// remove the remote folders
+		return self.cleanHost(host);
+	    });
     };
     
     SoftwareGenerator.prototype.cleanHost = function(host) {
 	var self = this;
 	var path = require('path');
-	var base_compile_dir = path.join(host.user.Directory, 'compilation');
+	var base_compile_dir = utils.sanitizePath(path.join(host.user.Directory, 'compilation'));
 	self.notify('info', 'removing compilation artifacts off: ' + host.intf.IP);
 	return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.IP, host.user);
     };
@@ -669,7 +768,7 @@ define([
 	var selectedHosts = [];
 
 	var path = require('path');
-	var binPath = path.join(self.gen_dir, 'bin');
+	var binPath = utils.sanitizePath(path.join(self.gen_dir, 'bin'));
 	var child_process = require('child_process');
 
 	// clear out any previous binaries
@@ -710,7 +809,7 @@ define([
 		    });
 	    });
     };
-			      
+    
     SoftwareGenerator.prototype.returnSource = function() {
 	var self = this;
 	var artifact = self.blobClient.createArtifact(self.artifactName);
@@ -744,9 +843,9 @@ define([
 	
 	return new Promise(function(resolve, reject) {
 	    var zlib = require('zlib'),
-	    tar = require('tar'),
-	    fstream = require('fstream'),
-	    input = self.gen_dir;
+		tar = require('tar'),
+		fstream = require('fstream'),
+		input = self.gen_dir;
 
 	    var bufs = [];
 	    var packer = tar.Pack()

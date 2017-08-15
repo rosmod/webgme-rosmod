@@ -4,7 +4,7 @@
  *  @brief   This file contains definitions for the <%- compInfo.name %> class; <%- compInfo['Brief Description'] %>
  */
 
-#include "<%- objects[compInfo.parentPath].name %>/<%- compInfo.name %>.hpp"
+#include "<%- compInfo.Package %>/<%- compInfo.name %>.hpp"
 
 // User Definitions
 //::::<%- compInfo.path %>::::Definitions::::
@@ -55,7 +55,7 @@ if (compInfo.Subscriber_list) {
   compInfo.Subscriber_list.map(function(sub) {
 -%>
 // Subscriber Operation - <%- sub.name %>
-void <%- compInfo.name %>::<%- sub.name %>_operation(const <%- objects[sub.Message.parentPath].name %>::<%- sub.Message.name %>::ConstPtr& received_data)
+void <%- compInfo.name %>::<%- sub.name %>_operation(const <%- sub.Message.Package %>::<%- sub.Message.name %>::ConstPtr& received_data)
 {
   //::::<%- sub.path %>::::Operation::::
   try {
@@ -78,7 +78,7 @@ if (compInfo.Server_list) {
   compInfo.Server_list.map(function(srv) {
 -%>
 // Server Operation - <%- srv.name %>
-bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- objects[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Request &req, <%- objects[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Response &res )
+bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- srv.Service.Package %>::<%- srv.Service.name %>::Request &req, <%- srv.Service.Package %>::<%- srv.Service.name %>::Response &res )
 {
   //::::<%- srv.path %>::::Operation::::
   try {
@@ -187,7 +187,7 @@ if (compInfo.Server_list) {
 
   advertiseName = "<%- srv.Service.name %>";
   rosmod::AdvertiseServiceOptions <%- srv.name %>_server_options;
-  <%- srv.name %>_server_options = rosmod::AdvertiseServiceOptions::create<<%- objects[srv.Service.parentPath].name %>::<%- srv.Service.name %>>
+  <%- srv.name %>_server_options = rosmod::AdvertiseServiceOptions::create<<%- srv.Service.Package %>::<%- srv.Service.name %>>
       (advertiseName.c_str(),
        boost::bind(&<%- compInfo.name %>::<%- srv.name %>_operation, this, _1, _2),
        rosmod::VoidPtr(),
@@ -205,7 +205,7 @@ if (compInfo.Client_list) {
 -%>
   // Client - <%- clt.name %>
   advertiseName = "<%- clt.Service.name %>";
-  this-><%- clt.name %> = nh.serviceClient<<%- objects[clt.Service.parentPath].name %>::<%- clt.Service.name %>>(advertiseName.c_str());//, true); 
+  this-><%- clt.name %> = nh.serviceClient<<%- clt.Service.Package %>::<%- clt.Service.name %>>(advertiseName.c_str());//, true); 
   this-><%- clt.name %>.waitForExistence();
   logger->log("DEBUG", "<%- clt.name %> connected!");
 <%
@@ -219,7 +219,7 @@ if (compInfo.Publisher_list) {
 -%>
   // Publisher - <%- pub.name %>
   advertiseName = "<%- pub.Message.name %>";
-  this-><%- pub.name %> = nh.advertise<<%- objects[pub.Message.parentPath].name %>::<%- pub.Message.name %>>(advertiseName.c_str(), 1000); 
+  this-><%- pub.name %> = nh.advertise<<%- pub.Message.Package %>::<%- pub.Message.name %>>(advertiseName.c_str(), 1000); 
 <%
     });
  }
@@ -243,7 +243,7 @@ if (compInfo.Subscriber_list) {
 
   advertiseName = "<%- sub.Message.name %>";
   rosmod::SubscribeOptions <%- sub.name %>_options;
-  <%- sub.name %>_options = rosmod::SubscribeOptions::create<<%- objects[sub.Message.parentPath].name %>::<%- sub.Message.name %>>
+  <%- sub.name %>_options = rosmod::SubscribeOptions::create<<%- sub.Message.Package %>::<%- sub.Message.name %>>
       (advertiseName.c_str(),
        1000,
        boost::bind(&<%- compInfo.name %>::<%- sub.name %>_operation, this, _1),

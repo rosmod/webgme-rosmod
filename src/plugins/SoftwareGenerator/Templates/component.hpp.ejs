@@ -6,7 +6,7 @@
 
 #ifndef <%- compInfo.name.toUpperCase() %>_INCLUDE_GUARD
 #define <%- compInfo.name.toUpperCase() %>_INCLUDE_GUARD
-#include "rosmod_component/Component.hpp"
+#include "rosmod_actor/component.hpp"
 
 /**
  * Component Message and Service Headers
@@ -15,7 +15,7 @@
 if (compInfo.Types.length) {
   compInfo.Types.map(function(type) {
 -%>
-#include "<%- objects[type.parentPath].name %>/<%- type.name %>.h"
+#include "<%- type.Package %>/<%- type.name %>.h"
 <%
     });
  }
@@ -82,7 +82,7 @@ if (compInfo.Subscriber_list) {
    *
    * <%- sub['Detailed Description'] %>
    */
-  void <%- sub.name %>_operation(const <%- objects[sub.Message.parentPath].name %>::<%- sub.Message.name %>::ConstPtr& received_data);
+  void <%- sub.name %>_operation(const <%- sub.Message.Package %>::<%- sub.Message.name %>::ConstPtr& received_data);
 <%
     });
  }
@@ -102,7 +102,7 @@ if (compInfo.Server_list) {
    *
    * <%- srv['Detailed Description'] %>
    */
-  bool <%- srv.name %>_operation(const <%- objects[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Request &req, <%- objects[srv.Service.parentPath].name %>::<%- srv.Service.name %>::Response &res);
+  bool <%- srv.name %>_operation(const <%- srv.Service.Package %>::<%- srv.Service.name %>::Request &req, <%- srv.Service.Package %>::<%- srv.Service.name %>::Response &res);
 <%
     });
  }
