@@ -621,8 +621,14 @@ define([
 	host.runningRoscore = true;
 	self.rosMasterURI = 'http://'+ip+':'+self.rosCorePort;
 	var user = host.user;
+	var deployment_dir = path.join(user.Directory,
+				       'experiments',
+				       self.experimentName);
 	var host_commands = [
-	    'source '+host.host['Build Workspace']+'/setup.bash',
+            'cd ' + utils.sanitizePath(deployment_dir),
+            'catkin config -d '+host.host['Build Workspace'],
+            '. `catkin locate --shell-verbs`',
+            'catkin source',
 	    'export ROS_IP='+ip,
 	    'export ROS_MASTER_URI='+self.rosMasterURI,
 	    'roscore --port=' + self.rosCorePort + ' &',
@@ -646,7 +652,9 @@ define([
 					   self.experimentName);
 	    var host_commands = [
 		'cd ' + utils.sanitizePath(deployment_dir),
-		'source '+host.host['Build Workspace']+'/setup.bash',
+                'catkin config -d '+host.host['Build Workspace'],
+                '. `catkin locate --shell-verbs`',
+                'catkin source',
 		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH',
 		'export ROS_IP='+ip,
 		'export ROS_MASTER_URI='+self.rosMasterURI,
