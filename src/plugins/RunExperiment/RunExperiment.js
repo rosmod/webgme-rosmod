@@ -381,7 +381,10 @@ define([
 	config.Name = node.name;
 	config.Priority = node.Priority;
 	config['Component Instances'] = [];
-	config['Artifacts'] = [];
+	config['Artifacts'] = [
+            node.name + '.stdout.log',
+            node.name + '.stderr.log',
+        ];
 	if (node.Component_list) {
 	    node.Component_list.map(function(comp) {
 		// make the component instance configuration
