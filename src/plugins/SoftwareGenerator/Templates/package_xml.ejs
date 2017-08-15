@@ -45,6 +45,24 @@
   <build_depend>rosmod_component</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
+<%
+if (pkgInfo.Component_list) {
+  pkgInfo.Component_list.map(function(cmp) {
+    if (cmp.Types.length) {
+      var indexedPackages = [];
+      cmp.Types.map(function(type) {
+        var packageName = type.Package;
+        if (packageName != cmp.Package && indexedPackages.indexOf(packageName) == -1) {
+          indexedPackages.push(packageName);
+-%>
+  <build_depend><%- packageName %></build_depend>
+<%
+        }
+      });
+    }
+  });
+} 
+-%>
 
   <run_depend>rosmod</run_depend>
   <run_depend>rosmod_component</run_depend>
