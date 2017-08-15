@@ -132,9 +132,11 @@ define([
 	if (self.generateDocs)
 	    self.artifactName += '+Docs';
 
-
+        // set up libraries
 	webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
 	utils.notify = function(level, msg) {self.notify(level, msg);}
+        utils.trackedProcesses = ['catkin', 'rosmod_actor', 'roscore'];
+
       	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true)
   	    .then(function (projectModel) {
 		processor.processModel(projectModel);

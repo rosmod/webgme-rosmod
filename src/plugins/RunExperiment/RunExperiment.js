@@ -94,6 +94,7 @@ define([
 	var currentConfig = self.getCurrentConfig();
 	self.returnZip = currentConfig.returnZip;
 	self.rosMasterURI = currentConfig.rosMasterURI;
+        self.forceIsolation = currentConfig.forceIsolation;
 	
 	// will be filled out by the plugin
 	self.hasStartedDeploying = false;
@@ -116,8 +117,10 @@ define([
 	}
 	self.artifacts = {};
 
+        // set up libraries
 	webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
 	utils.notify = function(level, msg) {self.notify(level, msg);}
+        utils.trackedProcesses = ['catkin', 'rosmod_actor', 'roscore'];
 
 	// the active node for this plugin is experiment -> experiments -> project
 	var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
@@ -226,7 +229,7 @@ define([
 	}
 	var tasks = [];
 	if (!self.runningOnClient)
-	    tasks = utils.getAvailableHosts(host_list);
+	    tasks = utils.getAvailableHosts(host_list, self.forceIsolation);
 	else {
 	    tasks = host_list.map(function(host) {
 		var intf = host.Interface_list[0];
