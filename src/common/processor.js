@@ -3,61 +3,171 @@
 define([], function() {
     'use strict';
     return {
+        union: function(a,b) {
+            return a.concat(b.filter(function (item) {
+                return a.indexOf(item) < 0;
+            }));
+        },
 	processModel: function(collection) {
 	    var self = this;
 	    self.checkObjects(collection.objects);
 	    self.makeConvenienceMembers(collection.objects);
 	},
+        getObjectsByType: function(objects, type) {
+            var self = this;
+            var objPaths = Object.keys(objects);
+            return objPaths.filter((objPath) => {
+                var obj = objects[objPath];
+                return obj.type == type;
+            }).map((objPath) => {
+                return objects[objPath];
+            });
+        },
 	makeConvenienceMembers: function(objects) {
 	    var self = this;
-	    var objPaths = Object.keys(objects);
-	    objPaths.map(function(objPath) {
-		var obj = objects[objPath];
-		if (obj.type == 'Component') {
-                    // make .Package convenience member for rendering code
-                    var parent = objects[obj.parentPath];
-                    obj.Package = parent.name;
-		    // make components have 'Types' which provide their messages/services
-		    obj.Types = []; 
-		    if (obj.Publisher_list) {
-			obj.Publisher_list.map(function(pub) {
-			    if ( obj.Types.indexOf(pub.Message) == -1)
-				obj.Types.push(pub.Message);
-			});
-		    }
-		    if (obj.Subscriber_list) {
-			obj.Subscriber_list.map(function(sub) {
-			    if ( obj.Types.indexOf(sub.Message) == -1)
-				obj.Types.push(sub.Message);
-			});
-		    }
-		    if (obj.Client_list) {
-			obj.Client_list.map(function(cli) {
-			    if ( obj.Types.indexOf(cli.Service) == -1)
-				obj.Types.push(cli.Service);
-			});
-		    }
-		    if (obj.Server_list) {
-			obj.Server_list.map(function(srv) {
-			    if ( obj.Types.indexOf(srv.Service) == -1)
-				obj.Types.push(srv.Service);
-			});
-		    }
-                } else if (obj.type == 'Message' || obj.type == 'Service') {
-                    // make .Package convenience member for rendering code
-                    var parent = objects[obj.parentPath];
-                    obj.Package = parent.name;
-                } else if (obj.type == 'External Definitions') {
-                    // this object is a child of the Software object
-                    // and contains external message and service
-                    // definitions, should make them easier to access.
-		} else if (obj.type == 'Link') {
-		    // copy the Link's address to the interface to which it's connected
-		    var intf = obj.src;
-		    intf.IP = obj.IP;
-		}
-	    });
+            var orderedTypes = [
+                'Message',
+                'Service',
+                'Link',
+                'Source Library',
+                'System Library',
+                'External Definitions',
+                'Component',
+                'Package',
+            ];
+            
+            var typeToConvMap = {
+                'Package': 'makePackageConvenience',
+                'Component': 'makeComponentConvenience',
+                'Message': 'makeMessageConvenience',
+                'Service': 'makeServiceConvenience',
+                'External Definitions': 'makeExternalDefinitionsConvenience',
+                'Link': 'makeLinkConvenience',
+                'Source Library': 'makeSourceLibraryConvenience',
+                'System Library': 'makeSystemLibraryConvenience',
+            };
+            orderedTypes.map((type) => {
+                self.getObjectsByType(objects, type).map((obj) => {
+                    self[typeToConvMap[type]](obj, objects);
+                });
+            });
 	},
+        makePackageConvenience: function(obj, objects) {
+            var self = this;
+            obj.Packages = [];
+            obj.CMAKE_COMMANDS = [];
+
+            if (obj.Component_list) {
+                obj.Component_list.map(function(o) {
+                    obj.Packages = self.union(obj.Packages, o.Packages);
+                    obj.CMAKE_COMMANDS = self.union(obj.CMAKE_COMMANDS, o.CMAKE_COMMANDS);
+                });
+            }
+
+            obj.BuildDependencies = obj.Packages.filter((p) => { return p != obj.name; });
+            obj.RunDependencies = obj.BuildDependencies;
+            obj.PackageDependencies = obj.BuildDependencies;
+        },
+        makeComponentConvenience: function(obj, objects) {
+            // make .Package convenience member for rendering code
+            var parent = objects[obj.parentPath];
+            obj.Package = parent.name;
+            // make component have .Packages which are all the package
+            // dependencies it has
+            obj.Packages = [];
+            // make component have .LinkLibraries which provide the
+            // shared objects that need to be linked
+            obj.LinkLibraries = [];
+            obj.CMAKE_COMMANDS = [];
+	    // make components have .Types which provide their
+	    // messages/services
+	    obj.Types = [];
+            obj.Dependencies = [];
+
+            // types
+            function tFunc(t, key) {
+                var type = t[key];
+		if ( obj.Types.indexOf(type) == -1) {
+                    // Add to types
+		    obj.Types.push(type);
+                    if ( obj.Packages.indexOf(type.Package) == -1 ) {
+                        // add to packages
+                        obj.Packages.push(type.Package);
+                    }
+                    if ( type.type.indexOf('External') == -1 &&
+                         obj.Dependencies.indexOf(type.Package) == -1) {
+                        obj.Dependencies.push(type.Package + '_generate_messages_cpp');
+                    }
+                }
+            };
+	    if (obj.Publisher_list) {
+		obj.Publisher_list.map(function(pub) { tFunc(pub, 'Message'); });
+	    }
+	    if (obj.Subscriber_list) {
+		obj.Subscriber_list.map(function(sub) { tFunc(sub, 'Message'); });
+	    }
+	    if (obj.Client_list) {
+		obj.Client_list.map(function(cli) { tFunc(cli, 'Service'); });
+	    }
+	    if (obj.Server_list) {
+		obj.Server_list.map(function(srv) { tFunc(srv, 'Service'); });
+	    }
+            // libraries
+            if (obj.Libraries) {
+                obj.Libraries.map(function(lib) {
+                    if (lib.type == 'Source Library') {
+                        if ( obj.Packages.indexOf(lib.name) == -1 ) {
+                            // add to packages
+                            obj.Packages.push(lib.name);
+                        }
+                    }
+                    if ( lib.LIBRARIES ) {
+                        if ( obj.LinkLibraries.indexOf(lib.LIBRARIES) == -1)
+                            // add to dependencies
+                            obj.LinkLibraries.push(lib.LIBRARIES);
+                    }
+                    if ( lib.CMAKE_COMMANDS ) {
+                        if ( obj.CMAKE_COMMANDS.indexOf(lib.CMAKE_COMMANDS) == -1) {
+                            obj.CMAKE_COMMANDS.push(lib.CMAKE_COMMANDS);
+                        }
+                    }
+                });
+            }
+        },
+        makeMessageConvenience: function(obj, objects) {
+            // make .Package convenience member for rendering code
+            var parent = objects[obj.parentPath];
+            obj.Package = parent.name;
+        },
+        makeServiceConvenience: function(obj, objects) {
+            // make .Package convenience member for rendering code
+            var parent = objects[obj.parentPath];
+            obj.Package = parent.name;
+        },
+        makeLinkConvenience: function(obj, objects) {
+	    // copy the Link's address to the interface to which it's connected
+	    var intf = obj.src;
+	    intf.IP = obj.IP;
+        },
+        makeExternalDefinitionsConvenience: function(obj, objects) {
+            // this object is a child of the Software object
+            // and contains external message and service
+            // definitions, should make them easier to access.
+        },
+        makeSourceLibraryConvenience: function(obj, objects) {
+            if (obj.CompilesToSO) {
+                obj.LIBRARY_NAME = "LIB_" + obj.name.toUpperCase();
+                obj.CMAKE_COMMANDS = "set (" +
+                    obj.LIBRARY_NAME +
+                    " ${PROJECT_SOURCE_DIR}/../../devel/lib/lib"+
+                    obj.name + ".so)";
+                // update it so it can be put in directly to target_link_libraries
+                obj.LIBRARIES = '${'+ obj.LIBRARY_NAME + '}';
+            }
+        },
+        makeSystemLibraryConvenience: function(obj, objects) {
+            obj.LIBRARIES = obj['Link Libraries'];
+        },
 	checkObjects: function(objects) {
 	    var self = this;
 

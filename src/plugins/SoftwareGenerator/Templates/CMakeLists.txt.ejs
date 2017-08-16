@@ -16,26 +16,9 @@ else()
     message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-find_package(catkin REQUIRED COMPONENTS  std_msgs message_generation rosmod rosmod_actor
-# external messages that we depend on
-<%
-if (pkgInfo.Component_list) {
-  pkgInfo.Component_list.map(function(cmp) {
-    if (cmp.Types.length) {
-      var indexedPackages = [];
-      cmp.Types.map(function(type) {
-        var packageName = type.Package;
-        if (packageName != cmp.Package && indexedPackages.indexOf(packageName) == -1) {
-          indexedPackages.push(packageName);
--%>
-<%- packageName %>
-<%
-        }
-      });
-    }
-  });
-} 
--%>
+find_package(catkin REQUIRED COMPONENTS message_generation rosmod rosmod_actor
+# external packages that we depend on
+<%- pkgInfo.PackageDependencies.join(' ') %>
 )
 
 <% 
@@ -104,7 +87,7 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES client_server_package
 #  CATKIN_DEPENDS roscpp std_msgs
   CATKIN_DEPENDS message_runtime
@@ -118,47 +101,9 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(
-  ../../devel/include
-<% 
-if (pkgInfo.Component_list) {
-  var indexedPackages = [];
-  pkgInfo.Component_list.map(function(cmp) {
-    // GET ALL REQUIRED TYPES (MSG/SRV) INCLUDES
-    if (cmp.Types.length) {
-      cmp.Types.map(function(type) { 
-        var packageName = type.Package;
-        if (indexedPackages.indexOf(packageName) == -1) {
-          indexedPackages.push(packageName);
--%>
-  ../<%- packageName %>/include
-<% 
-        }
-      });
-    }
-    if (cmp['Libraries']) {
-      cmp['Libraries'].map(function(lib) {
-        if ( lib['Include Directories'] != null ) {
--%>
-  <%- lib['Include Directories'] %>
-<%
-        }
-        if ( lib.type == 'Source Library' ) {
--%>
-  ../<%- lib.name %>/include
-<%
-        }
-      });
-    }
-  });
-}
--%>
-  ${catkin_INCLUDE_DIRS}
-)
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
 include_directories(include ${catkin_INCLUDE_DIRS})
+
+<%- pkgInfo.CMAKE_COMMANDS.join('\n') %>
 
 <%
 if (pkgInfo.Component_list) {
@@ -169,39 +114,13 @@ add_library(<%- cmp.name %>
             )
 target_link_libraries(<%- cmp.name %>
                       ${catkin_LIBRARIES}
-<%
-    if (cmp['Libraries']) {
-      cmp['Libraries'].map(function(lib) {
-        if ( lib['Link Libraries'] ) {
--%>
-                      <%- lib['Link Libraries'] %>
-<%
-        }
-        if ( lib.type == 'Source Library' && lib.CompilesToSO ) {
--%>
-                      <%- lib.name %>
-<%
-        }
-      });
-    }
--%>
+                      <%- cmp.LinkLibraries.join(' ') %>
                       )
 <%
-    if (cmp.Types.length) {
+    if (cmp.Dependencies.length) {
 -%>
 add_dependencies(<%- cmp.name %>
-<%
-      var indexedPackages = [];
-      cmp.Types.map(function(type) {
-        var packageName = type.Package;
-        if (indexedPackages.indexOf(packageName) == -1) {
-          indexedPackages.push(packageName);
--%>
-	         <%- packageName %>_generate_messages_cpp
-<%
-        }
-      });
--%>
+                 <%- cmp.Dependencies.join(' ') %>
 		 )
 <%
     }

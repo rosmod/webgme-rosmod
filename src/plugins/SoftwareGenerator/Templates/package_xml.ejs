@@ -44,30 +44,24 @@
   <build_depend>rosmod</build_depend>
   <build_depend>rosmod_component</build_depend>
   <build_depend>roscpp</build_depend>
-  <build_depend>std_msgs</build_depend>
 <%
-if (pkgInfo.Component_list) {
-  pkgInfo.Component_list.map(function(cmp) {
-    if (cmp.Types.length) {
-      var indexedPackages = [];
-      cmp.Types.map(function(type) {
-        var packageName = type.Package;
-        if (packageName != cmp.Package && indexedPackages.indexOf(packageName) == -1) {
-          indexedPackages.push(packageName);
+pkgInfo.BuildDependencies.map(function(d) {
 -%>
-  <build_depend><%- packageName %></build_depend>
+  <build_depend><%- d %></build_depend>
 <%
-        }
-      });
-    }
-  });
-} 
+});
 -%>
 
   <run_depend>rosmod</run_depend>
   <run_depend>rosmod_component</run_depend>
   <run_depend>roscpp</run_depend>
-  <run_depend>std_msgs</run_depend>
+<%
+pkgInfo.RunDependencies.map(function(d) {
+-%>
+  <run_depend><%- d %></run_depend>
+<%
+});
+-%>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
