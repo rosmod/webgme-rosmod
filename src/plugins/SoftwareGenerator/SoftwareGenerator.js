@@ -318,11 +318,11 @@ define([
 	var path = require('path'),
 	    dir = path.join(self.gen_dir, 'src');
 
-	self.notify('info', 'Downloading Source Libraries');
+	self.notify('info', 'Downloading External Libraries');
 
 	var tasks = [];
-	if (self.projectModel.Software_list[0]['Source Library_list']) {
-	    tasks = self.projectModel.Software_list[0]['Source Library_list'].map(function(lib) {
+	if (self.projectModel.Software_list[0]['External Library_list']) {
+	    tasks = self.projectModel.Software_list[0]['External Library_list'].map(function(lib) {
 		self.notify('info', 'Downloading: ' + lib.name + ' from '+ lib.URL);
 		return utils.wgetAndUnzipLibrary(lib.URL, dir);
 	    });

@@ -29,7 +29,8 @@ define([], function() {
                 'Message',
                 'Service',
                 'Link',
-                'Source Library',
+                'External Library',
+                'Embedded Library',
                 'System Library',
                 'External Definitions',
                 'Component',
@@ -43,7 +44,8 @@ define([], function() {
                 'Service': 'makeServiceConvenience',
                 'External Definitions': 'makeExternalDefinitionsConvenience',
                 'Link': 'makeLinkConvenience',
-                'Source Library': 'makeSourceLibraryConvenience',
+                'External Library': 'makeExternalLibraryConvenience',
+                'Embedded Library': 'makeEmbeddedLibraryConvenience',
                 'System Library': 'makeSystemLibraryConvenience',
             };
             orderedTypes.map((type) => {
@@ -94,7 +96,7 @@ define([], function() {
                         // add to packages
                         obj.Packages.push(type.Package);
                     }
-                    if ( type.type.indexOf('External') == -1 &&
+                    if ( type.type.indexOf('External Definitions') == -1 &&
                          obj.Dependencies.indexOf(type.Package) == -1) {
                         obj.Dependencies.push(type.Package + '_generate_messages_cpp');
                     }
@@ -115,7 +117,7 @@ define([], function() {
             // libraries
             if (obj.Libraries) {
                 obj.Libraries.map(function(lib) {
-                    if (lib.type == 'Source Library') {
+                    if (lib.type == 'External Library' || lib.type == 'Embedded Library') {
                         if ( obj.Packages.indexOf(lib.name) == -1 ) {
                             // add to packages
                             obj.Packages.push(lib.name);
@@ -154,7 +156,20 @@ define([], function() {
             // and contains external message and service
             // definitions, should make them easier to access.
         },
-        makeSourceLibraryConvenience: function(obj, objects) {
+        makeExternalLibraryConvenience: function(obj, objects) {
+            if (obj.CompilesToSO) {
+                obj.LIBRARY_NAME = "LIB_" + obj.name.toUpperCase();
+                obj.CMAKE_COMMANDS = "set (" +
+                    obj.LIBRARY_NAME +
+                    " ${PROJECT_SOURCE_DIR}/../../devel/lib/lib"+
+                    obj.name + ".so)";
+                // update it so it can be put in directly to target_link_libraries
+                obj.LIBRARIES = '${'+ obj.LIBRARY_NAME + '}';
+            }
+        },
+        makeEmbeddedLibraryConvenience: function(obj, objects) {
+            // replace COMPILESTOSO with whether or not it has
+            // "Declarations" children
             if (obj.CompilesToSO) {
                 obj.LIBRARY_NAME = "LIB_" + obj.name.toUpperCase();
                 obj.CMAKE_COMMANDS = "set (" +
