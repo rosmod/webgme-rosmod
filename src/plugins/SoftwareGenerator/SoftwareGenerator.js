@@ -509,11 +509,11 @@ define([
 		if (node) {
 		    var nodeName = node.name;
 		    self.notify('error', 'Error in Package: ' + packageName + 
-				', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
+				', Component: ' + compName + ', attribute: ' + attr +
 				', at line: ' + lineNum, node);
 		}
 		else {
-		    self.notify('error', 'Library ' + packageName + ' has error!');
+		    self.notify('error', 'Library "' + packageName + '" has error!');
 		}
 	    });
 	}
@@ -521,8 +521,7 @@ define([
 	{
 	    var compileErrors = utils.parseMakeErrorOutput(strippedData);
 	    compileErrors.map(function(compileError) {
-		var baseName = compileError.fileName;
-		baseName.replace(removeDir, '');
+		var baseName = compileError.fileName.replace(removeDir, '');
 		var packageName = baseName.split('/')[0];
 		var compName = path.basename(compileError.fileName).split('.')[0];
 		var msg = '<details><summary><b>Build Warning:: package: ' + packageName + ', component: ' +
@@ -543,12 +542,12 @@ define([
 		if (node) {
 		    var nodeName = node.name;
 		    self.notify('warning', 'Warning in Package: ' + packageName + 
-				', Component: ' + compName + ', NodeName: ' + nodeName + ', attribute: ' + attr + 
+				', Component: ' + compName + ', attribute: ' + attr +
 				', at line: ' + lineNum, node);
 		}
 		else {
 		    // show errors in libraries?
-		    self.notify('warning', 'Library ' + packageName + ' has warning!');
+		    self.notify('warning', 'Library "' + packageName + '" has warning!');
 		}
 	    });
 	}
