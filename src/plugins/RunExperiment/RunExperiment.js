@@ -385,8 +385,8 @@ define([
 	config.Priority = node.Priority;
 	config['Component Instances'] = [];
 	config['Artifacts'] = [
-            node.name + '.stdout.log',
-            node.name + '.stderr.log',
+            //node.name + '.stdout.log',
+            //node.name + '.stderr.log',
         ];
 	if (node.Component_list) {
 	    node.Component_list.map(function(comp) {
@@ -440,7 +440,7 @@ define([
 
 		// warn about user logging settings
 		if (ci.Logging['Component Logger'].Enabled) {
-		    config['Artifacts'].push(ci.Logging['Component Logger']['FileName']);
+		    //config['Artifacts'].push(ci.Logging['Component Logger']['FileName']);
 		    if (ci.Logging['Component Logger'].Unit > 1) {
 			self.notify(
 			    'warning',
@@ -459,7 +459,7 @@ define([
 
 		// warn about trace logging settings
 		if (ci.Logging['ROSMOD Logger'].Enabled) {
-		    config['Artifacts'].push(ci.Logging['ROSMOD Logger']['FileName']);
+		    //config['Artifacts'].push(ci.Logging['ROSMOD Logger']['FileName']);
 		    if (ci.Logging['ROSMOD Logger'].Unit > 1) {
 			self.notify(
 			    'warning',
@@ -530,7 +530,7 @@ define([
 		    var config = self.getNodeConfig(node);
 		    host.artifacts = host.artifacts.concat(config.Artifacts);
 		    // want stopExperiment to copy the config back as well
-                    host.artifacts.push(nodeConfigName);
+                    //host.artifacts.push(nodeConfigName);
 		    self.artifacts[nodeConfigName] = JSON.stringify( config, null, 2 );
 		});
 	    }

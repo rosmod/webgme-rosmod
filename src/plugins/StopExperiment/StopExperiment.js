@@ -246,7 +246,10 @@ define([
 				      'experiments',
 				      self.experimentName);
 	    self.notify('info', 'Copying experiment data from ' + ip);
-	    var artTasks = host.artifacts.map(function(artifact) {
+            var hostArtifacts = host.artifacts;
+            hostArtifacts.push("*.log");
+            hostArtifacts.push("*.config");
+	    var artTasks = hostArtifacts.map(function(artifact) {
 		return utils.copyFromHost(remoteDir + '/' + artifact,
 					  localDir + '/.', ip, user)
 		    .catch(function(err) {
