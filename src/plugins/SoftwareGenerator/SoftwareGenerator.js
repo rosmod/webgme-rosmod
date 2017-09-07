@@ -654,7 +654,7 @@ define([
 	    .then(function() {
 		// copy the sources to remote
 		self.notify('info', 'copying compilation sources to: ' + host.intf.IP);
-		return utils.copyToHost(self.gen_dir, compile_dir, host.intf.IP, host.user);
+		return utils.copyToHost(self.gen_dir + '/*', compile_dir +'/.', host.intf.IP, host.user);
 	    })
 	    .then(function() {
 		// run the compile step

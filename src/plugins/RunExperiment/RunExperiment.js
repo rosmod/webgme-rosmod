@@ -580,14 +580,14 @@ define([
 					   self.experimentName);
 	    return utils.mkdirRemote(deployment_dir, ip, user)
 		.then(function() {
-		    return utils.copyToHost(local_exe_dir,
-					    deployment_dir,
+		    return utils.copyToHost(local_exe_dir+'/*',
+					    deployment_dir+'/.',
 					    ip,
 					    user);
 		})
 		.then(function() {
-		    return utils.copyToHost(self.config_dir,
-					    deployment_dir,
+		    return utils.copyToHost(self.config_dir+'/*',
+					    deployment_dir+'/.',
 					    ip,
 					    user);
 		});
