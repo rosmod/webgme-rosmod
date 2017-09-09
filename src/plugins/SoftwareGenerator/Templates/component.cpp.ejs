@@ -17,7 +17,7 @@ void <%- compInfo.name %>::init_timer_operation(const rosmod::TimerEvent& event)
   //::::<%- compInfo.path %>::::Initialization::::
   try {
     // print out the config that was passed in
-    logger->log("CONFIG", "%s", config["User Configuration"].toStyledString());
+    logger->log("CONFIG", "%s", config["User Configuration"].toStyledString().c_str());
     // now run the initialization code
   <%- compInfo.Initialization %>
   } catch (std::exception& e) {
