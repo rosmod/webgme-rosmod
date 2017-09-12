@@ -155,6 +155,11 @@ define([
 		}
 		return self.mapContainersToHosts();
 	    })
+            .then(function() {
+                // generate the node configs
+                self.notify('info', 'generating node configs.');
+                return self.generateConfigs();
+            })
 	    .then(function() {
 		// check for binaries
 		self.notify('info','checking for binaries');
@@ -347,7 +352,7 @@ define([
 	    // get the components required
 	    var container = containerToHostMap[0];
 	    container.Node_list.map(function(node) {
-		var nodeConf = self.getNodeConfig(node);
+		var nodeConf = self.configs[ node.name ];
 		nodeConf['Component Instances'].map(function(ci) {
 		    if (binaries.indexOf(ci.Definition) == -1) {
 			binaries.push(ci.Definition);
@@ -376,6 +381,20 @@ define([
 	    });
 	});
 	return Q.all(tasks);
+    };
+
+    RunExperiment.prototype.generateConfigs = function() {
+        var self = this;
+        self.configs = {};
+	self.experiment.map(function (containerToHostMap) {
+	    var container = containerToHostMap[0]; // container is [0], host is [1]
+	    var nodes = container.Node_list;
+	    if (nodes) {
+		nodes.map(function(node) {
+                    self.configs[ node.name ] = self.getNodeConfig(node);
+		});
+	    }
+	});
     };
 
     RunExperiment.prototype.getNodeConfig = function(node) {
@@ -527,7 +546,7 @@ define([
 	    if (nodes) {
 		nodes.map(function(node) {
 		    var nodeConfigName = prefix + node.name + '.config';
-		    var config = self.getNodeConfig(node);
+		    var config = self.configs[ node.name ];
 		    host.artifacts = host.artifacts.concat(config.Artifacts);
 		    // want stopExperiment to copy the config back as well
                     //host.artifacts.push(nodeConfigName);
