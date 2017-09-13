@@ -745,7 +745,10 @@ define([
 	var path = require('path');
 	var base_compile_dir = utils.sanitizePath(path.join(host.user.Directory, 'compilation'));
 	self.notify('info', 'removing compilation artifacts off: ' + host.intf.IP);
-	return utils.executeOnHost(['rm -rf ' + base_compile_dir], host.intf.IP, host.user);
+	return utils.executeOnHost([
+            'pkill catkin',
+            'rm -rf ' + base_compile_dir,
+        ], host.intf.IP, host.user);
     };
 
     SoftwareGenerator.prototype.runCompilation = function ()
