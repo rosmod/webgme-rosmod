@@ -137,32 +137,31 @@ compilation and deployment as requested by the users.
 
 ### Setting up the ROSMOD Server
 
-1. Install [NVM](https://github.com/creationix/nvm)
+1. Install [Node.js LTS](https://nodejs.org)
    ```bash
-   wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+   cd ~/Downloads
+   wget https://nodejs.org/dist/v6.11.3/node-v6.11.3-linux-x64.tar.xz
+   tar xvf node-v6.11.3-linux-x64.tar.xz
+   sudo cp -r node-v6.11.3-linux-x64/{bin,include,lib} /usr/.
    ```
-2. Install [NodeJS LTS](http://nodejs.org)
+2. Install Bower
    ```bash
-   nvm install --lts nodejs
+   sudo npm install -g bower
    ```
-3. Install Bower
-   ```bash
-   npm install -g bower
-   ```
-4. Install [MongoDB](http://mongodb.com)
+3. Install [MongoDB](http://mongodb.com)
    ```bash
    sudo apt-get install mongodb
    ```
-5. Clone this repo
+4. Clone this repo
    ```bash
    git clone https://github.com/rosmod/webgme-rosmod
    ```
-6. Install dependencies
+5. Install dependencies
    ```bash
    cd webgme-rosmod
-   npm update
+   npm install
    ```
-7. Start the server
+6. Start the server
    ```bash
    npm start
    ```
