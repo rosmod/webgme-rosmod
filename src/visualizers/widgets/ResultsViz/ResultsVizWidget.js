@@ -82,6 +82,10 @@ define([
 	    };
 
 	    var attributes = desc.attributes.concat(desc.userLogs);
+	    var timeBeginEnd = {
+		begin: -1,
+		end: -1
+	    };
 	    var tasks = attributes.map((key) => {
 		var a = key;
 		// load the attribute
@@ -96,6 +100,17 @@ define([
 			    if (_.isEmpty(parsed))
 				parsed = UserParser.getDataFromAttribute(data);
 			    datas[a] = parsed;
+			    // figure out time range
+			    if (!_.isEmpty(parsed)) {
+				var logTimeRange = UserParser.getTimeBeginEnd( datas[a] );
+				if (timeBeginEnd.begin == -1 || timeBeginEnd.begin > logTimeRange.begin) {
+				    timeBeginEnd.begin = logTimeRange.begin;
+				}
+				if (timeBeginEnd.end == -1 || timeBeginEnd.end < logTimeRange.end) {
+				    timeBeginEnd.end = logTimeRange.end;
+				}
+			    }
+			    // now get the metadata for the display name
 			    return this._blobClient.getMetadata(logHash);
 			})
 			.then((metadata) => {
@@ -106,6 +121,7 @@ define([
 	    });
 	    return Q.allSettled(tasks)
 		.then(() => {
+		    console.log(timeBeginEnd);
 		    for (var a in desc.logs) {
 			// setup the html
 			this._el.append(PlotHtml);
@@ -135,6 +151,7 @@ define([
 			});
 
 			var data = datas[a];
+			data = UserParser.alignLogs(data, timeBeginEnd.begin, timeBeginEnd.end );
 			if (!_.isEmpty(data)) {
 			    Plotter.plotData(self._el, 'plot_'+a, data, this._onClick.bind(this, desc.id) );
 			    this.plotIDs.push('#plot_'+a);

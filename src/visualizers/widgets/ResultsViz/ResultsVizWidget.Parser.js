@@ -11,6 +11,8 @@ define([], function() {
 		    log_data[alias] = {
 			name : alias,
 			data : [],
+			begin: -1,
+			end: -1,
 			annotations: []
 		    };
 		}
@@ -30,6 +32,18 @@ define([], function() {
 		log_data[alias].data.push([deq,  exec_time]);
 		log_data[alias].data.push([comp, exec_time]);
 		log_data[alias].data.push([comp, 0]);
+
+		// KEEP TRACK OF THE BEGIN AND END OF THIS LOG
+		if (log_data[alias].begin == -1) {
+		    log_data[alias].begin = enq;
+		}
+		if (log_data[alias].end == -1) {
+		    log_data[alias].end = comp;
+		}
+		else if (log_data[alias].end < comp) {
+		    log_data[alias].end = comp;
+		}
+
 		result = re.exec(attribute);
 	    }
 	    return log_data;

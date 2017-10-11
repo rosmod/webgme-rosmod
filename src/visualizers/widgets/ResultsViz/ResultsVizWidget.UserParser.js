@@ -1,6 +1,34 @@
 define([], function() {
     'use strict';
     return {
+	getTimeBeginEnd: function(log_data) {
+	    var logKeys = Object.keys(log_data);
+	    var range = {
+		begin: -1,
+		end: -1
+	    };
+	    logKeys.map(function(key) {
+		var log = log_data[key];
+		if (range.begin == -1 || range.begin > log.begin) {
+		    range.begin = log.begin;
+		}
+		if (range.end == -1 || range.end < log.end) {
+		    range.end = log.end;
+		}
+	    });
+	    return range;
+	},
+	alignLogs: function(log_data, begin, end) {
+	    var logKeys = Object.keys(log_data);
+	    logKeys.map(function(key) {
+		var log = log_data[key];
+		var beginY = log.data[0][1]; 
+		var endY = log.data[log.data.length-1][1];
+		log.data.push([begin, beginY]);
+		log.data.push([end, endY]);
+	    });
+	    return log_data;
+	},
 	getDataFromAttribute: function(attribute) {
 	    var log_data = {};
 	    // get numerical data of the form:
@@ -18,12 +46,25 @@ define([], function() {
 		    log_data[alias] = {
 			name : alias,
 			data : [],
+			begin: -1,
+			end: -1,
 			annotations: [],
 			_lastAnnX: 0
 		    };
 		}
 		var time = parseFloat(result[2]);
 		time = time / 1000000.0;
+		// KEEP TRACK OF THE BEGIN AND END OF THIS LOG
+		if (log_data[alias].begin == -1) {
+		    log_data[alias].begin = time;
+		}
+		if (log_data[alias].end == -1) {
+		    log_data[alias].end = time;
+		}
+		else if (log_data[alias].end < time) {
+		    log_data[alias].end = time;
+		}
+		// WHAT KIND OF LOG IS THIS?
 		var data = parseFloat(result[3]);
 		if (isNaN(data)) {
 		    // the data/text didn't start with a number, so must be annotation
