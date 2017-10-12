@@ -93,11 +93,145 @@
 		"Brief Description": "gfm",
 		"Detailed Description": "gfm",
 		"AbstractBusinessLogic": "C++"
-	    },
-	    "Results": {
-		"User Parser": "Javascript"
 	    }
+	},
+        "attrToInfoMap": {
+            "Project": {
+                "ancestordepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Authors": "gfm",
+		    "Brief Description": "gfm",
+		    "Detailed Description": "gfm"
+                }
+	    },
+            "Documentation": {
+                "ancestordepth": 0,
+                "docstring" : [],
+                "attributes" : {
+                    "documentation" : "Test Documentation"
+                }
+	    },
+            "Deployments" : {
+                "ancestordepth" : 1,
+                "docstring" : []
+            },
+            "Deployment" : {
+                "ancestordepth" : 1,
+                "docstring" : []
+            },
+            "Container" : {
+                "ancestordepth" : 1,
+                "docstring" : []
+            },
+            "Node" : {
+                "ancestordepth" : 1,
+                "docstring" : []
+            },
+            "Software" : {
+                "ancestordepth" : 1,
+                "docstring" : []
+            },
+	    "Package": {
+                "ancestordepth": 1,
+                "docstring" : [],
+                "attributes": {
+                    "Authors": "gfm",
+		    "Brief Description": "gfm",
+		    "Detailed Description": "gfm"
+                }
+	    },
+            "External Definitions" : {
+                "ancestordepth" : 1,
+                "docstring" : []
+            },
+            "External Message" : {
+                "ancestordepth" : 1,
+                "docstring" : []
+            },
+            "External Service" : {
+                "ancestordepth" : 1,
+                "docstring" : []
+            },
+            "Component": {
+                "ancestordepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Forwards": "C++",
+		    "Members": "C++",
+		    "Definitions": "C++",
+		    "Initialization": "C++",
+		    "Destruction": "C++",
+		    "User Configuration": "JSON",
+		    "User Artifacts": "JSON",
+		    "Authors": "gfm",
+		    "Brief Description": "gfm",
+		    "Detailed Description": "gfm"
+                }
+	    },
+	    "Message": {
+                "ancestordepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Definition": "ROS"
+                }
+	    },
+	    "Service": {
+                "ancestordepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Definition": "ROS"
+                }
+	    },
+	    "Timer": {
+                "ancestordepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Operation": "C++",
+		    "Authors": "gfm",
+		    "Brief Description": "gfm",
+		    "Detailed Description": "gfm",
+		    "AbstractBusinessLogic": "C++"
+                }
+	    },
+            "Client": {
+                "ancestordepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Definition": "ROS"
+                }
+	    },
+	    "Server": {
+                "ancestordepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Operation": "C++",
+		    "Authors": "gfm",
+		    "Brief Description": "gfm",
+		    "Detailed Description": "gfm",
+		    "AbstractBusinessLogic": "C++"
+                }
+	    },
+            "Publisher": {
+                "ancestordepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Definition": "ROS"
+                }
+	    },
+	    "Subscriber": {
+                "ancestordepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Operation": "C++",
+		    "Authors": "gfm",
+		    "Brief Description": "gfm",
+		    "Detailed Description": "gfm",
+		    "AbstractBusinessLogic": "C++"
+                }
+	    },
 	}
+
     },
     "GenericUIProjectNavigatorController": {
 	"disableProjectActions": false,
