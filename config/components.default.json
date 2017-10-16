@@ -77,22 +77,19 @@
 		"Operation": "C++",
 		"Authors": "gfm",
 		"Brief Description": "gfm",
-		"Detailed Description": "gfm",
-		"AbstractBusinessLogic": "C++"
+		"Detailed Description": "gfm"
 	    },
 	    "Server": {
 		"Operation": "C++",
 		"Authors": "gfm",
 		"Brief Description": "gfm",
-		"Detailed Description": "gfm",
-		"AbstractBusinessLogic": "C++"
+		"Detailed Description": "gfm"
 	    },
 	    "Subscriber": {
 		"Operation": "C++",
 		"Authors": "gfm",
 		"Brief Description": "gfm",
-		"Detailed Description": "gfm",
-		"AbstractBusinessLogic": "C++"
+		"Detailed Description": "gfm"
 	    }
 	},
         "attrToInfoMap": {
@@ -190,8 +187,7 @@
 		    "Operation": "C++",
 		    "Authors": "gfm",
 		    "Brief Description": "gfm",
-		    "Detailed Description": "gfm",
-		    "AbstractBusinessLogic": "C++"
+		    "Detailed Description": "gfm"
                 }
 	    },
             "Client": {
@@ -205,8 +201,7 @@
 		    "Operation": "C++",
 		    "Authors": "gfm",
 		    "Brief Description": "gfm",
-		    "Detailed Description": "gfm",
-		    "AbstractBusinessLogic": "C++"
+		    "Detailed Description": "gfm"
                 }
 	    },
             "Publisher": {
@@ -220,8 +215,7 @@
 		    "Operation": "C++",
 		    "Authors": "gfm",
 		    "Brief Description": "gfm",
-		    "Detailed Description": "gfm",
-		    "AbstractBusinessLogic": "C++"
+		    "Detailed Description": "gfm"
                 }
 	    }
 	}
