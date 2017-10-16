@@ -19,10 +19,12 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 	    tzOffset = tzOffset * 60000;
 	    //console.log(tzOffset);
 
-	    var findAnnotations = function(x, y, floorAnn) {
+	    var findAnnotations = function(key, x, y, floorAnn) {
 		var foundAnnotations = annotations.filter(function(ann) {
 		    //console.log('comparing x,y point ('+x+', '+y+')');
 		    //console.log('           to ann   ('+ann.x+', '+ann.y+')');
+                    if (ann.key != key)
+                        return false;
 		    if (floorAnn === undefined)
 			floorAnn = false;
 		    if (floorAnn)
@@ -40,6 +42,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 			    y: ann.y,
 			    xref: 'x',
 			    yref: 'y',
+                            key: key,
 			    text: ann.text,
 			    showarrow: true,
 			    arrowhead: 7,
@@ -57,7 +60,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
                     marker: {
                         maxdisplayed: 1000,
                         size: !data[key].annotations.length ? [] : data[key].data.map(function(xy) {
-			    if (findAnnotations(xy[0], xy[1]).length > 0)
+			    if (findAnnotations(key, xy[0], xy[1]).length > 0)
 				return 15;
 			    else
 				return 1;
@@ -131,47 +134,52 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 
 	    myPlot.on('plotly_click', function(data){
 		onclick();
-		var point = data.points[0];
-		var foundAnnotations = findAnnotations(point.xaxis.d2l(point.x) + tzOffset,
-						       point.yaxis.d2l(point.y),
-						       true);
-		if (foundAnnotations.length) {
-		    var yOffset = 0;
-		    var yIncrement = 20;
-		    foundAnnotations.map((foundAnn) => {
-			var newAnnotation = {
-			    x: foundAnn.x,
-			    y: foundAnn.y,
-			    arrowhead: 6,
-			    ax: 0,
-			    ay: -80 - yOffset,
-			    bgcolor: 'rgba(255, 255, 255, 0.9)',
-			    //arrowcolor: point.fullData.marker.color,
-			    font: {size:12},
-			    //bordercolor: point.fullData.marker.color,
-			    borderwidth: 3,
-			    borderpad: 4,
-			    text: foundAnn.text
-			},
-			    divId = d3.selectAll(container).select(id).node(),
-			    newIndex = (divId.layout.annotations || []).length;
-			// delete instead if clicked twice
-			if(newIndex) {
-			    var foundCopy = false;
-			    divId.layout.annotations.forEach(function(ann, sameIndex) {
-				if(ann.text === newAnnotation.text &&
-				   ann.x == newAnnotation.x &&
-				   ann.y == newAnnotation.y) {
-				    Plotly.relayout(myPlot, 'annotations[' + sameIndex + ']', 'remove');
-				    foundCopy = true;
-				}
-			    });
-			    if(foundCopy) return;
-			}
-			yOffset += yIncrement;
-			Plotly.relayout(myPlot, 'annotations[' + newIndex + ']', newAnnotation);
-		    });
-		}
+                data.points.map(function(point) {
+		    var foundAnnotations = findAnnotations(
+                        point.data.name,
+                        point.xaxis.d2l(point.x) + tzOffset,
+		        point.yaxis.d2l(point.y),
+		        true
+                    );
+		    if (foundAnnotations.length) {
+		        var yOffset = 0;
+		        var yIncrement = 20;
+		        foundAnnotations.map((foundAnn) => {
+			    var newAnnotation = {
+			        x: foundAnn.x,
+			        y: foundAnn.y,
+			        arrowhead: 6,
+			        ax: 0,
+			        ay: -80 - yOffset,
+			        bgcolor: 'rgba(255, 255, 255, 0.9)',
+			        //arrowcolor: point.fullData.marker.color,
+			        font: {size:12},
+			        //bordercolor: point.fullData.marker.color,
+			        borderwidth: 3,
+			        borderpad: 4,
+			        text: foundAnn.text
+			    },
+			        divId = d3.selectAll(container).select(id).node(),
+			        newIndex = (divId.layout.annotations || []).length;
+			    // delete instead if clicked twice
+			    if(newIndex) {
+			        var foundCopy = false;
+			        divId.layout.annotations.forEach(function(ann, sameIndex) {
+				    if(ann.text === newAnnotation.text &&
+				       ann.x == newAnnotation.x &&
+				       ann.y == newAnnotation.y) {
+				        Plotly.relayout(myPlot, 'annotations[' + sameIndex + ']', 'remove');
+				        foundCopy = true;
+				    }
+			        });
+			        if(foundCopy) return;
+			    }
+			    yOffset += yIncrement;
+			    Plotly.relayout(myPlot, 'annotations[' + newIndex + ']', newAnnotation);
+		        });
+		    }
+
+                });
 	    })
 		.on('plotly_clickannotation', function(event, data) {
 		    Plotly.relayout(myPlot, 'annotations[' + data.index + ']', 'remove');
