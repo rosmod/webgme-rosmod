@@ -14,12 +14,12 @@
 void <%- compInfo.name %>::init_timer_operation(const rosmod::TimerEvent& event)
 {
   // User Initialization Code
-  //::::<%- compInfo.path %>::::Initialization::::
   try {
     // print out the config that was passed in
     logger->log("CONFIG", "%s", config["User Configuration"].toStyledString().c_str());
     // now run the initialization code
-  <%- compInfo.Initialization %>
+    //::::<%- compInfo.path %>::::Initialization::::
+    <%- compInfo.Initialization %>
   } catch (std::exception& e) {
     // catch exceptions
     logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::initialization: %s", e.what());
@@ -37,9 +37,9 @@ if (compInfo.Timer_list) {
 // Timer Operation - <%- tmr.name %>
 void <%- compInfo.name %>::<%- tmr.name %>_operation(const rosmod::TimerEvent& event)
 {
-  //::::<%- tmr.path %>::::Operation::::
   try {
-  <%- tmr.Operation %>
+    //::::<%- tmr.path %>::::Operation::::
+    <%- tmr.Operation %>
   } catch (std::exception& e) {
     // catch exceptions
     logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- tmr.name %>_operation: %s", e.what());
@@ -58,11 +58,18 @@ if (compInfo.Subscriber_list) {
   compInfo.Subscriber_list.map(function(sub) {
 -%>
 // Subscriber Operation - <%- sub.name %>
-void <%- compInfo.name %>::<%- sub.name %>_operation(const <%- sub.Message.Package %>::<%- sub.Message.name %>::ConstPtr& received_data)
+void <%- compInfo.name %>::<%- sub.name %>_operation(const ros::MessageEvent<<%- sub.Message.Package %>::<%- sub.Message.name %> const>& event)
 {
-  //::::<%- sub.path %>::::Operation::::
   try {
-  <%- sub.Operation %>
+    // get the publisher name, header, receipt time, and received_data from the event
+    const std::string& publisher_node_name = event.getPublisherName();
+    const ros::M_string& header = event.getConnectionHeader();
+    ros::Time receipt_time = event.getReceiptTime();
+    const <%- sub.Message.Package %>::<%- sub.Message.name %>::ConstPtr& received_data = event.getMessage();
+    const <%- sub.Message.Package %>::<%- sub.Message.name %>::ConstPtr& message = received_data;
+    // now run the user's subscriber operation code
+    //::::<%- sub.path %>::::Operation::::
+    <%- sub.Operation %>
   } catch (std::exception& e) {
     // catch exceptions
     logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- sub.name %>_operation: %s", e.what());
@@ -83,9 +90,10 @@ if (compInfo.Server_list) {
 // Server Operation - <%- srv.name %>
 bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- srv.Service.Package %>::<%- srv.Service.name %>::Request &req, <%- srv.Service.Package %>::<%- srv.Service.name %>::Response &res )
 {
-  //::::<%- srv.path %>::::Operation::::
   try {
-  <%- srv.Operation %>
+    // now run the user's server operation code
+    //::::<%- srv.path %>::::Operation::::
+    <%- srv.Operation %>
   } catch (std::exception& e) {
     // catch exceptions
     logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- srv.name %>_operation: %s", e.what());
@@ -160,6 +168,10 @@ void <%- compInfo.name %>::startUp()
   ros::Duration deadline;
   bool isOneShot;
 
+  // extra data we add to the header for service connections
+  std::map<std::string, std::string> service_header;
+  service_header["component instance"] = config["Name"].asString();
+
   logger->create_file(workingDir + "/" + config["Logging"]["Component Logger"]["FileName"].asString());
   logger->set_is_periodic(config["Logging"]["Component Logger"]["Enabled"].asBool());
   logger->set_max_log_unit(config["Logging"]["Component Logger"]["Unit"].asInt());
@@ -208,7 +220,11 @@ if (compInfo.Client_list) {
 -%>
   // Client - <%- clt.name %>
   advertiseName = "<%- clt.Service.name %>";
-  this-><%- clt.name %> = nh.serviceClient<<%- clt.Service.Package %>::<%- clt.Service.name %>>(advertiseName.c_str());//, true); 
+  this-><%- clt.name %> = nh.serviceClient<<%- clt.Service.Package %>::<%- clt.Service.name %>>(
+                                                                                                advertiseName.c_str(),
+                                                                                                false, // not persistent
+                                                                                                service_header
+                                                                                                );//, true); 
   this-><%- clt.name %>.waitForExistence();
   logger->log("DEBUG", "<%- clt.name %> connected!");
 <%

@@ -78,11 +78,11 @@ if (compInfo.Subscriber_list) {
    *
    * This operation is executed every time the  
    * <%- sub.name %> operation request is serviced 
-   * @param[in] received_data message received by the component subscriber
+   * @param[in] ros::MessageEvent - event - Event information containing the message and headers received.
    *
    * <%- sub['Detailed Description'] %>
    */
-  void <%- sub.name %>_operation(const <%- sub.Message.Package %>::<%- sub.Message.name %>::ConstPtr& received_data);
+      void <%- sub.name %>_operation(const ros::MessageEvent<<%- sub.Message.Package %>::<%- sub.Message.name %> const>& event);
 <%
     });
  }
