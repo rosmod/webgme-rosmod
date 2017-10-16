@@ -24,7 +24,7 @@ define([], function() {
 		var log = log_data[key];
 		var beginY = log.data[0][1]; 
 		var endY = log.data[log.data.length-1][1];
-		log.data.push([begin, beginY]);
+                log.data = [[begin, beginY]].concat(log.data);
 		log.data.push([end, endY]);
 	    });
 	    return log_data;
