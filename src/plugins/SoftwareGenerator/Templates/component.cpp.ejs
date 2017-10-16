@@ -232,13 +232,19 @@ if (compInfo.Client_list) {
  }
 -%>
   // Publishers
+  bool latching = true;
 <%
 if (compInfo.Publisher_list) {
   compInfo.Publisher_list.map(function(pub) {
 -%>
   // Publisher - <%- pub.name %>
   advertiseName = "<%- pub.Message.name %>";
-  this-><%- pub.name %> = nh.advertise<<%- pub.Message.Package %>::<%- pub.Message.name %>>(advertiseName.c_str(), 1000); 
+  latching = <%- pub.Latching ? "true" : "false" %>;
+  this-><%- pub.name %> = nh.advertise<<%- pub.Message.Package %>::<%- pub.Message.name %>>(
+                                                                                            advertiseName.c_str(),
+                                                                                            1000,
+                                                                                            latching
+                                                                                            ); 
 <%
     });
  }
