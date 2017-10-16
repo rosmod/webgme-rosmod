@@ -97,7 +97,7 @@
 	},
         "attrToInfoMap": {
             "Project": {
-                "ancestordepth": 1,
+                "ancestordepth": 0,
                 "docstring" : [],
                 "attributes": {
 		    "Authors": "gfm",
@@ -196,10 +196,7 @@
 	    },
             "Client": {
                 "ancestordepth": 1,
-                "docstring" : [],
-                "attributes": {
-		    "Definition": "ROS"
-                }
+                "docstring" : []
 	    },
 	    "Server": {
                 "ancestordepth": 1,
@@ -214,10 +211,7 @@
 	    },
             "Publisher": {
                 "ancestordepth": 1,
-                "docstring" : [],
-                "attributes": {
-		    "Definition": "ROS"
-                }
+                "docstring" : []
 	    },
 	    "Subscriber": {
                 "ancestordepth": 1,
