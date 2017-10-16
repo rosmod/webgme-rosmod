@@ -1,0 +1,19 @@
+# Service Definition
+
+Here is an example Service `definition`:
+
+```
+#request constants
+int8 FOO=1
+int8 BAR=2
+#request fields
+int8 foobar
+another_pkg/AnotherMessage msg
+---
+#response constants
+uint32 SECRET=123456
+#response fields
+another_pkg/YetAnotherMessage val
+CustomMessageDefinedInThisPackage value
+uint32 an_integer
+```

@@ -7,10 +7,9 @@ try{
 
     var project = fs.readFileSync(__dirname + '/../docs/project.md', 'utf8');
     var authors = fs.readFileSync(__dirname + '/../docs/authors.md', 'utf8');
-    var bDesc = fs.readFileSync(__dirname + '/../docs/bDesc.md', 'utf8');
-    var dDesc = fs.readFileSync(__dirname + '/../docs/dDesc.md', 'utf8');
-    var documentation = fs.readFileSync(__dirname + '/../docs/documentation.md', 'utf8');
-    var docDoc = fs.readFileSync(__dirname + '/../docs/docDoc.md', 'utf8');
+    var bDesc = fs.readFileSync(__dirname + '/../docs/briefDescription.md', 'utf8');
+    var dDesc = fs.readFileSync(__dirname + '/../docs/detailedDescription.md', 'utf8');
+    var documentation = fs.readFileSync(__dirname + '/../docs/documentationBlock.md', 'utf8');
     var deployments = fs.readFileSync(__dirname + '/../docs/deployments.md', 'utf8');
     var deployment = fs.readFileSync(__dirname + '/../docs/deployment.md', 'utf8');
     var container = fs.readFileSync(__dirname + '/../docs/container.md', 'utf8');
@@ -49,7 +48,6 @@ try{
     components.CodeEditor.attrToInfoMap.Project.attributes["Brief Description"] = bDesc;
     components.CodeEditor.attrToInfoMap.Project.attributes["Detailed Description"] = dDesc;
     components.CodeEditor.attrToInfoMap.Documentation["docstring"] = documentation;
-    components.CodeEditor.attrToInfoMap.Documentation.attributes["documentation"] = docDoc;
     components.CodeEditor.attrToInfoMap.Deployments["docstring"] = deployments;
     components.CodeEditor.attrToInfoMap.Deployment["docstring"] = deployment;
     components.CodeEditor.attrToInfoMap.Container["docstring"] = container;
