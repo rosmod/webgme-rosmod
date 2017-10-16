@@ -1,0 +1,5 @@
+# Service
+
+Services contain a `definition` attribute (editable using a [CodeMirror](http://codemirror.net) dialog). This definition attribute conforms to the [ROS Service Description Specification](http://wiki.ros.org/srv).  Services allow components to interact using `Clients` and `Servers`, through a _blocking_, _one-to-one_ client/server interaction pattern.  Blocking means that the component that issues the client call to the server must wait and cannot execute other code until it receives the response from the server.
+
+The `definition` is edited using the `CodeEditor` visualizer, as described in the beginning of this sample's documentation. Since a `Service` has no other valid visualizers, when you double-click on a message, it will automatically open into its definition to be viewed/edited using the `CodeEditor` visualizer.

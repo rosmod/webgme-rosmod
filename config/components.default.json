@@ -94,128 +94,128 @@
 	},
         "attrToInfoMap": {
             "Project": {
-                "ancestordepth": 0,
+                "ancestorDepth": 0,
                 "docstring" : [],
                 "attributes": {
-		    "Authors": "gfm",
-		    "Brief Description": "gfm",
-		    "Detailed Description": "gfm"
+		    "Authors": [],
+		    "Brief Description": [],
+		    "Detailed Description": []
                 }
 	    },
             "Documentation": {
-                "ancestordepth": 0,
+                "ancestorDepth": 0,
                 "docstring" : [],
                 "attributes" : {
-                    "documentation" : "Test Documentation"
+                    "documentation" : []
                 }
 	    },
             "Deployments" : {
-                "ancestordepth" : 1,
+                "ancestorDepth" : 0,
                 "docstring" : []
             },
             "Deployment" : {
-                "ancestordepth" : 1,
+                "ancestorDepth" : 1,
                 "docstring" : []
             },
             "Container" : {
-                "ancestordepth" : 1,
+                "ancestorDepth" : 2,
                 "docstring" : []
             },
             "Node" : {
-                "ancestordepth" : 1,
+                "ancestorDepth" : 3,
                 "docstring" : []
             },
             "Software" : {
-                "ancestordepth" : 1,
+                "ancestorDepth" : 0,
                 "docstring" : []
             },
 	    "Package": {
-                "ancestordepth": 1,
+                "ancestorDepth": 0,
                 "docstring" : [],
                 "attributes": {
-                    "Authors": "gfm",
-		    "Brief Description": "gfm",
-		    "Detailed Description": "gfm"
+                    "Authors": [],
+		    "Brief Description": [],
+		    "Detailed Description": []
                 }
 	    },
             "External Definitions" : {
-                "ancestordepth" : 1,
+                "ancestorDepth" : 0,
                 "docstring" : []
             },
             "External Message" : {
-                "ancestordepth" : 1,
+                "ancestorDepth" : 1,
                 "docstring" : []
             },
             "External Service" : {
-                "ancestordepth" : 1,
+                "ancestorDepth" : 1,
                 "docstring" : []
             },
             "Component": {
-                "ancestordepth": 1,
+                "ancestorDepth": 0,
                 "docstring" : [],
                 "attributes": {
-		    "Forwards": "C++",
-		    "Members": "C++",
-		    "Definitions": "C++",
-		    "Initialization": "C++",
-		    "Destruction": "C++",
-		    "User Configuration": "JSON",
-		    "User Artifacts": "JSON",
-		    "Authors": "gfm",
-		    "Brief Description": "gfm",
-		    "Detailed Description": "gfm"
+		    "Forwards": [],
+		    "Members": [],
+		    "Definitions": [],
+		    "Initialization": [],
+		    "Destruction": [],
+		    "User Configuration": [],
+		    "User Artifacts": [],
+		    "Authors": [],
+		    "Brief Description": [],
+		    "Detailed Description": []
                 }
 	    },
 	    "Message": {
-                "ancestordepth": 1,
+                "ancestorDepth": 1,
                 "docstring" : [],
                 "attributes": {
-		    "Definition": "ROS"
+		    "Definition": []
                 }
 	    },
 	    "Service": {
-                "ancestordepth": 1,
+                "ancestorDepth": 1,
                 "docstring" : [],
                 "attributes": {
-		    "Definition": "ROS"
+		    "Definition": []
                 }
 	    },
 	    "Timer": {
-                "ancestordepth": 1,
+                "ancestorDepth": 1,
                 "docstring" : [],
                 "attributes": {
-		    "Operation": "C++",
-		    "Authors": "gfm",
-		    "Brief Description": "gfm",
-		    "Detailed Description": "gfm"
+		    "Operation": [],
+		    "Authors": [],
+		    "Brief Description": [],
+		    "Detailed Description": []
                 }
 	    },
             "Client": {
-                "ancestordepth": 1,
+                "ancestorDepth": 1,
                 "docstring" : []
 	    },
 	    "Server": {
-                "ancestordepth": 1,
+                "ancestorDepth": 1,
                 "docstring" : [],
                 "attributes": {
-		    "Operation": "C++",
-		    "Authors": "gfm",
-		    "Brief Description": "gfm",
-		    "Detailed Description": "gfm"
+		    "Operation": [],
+		    "Authors": [],
+		    "Brief Description": [],
+		    "Detailed Description": []
                 }
 	    },
             "Publisher": {
-                "ancestordepth": 1,
+                "ancestorDepth": 1,
                 "docstring" : []
 	    },
 	    "Subscriber": {
-                "ancestordepth": 1,
+                "ancestorDepth": 1,
                 "docstring" : [],
                 "attributes": {
-		    "Operation": "C++",
-		    "Authors": "gfm",
-		    "Brief Description": "gfm",
-		    "Detailed Description": "gfm"
+		    "Operation": [],
+		    "Authors": [],
+		    "Brief Description": [],
+		    "Detailed Description": []
                 }
 	    }
 	}
