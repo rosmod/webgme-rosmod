@@ -5,7 +5,7 @@
     "start-dev": "NODE_ENV=dev node app.js",
     "test": "node ./node_modules/mocha/bin/mocha --recursive test"
   },
-  "version": "1.0.3",
+  "version": "1.1.0",
   "dependencies": {
     "ansi-to-html": "^0.6.3",
     "cytoscape": "^2.7.16",
