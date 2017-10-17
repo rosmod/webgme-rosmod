@@ -55,7 +55,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		    x : data[key].data.map(function(xy) { return new Date(xy[0]); }),
 		    y : data[key].data.map(function(xy) { return xy[1]; }),
 		    mode: !data[key].annotations.length ? 'lines' : 'markers+lines',
-                    type: 'scatter',
+                    type: 'scattergl',
 		    name: key,
                     marker: {
                         maxdisplayed: 1000,
@@ -137,8 +137,8 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
                 data.points.map(function(point) {
 		    var foundAnnotations = findAnnotations(
                         point.data.name,
-                        point.xaxis.d2l(point.x) + tzOffset,
-		        point.yaxis.d2l(point.y),
+                        point.x + tzOffset,
+		        point.y,
 		        true
                     );
 		    if (foundAnnotations.length) {
