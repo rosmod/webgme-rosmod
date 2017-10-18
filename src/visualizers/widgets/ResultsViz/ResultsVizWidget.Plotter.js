@@ -3,21 +3,20 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
     return {
 	plotData: function(container, plotId, data, onclick) {
 	    // extent returns array: [min, max]
+            // data[key].data contains an array of xys arrays, which are x, y, size of marker
+            /*
 	    var maxXs = Object.keys(data).map(function(key) {
-		return d3.extent(data[key].data, function(xy) { return xy[0]; })[1];
+		return d3.extent(data[key].data, function(xys) { return xys[0]; })[1];
 	    });
 	    var maxYs = Object.keys(data).map(function(key) {
-		return d3.extent(data[key].data, function(xy) { return xy[1]; })[1];
+		return d3.extent(data[key].data, function(xys) { return xys[1]; })[1];
 	    });
 	    var xdomain = d3.max(maxXs);
 	    var ydomain = d3.max(maxYs);
+            */
 
 	    var pdata = [];
 	    var annotations = [];
-	    var tzOffset = new Date().getTimezoneOffset();
-	    // convert from minutes to milliseconds
-	    tzOffset = tzOffset * 60000;
-	    //console.log(tzOffset);
 
 	    var findAnnotations = function(key, x, y, floorAnn) {
 		var foundAnnotations = annotations.filter(function(ann) {
@@ -25,11 +24,8 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		    //console.log('           to ann   ('+ann.x+', '+ann.y+')');
                     if (ann.key != key)
                         return false;
-		    if (floorAnn === undefined)
-			floorAnn = false;
-		    if (floorAnn)
-			return Math.floor(ann.x) == x && ann.y == y;
-		    return ann.x == x && ann.y == y;
+                    var annTime = new Date(ann.x).toISOString();
+		    return annTime == x && ann.y == y;
 		});
 		return foundAnnotations;
 	    };
@@ -52,19 +48,14 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		    });
 		}
 		pdata.push({
-		    x : data[key].data.map(function(xy) { return new Date(xy[0]); }),
-		    y : data[key].data.map(function(xy) { return xy[1]; }),
+		    x : data[key].data.map(function(xys) { return new Date(xys[0]).toISOString(); }),
+		    y : data[key].data.map(function(xys) { return xys[1]; }),
 		    mode: !data[key].annotations.length ? 'lines' : 'markers+lines',
                     type: 'scattergl',
 		    name: key,
                     marker: {
                         maxdisplayed: 1000,
-                        size: !data[key].annotations.length ? [] : data[key].data.map(function(xy) {
-			    if (findAnnotations(key, xy[0], xy[1]).length > 0)
-				return 15;
-			    else
-				return 1;
-			}),
+                        size: !data[key].annotations.length ? [] : data[key].data.map(function(xys) { return xys[2] })
                         /*
                           color: "rgb(164, 194, 244)",
                           line: {
@@ -137,7 +128,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
                 data.points.map(function(point) {
 		    var foundAnnotations = findAnnotations(
                         point.data.name,
-                        point.x + tzOffset,
+                        new Date(point.x).toISOString(),
 		        point.y,
 		        true
                     );
@@ -146,7 +137,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		        var yIncrement = 20;
 		        foundAnnotations.map((foundAnn) => {
 			    var newAnnotation = {
-			        x: foundAnn.x,
+			        x: new Date(foundAnn.x).toISOString(),
 			        y: foundAnn.y,
 			        arrowhead: 6,
 			        ax: 0,
@@ -182,7 +173,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
                 });
 	    })
 		.on('plotly_clickannotation', function(event, data) {
-		    Plotly.relayout(myPlot, 'annotations[' + data.index + ']', 'remove');
+		    //Plotly.relayout(myPlot, 'annotations[' + data.index + ']', 'remove');
 		});
 	}
     };

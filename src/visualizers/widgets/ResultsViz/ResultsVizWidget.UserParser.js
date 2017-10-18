@@ -77,11 +77,11 @@ define([], function() {
 		    });
 		    //log_data[alias]._lastAnnX = time;
 		    annY += annYIncrement;
-		    log_data[alias].data.push([time, annY]);
+		    log_data[alias].data.push([time, annY, 15]);
 		}
 		else {
 		    // a number was successfully parsed from the log, plot it
-		    log_data[alias].data.push([time, data]);
+		    log_data[alias].data.push([time, data, 1]);
 		}
 		result = re.exec(attribute);
 	    }
