@@ -11,6 +11,7 @@
             "Project"
         ],
 	"excludeTypes": [
+            "Projects",
 	    "Experiments",
 	    "Systems"
 	],
