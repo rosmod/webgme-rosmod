@@ -1,7 +1,6 @@
-<?xml version="1.0"?>
-<package>
+<package format="2">
   <name><%= pkgInfo.name %></name>
-  <version>0.0.0</version>
+  <version>0.0.1</version>
   <description>The <%= pkgInfo.name %> package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
@@ -36,29 +35,18 @@
   <!-- Use buildtool_depend for build tool packages: -->
   <!--   <buildtool_depend>catkin</buildtool_depend> -->
   <!-- Use run_depend for packages you need at runtime: -->
-  <run_depend>message_runtime</run_depend>
+  <depend>message_runtime</depend>
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>rosmod</build_depend>
-  <build_depend>rosmod_component</build_depend>
-  <build_depend>roscpp</build_depend>
+  <depend>rosmod</depend>
+  <depend>rosmod_component</depend>
+  <depend>roscpp</depend>
 <%
 pkgInfo.BuildDependencies.map(function(d) {
 -%>
-  <build_depend><%- d %></build_depend>
-<%
-});
--%>
-
-  <run_depend>rosmod</run_depend>
-  <run_depend>rosmod_component</run_depend>
-  <run_depend>roscpp</run_depend>
-<%
-pkgInfo.RunDependencies.map(function(d) {
--%>
-  <run_depend><%- d %></run_depend>
+  <depend><%- d %></depend>
 <%
 });
 -%>
