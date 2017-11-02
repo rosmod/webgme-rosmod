@@ -146,9 +146,10 @@ define([
 	}
 
         function dialogPopup(gmeId, attrName) {
-            var editorDialog = new DocumentEditorDialog();
             var node = self._client.getNode(gmeId);
             var attr = node.getAttribute(attrName);
+            var nodeName = node.getAttribute('name');
+            var editorDialog = new DocumentEditorDialog("Edit " + attrName + " for " + nodeName);
 
             editorDialog.initialize(attr, function (text) {
                 try {
