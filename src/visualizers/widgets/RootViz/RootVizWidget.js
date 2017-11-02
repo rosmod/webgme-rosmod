@@ -10,6 +10,9 @@ define([
     'text!./DefaultIcon.svg',
     'js/DragDrop/DropTarget',
     'js/DragDrop/DragConstants',
+    'decorators/DocumentDecorator/DiagramDesigner/DocumentEditorDialog',
+    // showdown
+    'showdown/dist/showdown.min',
     'common/util/ejs',
     './Templates',
     'js/Utils/GMEConcepts',
@@ -20,6 +23,8 @@ define([
     DefaultIcon,
     dropTarget,
     DROP_CONSTANTS,
+    DocumentEditorDialog,
+    showdown,
     ejs,
     TEMPLATES,
     GMEConcepts,
@@ -90,6 +95,8 @@ define([
 	this._numNodes++;
     };
 
+    var converter = new showdown.Converter();
+
     RootVizWidget.prototype.updateNodeEntry = function(desc) {
 	var self = this;
 	var column,
@@ -109,9 +116,9 @@ define([
 	gmeId = desc.id;
 	panelId = gmeId.replace(/\//g,'-');
 	icon = desc.icon || DefaultIcon;
-	authors = desc.authors;
-	brief = desc.brief;
-	detailed = desc.detailed;
+	authors = converter.makeHtml(desc.authors);
+	brief = converter.makeHtml(desc.brief);
+	detailed = converter.makeHtml(desc.detailed);
 	projectHtml = ejs.render(TEMPLATES['Project.html.ejs'], {
 	    id: panelId,
 	    title: title,
@@ -138,41 +145,30 @@ define([
 	    }
 	}
 
-	function divClicked() {
-	    var divHtml = $(this).text();
-	    var attribute = $(this).attr('class');
-	    var editableText = $("<textarea />");
-	    editableText.val(divHtml);
-	    editableText.attr('class', attribute);
-	    $(this).replaceWith(editableText);
-	    editableText.focus();
-	    // setup the blur event for this new textarea
-	    editableText.blur(editableTextBlurred);
-	    event.stopPropagation();
-	    event.preventDefault();
-	}
+        function dialogPopup(gmeId, attrName) {
+            var editorDialog = new DocumentEditorDialog();
+            var node = self._client.getNode(gmeId);
+            var attr = node.getAttribute(attrName);
 
-	function editableTextBlurred() {
-	    var text = $(this).val();
-	    var attribute = $(this).attr('class');
-	    var viewableText = $("<div>");
-	    viewableText.text(text);
-	    viewableText.attr('class', attribute);
-	    $(this).replaceWith(viewableText);
-	    // setup the click event for this new div
-	    viewableText.on('dblclick', divClicked);
-	    // save the attribute
-	    if (text != "undefined")
-		self._client.setAttribute(gmeId, attribute, text);
-	}
+            editorDialog.initialize(attr, function (text) {
+                try {
+                    self._client.setAttribute(gmeId, attrName, text, 'updated '+attrName+' for ' + gmeId);
+                } catch (e) {
+                    console.error('Could not save '+attrName+': ');
+                    console.error(e);
+                }
+            });
+
+            editorDialog.show();
+        }
 
 	if (!this._client.isProjectReadOnly()) {
 	    // editable authors area
-	    this.$el.find('#'+panelId+'-authors').on('dblclick', divClicked);
+	    this.$el.find('#'+panelId+'-authors').on('click', _.bind(dialogPopup, self, gmeId, 'Authors'));
 	    // editable brief area
-	    this.$el.find('#'+panelId+'-brief').on('dblclick', divClicked);
+	    this.$el.find('#'+panelId+'-brief').on('click', _.bind(dialogPopup, self, gmeId, 'Brief Description'));
 	    // editable detailed area
-	    this.$el.find('#'+panelId+'-detailed').on('dblclick', divClicked);
+	    this.$el.find('#'+panelId+'-detailed').on('click', _.bind(dialogPopup, self, gmeId, 'Detailed Description'));
 	}
 
 	svg = column.find('svg');

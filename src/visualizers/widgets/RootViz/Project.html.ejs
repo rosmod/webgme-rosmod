@@ -6,8 +6,8 @@
     <div style="text-align:center;">
       <%- icon %>
     </div>
-    <div class="Authors"><b>Authors:</b></div><div id="<%= id %>-authors" class="Authors"><%= authors %></div>
-    <div class="Brief Description"><b>Brief Description:</b></div><div id="<%= id %>-brief" class="Brief Description"><%= brief %></div>
-    <div class="Detailed Description"><b>Detailed Description:</b></div><div id="<%= id %>-detailed" class="Detailed Description"><%= detailed %></div>
+    <details open><summary><i id="<%= id %>-authors" class="fa fa-pencil-square" aria-hidden="true"></i><b>  Authors</b></summary><%- authors %></details>
+    <details open><summary><i id="<%= id %>-brief"class="fa fa-pencil-square" aria-hidden="true"></i><b>  Brief Description</b></summary><%- brief %></details>
+    <details><summary><i id="<%= id %>-detailed"class="fa fa-pencil-square" aria-hidden="true"></i><b>  Detailed Description</b></summary><%- detailed %></details>
   </div>
 </div>

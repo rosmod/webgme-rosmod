@@ -37,6 +37,7 @@ config.requirejsPaths['cytoscape-cose-bilkent'] = "./node_modules/cytoscape-cose
 config.requirejsPaths['webgme-to-json'] = "./node_modules/webgme-to-json/";
 config.requirejsPaths['remote-utils'] = "./node_modules/remote-utils/";
 config.requirejsPaths['plotly-js'] = "./node_modules/plotly.js/dist/";
+config.requirejsPaths['showdown'] = "./node_modules/showdown/";
 
 config.client.log.level = 'info';
 
