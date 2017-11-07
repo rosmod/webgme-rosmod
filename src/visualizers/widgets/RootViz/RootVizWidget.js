@@ -61,46 +61,26 @@ define([
 	var sizeOfElement = 300;
         var width = this.$el.width(),
             height = this.$el.height();
-	this._numElementsPerRow = Math.floor(width / sizeOfElement) || 1;
 	this.$table.empty();
-	this.$table.append('<colgroup>');
-	for (var i=0;i<this._numElementsPerRow;i++)
-	    this.$table.append('<col width="'+100/this._numElementsPerRow+'%" height="auto">');
-	this.$table.append('</colgroup>');
 	this._tableSetup = true;
-
-	this._numNodes = 0;
-	this._currentRow = 0;
     };
 
     RootVizWidget.prototype.createNodeEntry = function (desc) {
-	var row,
-	column,
-	panelId;
+	var panelId;
 	
 	if (!this._tableSetup)
 	    this.setupTable();
 
-	if ((this._numNodes % this._numElementsPerRow) == 0) {
-	    this._currentRow++;
-	    this.$table.append('<tr id="rowClass'+this._currentRow+'"></tr>');
-	}
-
 	panelId = desc.id.replace(/\//g,'-');
 
-	row = this.$el.find('#rowClass' + this._currentRow);
-	row.append('<td style="width: '+5000+'px; vertical-align: top; padding-top: 10px; padding-bottom: 10px; padding-right: 10px; padding-left: 10px;" id="colClass'+panelId+'"></td>');
-
 	this.updateNodeEntry(desc);
-	this._numNodes++;
     };
 
     var converter = new showdown.Converter();
 
     RootVizWidget.prototype.updateNodeEntry = function(desc) {
 	var self = this;
-	var column,
-	    projectHtml,
+	var projectHtml,
 	    gmeId,
 	    panelId,
 	    title,
@@ -128,9 +108,8 @@ define([
 	    detailed: detailed
 	});
 
-	column = this.$el.find('#colClass' + panelId);
-	column.empty();
-	column.append(projectHtml);
+        this.$table.find('#'+panelId+'-node-panel').first().remove();
+        this.$table.append(projectHtml);
 
 	var i = document.getElementById("root-viz-menu");
 	if (i)
@@ -172,12 +151,12 @@ define([
 	    this.$el.find('#'+panelId+'-detailed').on('click', _.bind(dialogPopup, self, gmeId, 'Detailed Description'));
 	}
 
-	svg = column.find('svg');
-	svg.css('height', '120px');
-	svg.css('width', 'auto');
-
 	htmlId = panelId + '-node-panel';
 	html = this.$el.find('#' + htmlId);
+
+	svg = html.find('svg');
+	svg.css('height', '120px');
+	svg.css('width', 'auto');
 
 	html.addClass('panel-info');
 	html.on('mouseenter', (event) => {
