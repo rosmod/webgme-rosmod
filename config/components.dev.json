@@ -121,7 +121,7 @@
 		"hideLibraries": false
 	    }
 	},
-	"treeRoot": "/v"
+	"treeRoot": ""
     },
     "GenericUIDefaultLayout": {
 	"panels": [
