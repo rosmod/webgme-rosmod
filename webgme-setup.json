@@ -52,10 +52,6 @@
       }
     },
     "layouts": {
-      "NewDefaultLayout": {
-        "src": "src/layouts/NewDefaultLayout",
-        "enabled": true
-      }
     }
   },
   "dependencies": {

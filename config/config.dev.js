@@ -8,7 +8,6 @@ config.client.log.level = 'debug';
 
 config.visualization.visualizerDescriptors = ['./src/visualizers/Visualizers-dev.json'];
 config.visualization.panelPaths.push('./src/visualizers/panels');
-config.visualization.layout.basePaths.push('./src/layouts');
 
 validateConfig(config);
 module.exports = config;
