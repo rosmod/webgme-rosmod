@@ -97,7 +97,9 @@
 	'Client',
 	'Server',
 	'Message',
-	'Service'
+	'Service',
+	'Advertised Message',
+	'Advertised Service'
     ];
 
     var connectionTypes = [
@@ -164,7 +166,9 @@
 	    if (objDescriptor.type == 'Container' ||
 		objDescriptor.type == 'Deployment' ||
 		objDescriptor.type == 'Message' ||
-		objDescriptor.type == 'Service') {
+		objDescriptor.type == 'Service' ||
+		objDescriptor.type == 'Advertised Message' ||
+		objDescriptor.type == 'Advertised Service') {
 		objDescriptor.parentId = null;
 	    }
         }

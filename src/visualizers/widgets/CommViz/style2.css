@@ -63,31 +63,32 @@ node[NodeType = "Node"] {
 node[NodeType = "Component"] {
     background-color: #E8F8FF; /*#FACD37;*/
     text-outline-color: #E8F8FF; /*#FACD37;*/
-    target-arrow-color: #E8F8FF;
     /* width: mapData(Quality, 70, 100, 20, 50); */
     /* height: mapData(Quality, 70, 100, 20, 50); */
 }
 
-node[NodeType = "Message"] {
+node[NodeType = "Message"],
+node[NodeType = "Advertised Message"] {
     background-color: green;
     text-outline-color: green;
-    target-arrow-color: green;
 }
 
 edge[type = "Subscriber"],
 edge[type = "Publisher"] {
     line-color: green;
+    target-arrow-color: green;
 }
 
-node[NodeType = "Service"] {
+node[NodeType = "Service"],
+node[NodeType = "Advertised Service"] {
     background-color: #DE3128;
     text-outline-color: #DE3128;
-    target-arrow-color: #DE3128;
 }
 
 edge[type = "Server"],
 edge[type = "Client"] {
     line-color: #DE3128;
+    target-arrow-color: #DE3128;
 }
 
 node.highlighted {
