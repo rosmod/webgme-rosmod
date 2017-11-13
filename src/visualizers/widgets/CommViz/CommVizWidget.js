@@ -257,6 +257,7 @@ define([
 
 		clear();
 		hideNodeInfo();
+                self.onZoomClicked();
 	    });
 	};
 
