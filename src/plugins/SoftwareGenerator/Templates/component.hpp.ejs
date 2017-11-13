@@ -15,7 +15,7 @@
 if (compInfo.Types.length) {
   compInfo.Types.map(function(type) {
 -%>
-#include "<%- type.Package %>/<%- type.name %>.h"
+#include "<%- type.Package %>/<%- type.TypeName %>.h"
 <%
     });
  }
@@ -82,7 +82,7 @@ if (compInfo.Subscriber_list) {
    *
    * <%- sub['Detailed Description'] %>
    */
-      void <%- sub.name %>_operation(const ros::MessageEvent<<%- sub.Message.Package %>::<%- sub.Message.name %> const>& event);
+      void <%- sub.name %>_operation(const ros::MessageEvent<<%- sub.Message.Package %>::<%- sub.Message.TypeName %> const>& event);
 <%
     });
  }
@@ -102,7 +102,7 @@ if (compInfo.Server_list) {
    *
    * <%- srv['Detailed Description'] %>
    */
-  bool <%- srv.name %>_operation(const <%- srv.Service.Package %>::<%- srv.Service.name %>::Request &req, <%- srv.Service.Package %>::<%- srv.Service.name %>::Response &res);
+  bool <%- srv.name %>_operation(const <%- srv.Service.Package %>::<%- srv.Service.TypeName %>::Request &req, <%- srv.Service.Package %>::<%- srv.Service.TypeName %>::Response &res);
 <%
     });
  }

@@ -58,15 +58,15 @@ if (compInfo.Subscriber_list) {
   compInfo.Subscriber_list.map(function(sub) {
 -%>
 // Subscriber Operation - <%- sub.name %>
-void <%- compInfo.name %>::<%- sub.name %>_operation(const ros::MessageEvent<<%- sub.Message.Package %>::<%- sub.Message.name %> const>& event)
+void <%- compInfo.name %>::<%- sub.name %>_operation(const ros::MessageEvent<<%- sub.Message.Package %>::<%- sub.Message.TypeName %> const>& event)
 {
   try {
     // get the publisher name, header, receipt time, and received_data from the event
     const std::string& publisher_node_name = event.getPublisherName();
     const ros::M_string& header = event.getConnectionHeader();
     ros::Time receipt_time = event.getReceiptTime();
-    const <%- sub.Message.Package %>::<%- sub.Message.name %>::ConstPtr& received_data = event.getMessage();
-    const <%- sub.Message.Package %>::<%- sub.Message.name %>::ConstPtr& message = received_data;
+    const <%- sub.Message.Package %>::<%- sub.Message.TypeName %>::ConstPtr& received_data = event.getMessage();
+    const <%- sub.Message.Package %>::<%- sub.Message.TypeName %>::ConstPtr& message = received_data;
     // now run the user's subscriber operation code
     //::::<%- sub.path %>::::Operation::::
     <%- sub.Operation %>
@@ -88,7 +88,7 @@ if (compInfo.Server_list) {
   compInfo.Server_list.map(function(srv) {
 -%>
 // Server Operation - <%- srv.name %>
-bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- srv.Service.Package %>::<%- srv.Service.name %>::Request &req, <%- srv.Service.Package %>::<%- srv.Service.name %>::Response &res )
+bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- srv.Service.Package %>::<%- srv.Service.TypeName %>::Request &req, <%- srv.Service.Package %>::<%- srv.Service.TypeName %>::Response &res )
 {
   try {
     // now run the user's server operation code
@@ -202,7 +202,7 @@ if (compInfo.Server_list) {
 
   advertiseName = "<%- srv.Service.name %>";
   rosmod::AdvertiseServiceOptions <%- srv.name %>_server_options;
-  <%- srv.name %>_server_options = rosmod::AdvertiseServiceOptions::create<<%- srv.Service.Package %>::<%- srv.Service.name %>>
+  <%- srv.name %>_server_options = rosmod::AdvertiseServiceOptions::create<<%- srv.Service.Package %>::<%- srv.Service.TypeName %>>
       (advertiseName.c_str(),
        boost::bind(&<%- compInfo.name %>::<%- srv.name %>_operation, this, _1, _2),
        rosmod::VoidPtr(),
@@ -220,7 +220,7 @@ if (compInfo.Client_list) {
 -%>
   // Client - <%- clt.name %>
   advertiseName = "<%- clt.Service.name %>";
-  this-><%- clt.name %> = nh.serviceClient<<%- clt.Service.Package %>::<%- clt.Service.name %>>(
+  this-><%- clt.name %> = nh.serviceClient<<%- clt.Service.Package %>::<%- clt.Service.TypeName %>>(
                                                                                                 advertiseName.c_str(),
                                                                                                 false, // not persistent
                                                                                                 service_header
@@ -240,7 +240,7 @@ if (compInfo.Publisher_list) {
   // Publisher - <%- pub.name %>
   advertiseName = "<%- pub.Message.name %>";
   latching = <%- pub.Latching ? "true" : "false" %>;
-  this-><%- pub.name %> = nh.advertise<<%- pub.Message.Package %>::<%- pub.Message.name %>>(
+  this-><%- pub.name %> = nh.advertise<<%- pub.Message.Package %>::<%- pub.Message.TypeName %>>(
                                                                                             advertiseName.c_str(),
                                                                                             1000,
                                                                                             latching
@@ -268,7 +268,7 @@ if (compInfo.Subscriber_list) {
 
   advertiseName = "<%- sub.Message.name %>";
   rosmod::SubscribeOptions <%- sub.name %>_options;
-  <%- sub.name %>_options = rosmod::SubscribeOptions::create<<%- sub.Message.Package %>::<%- sub.Message.name %>>
+  <%- sub.name %>_options = rosmod::SubscribeOptions::create<<%- sub.Message.Package %>::<%- sub.Message.TypeName %>>
       (advertiseName.c_str(),
        1000,
        boost::bind(&<%- compInfo.name %>::<%- sub.name %>_operation, this, _1),

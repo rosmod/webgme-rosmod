@@ -28,6 +28,8 @@ define([], function() {
             var orderedTypes = [
                 'Message',
                 'Service',
+                'Advertised Message',
+                'Advertised Service',
                 'Link',
                 'Source Library',
                 'System Library',
@@ -41,6 +43,8 @@ define([], function() {
                 'Component': 'makeComponentConvenience',
                 'Message': 'makeMessageConvenience',
                 'Service': 'makeServiceConvenience',
+                'Advertised Message': 'makeAdvertisedMessageConvenience',
+                'Advertised Service': 'makeAdvertisedServiceConvenience',
                 'External Definitions': 'makeExternalDefinitionsConvenience',
                 'Link': 'makeLinkConvenience',
                 'Source Library': 'makeSourceLibraryConvenience',
@@ -135,14 +139,40 @@ define([], function() {
             }
         },
         makeMessageConvenience: function(obj, objects) {
-            // make .Package convenience member for rendering code
             var parent = objects[obj.parentPath];
+            // make .Package convenience member for rendering code
             obj.Package = parent.name;
+            // make .TypeName convenience member for rendering code
+            obj.TypeName = obj.name;
+            // make .AdvertisedName convenience member for rendering code
+            obj.AdvertisedName = obj.Package + '/' + obj.name;
         },
         makeServiceConvenience: function(obj, objects) {
-            // make .Package convenience member for rendering code
             var parent = objects[obj.parentPath];
+            // make .Package convenience member for rendering code
             obj.Package = parent.name;
+            // make .TypeName convenience member for rendering code
+            obj.TypeName = obj.name;
+            // make .AdvertisedName convenience member for rendering code
+            obj.AdvertisedName = obj.Package + '/' + obj.name;
+        },
+        makeAdvertisedMessageConvenience: function(obj, objects) {
+            var TopicType = objects[obj.pointers['Type']];
+            // make .Package convenience member for rendering code
+            obj.Package = TopicType.Package;
+            // make .TypeName convenience member for rendering code
+            obj.TypeName = TopicType.name;
+            // make .AdvertisedName convenience member for rendering code
+            obj.AdvertisedName = obj.name;
+        },
+        makeAdvertisedServiceConvenience: function(obj, objects) {
+            var TopicType = objects[obj.pointers['Type']];
+            // make .Package convenience member for rendering code
+            obj.Package = TopicType.Package;
+            // make .TypeName convenience member for rendering code
+            obj.TypeName = TopicType.name;
+            // make .AdvertisedName convenience member for rendering code
+            obj.AdvertisedName = obj.name;
         },
         makeLinkConvenience: function(obj, objects) {
 	    // copy the Link's address to the interface to which it's connected
