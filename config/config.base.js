@@ -38,6 +38,7 @@ config.requirejsPaths['webgme-to-json'] = "./node_modules/webgme-to-json/";
 config.requirejsPaths['remote-utils'] = "./node_modules/remote-utils/";
 config.requirejsPaths['plotly-js'] = "./node_modules/plotly.js/dist/";
 config.requirejsPaths['showdown'] = "./node_modules/showdown/";
+config.requirejsPaths['blob-util'] = "./node_modules/blob-util/";
 
 config.requirejsPaths['bower'] = "./node_modules/webgme-hfsm/bower_components/";
 config.requirejsPaths['cytoscape-edgehandles'] = "./node_modules/webgme-hfsm/bower_components/cytoscape-edgehandles/cytoscape-edgehandles";

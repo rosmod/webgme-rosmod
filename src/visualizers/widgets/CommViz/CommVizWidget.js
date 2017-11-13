@@ -10,17 +10,19 @@ define([
     'cytoscape-cose-bilkent/cytoscape-cose-bilkent',
     'text!./style2.css',
     'handlebars/dist/handlebars',
+    'blob-util/dist/blob-util.min',
     'q',
     'css!./styles/CommVizWidget.css'], function (
 	cytoscape,
 	regCose,
 	styleText,
 	Handlebars,
+        blobUtil,
 	Q) {
 	'use strict';
 
 	regCose( cytoscape );
-	    
+	
 	var CommVizWidget,
             WIDGET_CLASS = 'comm-viz';
 
@@ -34,11 +36,6 @@ define([
 
 	    this._el.append('<div id="cy"></div>');
 	    this._cy_container = this._el.find('#cy');
-
-	    // add reset and filter buttons
-	    this._el.append('<button id="reset" class="btn btn-default"><i class="fa fa-arrows-h"></i></button>');
-	    this._el.append('<button id="filter" class="btn btn-default" data-hasqtip="0"><i class="fa fa-filter"></i></button>');
-	    this._el.append('<button id="re_layout" class="btn btn-default"><i class="fa fa-align-justify"></i></button>');
 
             this._initialize();
 
@@ -240,7 +237,7 @@ define([
 		});
 	    });
 
-      self._cy.on('add', _.debounce(self.reLayout.bind(self), 250));
+            self._cy.on('add', _.debounce(self.reLayout.bind(self), 250));
 	    
 	    self._cy.on('tap', function(){
 		$('#search').blur();
@@ -261,78 +258,79 @@ define([
 		clear();
 		hideNodeInfo();
 	    });
-
-	    self._el.find('#re_layout').on('click', function(){
-		self.reLayout();
-	    });
-	    
-	    self._el.find('#reset').on('click', function(){
-		self._cy.animate({
-		    fit: {
-			eles: self._cy.elements(),
-			padding: layoutPadding
-		    },
-		    duration: layoutDuration
-		});
-	    });
-	    
-	    self._el.find('#filters').on('click', 'input', function(){
-		
-		var soft = $('#soft').is(':checked');
-		var semiSoft = $('#semi-soft').is(':checked');
-		var na = $('#na').is(':checked');
-		var semiHard = $('#semi-hard').is(':checked');
-		var hard = $('#hard').is(':checked');
-		
-		var red = $('#red').is(':checked');
-		var white = $('#white').is(':checked');
-		var cider = $('#cider').is(':checked');
-		
-		cy.batch(function(){
-		    
-		    cy.nodes().forEach(function( n ){
-			var type = n.data('NodeType');
-			
-			n.removeClass('filtered');
-			
-			var filter = function(){
-			    n.addClass('filtered');
-			};
-			
-			if( type === 'Cheese' ){
-			    
-			    var cType = n.data('Type');
-			    
-			    if( 
-				(cType === 'Soft' && !soft)
-				    || (cType === 'Semi-soft' && !semiSoft)
-				    || (cType === undefined && !na)
-				    || (cType === 'Semi-hard' && !semiHard)
-				    || (cType === 'Hard' && !hard)
-			    ){
-				filter();
-			    }
-			    
-			} else if( type === 'RedWine' ){
-			    
-			    if( !red ){ filter(); }
-			    
-			} else if( type === 'WhiteWine' ){
-			    
-			    if( !white ){ filter(); }
-			    
-			} else if( type === 'Cider' ){
-			    
-			    if( !cider ){ filter(); }
-			    
-			}
-			
-		    });
-		    
-		});
-		
-	    });
 	};
+
+        /* * * * * * * * Display Functions  * * * * * * * */
+
+        function download(filename, text) {
+            var element = document.createElement('a');
+            var imgData = text.split(',')[1]; // after the comma is the actual image data
+
+            blobUtil.base64StringToBlob( imgData.toString() ).then(function(blob) {
+                var blobURL = blobUtil.createObjectURL(blob);
+
+                element.setAttribute('href', blobURL);
+                element.setAttribute('download', filename);
+                element.style.display = 'none';
+
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            }).catch(function(err) {
+                console.log('Couldnt make blob from image!');
+                console.log(err);
+            });
+        }
+
+        CommVizWidget.prototype.onZoomClicked = function() {
+            var self = this;
+            var layoutPadding = 50;
+            self._cy.fit( self._cy.elements(), layoutPadding);
+        };
+
+        CommVizWidget.prototype._addSplitPanelToolbarBtns = function(toolbarEl) {
+            var self = this;
+
+            // BUTTON EVENT HANDLERS
+
+            var printEl = [
+                '<span id="print" class="split-panel-toolbar-btn fa fa-print">',
+                '</span>',
+            ].join('\n');
+
+            var zoomEl = [
+                '<span id="zoom" class="split-panel-toolbar-btn fa fa-home">',
+                '</span>',
+            ].join('\n');
+
+            var layoutEl = [
+                '<span id="layout" class="split-panel-toolbar-btn fa fa-random">',
+                '</span>',
+            ].join('\n');
+
+            toolbarEl.append(printEl);
+            toolbarEl.append(zoomEl);
+            toolbarEl.append(layoutEl);
+
+            toolbarEl.find('#print').on('click', function(){
+                var png = self._cy.png({
+                    full: true,
+                    scale: 6,
+                    bg: 'white'
+                });
+                download( 'CommViz.png', png );
+            });
+            
+            toolbarEl.find('#zoom').on('click', function(){
+                self.onZoomClicked();
+            });
+
+            toolbarEl.find('#layout').on('click', function(){
+                self.reLayout();
+            });
+        };        
 
 	CommVizWidget.prototype.onWidgetContainerResize = function (width, height) {
 	    this._cy.resize();
