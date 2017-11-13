@@ -34,5 +34,11 @@
     "title": "CommViz",
     "panel": "panels/CommViz/CommVizPanel",
     "DEBUG_ONLY": false
+  },
+  {
+    "id": "HFSMViz",
+    "title": "HFSMViz",
+    "panel": "panels/HFSMViz/HFSMVizPanel",
+    "DEBUG_ONLY": false
   }
 ]

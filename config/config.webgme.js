@@ -10,10 +10,12 @@ var config = require('webgme/config/config.default'),
 config.plugin.basePaths.push(__dirname + '/../src/plugins');
 config.visualization.layout.basePaths.push(__dirname + '/../src/layouts');
 config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
+config.visualization.decoratorPaths.push(__dirname + '/../node_modules/webgme-hfsm/src/decorators');
 
 
 
 config.visualization.panelPaths.push(__dirname + '/../node_modules/webgme-codeeditor/src/visualizers/panels');
+config.visualization.panelPaths.push(__dirname + '/../node_modules/webgme-hfsm/src/visualizers/panels');
 config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
 
 
@@ -23,12 +25,18 @@ config.visualization.panelPaths.push(__dirname + '/../src/visualizers/panels');
 config.visualization.visualizerDescriptors.push(__dirname + '/../src/visualizers/Visualizers.json');
 // Add requirejs paths
 config.requirejsPaths = {
+  'HFSMViz': 'panels/HFSMViz/HFSMVizPanel',
+  'CodeEditor': 'panels/CodeEditor/CodeEditorPanel',
+  'UMLStateMachineDecorator': 'node_modules/webgme-hfsm/src/decorators/UMLStateMachineDecorator',
   'panels': './src/visualizers/panels',
   'widgets': './src/visualizers/widgets',
+  'panels/HFSMViz': './node_modules/webgme-hfsm/src/visualizers/panels/HFSMViz',
+  'widgets/HFSMViz': './node_modules/webgme-hfsm/src/visualizers/widgets/HFSMViz',
   'panels/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/panels/CodeEditor',
-  'widgets/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/widgets/CodeEditor',
+  'widgets/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/widgets/CodeEditor'
 };
 
+config.visualization.layout.default = 'DefaultLayout';
 config.mongo.uri = 'mongodb://127.0.0.1:27017/rosmod';
 validateConfig(config);
 module.exports = config;

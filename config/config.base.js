@@ -39,10 +39,16 @@ config.requirejsPaths['remote-utils'] = "./node_modules/remote-utils/";
 config.requirejsPaths['plotly-js'] = "./node_modules/plotly.js/dist/";
 config.requirejsPaths['showdown'] = "./node_modules/showdown/";
 
+config.requirejsPaths['bower'] = "./node_modules/webgme-hfsm/bower_components/";
+config.requirejsPaths['cytoscape-edgehandles'] = "./node_modules/webgme-hfsm/bower_components/cytoscape-edgehandles/cytoscape-edgehandles";
+config.requirejsPaths['cytoscape-context-menus'] = "./node_modules/webgme-hfsm/bower_components/cytoscape-context-menus/cytoscape-context-menus";
+config.requirejsPaths['cytoscape-panzoom'] = "./node_modules/webgme-hfsm/bower_components/cytoscape-panzoom/cytoscape-panzoom";
+
 config.client.log.level = 'info';
 
 var path = require('path');
 config.visualization.svgDirs.push(path.join(__dirname, '..', "./src/svgs"));
+config.visualization.svgDirs.push(path.join(__dirname, '..', "./node_modules/webgme-hfsm/src/svgs"));
 
 validateConfig(config);
 module.exports = config;
