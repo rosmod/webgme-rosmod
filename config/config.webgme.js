@@ -35,7 +35,6 @@ config.requirejsPaths = {
   'widgets/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/widgets/CodeEditor'
 };
 
-config.visualization.layout.default = 'DefaultLayout';
 config.mongo.uri = 'mongodb://127.0.0.1:27017/rosmod';
 validateConfig(config);
 module.exports = config;
