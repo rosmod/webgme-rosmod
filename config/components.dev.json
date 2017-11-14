@@ -18,7 +18,7 @@
 	    "Initial",
 	    "End State"
 	],
-	"loadDepth": 15,
+	"loadDepth": -1,
 	"syntaxToModeMap": {
 	    "C++": { "name": "text/x-c++src", "useCPP": true },
 	    "JSON": { "name": "application/json" },
