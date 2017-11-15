@@ -51,11 +51,15 @@
         "widget": "src/visualizers/widgets/CommViz"
       }
     },
-    "layouts": {
-    }
+    "layouts": {}
   },
   "dependencies": {
-    "plugins": {},
+    "plugins": {
+      "SoftwareGenerator": {
+        "project": "webgme-hfsm",
+        "path": "node_modules/webgme-hfsm/src/plugins/SoftwareGenerator"
+      }
+    },
     "addons": {},
     "decorators": {
       "UMLStateMachineDecorator": {

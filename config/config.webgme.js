@@ -8,6 +8,7 @@ var config = require('webgme/config/config.default'),
 
 // The paths can be loaded from the webgme-setup.json
 config.plugin.basePaths.push(__dirname + '/../src/plugins');
+config.plugin.basePaths.push(__dirname + '/../node_modules/webgme-hfsm/src/plugins');
 config.visualization.decoratorPaths.push(__dirname + '/../src/decorators');
 config.visualization.decoratorPaths.push(__dirname + '/../node_modules/webgme-hfsm/src/decorators');
 
@@ -27,6 +28,7 @@ config.requirejsPaths = {
   'HFSMViz': 'panels/HFSMViz/HFSMVizPanel',
   'CodeEditor': 'panels/CodeEditor/CodeEditorPanel',
   'UMLStateMachineDecorator': 'node_modules/webgme-hfsm/src/decorators/UMLStateMachineDecorator',
+  'SoftwareGenerator': 'node_modules/webgme-hfsm/src/plugins/SoftwareGenerator',
   'panels': './src/visualizers/panels',
   'widgets': './src/visualizers/widgets',
   'panels/HFSMViz': './node_modules/webgme-hfsm/src/visualizers/panels/HFSMViz',
@@ -34,6 +36,7 @@ config.requirejsPaths = {
   'panels/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/panels/CodeEditor',
   'widgets/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/widgets/CodeEditor'
 };
+
 
 config.mongo.uri = 'mongodb://127.0.0.1:27017/rosmod';
 validateConfig(config);

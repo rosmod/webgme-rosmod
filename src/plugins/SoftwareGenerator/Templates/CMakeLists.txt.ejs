@@ -111,6 +111,15 @@ if (pkgInfo.Component_list) {
 -%>
 add_library(<%- cmp.name %>
             src/<%- pkgInfo.name %>/<%- cmp.name %>.cpp
+<%
+if (cmp['State Machine_list']) {
+  cmp['State Machine_list'].map(function(hfsm) {
+-%>
+            include/<%- pkgInfo.name %>/<%- cmp.name %>_HFSM/<%- hfsm.sanitizedName %>_GeneratedStates.cpp
+<%
+});
+}
+-%>
             )
 target_link_libraries(<%- cmp.name %>
                       ${catkin_LIBRARIES}

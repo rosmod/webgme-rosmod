@@ -40,6 +40,9 @@ config.requirejsPaths['plotly-js'] = "./node_modules/plotly.js/dist/";
 config.requirejsPaths['showdown'] = "./node_modules/showdown/";
 config.requirejsPaths['blob-util'] = "./node_modules/blob-util/";
 
+config.requirejsPaths['hfsm'] = './node_modules/webgme-hfsm/src/common/';
+config.requirejsPaths['hfsm-library'] = './node_modules/webgme-hfsm/';
+
 config.requirejsPaths['bower'] = "./node_modules/webgme-hfsm/bower_components/";
 config.requirejsPaths['cytoscape-edgehandles'] = "./node_modules/webgme-hfsm/bower_components/cytoscape-edgehandles/cytoscape-edgehandles";
 config.requirejsPaths['cytoscape-context-menus'] = "./node_modules/webgme-hfsm/bower_components/cytoscape-context-menus/cytoscape-context-menus";

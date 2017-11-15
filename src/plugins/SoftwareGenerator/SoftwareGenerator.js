@@ -15,6 +15,9 @@ define([
     'remote-utils/remote-utils',
     'webgme-to-json/webgme-to-json',
     'rosmod/processor',
+    // hfsm
+    'hfsm-library/src/plugins/SoftwareGenerator/SoftwareGenerator',
+    // promises
     'q'
 ], function (
     PluginConfig,
@@ -26,6 +29,8 @@ define([
     utils,
     webgmeToJson,
     processor,
+    // hfsm
+    hfsmSoftwareGenerator,
     Q) {
     'use strict';
 
@@ -139,6 +144,9 @@ define([
 
       	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true)
   	    .then(function (projectModel) {
+                // hfsm stuff
+                self.generateHFSM(projectModel);
+                // regular stuff
 		processor.processModel(projectModel);
 		self.projectModel = projectModel.root;
 		self.projectObjects = projectModel.objects;
@@ -170,6 +178,34 @@ define([
         	callback(err, self.result);
 	    })
 		.done();
+    };
+
+    SoftwareGenerator.prototype.generateHFSM = function(projectModel) {
+        var self = this;
+        var hfsmSW = new hfsmSoftwareGenerator();
+        hfsmSW.notify = function(level, msg) {self.notify(level,msg);}
+
+        var originalRoot = projectModel.root;
+
+        hfsmSW.setProjectModel(projectModel);
+        function objToFilePrefix(obj) {
+            // object here will be a stateMachine
+            // get the package name from parent->parent (comp->package)
+            var filePrefix = null;
+            var comp = obj.parent;
+            var pkg = comp.parent;
+            if (comp.type == 'Component' && pkg.type == 'Package') {
+                var pkgName = pkg.name;
+                var compName = comp.name;
+                var prefix = 'src';
+                filePrefix = prefix + '/' + pkgName + '/include/' + pkgName + '/' + compName + '_HFSM/';
+            }
+            return filePrefix;
+        }
+        var hfsmArtifacts = hfsmSW.generateArtifacts(self.result, false, false, objToFilePrefix)
+        self.artifacts = Object.assign(self.artifacts, hfsmArtifacts);
+
+        projectModel.root = originalRoot;
     };
 
     SoftwareGenerator.prototype.generateArtifacts = function () {

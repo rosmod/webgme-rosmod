@@ -8,6 +8,18 @@
 #define <%- compInfo.name.toUpperCase() %>_INCLUDE_GUARD
 #include "rosmod_actor/component.hpp"
 
+<%
+if (compInfo['State Machine_list']) {
+  compInfo['State Machine_list'].map(function(hfsm) {
+-%>
+// HFSM Includes
+#include "<%- compInfo.Package %>/<%- compInfo.name %>_HFSM/<%- hfsm.sanitizedName %>_Events.hpp"
+#include "<%- compInfo.Package %>/<%- compInfo.name %>_HFSM/<%- hfsm.sanitizedName %>_GeneratedStates.hpp"
+<%
+  });
+}
+-%>
+
 /**
  * Component Message and Service Headers
  */
@@ -35,6 +47,17 @@ if (compInfo.Types.length) {
 class <%- compInfo.name %> : public Component
 {
 public:
+<%
+if (compInfo['State Machine_list']) {
+  compInfo['State Machine_list'].map(function(hfsm) {
+-%>
+  // give HFSM access to this class.
+  friend class StateMachine::<%- hfsm.sanitizedName %>;
+<%
+  });
+}
+-%>
+  
   /**
    * @brief <%- compInfo.name %> Constructor.
    * @param _config Component configuration parsed from deployment JSON
