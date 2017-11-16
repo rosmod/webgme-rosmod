@@ -74,6 +74,26 @@ if (compInfo['State Machine_list']) {
   void init_timer_operation(const rosmod::TimerEvent& event);
 
 <%
+if (compInfo['State Machine_list']) {
+  compInfo['State Machine_list'].map(function(hfsm) {
+-%>
+  /**
+   * @brief <%- hfsm.name %> Timer function
+   * This timer has a dynamic period and executes the HFSM's tick()
+   * function. It automatically handles consuming the HFSM's event
+   * queue and updating its period based on the period of the
+   * currently active leaf state.
+   *
+   * @param[in] event a timer event
+   * @see startUp()
+   */
+  void <%- hfsm.sanitizedName %>_HFSM_timer_operation(const rosmod::TimerEvent& event);
+<%
+  });
+}
+-%>  
+
+<%
 if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
@@ -144,6 +164,16 @@ if (compInfo.Server_list) {
   ~<%- compInfo.name %>();
 
 private:
+
+<%
+if (compInfo['State Machine_list']) {
+  compInfo['State Machine_list'].map(function(hfsm) {
+-%>
+  rosmod::Timer <%- hfsm.sanitizedName %>_HFSM_timer; /*!< <%- hfsm.name %> HFSM Timer */
+<%
+  });
+}
+-%>  
 
 <%
 if (compInfo.Timer_list) {
