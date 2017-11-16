@@ -202,6 +202,20 @@ define([
             }
             return filePrefix;
         }
+        // add component includes to State Machines
+        Object.keys(projectModel.objects).map(function(k) {
+            var obj = projectModel.objects[k];
+            if (obj.type == 'State Machine') {
+                var comp = projectModel.objects[obj.parentPath];
+                var pkg = projectModel.objects[comp.parentPath];
+                if (comp.type == 'Component' && pkg.type == 'Package') {
+                    var pkgName = pkg.name;
+                    var compName = comp.name;
+                    obj.Includes = `#include "${pkgName}/${compName}.hpp"\n` + obj.Includes;
+                }
+            }
+        });
+        // now render the HFSM code
         var hfsmArtifacts = hfsmSW.generateArtifacts(self.result, false, false, objToFilePrefix)
         self.artifacts = Object.assign(self.artifacts, hfsmArtifacts);
 
