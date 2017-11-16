@@ -211,7 +211,17 @@ define([
                 if (comp.type == 'Component' && pkg.type == 'Package') {
                     var pkgName = pkg.name;
                     var compName = comp.name;
-                    obj.Includes = `#include "${pkgName}/${compName}.hpp"\n` + obj.Includes;
+                    var includes = [
+                        `#include "${pkgName}/${compName}.hpp"`,
+                        `class ${compName};`
+                    ].join('\n');
+                    obj.Includes = includes + obj.Includes;
+                    // make sure we have functions and pointers to the component itself
+                    var declarations = [
+                        `static ${compName}* this_component;`,
+                        `void setComponentPtr( ${compName}* c ) { this_component = c; }`
+                    ].join('\n');
+                    obj.Declarations = declarations + obj.Declarations;
                 }
             }
         });

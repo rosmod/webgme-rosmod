@@ -6,6 +6,19 @@
 
 #include "<%- compInfo.Package %>/<%- compInfo.name %>.hpp"
 
+<%
+if (compInfo['State Machine_list']) {
+  compInfo['State Machine_list'].map(function(hfsm) {
+-%>
+// HFSM Includes
+#include "<%- compInfo.Package %>/<%- compInfo.name %>_HFSM/<%- hfsm.sanitizedName %>_Events.hpp"
+#include "<%- compInfo.Package %>/<%- compInfo.name %>_HFSM/<%- hfsm.sanitizedName %>_GeneratedStates.hpp"
+<%
+  });
+}
+-%>
+
+
 // User Definitions
 //::::<%- compInfo.path %>::::Definitions::::
 <%- compInfo.Definitions %>
@@ -22,6 +35,8 @@ if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
     // now initialize the HFSM
+    // update the "this_component" var for the HFSM
+    <%- hfsm.sanitizedName %>_root->setComponentPtr( this );
     <%- hfsm.sanitizedName %>_root->initialize();
     // update the HFSM timer period and start the timer
     ros::Duration newHFSMPeriod = ros::Duration( <%- hfsm.sanitizedName %>_root->getActiveLeaf()->getTimerPeriod() );

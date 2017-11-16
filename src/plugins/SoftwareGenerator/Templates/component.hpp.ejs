@@ -8,13 +8,14 @@
 #define <%- compInfo.name.toUpperCase() %>_INCLUDE_GUARD
 #include "rosmod_actor/component.hpp"
 
+
 <%
 if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
-// HFSM Includes
-#include "<%- compInfo.Package %>/<%- compInfo.name %>_HFSM/<%- hfsm.sanitizedName %>_Events.hpp"
-#include "<%- compInfo.Package %>/<%- compInfo.name %>_HFSM/<%- hfsm.sanitizedName %>_GeneratedStates.hpp"
+namespace StateMachine {
+  class <%- hfsm.sanitizedName %>;
+};
 <%
   });
 }
