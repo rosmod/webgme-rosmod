@@ -764,8 +764,7 @@ define([
 	    return;
 	}
 
-	var metaNodes = self.core.getAllMetaNodes(self.activeNode);
-	var fcoNode = self.core.getBaseRoot(self.activeNode);
+	//var metaNodes = self.core.getAllMetaNodes(self.activeNode);
 
 	var containerX = 100;
 	var hostX = 400;
@@ -790,7 +789,7 @@ define([
 		{parent: self.activeNode, base: self.META.Host}
 	    );
 	    var ln = self.core.createNode(
-		{parent: self.activeNode, base: fcoNode}
+		{parent: self.activeNode, base: self.META.FCO}
 	    );
 
 	    self.core.setRegistry(cn, 'position', {x: containerX, y:rowY});
