@@ -687,14 +687,15 @@ define([
 		'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH',
 		'export ROS_IP='+ip,
 		'export ROS_MASTER_URI='+self.rosMasterURI,
-		'export DISPLAY=:0.0'
+		'export DISPLAY=:0.0',
+                'export ROSCONSOLE_STDOUT_LINE_BUFFERED=1'
 	    ];
 	    if (container.Node_list) {
 		container.Node_list.map(function(node) {
 		    var redirect_command = ' > ' + node.name + '.stdout.log' +
 			' 2> ' + node.name + '.stderr.log';
 		    host_commands.push('nohup rosmod_actor --config ' +
-				       node.name + '.config' + redirect_command +' & disown');
+				       node.name + '.config' + redirect_command +' &');
 		});
 	    }
 	    //host_commands.push('sleep 10');

@@ -28,20 +28,26 @@ void <%- compInfo.name %>::init_timer_operation(const rosmod::TimerEvent& event)
 {
   // User Initialization Code
   try {
-    // print out the config that was passed in
-    logger->log("CONFIG", "%s", config["User Configuration"].toStyledString().c_str());
+    {
+      // print out the config that was passed in
+      std::string configStr = config.toStyledString();
+      std::cout << "Config: " << config << std::endl;
+    }
 <%
 if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
-    // now initialize the HFSM
-    // update the "this_component" var for the HFSM
-    <%- hfsm.sanitizedName %>_root->setComponentPtr( this );
-    <%- hfsm.sanitizedName %>_root->initialize();
-    // update the HFSM timer period and start the timer
-    ros::Duration newHFSMPeriod = ros::Duration( <%- hfsm.sanitizedName %>_root->getActiveLeaf()->getTimerPeriod() );
-    <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newHFSMPeriod );
-    <%- hfsm.sanitizedName %>_HFSM_timer.start();
+    {
+      // now initialize the HFSM
+      // update the "this_component" var for the HFSM
+      <%- hfsm.sanitizedName %>_root->setComponentPtr( this );
+      <%- hfsm.sanitizedName %>_root->initialize();
+      // update the HFSM timer period and start the timer
+      ros::Duration newPeriod = ros::Duration( <%- hfsm.sanitizedName %>_root->getActiveLeaf()->getTimerPeriod() );
+      <%- hfsm.sanitizedName %>_HFSM_timer.stop();
+      <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newPeriod );
+      <%- hfsm.sanitizedName %>_HFSM_timer.start();
+    }
 <%
   });
 }
@@ -82,7 +88,9 @@ void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const 
     }
     // update the timer period according to new active state
     ros::Duration newPeriod = ros::Duration( <%- hfsm.sanitizedName %>_root->getActiveLeaf()->getTimerPeriod() );
+    <%- hfsm.sanitizedName %>_HFSM_timer.stop();
     <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newPeriod );
+    <%- hfsm.sanitizedName %>_HFSM_timer.start();
   } catch (std::exception& e) {
     // catch exceptions
     logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation: %s", e.what());
@@ -129,7 +137,7 @@ void <%- compInfo.name %>::<%- sub.name %>_operation(const ros::MessageEvent<<%-
   try {
     // get the publisher name, header, receipt time, and received_data from the event
     const std::string& publisher_node_name = event.getPublisherName();
-    const ros::M_string& header = event.getConnectionHeader();
+    const boost::shared_ptr<ros::M_string>& headerPtr = event.getConnectionHeaderPtr();
     ros::Time receipt_time = event.getReceiptTime();
     const <%- sub.Message.Package %>::<%- sub.Message.TypeName %>::ConstPtr& received_data = event.getMessage();
     const <%- sub.Message.Package %>::<%- sub.Message.TypeName %>::ConstPtr& message = received_data;
@@ -242,6 +250,9 @@ void <%- compInfo.name %>::startUp()
   std::string advertiseName;
   ros::Duration deadline;
   bool isOneShot;
+  rosmod::TimerOptions timer_options;
+  rosmod::ROSMOD_Callback_Options callback_options;
+
 
   // extra data we add to the header for service connections
   std::map<std::string, std::string> service_header;
@@ -260,7 +271,6 @@ void <%- compInfo.name %>::startUp()
   }
   
   this->comp_queue.scheduling_scheme = config["SchedulingScheme"].asString();
-  rosmod::ROSMOD_Callback_Options callback_options;
 
   // Servers
 <%
@@ -361,7 +371,6 @@ if (compInfo.Subscriber_list) {
   callback_options.priority = 99;
   callback_options.deadline.sec = 1;
   callback_options.deadline.nsec = 0;
-  rosmod::TimerOptions timer_options;
   timer_options = 
     rosmod::TimerOptions
     (ros::Duration(-1),
@@ -404,31 +413,29 @@ if (compInfo.Timer_list) {
 if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
-  // HFSM Timer
-  callback_options.alias = "<%- hfsm.sanitizedName %>_HFSM_timer_operation";
+      // HFSM Timer
+      callback_options.alias = "<%- hfsm.sanitizedName %>_HFSM_timer_operation";
   
-  // NEED TO FIGURE OUT HOW TO SPECIFY PRIORITY FOR THE HFSM TIMER IN THE MODEL
-  //callback_options.priority = config["Timers"]["<%- hfsm.sanitizedName %>"]["Priority"].asInt();
-  ros::Duration hfsmPeriod = ros::Duration( <%- hfsm.sanitizedName %>_root->getActiveLeaf()->getTimerPeriod() );
-  deadline = hfsmPeriod;
-  callback_options.deadline.sec = deadline.sec;
-  callback_options.deadline.nsec = deadline.nsec;
-  isOneShot = false;
-  timer_options = 
-    rosmod::TimerOptions
-    (hfsmPeriod,
-     boost::bind(&<%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation, this, _1),
-     &this->comp_queue,
-     callback_options,
-     isOneShot,
-     false);
-  this-><%- hfsm.sanitizedName %>_HFSM_timer = nh.createTimer(timer_options);
-  this-><%- hfsm.sanitizedName %>_HFSM_timer.stop();
+      // NEED TO FIGURE OUT HOW TO SPECIFY PRIORITY FOR THE HFSM TIMER IN THE MODEL
+      //callback_options.priority = config["Timers"]["<%- hfsm.sanitizedName %>"]["Priority"].asInt();
+      ros::Duration hfsmPeriod = ros::Duration( 0 );
+      deadline = hfsmPeriod;
+      callback_options.deadline.sec = deadline.sec;
+      callback_options.deadline.nsec = deadline.nsec;
+      isOneShot = false;
+      timer_options = 
+        rosmod::TimerOptions
+        (hfsmPeriod,
+         boost::bind(&<%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation, this, _1),
+         &this->comp_queue,
+         callback_options,
+         isOneShot,
+         false);
+      <%- hfsm.sanitizedName %>_HFSM_timer = nh.createTimer(timer_options);
 <%
   });
 }
--%>    
-
+-%>
   // Start the timers
   this->init_timer.start();
 <%

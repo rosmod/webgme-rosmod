@@ -222,6 +222,10 @@ define([
                         `void setComponentPtr( ${compName}* c ) { this_component = c; }`
                     ].join('\n');
                     obj.Declarations = declarations + obj.Declarations;
+                    var definitions = [
+                        `${compName}* StateMachine::${obj.sanitizedName}::this_component;`,
+                    ].join('\n');
+                    obj.Definitions = definitions + obj.Definitions;
                 }
             }
         });
