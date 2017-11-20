@@ -142,7 +142,7 @@ define([
 	utils.notify = function(level, msg) {self.notify(level, msg);}
         utils.trackedProcesses = ['catkin', 'rosmod_actor', 'roscore'];
 
-      	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true)
+      	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true, true) // resolve ptrs, keep webgme nodes
   	    .then(function (projectModel) {
                 // hfsm stuff
                 self.generateHFSM(projectModel);
@@ -497,17 +497,10 @@ define([
 	    });
     };
 
-    SoftwareGenerator.prototype.getObjectAttributeFromBuild = function (pkgName, compName, fileName, fileLineNumber) {
+    SoftwareGenerator.prototype.getObjectAttributeFromBuild = function (fileName, fileLineNumber) {
 	var self = this;
-	var path = require('path');
 	// find correct file
-	fileName = path.basename(fileName);
-	var fileKey = path.join('src', 
-				pkgName,
-				(fileName.split('.')[1] == 'hpp') ? 'include' : 'src',
-				pkgName,
-				fileName);
-	var fileData = self.artifacts[fileKey];
+	var fileData = self.artifacts['src/'+fileName];
 	if (fileData) {
 	    // split the file string into line string array
 	    var fileLines = fileData.split("\n");
@@ -549,36 +542,52 @@ define([
 
 	var strippedData = stripANSI(data);
 
+        function getParentByType(path, type) {
+            var o = self.projectObjects[path];
+            if (o) {
+                if (o.type != type)
+                    o = getParentByType(o.parentPath, type);
+            } else {
+                return { name: null };
+            }
+            return o;
+        }
+
 	if (strippedData.indexOf('error:') > -1)
 	{
 	    var compileErrors = utils.parseMakeErrorOutput(strippedData);
 	    compileErrors.map(function(compileError) {
 		var baseName = compileError.fileName.replace(removeDir, '');
-		var packageName = baseName.split('/')[0];
-		var compName = path.basename(compileError.fileName).split('.')[0];
-		var msg = '<details><summary><b>Build Error:: package: ' + packageName + ', component: ' +
-		    compName + ':</b></summary>' +
-		    '<pre><code>'+
-		    compileError.text +
-		    '</code></pre>'+
-		    '</details>';
-		self.createMessage(self.activeNode, msg, 'error');
-		var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
-								compName,
-								compileError.fileName, 
-								compileError.line);
+		var nodeInfo = self.getObjectAttributeFromBuild(baseName, compileError.line);
 		var node = nodeInfo.node,
 		    attr = nodeInfo.attr,
 		    lineNum = nodeInfo.lineNumber;
 		if (node) {
 		    var nodeName = node.name;
+                    var packageName = getParentByType(node.path, 'Package').name;
+                    var compName = getParentByType(node.path, 'Component').name;
+                    var hfsmName = getParentByType(node.path, 'State Machine').name;
 		    self.notify('error', 'Error in Package: ' + packageName + 
-				', Component: ' + compName + ', attribute: ' + attr +
+				', Component: ' + compName + (hfsmName ? ", HFSM: " + hfsmName : "") + ', attribute: ' + attr +
 				', at line: ' + lineNum, node);
+		    var msg = '<details><summary><b>Build Error:: package: ' + packageName + ', component: ' +
+		        compName + (hfsmName ? ", HFSM: " + hfsmName : "")  +':</b></summary>' +
+		        '<pre><code>'+
+		        compileError.text +
+		        '</code></pre>'+
+		        '</details>';
+		    self.createMessage(node.node, msg, 'error');
 		}
-		else {
-		    self.notify('error', 'Library "' + packageName + '" has error!');
-		}
+                else {
+		    var packageName = baseName.split('/')[0];
+		    var compName = path.basename(compileError.fileName).split('.')[0];
+		    var msg = '<details><summary><b>Build Error:: Library: ' + packageName +':</b></summary>' +
+		        '<pre><code>'+
+		        compileError.text +
+		        '</code></pre>'+
+		        '</details>';
+		    self.createMessage(self.activeNode, msg, 'error');
+                }
 	    });
 	}
 	else if (strippedData.indexOf('warning:') > -1)
@@ -586,33 +595,36 @@ define([
 	    var compileErrors = utils.parseMakeErrorOutput(strippedData);
 	    compileErrors.map(function(compileError) {
 		var baseName = compileError.fileName.replace(removeDir, '');
-		var packageName = baseName.split('/')[0];
-		var compName = path.basename(compileError.fileName).split('.')[0];
-		var msg = '<details><summary><b>Build Warning:: package: ' + packageName + ', component: ' +
-		    compName + ':</b></summary>' +
-		    '<pre><code>'+
-		    compileError.text +
-		    '</code></pre>'+
-		    '</details>';
-
-		self.createMessage(self.activeNode, msg, 'warning');
-		var nodeInfo = self.getObjectAttributeFromBuild(packageName, 
-								compName,
-								compileError.fileName, 
-								compileError.line);
+		var nodeInfo = self.getObjectAttributeFromBuild(baseName, compileError.line);
 		var node = nodeInfo.node,
 		    attr = nodeInfo.attr,
 		    lineNum = nodeInfo.lineNumber;
 		if (node) {
 		    var nodeName = node.name;
-		    self.notify('warning', 'Warning in Package: ' + packageName + 
-				', Component: ' + compName + ', attribute: ' + attr +
+                    var packageName = getParentByType(node.path, 'Package').name;
+                    var compName = getParentByType(node.path, 'Component').name;
+                    var hfsmName = getParentByType(node.path, 'State Machine').name;
+		    self.notify('error', 'Warning in Package: ' + packageName + 
+				', Component: ' + compName + (hfsmName ? ", HFSM: " + hfsmName : "") + ', attribute: ' + attr +
 				', at line: ' + lineNum, node);
+		    var msg = '<details><summary><b>Build Warning:: package: ' + packageName + ', component: ' +
+		        compName + (hfsmName ? ", HFSM: " + hfsmName : "")  +':</b></summary>' +
+		        '<pre><code>'+
+		        compileError.text +
+		        '</code></pre>'+
+		        '</details>';
+		    self.createMessage(node.node, msg, 'error');
 		}
-		else {
-		    // show errors in libraries?
-		    self.notify('warning', 'Library "' + packageName + '" has warning!');
-		}
+                else {
+		    var packageName = baseName.split('/')[0];
+		    var compName = path.basename(compileError.fileName).split('.')[0];
+		    var msg = '<details><summary><b>Build Warning:: Library: ' + packageName +':</b></summary>' +
+		        '<pre><code>'+
+		        compileError.text +
+		        '</code></pre>'+
+		        '</details>';
+		    self.createMessage(self.activeNode, msg, 'error');
+                }
 	    });
 	}
     };
