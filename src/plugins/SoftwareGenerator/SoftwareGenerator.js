@@ -301,6 +301,12 @@ define([
 		    'model': self.projectModel,
                     'objects': self.projectObjects
 		});
+
+                // generate the pkg xml under share/<package name>
+		var sharedPackageXMLFileName = ['share',
+					        pkgInfo.name,
+					        'package.xml'].join('/');
+		self.artifacts[sharedPackageXMLFileName] = self.artifacts[packageXMLFileName];
 	    });
 	}
 
@@ -701,6 +707,9 @@ define([
 	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
 	var archBinPath = path.join(self.gen_dir, 'bin' , utils.getDeviceType(host.host));
 
+        // share folder for storing package.xmls (generated above) and the msg/srv deserialization
+	var sharePath = path.join(self.gen_dir, 'share');
+
 	var compile_commands = [
 	    'cd ' + utils.sanitizePath(compile_dir),
 	    'rm -rf bin',
@@ -708,8 +717,9 @@ define([
 	    'catkin clean -b --yes',
 	    'catkin build --no-status',
 	    'mkdir bin',
+            'mkdir share',
 	    'cp devel/lib/*.so bin/.',
-	    'rm -rf devel build',
+            'cp -r devel/lib/python2.7/dist-packages/* share/.'
 	];
 
 	var compilationFailed = false;
@@ -796,13 +806,13 @@ define([
 	    .then(function(output) {
 		if (host.hasError || output == undefined || output.returnCode != 0)
 		    compilationFailed = true;
-		// make the local binary folder for the architecture
 		if (compilationFailed) {
 		    throw new String('Compilation failed on ' + host.intf.IP);
 		}
-		mkdirp.sync(archBinPath);
 	    })
 	    .then(function() {
+		// make the local binary folder for the architecture
+		mkdirp.sync(archBinPath);
 		// copy the compiled binaries from remote into the local bin folder
 		self.notify('info', 'copying from ' + host.intf.IP + ' into local storage.');
 		return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
@@ -810,6 +820,20 @@ define([
 					  host.intf.IP,
 					  host.user);
 	    })
+            .then(function() {
+		// make the local binary folder for the architecture
+		mkdirp.sync(sharePath);
+                // copy the message/service deserialization generated as part of the build
+                return utils.copyFromHost(path.join(compile_dir, 'share') + '/*',
+                                          sharePath + '/.',
+                                          host.intf.IP,
+                                          host.user);
+            })
+            .then(function() {
+                // remove all folders within share/<package name>/ except msg,srv
+                var fs = require('fs');
+                //fs.unlinkSync();
+            })
 	    .then(function() {
 		// remove the remote folders
 		return self.cleanHost(host);
