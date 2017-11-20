@@ -30,7 +30,19 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		return foundAnnotations;
 	    };
 
-	    Object.keys(data).map(function(key) {
+	    function dataSort(a, b) {
+		if (a == 'init_timer_operation') {
+		    return -1;
+		}
+		else if (b == 'init_timer_operation') {
+		    return 1;
+		}
+		else {
+		    return a.localeCompare(b);
+		}
+	    }
+
+	    Object.keys(data).sort(dataSort).map(function(key) {
 		if (data[key].annotations.length) {
 		    data[key].annotations.map(function(ann) {
 			annotations.push({

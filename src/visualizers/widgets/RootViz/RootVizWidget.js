@@ -50,30 +50,29 @@ define([
     };
 
     RootVizWidget.prototype._initialize = function () {
+	var self = this;
         // set widget class
-        this.$el.addClass(WIDGET_CLASS);
-        this.$el.append(RootVizHtml);
-	this.$table = this.$el.find('#rootVizTable');
-	this._tableSetup = false;
+        self.$el.addClass(WIDGET_CLASS);
+        self.$el.append(RootVizHtml);
+	self.$table = self.$el.find('#rootVizTable');
+	self._tableSetup = false;
     };
 
     RootVizWidget.prototype.setupTable = function() {
+	var self = this;
 	var sizeOfElement = 300;
-        var width = this.$el.width(),
-            height = this.$el.height();
-	this.$table.empty();
-	this._tableSetup = true;
+        var width = self.$el.width(),
+            height = self.$el.height();
+	self.$table.empty();
+	self._tableSetup = true;
     };
 
     RootVizWidget.prototype.createNodeEntry = function (desc) {
-	var panelId;
-	
-	if (!this._tableSetup)
-	    this.setupTable();
+	var self = this;
+	if (!self._tableSetup)
+	    self.setupTable();
 
-	panelId = desc.id.replace(/\//g,'-');
-
-	this.updateNodeEntry(desc);
+	self.updateNodeEntry(desc);
     };
 
     var converter = new showdown.Converter();
@@ -108,8 +107,8 @@ define([
 	    detailed: detailed
 	});
 
-        this.$table.find('#'+panelId+'-node-panel').first().remove();
-        this.$table.append(projectHtml);
+        self.$table.find('#'+panelId+'-node-panel').first().remove();
+        self.$table.append(projectHtml);
 
 	var i = document.getElementById("root-viz-menu");
 	if (i)
@@ -142,17 +141,17 @@ define([
             editorDialog.show();
         }
 
-	if (!this._client.isProjectReadOnly()) {
+	if (!self._client.isProjectReadOnly()) {
 	    // editable authors area
-	    this.$el.find('#'+panelId+'-authors').on('click', _.bind(dialogPopup, self, gmeId, 'Authors'));
+	    self.$el.find('#'+panelId+'-authors').on('click', _.bind(dialogPopup, self, gmeId, 'Authors'));
 	    // editable brief area
-	    this.$el.find('#'+panelId+'-brief').on('click', _.bind(dialogPopup, self, gmeId, 'Brief Description'));
+	    self.$el.find('#'+panelId+'-brief').on('click', _.bind(dialogPopup, self, gmeId, 'Brief Description'));
 	    // editable detailed area
-	    this.$el.find('#'+panelId+'-detailed').on('click', _.bind(dialogPopup, self, gmeId, 'Detailed Description'));
+	    self.$el.find('#'+panelId+'-detailed').on('click', _.bind(dialogPopup, self, gmeId, 'Detailed Description'));
 	}
 
 	htmlId = panelId + '-node-panel';
-	html = this.$el.find('#' + htmlId);
+	html = self.$el.find('#' + htmlId);
 
 	svg = html.find('svg');
 	svg.css('height', '120px');
@@ -173,12 +172,12 @@ define([
 		i.visibility = "hidden";
 	    }, menuFadeTimeMs);
 	    
-	    this.onNodeSelect(desc.id);
+	    self.onNodeSelect(desc.id);
 	    //event.stopPropagation();
 	    //event.preventDefault();
 	});
 	html.on('dblclick', (event) => {
-	    this.onNodeClick(desc.id);
+	    self.onNodeClick(desc.id);
 	    event.stopPropagation();
 	    event.preventDefault();
 	});
@@ -189,32 +188,33 @@ define([
 	    var posX = event.clientX;
 	    var posY = event.clientY;
 	    menu(posX, posY);
-	    this.onNodeSelect(desc.id);
+	    self.onNodeSelect(desc.id);
 	    event.stopPropagation();
 	    event.preventDefault();
 	});
 	// default handlers for the rest of the viz space
-	this.$el.on('contextmenu', (event) => {
+	self.$el.on('contextmenu', (event) => {
 	    var posX = event.clientX;
 	    var posY = event.clientY;
 	    menu(posX, posY);
 	    event.stopPropagation();
 	    event.preventDefault();
 	});
-	this.$el.on('click', (event) => {
+	self.$el.on('click', (event) => {
 	    i.opacity = "0";
 	    setTimeout(function() {
 		i.visibility = "hidden";
 	    }, menuFadeTimeMs);
 	});
 
-	this.nodes[desc.id] = desc;
+	self.nodes[desc.id] = desc;
     };
 
     RootVizWidget.prototype.onWidgetContainerResize = function (width, height) {
-	this.setupTable();
-	for (var id in this.nodes) {
-            this.addNode(this.nodes[id]);
+	var self = this;
+	self.setupTable();
+	for (var id in self.nodes) {
+            self.addNode(self.nodes[id]);
 	}
     };
 
@@ -223,41 +223,49 @@ define([
         Project: true
     };
     RootVizWidget.prototype.addNode = function (desc) {
-
+	var self = this;
         if (desc) {
 	    var isValid = NODE_WHITELIST[desc.meta];
 
             if (isValid) {
-		//this._nodes.push(desc);
-		this.createNodeEntry(desc);
+		//self._nodes.push(desc);
+		self.createNodeEntry(desc);
             }
         }
     };
 
     RootVizWidget.prototype.removeNode = function (gmeId) {
-	if (this.nodes[gmeId]) {
-            delete this.nodes[gmeId];
-	    this.setupTable();
-	    for (var id in this.nodes) {
-		this.addNode(this.nodes[id]);
+	var self = this;
+	if (self.nodes[gmeId]) {
+            delete self.nodes[gmeId];
+	    self.setupTable();
+	    for (var id in self.nodes) {
+		self.addNode(self.nodes[id]);
 	    }
 	}
     };
 
     RootVizWidget.prototype.updateNode = function (desc) {
-	this.updateNodeEntry(desc);
+	var self = this;
+	if (desc) {
+	    var isValid = NODE_WHITELIST[desc.meta];
+	    if (isValid) {
+		self.updateNodeEntry(desc);
+	    }
+	}
     };
 
     RootVizWidget.prototype._isValidDrop = function (dragInfo) {
+	var self = this;
 	if (!dragInfo)
 	    return false;
 	var self = this;
         var result = false,
-        draggedNodePath,
-	nodeObj,
-	nodeName,
-	metaObj,
-	metaName;
+            draggedNodePath,
+	    nodeObj,
+	    nodeName,
+	    metaObj,
+	    metaName;
 
         if (dragInfo[DROP_CONSTANTS.DRAG_ITEMS].length === 1) {
             draggedNodePath = dragInfo[DROP_CONSTANTS.DRAG_ITEMS][0];
@@ -274,13 +282,14 @@ define([
     };
 
     RootVizWidget.prototype.createProject = function(nodePath) {
-	var client = this._client;
+	var self = this;
+	var client = self._client;
 	var parentId = '/v', // for our seeds, /v is always 'Projects'
-	node = client.getNode(nodePath),
-	nodeId = node.getId(),
-	baseId = node.getBaseId(),
-	baseNode = client.getNode(baseId),
-	baseName = baseNode.getAttribute('name');
+	    node = client.getNode(nodePath),
+	    nodeId = node.getId(),
+	    baseId = node.getBaseId(),
+	    baseNode = client.getNode(baseId),
+	    baseName = baseNode.getAttribute('name');
 
 	if (baseName == 'FCO') { // 
 	    var childCreationParams = {
@@ -292,9 +301,9 @@ define([
 	else if (baseName == 'Project') {
             var params = {parentId: parentId};
 	    params[nodeId] = {};
-            this._client.startTransaction();
-            this._client.copyMoreNodes(params);
-            this._client.completeTransaction();
+            self._client.startTransaction();
+            self._client.copyMoreNodes(params);
+            self._client.completeTransaction();
 	}
     };
 
@@ -302,7 +311,7 @@ define([
 
     RootVizWidget.prototype._makeDroppable = function () {
 	var self = this,
-	desc;
+	    desc;
         self.$el.addClass('drop-area');
         //self._div.append(self.__iconAssignNullPointer);
 

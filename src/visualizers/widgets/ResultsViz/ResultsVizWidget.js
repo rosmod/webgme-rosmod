@@ -66,7 +66,7 @@ define([
     // Adding/Removing/Updating items
     ResultsVizWidget.prototype.addNode = function (desc) {
 	var self = this;
-        if (desc && !this.nodes[desc.id]) {
+        if (desc && !self.nodes[desc.id]) {
 	    var datas = {};
 	    desc.logs = {};
 	    desc.displayNames = {};
@@ -89,10 +89,10 @@ define([
 	    var tasks = attributes.map((key) => {
 		var a = key;
 		// load the attribute
-		var nodeObj = this._client.getNode(desc.id);
+		var nodeObj = self._client.getNode(desc.id);
 		var logHash = nodeObj.getAttribute(a);
 		if (logHash) {
-		    return this._blobClient.getObjectAsString(logHash)
+		    return self._blobClient.getObjectAsString(logHash)
 			.then((data) => {
 			    desc.logs[a] = data;
 			    // parse the logs
@@ -111,7 +111,7 @@ define([
 				}
 			    }
 			    // now get the metadata for the display name
-			    return this._blobClient.getMetadata(logHash);
+			    return self._blobClient.getMetadata(logHash);
 			})
 			.then((metadata) => {
 			    // get the name of the file <node>.<comp>.<user/trace>.log
@@ -121,14 +121,15 @@ define([
 	    });
 	    return Q.allSettled(tasks)
 		.then(() => {
-		    console.log(timeBeginEnd);
-		    for (var a in desc.logs) {
+		    //console.log(timeBeginEnd);
+		    var sortedLogs = Object.keys(desc.logs).sort();
+		    sortedLogs.map(function(a) {
 			// setup the html
-			this._el.append(PlotHtml);
-			var container = this._el.find('#log');
+			self._el.append(PlotHtml);
+			var container = self._el.find('#log');
 			container.attr('id', 'log_'+a);
 			
-			var title = this._el.find('#title');
+			var title = self._el.find('#title');
 			var displayTitle = desc.displayNames[a];
 			displayTitle = displayTitle.replace(/\.user\.log/gm, ' User Log');
 			displayTitle = displayTitle.replace(/\.trace\.log/gm, ' Trace Log');
@@ -144,7 +145,7 @@ define([
 
 			title.append('<b>'+displayTitle+'</b>');
 
-			var p = this._el.find('#plot');
+			var p = self._el.find('#plot');
 			p.attr('id',"plot_" + a);
 			p.click(function() {
 			    self._onClick(desc.id);
@@ -153,13 +154,14 @@ define([
 			var data = datas[a];
 			data = UserParser.alignLogs(data, timeBeginEnd.begin, timeBeginEnd.end );
 			if (!_.isEmpty(data)) {
-			    Plotter.plotData(self._el, 'plot_'+a, data, this._onClick.bind(this, desc.id) );
-			    this.plotIDs.push('#plot_'+a);
+			    Plotter.plotData(self._el, 'plot_'+a, data, self._onClick.bind(self, desc.id) );
+			    self.plotIDs.push('#plot_'+a);
 			}
-			else
+			else {
 			    container.detach();
-		    }
-		    this.nodes[desc.id] = desc;
+			}
+		    });
+		    self.nodes[desc.id] = desc;
 		});
         }
     };
