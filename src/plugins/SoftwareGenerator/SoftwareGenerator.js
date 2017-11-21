@@ -100,6 +100,7 @@ define([
 	// What did the user select for our configuration?
 	var currentConfig = self.getCurrentConfig();
 	self.compileCode = currentConfig.compile;
+        self.forceIsolation = currentConfig.forceIsolation;
 	self.generateDocs = currentConfig.generate_docs;
 	self.returnZip = currentConfig.returnZip;
 	self.usePTY = currentConfig.usePTY;
@@ -487,7 +488,7 @@ define([
 	var validArchitectures = self.getValidArchitectures();
 
 	var tasks = Object.keys(validArchitectures).map(function(index) {
-	    return utils.getAvailableHosts(validArchitectures[index])
+	    return utils.getAvailableHosts(validArchitectures[index], self.forceIsolation)
 		.then(function(hostArr) {
 		    var retObj = {};
 		    retObj[index] = hostArr;
