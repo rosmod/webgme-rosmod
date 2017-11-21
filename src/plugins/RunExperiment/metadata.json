@@ -27,6 +27,14 @@
 	    "readOnly": false
 	},
 	{
+	    "name": "spawnROSBridge",
+	    "displayName": "Spawn ROSBridge server.",
+	    "description": "If true, it will spawn a ROS Bridge server on the ROSMOD server that connects to the system",
+	    "value": false,
+	    "valueType": "boolean",
+	    "readOnly": false
+	},
+	{
 	    "name": "returnZip",
 	    "displayName": "Zip and return generated artifacts.",
 	    "description": "If true, it enables the client to download a zip of the artifacts.",

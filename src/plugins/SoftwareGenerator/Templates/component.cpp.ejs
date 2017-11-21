@@ -240,7 +240,10 @@ if (compInfo.Server_list) {
  }
 -%>
   // User Destruction
+  //::::<%- compInfo.path %>::::Destruction::::
   <%- compInfo.Destruction %>
+  // make sure all logs are written
+  logger->write(); // flushes internally
 }
 
 // Startup - Setup Component Ports & Timers

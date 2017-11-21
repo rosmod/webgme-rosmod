@@ -196,7 +196,8 @@ define([
 	    var ip = host.intf.IP;
 	    var user = host.user;
 	    var host_commands = [
-		'pkill rosmod_actor',
+		'pkill -SIGINT rosmod_actor',
+                'sleep 5',
 		'rc_kill'
 	    ];
             if (host.RunningRoscore) {
