@@ -9,6 +9,7 @@
     },
     "disableServerSideExecution": false,
     "disableBrowserSideExecution": false,
+    "configWidget": "plugin/SoftwareGenerator/SoftwareGenerator/configWidget",
     "configStructure": [
         {
             "name": "compile",

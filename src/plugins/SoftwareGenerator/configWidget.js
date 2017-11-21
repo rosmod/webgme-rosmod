@@ -35,14 +35,11 @@ define([
             activeNode;
 
         // Need to add:
-        // * host drop-down to sleect where to run ROSCORE
-        // * of the available hosts, which ones we will select for this experiment
+        // * dialog for architecture for compilation selection
+        // * dialog for packages/components selected for compilation
 
 
         // Need to make dynamic:
-        // * drag/drop list for ordered starting of containers / processes
-        // * ROSCore location and port number if the user selects to automatically start ROSCore
-        // * Per host - which user to run the experiment as (with the default chosen)
 
         var pluginDialog = new PluginConfigDialog({client: this._client});
         pluginDialog.show(globalConfigStructure, pluginMetadata, prevPluginConfig, callback);
