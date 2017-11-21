@@ -627,10 +627,12 @@ define([
 					   'experiments');
 	    var host_commands = [
 		'pkill rosmod_actor',
-		'pkill roscore',
 		'rc_kill',
 		'rm -rf ' + utils.sanitizePath(deployment_dir)
 	    ];
+            if (host.RunningRoscore) {
+                host_commands.push('pkill roscore');
+            }
 	    return utils.deployOnHost(host_commands, ip, user);
 	});
 	return Q.all(tasks);
@@ -643,7 +645,7 @@ define([
 	var container = link[0];
 	var host = link[1];
 	var ip = host.intf.IP;
-	host.runningRoscore = true;
+	host.RunningRoscore = true;
 	self.rosMasterURI = 'http://'+ip+':'+self.rosCorePort;
 	var user = host.user;
 	var deployment_dir = path.join(user.Directory,
@@ -801,9 +803,9 @@ define([
 	    //    value here can be any valid JS object (even nested types);
 	    self.core.setAttribute(cn, 'name', container.name);
 	    self.core.setAttribute(hn, 'name', host.host.name);
-	    if (host.runningRoscore) {
+	    if (host.RunningRoscore) {
 		self.core.setAttributeMeta(hn, 'RunningRoscore', {type: 'boolean'});
-		self.core.setAttribute(hn, 'RunningRoscore', host.runningRoscore);
+		self.core.setAttribute(hn, 'RunningRoscore', host.RunningRoscore);
 	    }
 	    self.core.setAttribute(hn, 'Host', host.host);
 	    self.core.setAttribute(hn, 'Artifacts', host.artifacts);

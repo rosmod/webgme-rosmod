@@ -163,14 +163,14 @@ define([
 			    artifacts = self.core.getAttribute(node, 'Artifacts'),
 			    user = self.core.getAttribute(node, 'User'),
 			    intf = self.core.getAttribute(node, 'Interface'),
-			    runningRoscore = self.core.getAttribute(node, 'RunningRoscore');
+			    RunningRoscore = self.core.getAttribute(node, 'RunningRoscore');
 			
 			ah.push({
 			    host: host,
 			    user: user,
 			    intf: intf,
 			    artifacts: artifacts,
-			    RunningRoscore: runningRoscore
+			    RunningRoscore: RunningRoscore
 			});
 			self.core.deleteNode(node);
 		    }
@@ -196,10 +196,12 @@ define([
 	    var ip = host.intf.IP;
 	    var user = host.user;
 	    var host_commands = [
-		'pkill roscore',
 		'pkill rosmod_actor',
 		'rc_kill'
 	    ];
+            if (host.RunningRoscore) {
+                host_commands.push('pkill roscore');
+            }
 	    self.notify('info', 'stopping processes on: '+ user.name + '@' + ip);
 	    return utils.executeOnHost(host_commands, ip, user);
 	});
