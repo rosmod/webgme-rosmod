@@ -15,6 +15,7 @@ define([
     'showdown/dist/showdown.min',
     'common/util/ejs',
     './Templates',
+    'js/Controls/ContextMenu',
     'js/Utils/GMEConcepts',
     'js/NodePropertyNames',
     'css!./styles/RootVizWidget.css'
@@ -27,6 +28,7 @@ define([
     showdown,
     ejs,
     TEMPLATES,
+    ContextMenu,
     GMEConcepts,
     nodePropertyNames) {
     'use strict';
@@ -54,6 +56,36 @@ define([
         // set widget class
         self.$el.addClass(WIDGET_CLASS);
         self.$el.append(RootVizHtml);
+        
+        // html context menu
+        var cm;
+        var onEmptyItems = [
+            {
+                name: 'New Project',
+                icon: '',
+                doNotHide: false,
+                callback: self.newProject.bind(self)
+            },
+        ];
+	// default handlers for the rest of the viz space
+	self.$el.on('contextmenu', (event) => {
+	    var posX = event.clientX;
+	    var posY = event.clientY;
+
+            cm = new ContextMenu({
+                items: onEmptyItems,
+                callback: function(key) {
+                    onEmptyItems[key].callback();
+                    cm.destroy();
+                }
+            });
+
+            cm.show({x: posX, y: posY});
+
+	    event.stopPropagation();
+	    event.preventDefault();
+	});
+
 	self.$table = self.$el.find('#rootVizTable');
 	self._tableSetup = false;
     };
@@ -110,19 +142,6 @@ define([
         self.$table.find('#'+panelId+'-node-panel').first().remove();
         self.$table.append(projectHtml);
 
-	var i = document.getElementById("root-viz-menu");
-	if (i)
-	    i = i.style;
-	var menuFadeTimeMs = 100;
-	function menu(x, y) {
-	    if (i) {
-		i.top = y + "px";
-		i.left = x + "px";
-		i.visibility = "visible";
-		i.opacity = "1";
-	    }
-	}
-
         function dialogPopup(gmeId, attrName) {
             var node = self._client.getNode(gmeId);
             var attr = node.getAttribute(attrName);
@@ -167,11 +186,8 @@ define([
 	    html.removeClass('panel-primary');
 	});
 	html.on('click', (event) => {
-	    i.opacity = "0";
-	    setTimeout(function() {
-		i.visibility = "hidden";
-	    }, menuFadeTimeMs);
-	    
+	    // hide context menu
+
 	    self.onNodeSelect(desc.id);
 	    //event.stopPropagation();
 	    //event.preventDefault();
@@ -181,34 +197,75 @@ define([
 	    event.stopPropagation();
 	    event.preventDefault();
 	});
+        var cm;
+        // context menu:
+        var onProjectItems = [
+            {
+                name: 'Copy ' + desc.name,
+                icon: '',
+                doNotHide: false,
+                callback: self.copyProject.bind(self)
+            },
+            {
+                name: 'Delete ' + desc.name,
+                icon: '',
+                doNotHide: false,
+                callback: self.deleteProject.bind(self)
+            },
+            {
+                name: 'New Project',
+                icon: '',
+                doNotHide: false,
+                callback: self.newProject.bind(self)
+            },
+        ];
+        
 	html.on('contextmenu', (event) => {
 	    // handle right click here
 	    // make menu with copy option
 	    // make menu with delete option
 	    var posX = event.clientX;
 	    var posY = event.clientY;
-	    menu(posX, posY);
+
+            cm = new ContextMenu({
+                items: onProjectItems,
+                callback: function(key) {
+                    onProjectItems[key].callback(desc.id);
+                    cm.destroy();
+                }
+            });
+
+            cm.show({x: posX, y: posY});
+
 	    self.onNodeSelect(desc.id);
 	    event.stopPropagation();
 	    event.preventDefault();
 	});
-	// default handlers for the rest of the viz space
-	self.$el.on('contextmenu', (event) => {
-	    var posX = event.clientX;
-	    var posY = event.clientY;
-	    menu(posX, posY);
-	    event.stopPropagation();
-	    event.preventDefault();
-	});
-	self.$el.on('click', (event) => {
-	    i.opacity = "0";
-	    setTimeout(function() {
-		i.visibility = "hidden";
-	    }, menuFadeTimeMs);
-	});
 
 	self.nodes[desc.id] = desc;
     };
+
+    // CONTEXT MENU FUNCTIONS
+
+    RootVizWidget.prototype.deleteProject = function( gmeId ) {
+        var self = this;
+        if (gmeId)
+            self._client.deleteNode( gmeId, 'Deleting project: ' + gmeId);
+    };
+
+    RootVizWidget.prototype.copyProject = function( gmeId ) {
+        var self = this;
+        if (gmeId)
+            self.createProject( gmeId );
+    };
+
+    RootVizWidget.prototype.newProject = function( ) {
+        var self = this;
+        var projectMetaId = '/3/h';
+        self.createProject( projectMetaId );
+    };
+
+    // RESIZE
 
     RootVizWidget.prototype.onWidgetContainerResize = function (width, height) {
 	var self = this;
@@ -300,7 +357,11 @@ define([
 	}
 	else if (baseName == 'Project') {
             var params = {parentId: parentId};
-	    params[nodeId] = {};
+	    params[nodeId] = {
+                'attributes': {
+                    'name': node.getAttribute('name') + ' Copy'
+                }
+            };
             self._client.startTransaction();
             self._client.copyMoreNodes(params);
             self._client.completeTransaction();
