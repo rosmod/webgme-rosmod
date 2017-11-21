@@ -285,7 +285,7 @@ if (compInfo.Server_list) {
   callback_options.deadline.sec = deadline.sec;
   callback_options.deadline.nsec = deadline.nsec;
 
-  advertiseName = "<%- srv.Service.name %>";
+  advertiseName = "<%- srv.Service.AdvertisedName %>";
   rosmod::AdvertiseServiceOptions <%- srv.name %>_server_options;
   <%- srv.name %>_server_options = rosmod::AdvertiseServiceOptions::create<<%- srv.Service.Package %>::<%- srv.Service.TypeName %>>
       (advertiseName.c_str(),
@@ -304,7 +304,7 @@ if (compInfo.Client_list) {
   compInfo.Client_list.map(function(clt) {
 -%>
   // Client - <%- clt.name %>
-  advertiseName = "<%- clt.Service.name %>";
+  advertiseName = "<%- clt.Service.AdvertisedName %>";
   this-><%- clt.name %> = nh.serviceClient<<%- clt.Service.Package %>::<%- clt.Service.TypeName %>>(
                                                                                                 advertiseName.c_str(),
                                                                                                 false, // not persistent
@@ -323,7 +323,7 @@ if (compInfo.Publisher_list) {
   compInfo.Publisher_list.map(function(pub) {
 -%>
   // Publisher - <%- pub.name %>
-  advertiseName = "<%- pub.Message.name %>";
+  advertiseName = "<%- pub.Message.AdvertisedName %>";
   latching = <%- pub.Latching ? "true" : "false" %>;
   this-><%- pub.name %> = nh.advertise<<%- pub.Message.Package %>::<%- pub.Message.TypeName %>>(
                                                                                             advertiseName.c_str(),
@@ -351,7 +351,7 @@ if (compInfo.Subscriber_list) {
   callback_options.deadline.sec = <%- Math.floor(sub.Deadline) %>;
   callback_options.deadline.nsec = <%- Math.floor((sub.Deadline % 1) * 1000000000) %>;
 
-  advertiseName = "<%- sub.Message.name %>";
+  advertiseName = "<%- sub.Message.AdvertisedName %>";
   rosmod::SubscribeOptions <%- sub.name %>_options;
   <%- sub.name %>_options = rosmod::SubscribeOptions::create<<%- sub.Message.Package %>::<%- sub.Message.TypeName %>>
       (advertiseName.c_str(),
