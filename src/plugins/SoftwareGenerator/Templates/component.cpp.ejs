@@ -261,10 +261,12 @@ void <%- compInfo.name %>::startUp()
   std::map<std::string, std::string> service_header;
   service_header["component instance"] = config["Name"].asString();
 
-  logger->create_file(workingDir + "/" + config["Logging"]["Component Logger"]["FileName"].asString());
-  logger->set_is_periodic(config["Logging"]["Component Logger"]["Enabled"].asBool());
-  logger->set_max_log_unit(config["Logging"]["Component Logger"]["Unit"].asInt());
-  ROS_INFO_STREAM("Saving trace log to " << workingDir << "/" << config["Logging"]["Component Logger"]["FileName"].asString());
+  if ( config["Logging"]["Component Logger"]["Enabled"].asBool() ) {
+    logger->create_file(workingDir + "/" + config["Logging"]["Component Logger"]["FileName"].asString());
+    logger->set_is_periodic(config["Logging"]["Component Logger"]["Enabled"].asBool());
+    logger->set_max_log_unit(config["Logging"]["Component Logger"]["Unit"].asInt());
+    ROS_INFO_STREAM("Saving trace log to " << workingDir << "/" << config["Logging"]["Component Logger"]["FileName"].asString());
+  }
 
   if ( config["Logging"]["ROSMOD Logger"]["Enabled"].asBool() ) {
     ROS_INFO_STREAM("Saving trace log to " << workingDir + "/" + config["Logging"]["ROSMOD Logger"]["FileName"].asString());
