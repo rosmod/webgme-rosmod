@@ -9,6 +9,7 @@
     },
     "disableServerSideExecution": false,
     "disableBrowserSideExecution": false,
+    "configWidget": "plugin/RunExperiment/RunExperiment/configWidget",
     "configStructure": [
 	{
 	    "name": "rosMasterURI",
