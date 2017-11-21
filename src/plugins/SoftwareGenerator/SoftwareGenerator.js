@@ -62,8 +62,10 @@ define([
     SoftwareGenerator.prototype = Object.create(PluginBase.prototype);
     SoftwareGenerator.prototype.constructor = SoftwareGenerator;
 
-    SoftwareGenerator.prototype.notify = function(level, msg) {
+    SoftwareGenerator.prototype.notify = function(level, msg, obj) {
 	var self = this;
+        if (!obj)
+            obj = self.activeNode;
 	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
 	var lines = msg.split('\n');
 	lines.map(function(line) {
@@ -75,7 +77,7 @@ define([
 		self.logger.info(line);
 	    else if (level=='warning')
 		self.logger.warn(line);
-	    self.createMessage(self.activeNode, line, level);
+	    self.createMessage(obj, line, level);
 	    self.sendNotification(prefix+line);
 	});
     };
@@ -597,9 +599,12 @@ define([
                     var packageName = getParentByType(node.path, 'Package').name;
                     var compName = getParentByType(node.path, 'Component').name;
                     var hfsmName = getParentByType(node.path, 'State Machine').name;
-		    self.notify('error', 'Error in Package: ' + packageName + 
+		    self.notify('error',
+                                'Error in Package: ' + packageName + 
 				', Component: ' + compName + (hfsmName ? ", HFSM: " + hfsmName : "") + ', attribute: ' + attr +
-				', at line: ' + lineNum, node);
+				', at line: ' + lineNum,
+                                node.node
+                               );
 		    var msg = '<details><summary><b>Build Error:: package: ' + packageName + ', component: ' +
 		        compName + (hfsmName ? ", HFSM: " + hfsmName : "")  +':</b></summary>' +
 		        '<pre><code>'+
@@ -634,9 +639,12 @@ define([
                     var packageName = getParentByType(node.path, 'Package').name;
                     var compName = getParentByType(node.path, 'Component').name;
                     var hfsmName = getParentByType(node.path, 'State Machine').name;
-		    self.notify('error', 'Warning in Package: ' + packageName + 
+		    self.notify('error',
+                                'Warning in Package: ' + packageName + 
 				', Component: ' + compName + (hfsmName ? ", HFSM: " + hfsmName : "") + ', attribute: ' + attr +
-				', at line: ' + lineNum, node);
+				', at line: ' + lineNum,
+                                node.node
+                               );
 		    var msg = '<details><summary><b>Build Warning:: package: ' + packageName + ', component: ' +
 		        compName + (hfsmName ? ", HFSM: " + hfsmName : "")  +':</b></summary>' +
 		        '<pre><code>'+
