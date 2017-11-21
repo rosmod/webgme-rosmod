@@ -544,6 +544,21 @@ define([
 	    host.artifacts = [];
 	    var nodes = container.Node_list;
 	    if (nodes) {
+
+	        var rosmod_actor_script = [
+                    'setopt NO_HUP',
+                    'setopt NO_CHECK_JOBS',
+	            'cd ${DEPLOYMENT_DIR}',
+                    'catkin config -d '+host.host['Build Workspace'],
+                    '. `catkin locate --shell-verbs`',
+                    'catkin source',
+	            'export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH',
+	            'export ROS_IP='+host.intf.IP,
+	            'export ROS_MASTER_URI=${ROS_MASTER_URI}',
+	            'export DISPLAY=:0.0',
+                    'export ROSCONSOLE_STDOUT_LINE_BUFFERED=1'
+	        ];
+                
 		nodes.map(function(node) {
 		    var nodeConfigName = prefix + node.name + '.config';
 		    var config = self.configs[ node.name ];
@@ -551,9 +566,31 @@ define([
 		    // want stopExperiment to copy the config back as well
                     //host.artifacts.push(nodeConfigName);
 		    self.artifacts[nodeConfigName] = JSON.stringify( config, null, 2 );
+
+                    var redirect_command = ' > ' + node.name + '.stdout.log' +
+		        ' 2> ' + node.name + '.stderr.log';
+		    rosmod_actor_script.push('nohup rosmod_actor --config ' +
+				             node.name + '.config' + redirect_command +' &');
+
 		});
+                // save roscore startup script
+                self.artifacts['rosmod_actor-startup-'+host.intf.IP+'.bash'] = rosmod_actor_script.join('\n');   
 	    }
 	});
+	var roscore_commands = [
+            'setopt NO_HUP',
+            'setopt NO_CHECK_JOBS',
+            'cd ${DEPLOYMENT_DIR}',
+            'catkin config -d ${HOST_WORKSPACE}',
+            '. `catkin locate --shell-verbs`',
+            'catkin source',
+	    'export ROS_IP=${ROS_IP}',
+	    'export ROS_MASTER_URI='+self.rosMasterURI,
+	    'nohup roscore --port=' + self.rosCorePort + ' & disown',
+	    'until pids=$(pidof rosout); do sleep 1; done'
+	];
+        // save roscore startup script
+        self.artifacts['roscore-startup.bash'] = roscore_commands.join('\n');
 
 	if (self.runningOnClient) {
 	    self.notify('info', 'Skipping config generation in client mode.');
@@ -663,7 +700,7 @@ define([
 	    'nohup roscore --port=' + self.rosCorePort + ' & disown',
 	    'until pids=$(pidof rosout); do sleep 1; done'
 	];
-	//host_commands.push('sleep ' + self.roscoreDelay);
+        // now run the commands
 	self.notify('info','Starting ROSCORE at: ' + self.rosMasterURI);
 	return utils.deployOnHost(host_commands, ip, user);
     };
@@ -700,7 +737,7 @@ define([
 				       node.name + '.config' + redirect_command +' &');
 		});
 	    }
-	    //host_commands.push('sleep 10');
+            // now run the commands
 	    self.notify('info','starting binaries.');
 	    return utils.deployOnHost(host_commands, ip, user);
 	});

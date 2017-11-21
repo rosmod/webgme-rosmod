@@ -316,6 +316,23 @@ define([
 		self.artifacts[sharedPackageXMLFileName] = self.artifacts[packageXMLFileName];
 	    });
 	}
+        
+
+	var compile_script = [
+	    'catkin config --extend ${HOST_WORKSPACE}',
+	    'catkin clean -b --yes',
+	    'catkin build --no-status',
+	    'mkdir bin',
+            'mkdir share',
+	    'cp devel/lib/*.so bin/.'
+	];
+        if (self.generateTypes) {
+            // only do this if we have generated services / messages
+            compile_script.push('cp -r devel/lib/python2.7/dist-packages/* share/.');
+        }
+
+        // save the compilation script
+        self.artifacts['compile_script.bash'] = compile_script.join('\n');
 
 	if ( self.runningOnClient ) {
 	    self.notify('info', 'Generated code in client.');
@@ -731,6 +748,9 @@ define([
             // only do this if we have generated services / messages
             compile_commands.push('cp -r devel/lib/python2.7/dist-packages/* share/.');
         }
+
+        // save the compilation script
+        self.artifacts['compile-'+host.intf.IP+'.bash'] = compile_commands.join('\n');
 
 	var compilationFailed = false;
 
