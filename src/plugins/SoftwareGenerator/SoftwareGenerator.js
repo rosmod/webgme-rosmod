@@ -104,6 +104,8 @@ define([
 	self.generateDocs = currentConfig.generate_docs;
 	self.returnZip = currentConfig.returnZip;
 	self.usePTY = currentConfig.usePTY;
+
+        self.generateTypes = false;
 	self.runningOnClient = false;
 
         if (typeof WebGMEGlobal !== 'undefined') {
@@ -268,6 +270,7 @@ define([
 		}
 
 		if (pkgInfo.Message_list) {
+                    self.generateTypes = true;
 		    pkgInfo.Message_list.map(function(msgInfo) {
 			var msgFileName = [prefix,
 					   pkgInfo.name,
@@ -277,6 +280,7 @@ define([
 		    });
 		}
 		if (pkgInfo.Service_list) {
+                    self.generateTypes = true;
 		    pkgInfo.Service_list.map(function(srvInfo) {
 			var srvFileName = [prefix,
 					   pkgInfo.name,'srv',
@@ -721,9 +725,12 @@ define([
 	    'catkin build --no-status',
 	    'mkdir bin',
             'mkdir share',
-	    'cp devel/lib/*.so bin/.',
-            'cp -r devel/lib/python2.7/dist-packages/* share/.'
+	    'cp devel/lib/*.so bin/.'
 	];
+        if (self.generateTypes) {
+            // only do this if we have generated services / messages
+            compile_commands.push('cp -r devel/lib/python2.7/dist-packages/* share/.');
+        }
 
 	var compilationFailed = false;
 
