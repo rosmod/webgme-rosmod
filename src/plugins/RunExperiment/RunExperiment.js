@@ -142,7 +142,7 @@ define([
 					'config-'+(new Date()).toUTCString().replace(/:/gm, '-'));
 	}
 
-	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true)
+	webgmeToJson.loadModel(self.core, self.rootNode, projectNode, true, true)
 	    .then(function(projectModel) {
 		processor.processModel(projectModel);
 		self.projectModel = projectModel.root;
@@ -206,6 +206,8 @@ define([
 		if (self.experiment.length && self.hasStartedDeploying) { // if we made a host to container map
 		    return self.stopHosts()
 			.then(function() {
+                            if (typeof err != 'String')
+                                err = new String(err);
         		    self.notify('error', err);
 			    self.result.setSuccess(false);
 			    callback(err, self.result);
@@ -824,9 +826,8 @@ define([
 	    var cn = self.core.createNode(
 		{parent: self.activeNode, base: self.META.Container}
 	    );
-	    var hn = self.core.createNode(
-		{parent: self.activeNode, base: self.META.Host}
-	    );
+            var hn = self.core.copyNode( host.host.node, self.activeNode );
+
 	    var ln = self.core.createNode(
 		{parent: self.activeNode, base: self.META.FCO}
 	    );
@@ -839,16 +840,32 @@ define([
 	    // use self.core.setAttribute(node, name, value);
 	    //    value here can be any valid JS object (even nested types);
 	    self.core.setAttribute(cn, 'name', container.name);
-	    self.core.setAttribute(hn, 'name', host.host.name);
+	    self.core.setAttribute(ln, 'name', 'MapsTo');
+
 	    if (host.RunningRoscore) {
 		self.core.setAttributeMeta(hn, 'RunningRoscore', {type: 'boolean'});
 		self.core.setAttribute(hn, 'RunningRoscore', host.RunningRoscore);
 	    }
-	    self.core.setAttribute(hn, 'Host', host.host);
-	    self.core.setAttribute(hn, 'Artifacts', host.artifacts);
-	    self.core.setAttribute(hn, 'User', host.user);
-	    self.core.setAttribute(hn, 'Interface', host.intf);
-	    self.core.setAttribute(ln, 'name', 'MapsTo');
+
+            // save all host related information
+	    self.core.setAttribute(hn, 'Artifacts', JSON.stringify(host.artifacts));
+            self.core.setAttributeMeta(hn, 'Artifacts', {type: 'string'});
+	    //self.core.setAttribute(hn, 'User', host.user);
+	    //self.core.setAttribute(hn, 'Interface', host.intf);
+            // store:
+            //  * User
+            //  * Directory
+            //  * Key
+            //  * IP
+	    self.core.setAttributeMeta(hn, 'User', {type: 'string'});
+            self.core.setAttribute(hn, 'User', host.user.name);
+	    self.core.setAttributeMeta(hn, 'Directory', {type: 'string'});
+            self.core.setAttribute(hn, 'Directory', host.user.Directory);
+	    self.core.setAttributeMeta(hn, 'Key', {type: 'string'});
+            self.core.setAttribute(hn, 'Key', host.user.Key);
+	    self.core.setAttributeMeta(hn, 'IP', {type: 'string'});
+            self.core.setAttribute(hn, 'IP', host.intf.IP);
+
 	    // optionally use self.core.setAttributeMeta(node, name, rule);
 	    //    rule here defines the 'type' of the attribute
 	    // use self.core.setPointer(node, name, target);

@@ -159,14 +159,29 @@ define([
 		for (var i=0; i<nodes.length; i++) {
 		    var node = nodes[i];
 		    if (self.core.isTypeOf(node, self.META.Host)) {
-			var host = self.core.getAttribute(node, 'Host'),
-			    artifacts = self.core.getAttribute(node, 'Artifacts'),
+			var artifacts = JSON.parse(self.core.getAttribute(node, 'Artifacts')),
+                            // old style
 			    user = self.core.getAttribute(node, 'User'),
 			    intf = self.core.getAttribute(node, 'Interface'),
+                            // new style
+                            directory = self.core.getAttribute(node, 'Directory'),
+                            ip = self.core.getAttribute(node, 'IP'),
+                            key = self.core.getAttribute(node, 'Key'),
 			    RunningRoscore = self.core.getAttribute(node, 'RunningRoscore');
+
+                        if (ip && key && directory) {
+                            // if new style then package them
+                            user = {
+                                name: user,
+                                Directory: directory,
+                                Key: key
+                            };
+                            intf = {
+                                IP: ip
+                            };
+                        }
 			
 			ah.push({
-			    host: host,
 			    user: user,
 			    intf: intf,
 			    artifacts: artifacts,
