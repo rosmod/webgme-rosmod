@@ -263,7 +263,9 @@ define([
 	else {
 	    tasks = host_list.map(function(host) {
 		var intf = host.Interface_list[0];
-		var user = host.Users[0];
+		var user = host.Users.filter(function(u) {
+                    return u.name == self.selectedHostUserMap[ host.path ];
+                })[0];
 		return {host: host, intf: intf, user: user};
 	    });
 	}
