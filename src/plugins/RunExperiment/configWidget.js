@@ -5,8 +5,10 @@
  */
 
 define([
+    'q',
     'js/Dialogs/PluginConfig/PluginConfigDialog'
 ], function (
+    Q,
     PluginConfigDialog) {
     'use strict';
 
@@ -34,36 +36,135 @@ define([
             activeNodeId = WebGMEGlobal.State.getActiveObject(),
             activeNode;
 
-        // Need to add:
-        // * host drop-down to sleect where to run ROSCORE
-        // * of the available hosts, which ones we will select for this experiment
+
+        var self = this;
+        self.activeNode = self._client.getNode(activeNodeId);
+
+        self._client.getCoreInstance(null, function(err, result) {
+            self.core = result.core;
+            self.root = result.rootNode;
+
+            var systemPointer = self.activeNode.getPointer('System').to;
+            var systemNode = self._client.getNode( systemPointer );
+            // get hosts in the system from pointer
+            var hosts, users;
+            self.getHosts( systemNode )
+                .then(function(_hosts) {
+                    hosts = _hosts;
+                    return self.getUsers( systemNode );
+                })
+                .then(function(_users) {
+                    users = _users;
+            
+                    // figure out their users
+                    var hostUserMap = self.makeHostUserMap( hosts, users );
+                    // for each host create selection in meta with options
+                    // containing users (defauling to first user) and "Disabled"
+                    var hostConfig = self.makeHostConfig( hostUserMap );
+
+                    //prevPluginConfig = hostConfig.concat(prevPluginConfig);
+                    pluginMetadata.configStructure = hostConfig.concat(pluginMetadata.configStructure);
+                    console.log(pluginMetadata);
+
+                    // Need to add:
+                    // * host drop-down to sleect where to run ROSCORE
+                    // * of the available hosts, which ones we will select for this experiment
 
 
-        // Need to make dynamic:
-        // * drag/drop list for ordered starting of containers / processes
-        // * ROSCore location and port number if the user selects to automatically start ROSCore
-        // * Per host - which user to run the experiment as (with the default chosen)
+                    // Need to make dynamic:
+                    // * drag/drop list for ordered starting of containers / processes
+                    // * ROSCore location and port number if the user selects to automatically start ROSCore
+                    // * Per host - which user to run the experiment as (with the default chosen)
 
-        var pluginDialog = new PluginConfigDialog({client: this._client});
-        pluginDialog.show(globalConfigStructure, pluginMetadata, prevPluginConfig, callback);
+                    var pluginDialog = new PluginConfigDialog({client: self._client});
+                    pluginDialog.show(globalConfigStructure, pluginMetadata, prevPluginConfig, callback);
 
+                })
+        });
+    };
+
+    ConfigWidget.prototype.getChildrenByType = function(node, childType) {
+        var self = this;
+        var childIds = node.getChildrenIds();
+        var nodes = childIds.map(function(cid) {
+            return self.core.loadByPath(self.root, cid);
+        });
+        return Q.all(nodes)
+            .then(function(nodes) {
+                var filtered = nodes.filter(function(c) {
+                    var base = self.core.getMetaType(c);
+                    return childType == self.core.getAttribute(base, 'name');
+                });
+
+                return Q.all(filtered);
+            });
+    };
+
+    ConfigWidget.prototype.getHosts = function(systemNode) {
+        var self = this;
+        return self.getChildrenByType(systemNode, 'Host');
+    };
+
+    ConfigWidget.prototype.getUsers = function(systemNode) {
+        var self = this;
+        return self.getChildrenByType(systemNode, 'User');
         /*
-        // We use the default global config here..
-        globalConfigStructure.forEach(function (globalOption) {
-            globalConfig[globalOption.name] = globalOption.value;
+            .then(function(users) {
+                console.log(users);
+                return users.map(function(u) {
+                    console.log(u);
+                    return self.core.getAttribute(u, 'name');
+                });
+            });
+        */
+    };
+
+    ConfigWidget.prototype.makeHostUserMap = function(hosts, users) {
+        var self = this,
+            core = self.core,
+            hostUserMap = {};
+        
+        hosts.map(function(h) {
+            var hostName = self.core.getAttribute(h,'name');
+            var validUserPaths = self.core.getMemberPaths(h, 'Users');
+            hostUserMap[ hostName ] = users.filter(function(u) {
+                var path = self.core.getPath(u);
+                return validUserPaths.indexOf(path) > -1;
+            }).map(function(u) {
+                return self.core.getAttribute(u, 'name');
+            });
         });
 
-        if (typeof activeNodeId === 'string') {
-            activeNode = this._client.getNode(activeNodeId);
-            pluginConfig.activeNodeName = activeNode.getAttribute('name');
-        } else {
-            this._logger.error('No active node...');
-            callback(true); // abort execution
-            return;
-        }
+        return hostUserMap;
+    };
+    
+    ConfigWidget.prototype.makeHostConfig = function( hostUserMap ) {
+        var self = this,
+            config = [];
 
-        callback(globalConfig, pluginConfig, false); // Set third argument to true to store config in user.
-        */
+        var tmpl = {
+	    "name": "",
+	    "displayName": "",
+	    "description": "Select User for Host deployment or Disabled to exclude host.",
+	    "value": "",
+	    "valueType": "string",
+	    "valueItems": [
+	    ]
+	};
+
+        Object.keys(hostUserMap).map(function(hostName) {
+            var users = hostUserMap[hostName];
+
+            var hostTmpl = Object.assign({}, tmpl);
+            hostTmpl.name = hostName+'_Selection';
+            hostTmpl.displayName = hostName;
+            hostTmpl.value = users[0] || 'Disabled';
+            hostTmpl.valueItems = users.concat('Disabled');
+
+            config.push(hostTmpl);
+        });
+
+        return config;
     };
 
     return ConfigWidget;
