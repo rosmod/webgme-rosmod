@@ -104,6 +104,7 @@ define([
             self.configPrefix = '';
         }
         self.forceIsolation = currentConfig.forceIsolation;
+        self.spawnROSBridge = currentConfig.spawnROSBridge;
 
         // get the selected hosts from the config
         self.selectedHostUserMap = {};
@@ -777,6 +778,44 @@ define([
 	return utils.executeOnHost(['rm -rf ' + base_dir], host.intf.IP, host.user);
     };
 
+    RunExperiment.prototype.startRosbridge = function() {
+        var self = this;
+        
+        if (!self.spawnROSBridge)
+            return;
+
+        self.notify('info', 'Spawning ROS Bridge server');
+
+        const { exec } = require('child_process');
+        var path = require('path');
+
+	var sharePath = utils.sanitizePath(path.join(self.root_dir, 'share'));
+
+        var commands=[
+            'source /opt/rosmod/setup.bash',
+            'export PYTHONPATH='+sharePath+':$PYTHONPATH',
+            'export ROS_PACKAGE_PATH='+sharePath+':$ROS_PACKAGE_PATH',
+            'export ROS_MASTER_URI='+self.rosMasterURI,
+            'roslaunch rosbridge_server rosbridge_websocket.launch > /opt/rosmod/rosbridge.log 2>&1 &',
+            'echo $!',
+        ].join('\n');
+
+        var options = {
+            shell: '/bin/bash',
+        };
+
+        var deferred = Q.defer();
+        exec(commands, options, function(error, stdout, stderr) {
+            if (error) {
+                throw new String(stderr);
+            }
+            self.rosBridgePID = parseInt(stdout);
+            self.notify('info', 'ROS Bridge started with PID: '+self.rosBridgePID);
+            deferred.resolve();
+        });
+        return deferred.promise;
+    };
+
     RunExperiment.prototype.deployExperiment = function () {
 	var self = this;
 
@@ -799,6 +838,9 @@ define([
 	    .then(function () {
 		return self.startProcesses();
 	    })
+            .then(function() {
+                return self.startRosbridge();
+            })
 	    .then(function() {
 		self.notify('info', 'Successfully started experiment.');
 	    })
@@ -828,6 +870,8 @@ define([
 	var hostX = 400;
 
 	var rowY = 50;
+
+        var haveSavedRosBridgePID = false;
 
 	self.experiment.forEach(function(link) {
 	    var container = link[0];
@@ -863,6 +907,12 @@ define([
 		self.core.setAttributeMeta(hn, 'RunningRoscore', {type: 'boolean'});
 		self.core.setAttribute(hn, 'RunningRoscore', host.RunningRoscore);
 	    }
+
+            if (self.rosBridgePID && !haveSavedRosBridgePID) {
+		self.core.setAttributeMeta(hn, 'ROS Bridge PID', {type: 'integer'});
+		self.core.setAttribute(hn, 'ROS Bridge PID', self.rosBridgePID);
+                haveSavedRosBridgePID = true;
+            }
 
             // save all host related information
 	    self.core.setAttribute(hn, 'Artifacts', JSON.stringify(host.artifacts));

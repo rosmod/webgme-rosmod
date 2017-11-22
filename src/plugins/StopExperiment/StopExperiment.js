@@ -167,7 +167,12 @@ define([
                             directory = self.core.getAttribute(node, 'Directory'),
                             ip = self.core.getAttribute(node, 'IP'),
                             key = self.core.getAttribute(node, 'Key'),
-			    RunningRoscore = self.core.getAttribute(node, 'RunningRoscore');
+			    RunningRoscore = self.core.getAttribute(node, 'RunningRoscore'),
+                            // ROS Bridge
+                            ROSBridgePID = self.core.getAttribute(node, 'ROS Bridge PID');
+                        if (ROSBridgePID) {
+                            self.ROSBridgePID = ROSBridgePID;
+                        }
 
                         if (ip && key && directory) {
                             // if new style then package them
@@ -185,7 +190,7 @@ define([
 			    user: user,
 			    intf: intf,
 			    artifacts: artifacts,
-			    RunningRoscore: RunningRoscore
+			    RunningRoscore: RunningRoscore,
 			});
 			self.core.deleteNode(node);
 		    }
@@ -317,6 +322,20 @@ define([
 	    });
     };
 
+    StopExperiment.prototype.stopRosBridge = function() {
+        var self = this;
+        const { execSync } = require('child_process');
+        var commands=[
+            'kill -9 ' + self.ROSBridgePID
+        ].join('\n');
+
+        var options = {
+            shell: '/bin/bash',
+        };
+        execSync(commands, options);
+        self.notify('info', 'ROS Bridge with PID: '+self.ROSBridgePID + ' stopped');
+    };
+
     StopExperiment.prototype.cleanupExperiment = function() {
 	var self = this;
 	var path = require('path');
@@ -328,7 +347,13 @@ define([
 	    self.notify('info', 'Removing experiment data on ' + ip);
 	    return utils.executeOnHost(['rm -rf ' + remoteDir], ip, user);
 	});
-	return Q.all(tasks);
+	return Q.all(tasks)
+            .then(function() {
+                // now stop ROS Bridge if it was started
+                if (self.ROSBridgePID) {
+                    self.stopRosBridge();
+                }
+            });
     };
     
     StopExperiment.prototype.createZip = function() {
