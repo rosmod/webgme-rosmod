@@ -154,12 +154,13 @@ define([
             var map = hostUserMap[hostPath];
             var users = map.users;
             var hostName = map.name;
+            var disabledMessage = 'Excluded from Experiment';
 
             var hostTmpl = Object.assign({}, tmpl);
             hostTmpl.name = 'Host_Selection:' + hostPath;
             hostTmpl.displayName = hostName;
-            hostTmpl.value = users[0] || 'Disabled';
-            hostTmpl.valueItems = users.concat('Disabled');
+            hostTmpl.value = users[0] || disabledMessage;
+            hostTmpl.valueItems = users.concat(disabledMessage);
 
             config.push(hostTmpl);
         });

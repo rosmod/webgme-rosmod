@@ -107,10 +107,13 @@ define([
 
         // get the selected hosts from the config
         self.selectedHostUserMap = {};
+        var disabledHostMessage = 'Excluded from Experiment';
         Object.keys(currentConfig).map(function(k) {
             if (k.indexOf('Host_Selection:') > -1) {
                 var hostPath = k.split(':')[1];
-                self.selectedHostUserMap[ hostPath ] = currentConfig[k];
+                var selectedUser = currentConfig[k];
+                if (selectedUser != disabledHostMessage)
+                    self.selectedHostUserMap[ hostPath ] = selectedUser;
             }
         });
 	
@@ -248,7 +251,9 @@ define([
 		    ' to hosts in '  + self.selectedExperiment.System.name);
 
 	var containers = self.selectedExperiment.Deployment.Container_list;
-	var host_list = self.selectedExperiment.System.Host_list;
+	var host_list = self.selectedExperiment.System.Host_list.filter(function(h) {
+            return Object.keys(self.selectedHostUserMap).indexOf(h.path) > -1;
+        });
 	if (!containers || !host_list) {
 	    throw new String('System must have hosts and Deployment must have containers!');
 	}
