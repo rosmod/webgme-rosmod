@@ -18,6 +18,14 @@
 	    "value": "",
 	    "valueType": "string",
 	    "readOnly": false
+	},
+	{
+	    "name": "rosNamespace",
+	    "displayName": "ROS Namespace.",
+	    "description": "Sets the ROS_NAMESPACE for the experiment.",
+	    "value": "",
+	    "valueType": "string",
+	    "readOnly": false
 	},	
 	{
 	    "name": "forceIsolation",

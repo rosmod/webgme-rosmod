@@ -94,6 +94,7 @@ define([
 	var currentConfig = self.getCurrentConfig();
 	self.returnZip = currentConfig.returnZip;
 	self.rosMasterURI = currentConfig.rosMasterURI;
+	self.rosNamespace = currentConfig.rosNamespace;
         self.forceIsolation = currentConfig.forceIsolation;
 	
 	// will be filled out by the plugin
@@ -560,6 +561,9 @@ define([
 	            'export DISPLAY=:0.0',
                     'export ROSCONSOLE_STDOUT_LINE_BUFFERED=1'
 	        ];
+                if (self.rosNamespace) {
+                    rosmod_actor_script.push('export ROS_NAMESPACE='+self.rosNamespace);
+                }
                 
 		nodes.map(function(node) {
 		    var nodeConfigName = prefix + node.name + '.config';
@@ -731,6 +735,9 @@ define([
 		'export DISPLAY=:0.0',
                 'export ROSCONSOLE_STDOUT_LINE_BUFFERED=1'
 	    ];
+            if (self.rosNamespace) {
+                host_commands.push('export ROS_NAMESPACE='+self.rosNamespace);
+            }
 	    if (container.Node_list) {
 		container.Node_list.map(function(node) {
 		    var redirect_command = ' > ' + node.name + '.stdout.log' +
