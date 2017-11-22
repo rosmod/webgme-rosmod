@@ -325,15 +325,39 @@ define([
     StopExperiment.prototype.stopRosBridge = function() {
         var self = this;
         const { execSync } = require('child_process');
-        var commands=[
-            'kill -9 ' + self.ROSBridgePID
+        const { exec } = require('child_process');
+
+        var find_child_commands=[
+            'ps h --ppid '+self.ROSBridgePID+' -o pid'
         ].join('\n');
 
         var options = {
             shell: '/bin/bash',
         };
-        execSync(commands, options);
-        self.notify('info', 'ROS Bridge with PID: '+self.ROSBridgePID + ' stopped');
+
+        var deferred = Q.defer();
+        exec(find_child_commands, options, function(error, stdout, stderr) {
+            if (error) {
+                throw new String(stderr);
+            }
+            var commands=[
+                'kill -9 ' + self.ROSBridgePID,
+            ]
+            var rosBridgeChildren = stdout.split('\n').map(function(l) {
+                var childPID = parseInt(l);
+                if (childPID)
+                    commands.push( 'kill -9 '+childPID );
+            });
+
+            commands = commands.join('\n');
+
+            execSync(commands, options);
+            self.notify('info', 'ROS Bridge with PID: '+self.ROSBridgePID + ' stopped');
+
+            deferred.resolve();
+        });
+        return deferred.promise;
+        
     };
 
     StopExperiment.prototype.cleanupExperiment = function() {
@@ -351,7 +375,7 @@ define([
             .then(function() {
                 // now stop ROS Bridge if it was started
                 if (self.ROSBridgePID) {
-                    self.stopRosBridge();
+                    return self.stopRosBridge();
                 }
             });
     };
