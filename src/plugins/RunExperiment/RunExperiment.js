@@ -95,6 +95,14 @@ define([
 	self.returnZip = currentConfig.returnZip;
 	self.rosMasterURI = currentConfig.rosMasterURI;
 	self.rosNamespace = currentConfig.rosNamespace;
+        if (self.rosNamespace) {
+            self.logFilePrefix = self.rosNamespace + '.';
+            self.configPrefix = self.rosNamespace + '.';
+        }
+        else {
+            self.logFilePrefix = '';
+            self.configPrefix = '';
+        }
         self.forceIsolation = currentConfig.forceIsolation;
 	
 	// will be filled out by the plugin
@@ -339,6 +347,11 @@ define([
 	return true;
     };
 
+    RunExperiment.prototype.getConfigName = function( node ) {
+        var self = this;
+        return self.configPrefix + node.name + '.config';
+    };
+
     RunExperiment.prototype.checkBinaries = function() {
 	var self = this;
 
@@ -442,12 +455,12 @@ define([
 		    "User Configuration": userConfig,
 		    "Logging": {
 			"Component Logger": {
-			    "FileName": node.name + '.' + comp.name + '.user.log',
+			    "FileName": self.logFilePrefix + node.name + '.' + comp.name + '.user.log',
 			    "Enabled": comp.Logging_UserEnable || comp.EnableLogging, 
 			    "Unit": comp.Logging_UserUnit || comp.LoggingUnit,
 			},
 			"ROSMOD Logger": {
-			    "FileName": node.name + '.' + comp.name + '.trace.log',
+			    "FileName": self.logFilePrefix + node.name + '.' + comp.name + '.trace.log',
 			    "Enabled": comp.Logging_TraceEnable || comp.EnableLogging,
 			    "Unit": comp.Logging_TraceUnit || comp.LoggingUnit,
 			}
@@ -461,17 +474,7 @@ define([
 		config['Artifacts'].concat(userArtifacts);
 
 		// warn about user logging settings
-		if (ci.Logging['Component Logger'].Enabled) {
-		    //config['Artifacts'].push(ci.Logging['Component Logger']['FileName']);
-		    if (ci.Logging['Component Logger'].Unit > 1) {
-			self.notify(
-			    'warning',
-			    node.name + ' : ' +
-				comp.name + ' : ' +
-				' not all user logs may be captured.');
-		    }
-		}
-		else {
+		if (!ci.Logging['Component Logger'].Enabled) {
 		    self.notify(
 			'warning',
 			node.name + ' : ' +
@@ -480,17 +483,7 @@ define([
 		}
 
 		// warn about trace logging settings
-		if (ci.Logging['ROSMOD Logger'].Enabled) {
-		    //config['Artifacts'].push(ci.Logging['ROSMOD Logger']['FileName']);
-		    if (ci.Logging['ROSMOD Logger'].Unit > 1) {
-			self.notify(
-			    'warning',
-			    node.name + ' : ' +
-				comp.name + ' : ' +
-				' not all trace logs may be captured.');
-		    }
-		}
-		else {
+		if (!ci.Logging['ROSMOD Logger'].Enabled) {
 		    self.notify(
 			'warning',
 			    node.name + ' : ' +
@@ -566,17 +559,17 @@ define([
                 }
                 
 		nodes.map(function(node) {
-		    var nodeConfigName = prefix + node.name + '.config';
+		    var nodeConfigName = prefix + self.getConfigName( node );
 		    var config = self.configs[ node.name ];
 		    host.artifacts = host.artifacts.concat(config.Artifacts);
 		    // want stopExperiment to copy the config back as well
                     //host.artifacts.push(nodeConfigName);
 		    self.artifacts[nodeConfigName] = JSON.stringify( config, null, 2 );
 
-                    var redirect_command = ' > ' + node.name + '.stdout.log' +
-		        ' 2> ' + node.name + '.stderr.log';
+                    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
+		        ' 2> ' + self.configPrefix + node.name + '.stderr.log';
 		    rosmod_actor_script.push('nohup rosmod_actor --config ' +
-				             node.name + '.config' + redirect_command +' &');
+				             nodeConfigName + redirect_command +' &');
 
 		});
                 // save roscore startup script
@@ -740,10 +733,11 @@ define([
             }
 	    if (container.Node_list) {
 		container.Node_list.map(function(node) {
-		    var redirect_command = ' > ' + node.name + '.stdout.log' +
-			' 2> ' + node.name + '.stderr.log';
+                    var nodeConfigName = self.getConfigName( node );
+		    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
+			' 2> ' + self.configPrefix + node.name + '.stderr.log';
 		    host_commands.push('nohup rosmod_actor --config ' +
-				       node.name + '.config' + redirect_command +' &');
+				       nodeConfigName + redirect_command +' &');
 		});
 	    }
             // now run the commands
