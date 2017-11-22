@@ -108,15 +108,6 @@ define([
     ConfigWidget.prototype.getUsers = function(systemNode) {
         var self = this;
         return self.getChildrenByType(systemNode, 'User');
-        /*
-            .then(function(users) {
-                console.log(users);
-                return users.map(function(u) {
-                    console.log(u);
-                    return self.core.getAttribute(u, 'name');
-                });
-            });
-        */
     };
 
     ConfigWidget.prototype.makeHostUserMap = function(hosts, users) {
@@ -125,14 +116,21 @@ define([
             hostUserMap = {};
         
         hosts.map(function(h) {
+            var hostPath = self.core.getPath(h);
             var hostName = self.core.getAttribute(h,'name');
             var validUserPaths = self.core.getMemberPaths(h, 'Users');
-            hostUserMap[ hostName ] = users.filter(function(u) {
+
+            var validUsers = users.filter(function(u) {
                 var path = self.core.getPath(u);
                 return validUserPaths.indexOf(path) > -1;
             }).map(function(u) {
                 return self.core.getAttribute(u, 'name');
             });
+
+            hostUserMap[ hostPath ] = {
+                name: hostName,
+                users: validUsers
+            };
         });
 
         return hostUserMap;
@@ -152,11 +150,13 @@ define([
 	    ]
 	};
 
-        Object.keys(hostUserMap).map(function(hostName) {
-            var users = hostUserMap[hostName];
+        Object.keys(hostUserMap).map(function(hostPath) {
+            var map = hostUserMap[hostPath];
+            var users = map.users;
+            var hostName = map.name;
 
             var hostTmpl = Object.assign({}, tmpl);
-            hostTmpl.name = hostName+'_Selection';
+            hostTmpl.name = 'Host_Selection:' + hostPath;
             hostTmpl.displayName = hostName;
             hostTmpl.value = users[0] || 'Disabled';
             hostTmpl.valueItems = users.concat('Disabled');

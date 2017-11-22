@@ -104,6 +104,15 @@ define([
             self.configPrefix = '';
         }
         self.forceIsolation = currentConfig.forceIsolation;
+
+        // get the selected hosts from the config
+        self.selectedHostUserMap = {};
+        Object.keys(currentConfig).map(function(k) {
+            if (k.indexOf('Host_Selection:') > -1) {
+                var hostPath = k.split(':')[1];
+                self.selectedHostUserMap[ hostPath ] = currentConfig[k];
+            }
+        });
 	
 	// will be filled out by the plugin
 	self.hasStartedDeploying = false;
