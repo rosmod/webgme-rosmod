@@ -488,13 +488,7 @@ define([
     /* * * * * * * * * * * * * Constraint handling  * * * * * * * * * * * */
     SoftwareGenerator.prototype.mapPackagesToHosts = function (validHostList) {
 	var self = this;
-
-        if (!self.enforceConstraints) {
-            self.notify('info', 'User did not ask to enforce constraints at compile time.');
-            return;
-        }
-
-	self.notify('info', 'Mapping constraints in packages to hosts.');
+        
 
         var sw = self.projectModel.Software_list && self.projectModel.Software_list[0];
         if (!sw) {
@@ -530,8 +524,22 @@ define([
 	sortedPackages.sort(function(a,b) { 
 	    return b.constraints.length - a.constraints.length
 	});
+        
+        // make sure they have compilePackages.
+        for (var arch in validHostList) {
+            var hl = validHostList[ arch ];
+            hl.map(function(h) {
+                h.compilePackages = [];
+            });
+        };
 
-        var hostToPackageMap = {};
+        if (!self.enforceConstraints) {
+            self.notify('info', 'User did not ask to enforce constraints at compile time.');
+            return;
+        }
+
+	self.notify('info', 'Mapping constraints in packages to hosts.');
+
 	// now figure out the hosts that meet the package's constraints
         for (var arch in validHostList) {
             var hl = validHostList[ arch ];
@@ -543,11 +551,8 @@ define([
 		    return self.capabilitiesMeetConstraints(capabilities, constraints);
                 });
                 h.compilePackages = validPackages;
-                hostToPackageMap[ host.path ] = validPackages;
             });
         };
-
-        console.log( hostToPackageMap );
     };
 
     SoftwareGenerator.prototype.capabilitiesMeetConstraints = function(capabilities, constraints) {
@@ -826,12 +831,14 @@ define([
         // share folder for storing package.xmls (generated above) and the msg/srv deserialization
 	var sharePath = path.join(self.gen_dir, 'share');
 
+        var buildCommand = 'catkin build --no-status '+host.compilePackages.map(function(p) { return p.name; }).join(' ');
+
 	var compile_commands = [
 	    'cd ' + utils.sanitizePath(compile_dir),
 	    'rm -rf bin',
 	    'catkin config --extend ' + host.host['Build Workspace'],
 	    'catkin clean -b --yes',
-	    'catkin build --no-status',
+            buildCommand, 
 	    'mkdir bin',
             'mkdir share',
 	    'cp devel/lib/*.so bin/.'
@@ -868,6 +875,7 @@ define([
 	    .then(function() {
 		// run the compile step
 		self.notify('info', 'compiling on: ' + host.intf.IP + ' into '+compile_dir);
+		self.notify('info', '            : ' + buildCommand);
 		host.hasError = false;
 		host.stdErr = '';
 		host.stdOut = '';
@@ -1006,7 +1014,16 @@ define([
 	for (var arch in validHostList) {
 	    var hosts = validHostList[arch];
 	    if (hosts.length) {
-		selectedHosts.push(hosts[0]);
+                hosts.sort(function(a,b) {
+                    return b.compilePackages.length - a.compilePackages.length;
+                });
+                if (!self.enforceConstraints || hosts[0].compilePackages.length) {
+		    selectedHosts.push(hosts[0]); // compile on the arch's host that can compile the most packages
+                }
+                else {
+		    var msg = 'No hosts could be found for (constrained) compilation on ' + arch;
+		    self.notify('warning', msg);
+                }
 	    }
 	    else {
 		var msg = 'No hosts could be found for compilation on ' + arch;
