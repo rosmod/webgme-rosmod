@@ -20,6 +20,14 @@
             "readOnly": false
         },
 	{
+	    "name": "enforceConstraints",
+	    "displayName": "Enforce Constraints",
+	    "description": "If true, packages that have components with constraints will only be compiled on hosts that satisfy the components' constraints.",
+	    "value": false,
+	    "valueType": "boolean",
+	    "readOnly": false
+	},
+	{
 	    "name": "forceIsolation",
 	    "displayName": "Force Isolation.",
 	    "description": "If true, enforces that the compilation must run on hosts which are not currently running other ROSMOD/ROSCore/catkin processes.",

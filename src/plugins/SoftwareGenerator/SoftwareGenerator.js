@@ -102,6 +102,7 @@ define([
 	// What did the user select for our configuration?
 	var currentConfig = self.getCurrentConfig();
 	self.compileCode = currentConfig.compile;
+        self.enforceConstraints = currentConfig.enforceConstraints;
         self.forceIsolation = currentConfig.forceIsolation;
 	self.generateDocs = currentConfig.generate_docs;
 	self.returnZip = currentConfig.returnZip;
@@ -483,6 +484,89 @@ define([
 	}, 1000);
 	return deferred.promise;
     };
+
+    /* * * * * * * * * * * * * Constraint handling  * * * * * * * * * * * */
+    SoftwareGenerator.prototype.mapPackagesToHosts = function (validHostList) {
+	var self = this;
+
+        if (!self.enforceConstraints) {
+            self.notify('info', 'User did not ask to enforce constraints at compile time.');
+            return;
+        }
+
+	self.notify('info', 'Mapping constraints in packages to hosts.');
+
+        var sw = self.projectModel.Software_list && self.projectModel.Software_list[0];
+        if (!sw) {
+            throw new String('Must have software!');
+        }
+	var package_list = sw.Package_list;
+	var host_list = validHostList;  // is a dictionary of arch -> valid hosts
+	if (!package_list || !host_list) {
+	    throw new String('Must have hosts and packages!');
+	}
+
+	var sortedPackages = [];
+	// figure out which packages have which constraints;
+	package_list.map(function(pkg) {
+	    pkg.constraints = [];
+            // get all components in the package
+	    if (pkg.Component_list) {
+		pkg.Component_list.map(function(comp) {
+                    // get all constraints in the component
+		    if (comp.Constraint_list) {
+			comp.Constraint_list.map(function(constraint) {
+			    if (pkg.constraints.indexOf(constraint) == -1) {
+				pkg.constraints.push(constraint);
+			    }
+			});
+		    }
+		});
+	    }
+	    sortedPackages.push(pkg);
+	});
+	// Sort packages by decreasing number of constraints
+	// sort function :  < 0 -> a < b ; = 0 -> a==b ; > 0 -> b < a
+	sortedPackages.sort(function(a,b) { 
+	    return b.constraints.length - a.constraints.length
+	});
+
+        var hostToPackageMap = {};
+	// now figure out the hosts that meet the package's constraints
+        for (var arch in validHostList) {
+            var hl = validHostList[ arch ];
+            hl.map(function(h) {
+                var host = h.host;
+                var capabilities = host.Capability_list;
+                var validPackages = sortedPackages.filter(function(pkg) {
+                    var constraints  = pkg.constraints;
+		    return self.capabilitiesMeetConstraints(capabilities, constraints);
+                });
+                h.compilePackages = validPackages;
+                hostToPackageMap[ host.path ] = validPackages;
+            });
+        };
+
+        console.log( hostToPackageMap );
+    };
+
+    SoftwareGenerator.prototype.capabilitiesMeetConstraints = function(capabilities, constraints) {
+	var self = this;
+	if (constraints.length == 0) {
+	    return true;
+	}
+	if (constraints.length > 0 && capabilities == undefined) {
+	    return false;
+	}
+	capabilities = capabilities.map((capability) => { return capability.name; });
+	for (var c in constraints) {
+	    var constraint = constraints[c];
+	    if (capabilities.indexOf(constraint.name) == -1) {
+		return false;
+	    }
+	}
+	return true;
+    };    
 
     SoftwareGenerator.prototype.getValidArchitectures = function() {
 	var self = this,
@@ -916,6 +1000,8 @@ define([
 
 	// clear out any previous binaries
 	child_process.execSync('rm -rf ' + binPath);
+
+        self.mapPackagesToHosts( validHostList );
 
 	for (var arch in validHostList) {
 	    var hosts = validHostList[arch];
