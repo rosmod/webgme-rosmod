@@ -108,6 +108,20 @@ define([
 	self.returnZip = currentConfig.returnZip;
 	self.usePTY = currentConfig.usePTY;
 
+        // which architectures did the user ask us to compile on?
+        self.selectedArchitectures = [];
+        Object.keys(currentConfig).map(function(k) {
+            if (k.indexOf('_ARCH_SELECTION') > -1) {
+                var arch = k.replace('_ARCH_SELECTION', '');
+                var isSelected = currentConfig[k];
+                if (isSelected) {
+                    self.selectedArchitectures.push( arch );
+                }
+            }
+        });
+        // make sure we don't try to compile if we don't have architectures
+        self.compileCode = self.selectedArchitectures.length && self.compileCode;
+
         self.generateTypes = false;
 	self.runningOnClient = false;
 
@@ -348,9 +362,13 @@ define([
 	    child_process = require('child_process');
 
 	// clear out any previous project files
-	var binDir = utils.sanitizePath(path.join(self.gen_dir,'bin'));
 	self.notify('info','Clearing out previous binaries.');
-	child_process.execSync('rm -rf ' + binDir);
+	var binDir = utils.sanitizePath(path.join(self.gen_dir,'bin'));
+        self.selectedArchitectures.map(function(a) {
+	    var binDir = utils.sanitizePath(path.join(self.gen_dir,'bin', a));
+            console.log(binDir);
+            child_process.execSync('rm -rf ' + binDir);
+        });
 
 	var srcDir = utils.sanitizePath(path.join(self.gen_dir,'src'));
 	self.notify('info','Clearing out previous generated code.');
@@ -582,10 +600,12 @@ define([
 		if (system.Host_list) {
 		    system.Host_list.map(function(host) {
 			var devName = utils.getDeviceType(host);
-			if (validArchs[devName] == undefined) {
-			    validArchs[devName] = [];
-			}
-			validArchs[devName].push(host);
+                        if (self.selectedArchitectures.indexOf(devName) != -1) {
+			    if (validArchs[devName] == undefined) {
+			        validArchs[devName] = [];
+			    }
+			    validArchs[devName].push(host);
+                        }
 		    });
 		}
 	    });
@@ -596,8 +616,12 @@ define([
     SoftwareGenerator.prototype.selectCompilationArchitectures = function() {
 	
 	var self = this;
-
+        var _ = require('underscore');
 	var validArchitectures = self.getValidArchitectures();
+
+        if (_.isEmpty(validArchitectures)) {
+            throw new String("No valid architectures found!");
+        }
 
 	var tasks = Object.keys(validArchitectures).map(function(index) {
 	    return utils.getAvailableHosts(validArchitectures[index], self.forceIsolation)

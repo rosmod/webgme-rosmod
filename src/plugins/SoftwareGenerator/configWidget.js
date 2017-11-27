@@ -103,7 +103,6 @@ define([
             .then(function(hostList) {
                 var archs = [];
                 hostList = _.flatten(hostList);
-                console.log(hostList);
                 hostList.map(function(h) {
                     var host = {
                         'Architecture': self.core.getAttribute(h, 'Architecture'),
