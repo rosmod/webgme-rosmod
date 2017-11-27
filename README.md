@@ -152,6 +152,11 @@ compilation and deployment as requested by the users.
    ```bash
    sudo apt-get install mongodb
    ```
+4. Install [ROS Bridge](http://wiki.ros.org/rosbridge_suite)
+   ```bash
+   sudo apt-get install ros-kinetic-rosbridge-suite
+   ```
+
 4. Clone this repo
    ```bash
    git clone https://github.com/rosmod/webgme-rosmod
