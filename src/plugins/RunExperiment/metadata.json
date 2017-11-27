@@ -14,7 +14,7 @@
 	{
 	    "name": "rosMasterURI",
 	    "displayName": "ROS Master URI.",
-	    "description": "Connect to ROS MASTER URI if not blank, else start new ROS Master.",
+	    "description": "Connect to provided ROS MASTER URI if ROS Core Host is set to 'None'. Has the form of 'http://<IP Address>:<Port Number>'",
 	    "value": "",
 	    "valueType": "string",
 	    "readOnly": false

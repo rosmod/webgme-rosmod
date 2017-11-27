@@ -117,11 +117,20 @@ define([
                     self.selectedHostUserMap[ hostPath ] = selectedUser;
             }
         });
+
+        // figure out where to run roscore
+        self.rosCoreHost = currentConfig.rosCoreHost;
 	
 	// will be filled out by the plugin
 	self.hasStartedDeploying = false;
+
+        var rosCoreErr = null;
 	self.experiment = [];
 	if (!self.deployRosMaster()) {
+            if (!self.rosMasterURI || !self.rosMasterURI.length) {
+                rosCoreErr = new String("Must provide ROS_MASTER_URI if not starting roscore with experiment!");
+            }
+
 	    var port = 11311;
 	    var splitArr = self.rosMasterURI.split(':');
 	    if (splitArr.length) {
@@ -132,12 +141,19 @@ define([
 			port = parsed;
 		}
 	    }
+            else {
+                rosCoreErr = new String("Must provide ROS_MASTER_URI if not starting roscore with experiment!");
+            }
 	    self.rosCorePort = port;
 	}
 	else {
 	    self.rosCorePort = 11311;
 	}
 	self.artifacts = {};
+
+        if (rosCoreErr) {
+            callback(rosCoreErr, self.result);
+        }
 
         // set up libraries
 	webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
@@ -694,9 +710,26 @@ define([
     RunExperiment.prototype.startRosCore = function() {
 	var self = this;
 	var path = require('path');
-	var link = self.experiment[0];
-	var container = link[0];
-	var host = link[1];
+        // need to get the right host using the config's host name
+        var host = null;
+        if (self.rosCoreHost != 'Any') {
+            var filt = self.experiment.filter(function(e) {
+                var h = e[1].host;
+                return h.name == self.rosCoreHost;
+            });
+            if (filt && filt.length) {
+                if (filt.length > 1) {
+                    self.notify("warning", "Found more than one host with name: "+self.rosCoreHost+", selecting first one.");
+                }
+                host = filt[0][1];
+            }
+            else {
+                self.notify('warning', "Couldn't find selected host by name, this should not be possible!");
+            }
+        }
+        if (host == null) {
+            host = self.experiment[0][1];
+        }
 	var ip = host.intf.IP;
 	host.RunningRoscore = true;
 	self.rosMasterURI = 'http://'+ip+':'+self.rosCorePort;
@@ -766,7 +799,7 @@ define([
 
     RunExperiment.prototype.deployRosMaster = function() {
 	var self = this;
-	return self.rosMasterURI.length == 0;
+	return self.rosCoreHost != 'None';
     };
     
     RunExperiment.prototype.cleanHost = function(host) {

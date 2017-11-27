@@ -61,10 +61,13 @@ define([
                     // for each host create selection in meta with options
                     // containing users (defauling to first user) and "Disabled"
                     var hostConfig = self.makeHostConfig( hostUserMap );
+                    pluginMetadata.configStructure = hostConfig.concat(pluginMetadata.configStructure);
+
+                    var rosCoreConfig = self.makeRosCoreConfig( hosts );
+                    pluginMetadata.configStructure = rosCoreConfig.concat(pluginMetadata.configStructure);
 
                     //prevPluginConfig = hostConfig.concat(prevPluginConfig);
-                    pluginMetadata.configStructure = hostConfig.concat(pluginMetadata.configStructure);
-                    console.log(pluginMetadata);
+                    //console.log(pluginMetadata);
 
                     // Need to add:
                     // * host drop-down to sleect where to run ROSCORE
@@ -164,6 +167,33 @@ define([
 
             config.push(hostTmpl);
         });
+
+        return config;
+    };
+
+    ConfigWidget.prototype.makeRosCoreConfig = function( hosts ) {
+        var self = this,
+            config = [];
+        
+        var hostNames = [ 'Any' ];
+        hostNames = hostNames.concat(
+            hosts.map(function(h) {
+                return self.core.getAttribute(h,'name');
+            })
+        );
+
+        hostNames.push('None');
+        
+        var tmpl = {
+	    "name": "rosCoreHost",
+	    "displayName": "ROS Core Host",
+	    "description": "Select Host / Any / None to select where and whether to spawn ROS Core / ROS Master.",
+	    "value": hostNames[0],
+	    "valueType": "string",
+	    "valueItems": hostNames
+	};
+
+        config.push(tmpl);
 
         return config;
     };
