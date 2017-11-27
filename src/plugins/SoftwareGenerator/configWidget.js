@@ -5,8 +5,12 @@
  */
 
 define([
+    'remote-utils/remote-utils',
+    'q',
     'js/Dialogs/PluginConfig/PluginConfigDialog'
 ], function (
+    utils,
+    Q,
     PluginConfigDialog) {
     'use strict';
 
@@ -33,34 +37,108 @@ define([
             globalConfig = {},
             activeNodeId = WebGMEGlobal.State.getActiveObject(),
             activeNode;
+        
+        var self = this;
+        self.activeNode = self._client.getNode(activeNodeId);
 
-        // Need to add:
-        // * dialog for architecture for compilation selection
-        // * dialog for packages/components selected for compilation
+        self._client.getCoreInstance(null, function(err, result) {
+            self.core = result.core;
+            self.root = result.rootNode;
 
+            // get hosts in the system from pointer
+            self.core.loadByPath(self.root, activeNodeId)
+                .then(function(node) {
+                    self.activeNode = node;
+                    return self.getArchitectures();
+                })
+                .then(function(archs) {
+                    var archConfig = self.makeArchConfig( archs );
+                    pluginMetadata.configStructure = archConfig.concat(pluginMetadata.configStructure);
+                    
+                    var pluginDialog = new PluginConfigDialog({client: self._client});
+                    pluginDialog.show(globalConfigStructure, pluginMetadata, prevPluginConfig, callback);
+                })
+                .catch(function(err) {
+                    console.log(err);
+                    callback(err, result);
+                });
+        });
+    };
+    
+    ConfigWidget.prototype.getChildrenByType = function(node, childType) {
+        var self = this;
+        var childIds = self.core.getChildrenPaths(node);
+        var nodes = childIds.map(function(cid) {
+            return self.core.loadByPath(self.root, cid);
+        });
+        return Q.all(nodes)
+            .then(function(nodes) {
+                var filtered = nodes.filter(function(c) {
+                    var base = self.core.getMetaType(c);
+                    return childType == self.core.getAttribute(base, 'name');
+                });
 
-        // Need to make dynamic:
+                return Q.all(filtered);
+            });
+    };
 
-        var pluginDialog = new PluginConfigDialog({client: this._client});
-        pluginDialog.show(globalConfigStructure, pluginMetadata, prevPluginConfig, callback);
+    ConfigWidget.prototype.getArchitectures = function() {
+        var self = this;
+        return self.getChildrenByType(self.activeNode, 'Systems')
+            .then(function(systemFolderList) {
+                if (systemFolderList) {
+                    var systemFolder = systemFolderList[0];
+                    return self.getChildrenByType(systemFolder, 'System');
+                }
+                else {
+                    throw new String("No Systems Folder found!");
+                }
+            })
+            .then(function(systemList) {
+                var tasks = systemList.map(function(s) {
+                    return self.getChildrenByType(s, 'Host');
+                });
+                return Q.all(tasks);
+            })
+            .then(function(hostList) {
+                var archs = [];
+                hostList = _.flatten(hostList);
+                console.log(hostList);
+                hostList.map(function(h) {
+                    var host = {
+                        'Architecture': self.core.getAttribute(h, 'Architecture'),
+                        'Device ID': self.core.getAttribute(h, 'Device ID'),
+                    };
+                    var arch = utils.getDeviceType( host );
+                    if (archs.indexOf(arch) == -1) {
+                        archs.push( arch );
+                    }
+                });
+                return archs;
+            });
+    };
 
-        /*
-        // We use the default global config here..
-        globalConfigStructure.forEach(function (globalOption) {
-            globalConfig[globalOption.name] = globalOption.value;
+    ConfigWidget.prototype.makeArchConfig = function(architectures) {
+        var self = this,
+            archConfig = [];
+
+        var templ = {
+	    "name": "",
+	    "displayName": "",
+	    "description": "Enable/Disable compilation for this architecture",
+	    "value": true,
+	    "valueType": "boolean",
+            "readOnly": false
+        };
+
+        architectures.map(function(arch) {
+            var archTempl = Object.assign({}, templ);
+            archTempl.name = arch + '_ARCH_SELECTION';
+            archTempl.displayName = 'Compile on ' + arch;
+            archConfig.push( archTempl );
         });
 
-        if (typeof activeNodeId === 'string') {
-            activeNode = this._client.getNode(activeNodeId);
-            pluginConfig.activeNodeName = activeNode.getAttribute('name');
-        } else {
-            this._logger.error('No active node...');
-            callback(true); // abort execution
-            return;
-        }
-
-        callback(globalConfig, pluginConfig, false); // Set third argument to true to store config in user.
-        */
+        return archConfig;
     };
 
     return ConfigWidget;
