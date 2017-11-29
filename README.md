@@ -11,6 +11,8 @@ environment for distributed embedded applications built using
 An example server running ROSMOD can be found on
 [rosmod.rcps.isis.vanderbilt.edu](http://rosmod.rcps.isis.vanderbilt.edu).
 
+Please see the [WIKI](https://github.com/rosmod/webgme-rosmod/wiki) for in-depth information about ROSMOD, how to use it, and links to various Youtube videos that walk through development and usage of ROSMOD.
+
 ## Contents
 
 1. [What is ROSMOD](#what-is-rosmod)
