@@ -198,6 +198,18 @@ define([], function() {
         makeSystemLibraryConvenience: function(obj, objects) {
             obj.LIBRARIES = obj['Link Libraries'];
         },
+        validName: function(name) {
+	    var varDeclExp = new RegExp(/^[a-zA-Z_][a-zA-Z0-9_]*$/gi);
+	    return varDeclExp.test(name);
+        },
+        checkName: function(o) {
+            var self = this;
+            if (!self.validName( o.name )) {
+                throw new String(o.type + ' ' +
+                                 o.name + ' has invalid name: '+o.name+
+                                 '. Name must be valid c/c++ name, following regex pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/');
+            }
+        },
 	checkObjects: function(objects) {
 	    var self = this;
 
@@ -210,9 +222,25 @@ define([], function() {
 		var parent = objects[ obj.parentPath ];
 		if (obj.type == 'Host' && parent && parent.type == 'System') {
 		    self.checkHost(obj);
+		} else if (obj.type == 'Component') {
+                    self.checkName(obj);
+		} else if (obj.type == 'Package') {
+                    self.checkName(obj);
+		} else if (obj.type == 'Publisher') {
+                    self.checkName(obj);
+		} else if (obj.type == 'Subscriber') {
+                    self.checkName(obj);
+		} else if (obj.type == 'Client') {
+                    self.checkName(obj);
+		} else if (obj.type == 'Server') {
+                    self.checkName(obj);
+		} else if (obj.type == 'Timer') {
+                    self.checkName(obj);
 		} else if (obj.type == 'Message') {
+                    self.checkName(obj);
 		    self.checkMessage(obj);
 		} else if (obj.type == 'Service') {
+                    self.checkName(obj);
 		    self.checkService(obj);
 		} else if (obj.type == 'Node') {
 		    self.checkNode(obj);

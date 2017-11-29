@@ -363,10 +363,8 @@ define([
 
 	// clear out any previous project files
 	self.notify('info','Clearing out previous binaries.');
-	var binDir = utils.sanitizePath(path.join(self.gen_dir,'bin'));
         self.selectedArchitectures.map(function(a) {
 	    var binDir = utils.sanitizePath(path.join(self.gen_dir,'bin', a));
-            console.log(binDir);
             child_process.execSync('rm -rf ' + binDir);
         });
 
