@@ -26,10 +26,12 @@ define([
 	var CommVizWidget,
             WIDGET_CLASS = 'comm-viz';
 
-	CommVizWidget = function (logger, container) {
+	CommVizWidget = function (logger, container, client) {
             this._logger = logger.fork('Widget');
 
             this._el = container;
+
+            this._client = client;
 
             // set widget class
             this._el.addClass(WIDGET_CLASS);
@@ -311,9 +313,21 @@ define([
                 '</span>',
             ].join('\n');
 
+            var enableLoggingEl = [
+                '<span id="enableLogging" class="split-panel-toolbar-btn fa fa-toggle-on">',
+                '</span>',
+            ].join('\n');
+
+            var disableLoggingEl = [
+                '<span id="disableLogging" class="split-panel-toolbar-btn fa fa-toggle-off">',
+                '</span>',
+            ].join('\n');
+
             toolbarEl.append(printEl);
             toolbarEl.append(zoomEl);
             toolbarEl.append(layoutEl);
+            toolbarEl.append(enableLoggingEl);
+            toolbarEl.append(disableLoggingEl);
 
             toolbarEl.find('#print').on('click', function(){
                 var png = self._cy.png({
@@ -331,7 +345,57 @@ define([
             toolbarEl.find('#layout').on('click', function(){
                 self.reLayout();
             });
-        };        
+
+            toolbarEl.find('#enableLogging').on('click', function(){
+                self.enableLogging();
+            });
+
+            toolbarEl.find('#disableLogging').on('click', function(){
+                self.disableLogging();
+            });
+        };
+
+        CommVizWidget.prototype.getAllComponents = function() {
+            var self = this;
+            return Object.keys(self.nodes).filter(function(path) {
+                var n = self.nodes[path];
+                return n.type == 'Component';
+            });
+        };
+
+        CommVizWidget.prototype.enableLogging = function() {
+            var self = this;
+            var compPaths = self.getAllComponents();
+
+            self._client.startTransaction('Enabling logging for all components.');
+
+            compPaths.map(function(k) {
+                var id = k;
+                if (self.nodes[id]) {
+                    self._client.setAttribute(id, 'Logging_TraceEnable', true);
+                    self._client.setAttribute(id, 'Logging_UserEnable', true);
+                }
+            });
+
+            self._client.completeTransaction();            
+        };
+
+        CommVizWidget.prototype.disableLogging = function() {
+            var self = this;
+            var compPaths = self.getAllComponents();
+
+            self._client.startTransaction('Disabling logging for all components.');
+
+            compPaths.map(function(k) {
+                var id = k;
+                if (self.nodes[id]) {
+                    self._client.setAttribute(id, 'Logging_TraceEnable', false);
+                    self._client.setAttribute(id, 'Logging_UserEnable', false);
+                }
+            });
+
+            self._client.completeTransaction();            
+        };
 
 	CommVizWidget.prototype.onWidgetContainerResize = function (width, height) {
 	    this._cy.resize();

@@ -46,7 +46,7 @@ define([
         //set Widget title
         this.setTitle('');
 
-        this.widget = new CommVizWidget(this.logger, this.$el);
+        this.widget = new CommVizWidget(this.logger, this.$el, this._client);
 
         this.widget.setTitle = function (title) {
             self.setTitle(title);
