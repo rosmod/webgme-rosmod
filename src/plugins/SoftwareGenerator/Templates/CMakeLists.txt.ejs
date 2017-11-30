@@ -87,7 +87,13 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+<%
+if (pkgInfo.Component_list) {
+-%>
   INCLUDE_DIRS include
+<%
+}
+-%>
 #  LIBRARIES client_server_package
 #  CATKIN_DEPENDS roscpp std_msgs
   CATKIN_DEPENDS message_runtime
@@ -101,7 +107,15 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(
+<%
+if (pkgInfo.Component_list) {
+-%>
+	include
+<%
+}
+-%>
+	${catkin_INCLUDE_DIRS})
 
 <%- pkgInfo.CMAKE_COMMANDS.join('\n') %>
 
