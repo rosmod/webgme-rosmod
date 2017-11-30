@@ -91,6 +91,9 @@ define([
 	self.experiment = [];
 	self.rosCorePort = Math.floor((Math.random() * (65535-1024) + 1024));
 	self.rosCoreIp = '';
+        self.rosBridgePort ='';
+        self.rosBridgeURL ='';
+        self.rosMCTExperimentName = '';
 
 	utils.notify = function(level, msg) {self.notify(level, msg);}
 
@@ -169,9 +172,16 @@ define([
                             key = self.core.getAttribute(node, 'Key'),
 			    RunningRoscore = self.core.getAttribute(node, 'RunningRoscore'),
                             // ROS Bridge
-                            ROSBridgePID = self.core.getAttribute(node, 'ROS Bridge PID');
+                            ROSBridgePID = self.core.getAttribute(node, 'ROS Bridge PID'),
+                            ROSBridgePort = self.core.getAttribute(node, 'ROS Bridge Port'),
+                            ROSBridgeUrl = self.core.getAttribute(node, 'ROS Bridge URL'),
+                            rosMCTExperimentName = self.core.getAttribute(node, 'Experiment Name');
                         if (ROSBridgePID) {
                             self.ROSBridgePID = ROSBridgePID;
+
+                            self.rosBridgePort =ROSBridgePort;
+                            self.rosBridgeURL =ROSBridgeUrl;
+                            self.rosMCTExperimentName = rosMCTExperimentName;
                         }
 
                         if (ip && key && directory) {
@@ -338,7 +348,7 @@ define([
         var deferred = Q.defer();
         exec(find_child_commands, options, function(error, stdout, stderr) {
             if (error) {
-                throw new String(stderr);
+                deferred.reject(error);
             }
             var commands=[
                 'kill -9 ' + self.ROSBridgePID,
@@ -357,12 +367,41 @@ define([
             }
             catch (err) {
                 self.notify('info', 'ROS Bridge with PID: '+self.ROSBridgePID + ' couldnt be stopped');
-                self.notify('info', err);
+                self.notify('info', new String(err));
             }
+            self.informRosMCT()
+                .then(function() {
+                    deferred.resolve();
+                });
+        });
+        return deferred.promise;
+    };
+
+    StopExperiment.prototype.informRosMCT = function() {
+        var self = this;
+        const WebSocket = require('ws');
+        var deferred = Q.defer();
+        const ws = new WebSocket('ws://localhost:8085/realtime/notify');
+
+        var info = {
+            name: self.rosMCTExperimentName,
+            rosbridgeurl: 'localhost',
+            rosbridgeport: self.rosBridgePort,
+            status: 'CLOSE'
+        };
+
+        ws.on('error', function(err) {
+            self.notify('warning', "Couldn't connect to ROSMCT server, is it running?");
+            self.notify('warning', new String(err));
+            deferred.resolve();
+        });
+
+        ws.on('open', function open() {
+            ws.send(JSON.stringify(info));
+            self.notify('info', 'Informed ROSMCT about experiment');
             deferred.resolve();
         });
         return deferred.promise;
-        
     };
 
     StopExperiment.prototype.cleanupExperiment = function() {

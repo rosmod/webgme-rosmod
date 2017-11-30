@@ -26,7 +26,8 @@
     "webgme": "^2.0.0",
     "webgme-codeeditor": "^3.0.0",
     "webgme-hfsm": "^1.1.9",
-    "webgme-to-json": "^1.0.4"
+    "webgme-to-json": "^1.0.4",
+    "ws": "^3.3.2"
   },
   "devDependencies": {
     "mocha": "^2.2.5",

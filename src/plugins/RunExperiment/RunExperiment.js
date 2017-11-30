@@ -856,6 +856,37 @@ define([
             }
             self.rosBridgePID = parseInt(stdout);
             self.notify('info', 'ROS Bridge started with PID: '+self.rosBridgePID+' on port '+self.rosBridgePort);
+            self.informRosMCT()
+                .then(function() {
+                    deferred.resolve();
+                });
+        });
+        return deferred.promise;
+    };
+
+    RunExperiment.prototype.informRosMCT = function() {
+        var self = this;
+        const WebSocket = require('ws');
+        var deferred = Q.defer();
+        const ws = new WebSocket('ws://localhost:8085/realtime/notify');
+
+        var system_name = self.logFilePrefix + self.experimentName;
+        var info = {
+            name: system_name,
+            rosbridgeurl: 'localhost',
+            rosbridgeport: self.rosBridgePort,
+            status: 'OPEN'
+        };
+
+        ws.on('error', function(err) {
+            self.notify('warning', "Couldn't connect to ROSMCT server, is it running?");
+            self.notify('warning', new String(err));
+            deferred.resolve();
+        });
+
+        ws.on('open', function open() {
+            ws.send(JSON.stringify(info));
+            self.notify('info', 'Informed ROSMCT about experiment');
             deferred.resolve();
         });
         return deferred.promise;
@@ -957,6 +988,14 @@ define([
 		self.core.setAttributeMeta(hn, 'ROS Bridge PID', {type: 'integer'});
 		self.core.setAttribute(hn, 'ROS Bridge PID', self.rosBridgePID);
                 haveSavedRosBridgePID = true;
+
+	        self.core.setAttributeMeta(hn, 'ROS Bridge Port', {type: 'integer'});
+                self.core.setAttribute(hn, 'ROS Bridge Port', self.rosBridgePort);
+	        self.core.setAttributeMeta(hn, 'ROS Bridge URL', {type: 'string'});
+                self.core.setAttribute(hn, 'ROS Bridge URL', 'localhost');
+	        self.core.setAttributeMeta(hn, 'Experiment Name', {type: 'string'});
+                self.core.setAttribute(hn, 'Experiment Name', self.logFilePrefix + self.experimentName);
+                
             }
 
             // save all host related information
