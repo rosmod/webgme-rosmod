@@ -102,6 +102,14 @@ compilation and deployment as requested by the users.
 
 ### Features
 
+* Integrated support for run-time monitoring using [ROS Bridge](http://wiki.ros.org/rosbridge_suite)
+
+* Integrated support for run-time mission control / command and telemetry using [NASA OpenMCT](http://www.github.com/nasa/openmct) and [ROSMCT](http://www.github.com/rosmod/rosmct)
+
+* Integrated Hierarchical Finite State Machine (HFSM) Modeling, Simulation, and Code Generation 
+
+  See [webgme-hfsm](https://github.com/finger563/webgme-hfsm) for documentation, walkthroughs, videos, etc.
+
 * Collaborative, automatically versioned web-based development
 
 	![Project history view with branching and tagging](./img/versioning.png)
