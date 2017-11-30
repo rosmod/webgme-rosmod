@@ -44,6 +44,14 @@
 	    "readOnly": false
 	},
 	{
+	    "name": "rosBridgePort",
+	    "displayName": " ROSBridge server port.",
+	    "description": "What port number should we give ROSBridge server? Leave blank for a randomly assigned port",
+	    "value": 0,
+	    "valueType": "integer",
+	    "readOnly": false
+	},
+	{
 	    "name": "returnZip",
 	    "displayName": "Zip and return generated artifacts.",
 	    "description": "If true, it enables the client to download a zip of the artifacts.",

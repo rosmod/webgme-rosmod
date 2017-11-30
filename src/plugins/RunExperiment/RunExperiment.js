@@ -105,6 +105,10 @@ define([
         }
         self.forceIsolation = currentConfig.forceIsolation;
         self.spawnROSBridge = currentConfig.spawnROSBridge;
+        self.rosBridgePort = currentConfig.rosBridgePort;
+        if (self.rosBridgePort <= 1024) {
+            self.rosBridgePort = Math.floor((Math.random() * (65535-1024) + 1024));
+        }
 
         // get the selected hosts from the config
         self.selectedHostUserMap = {};
@@ -837,7 +841,7 @@ define([
             'export PYTHONPATH='+sharePath+':$PYTHONPATH',
             'export ROS_PACKAGE_PATH='+sharePath+':$ROS_PACKAGE_PATH',
             'export ROS_MASTER_URI='+self.rosMasterURI,
-            'roslaunch rosbridge_server rosbridge_websocket.launch > /opt/rosmod/rosbridge.log 2>&1 &',
+            'roslaunch rosbridge_server rosbridge_websocket.launch port:='+self.rosBridgePort+' > /opt/rosmod/rosbridge.log 2>&1 &',
             'echo $!',
         ].join('\n');
 
@@ -851,7 +855,7 @@ define([
                 throw new String(stderr);
             }
             self.rosBridgePID = parseInt(stdout);
-            self.notify('info', 'ROS Bridge started with PID: '+self.rosBridgePID);
+            self.notify('info', 'ROS Bridge started with PID: '+self.rosBridgePID+' on port '+self.rosBridgePort);
             deferred.resolve();
         });
         return deferred.promise;
