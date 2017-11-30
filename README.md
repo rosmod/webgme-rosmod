@@ -109,6 +109,8 @@ compilation and deployment as requested by the users.
 * Integrated Hierarchical Finite State Machine (HFSM) Modeling, Simulation, and Code Generation 
 
   See [webgme-hfsm](https://github.com/finger563/webgme-hfsm) for documentation, walkthroughs, videos, etc.
+  
+	![UML HFSM Modeling and Simulation](./img/hfsm.png)
 
 * Collaborative, automatically versioned web-based development
 
