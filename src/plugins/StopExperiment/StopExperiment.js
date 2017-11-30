@@ -351,9 +351,14 @@ define([
 
             commands = commands.join('\n');
 
-            execSync(commands, options);
-            self.notify('info', 'ROS Bridge with PID: '+self.ROSBridgePID + ' stopped');
-
+            try {
+                execSync(commands, options);
+                self.notify('info', 'ROS Bridge with PID: '+self.ROSBridgePID + ' stopped');
+            }
+            catch (err) {
+                self.notify('info', 'ROS Bridge with PID: '+self.ROSBridgePID + ' couldnt be stopped');
+                self.notify('info', err);
+            }
             deferred.resolve();
         });
         return deferred.promise;
