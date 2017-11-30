@@ -526,6 +526,14 @@ define([
 
 		if (comp.Timer_list) {
 		    comp.Timer_list.map(function(timer) {
+                        if (timer.Period <= 0) {
+		            self.notify(
+			        'warning',
+			        node.name + ' : ' +
+				    comp.name + ' : ' +
+				    timer.name + ' : ' +
+			            ' has Period <= 0, will only run once!');
+                        }
 			var ti = {
 			    "Name": timer.name,
 			    "Period": timer.Period,
