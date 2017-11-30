@@ -247,11 +247,12 @@ define([
 
 	    self._cy.on('select', 'node', function(e){
 		var node = this;
-		if (node.id()) {
-		    WebGMEGlobal.State.registerActiveSelection([node.id()]);
-		}
-		highlight( node );
-		showNodeInfo( node );
+                if (node) {
+                    var id = node.id();
+		    WebGMEGlobal.State.registerActiveSelection([id]);
+		    highlight( node );
+		    showNodeInfo( node );
+                }
 	    });
 
 	    self._cy.on('unselect', 'node', function(e){
@@ -261,6 +262,8 @@ define([
 		hideNodeInfo();
                 self.onZoomClicked();
 	    });
+
+	    WebGMEGlobal.State.registerActiveSelection([]);
 	};
 
         /* * * * * * * * Display Functions  * * * * * * * */
@@ -410,21 +413,24 @@ define([
 
 	CommVizWidget.prototype.checkDependencies = function(desc) {
 	    var self = this;
-	    // dependencies will always be either parentId (nodes & edges) or connection (edges)
-	    var deps = [];
-	    if (desc.parentId && !self.nodes[desc.parentId]) {
-		deps.push(desc.parentId);
-	    }
-	    if (desc.connection && !self.nodes[desc.connection]) {
-		deps.push(desc.connection);
-	    }
-	    var depsMet = (deps.length == 0);
-	    if (!depsMet) {
-		if (connectionTypes.indexOf(desc.type) > -1)
-		    self.dependencies.edges[desc.id] = deps;
-		else
-		    self.dependencies.nodes[desc.id] = deps;
-	    }
+            var depsMet = false;
+            if (desc) {
+	        // dependencies will always be either parentId (nodes & edges) or connection (edges)
+	        var deps = [];
+	        if (desc.parentId && !self.nodes[desc.parentId]) {
+		    deps.push(desc.parentId);
+	        }
+	        if (desc.connection && !self.nodes[desc.connection]) {
+		    deps.push(desc.connection);
+	        }
+	        depsMet = (deps.length == 0);
+	        if (!depsMet) {
+		    if (connectionTypes.indexOf(desc.type) > -1)
+		        self.dependencies.edges[desc.id] = deps;
+		    else
+		        self.dependencies.nodes[desc.id] = deps;
+	        }
+            }
 	    return depsMet;
 	};
 
@@ -477,22 +483,48 @@ define([
             self._cy.layout(self._layout_options);
         };
 
+        CommVizWidget.prototype.getDescData = function(desc) {
+            var self = this;
+            var data = null;
+            if (desc.isConnection) {
+	        var from = self.nodes[desc.from];
+	        var to   = self.nodes[desc.to];
+	        if (from && to) {
+		    data = {
+			id: from.id + to.id,
+			type: desc.type,
+			interaction: desc.type,
+			source: from.id,
+			target: to.id
+		    };
+	        }
+            }
+            else {
+		data = {
+		    id: desc.id,
+		    parent: desc.parentId,
+		    type: desc.type,
+		    NodeType: desc.type,
+                    userLogging: (desc.Logging_UserEnable && !desc.Logging_TraceEnable) ? "True" : "False",
+                    traceLogging: (desc.Logging_TraceEnable && !desc.Logging_UserEnable) ? "True" : "False",
+                    allLogging: (desc.Loging_UserEnable && desc.Logging_TraceEnable) ? "True" : "False",
+                    noLogging: (desc.Loging_UserEnable || desc.Logging_TraceEnable) ? "False" : "True",
+		    name: desc.name,
+		    label: desc.name,
+		    orgPos: null
+		};
+            }
+            return data;
+        };
+
 	// pub, sub, client, server are all edges
 	CommVizWidget.prototype.createEdge = function(desc) {
 	    var self = this;
-	    var type = desc.type;
-	    var from = self.nodes[desc.from];
-	    var to   = self.nodes[desc.to];
-	    if (from && to) {
+            var data = self.getDescData( desc );
+            if (data) {
 		self._cy.add({
 		    group: 'edges',
-		    data: {
-			id: from.id + to.id,
-			type: type,
-			interaction: type,
-			source: from.id,
-			target: to.id
-		    }
+		    data: data
 		});
 		self.nodes[desc.id] = desc;
 		self.updateDependencies();
@@ -502,21 +534,15 @@ define([
 	// nodes are components, nodes, containers, messages, services
 	CommVizWidget.prototype.createNode = function(desc) {
 	    var self = this;
-	    var node = {
-		group: 'nodes',
-		data: {
-		    id: desc.id,
-		    parent: desc.parentId,
-		    type: desc.type,
-		    NodeType: desc.type,
-		    name: desc.name,
-		    label: desc.name,
-		    orgPos: null
-		}
-	    };
-	    self._cy.add(node);
-	    self.nodes[desc.id] = desc;
-	    self.updateDependencies();
+            var data = self.getDescData( desc );
+            if (data) {
+	        self._cy.add({
+		    group: 'nodes',
+                    data: data
+	        });
+	        self.nodes[desc.id] = desc;
+	        self.updateDependencies();
+            }
 	};
 
 	// Adding/Removing/Updating items
@@ -545,16 +571,56 @@ define([
 	};
 
 	CommVizWidget.prototype.removeNode = function (gmeId) {
-            var desc = this.nodes[gmeId];
-            this._logger.debug('Removing node ' + desc.name);
-	    this._cy.remove("[id == " + gmeId + "]");
-            delete this.nodes[gmeId];
+            var self = this;
+            if (self._el && self.nodes) {
+                var idTag = gmeId.replace(/\//gm, "\\/");
+                var desc = self.nodes[gmeId];
+                if (desc) {
+                    if (!desc.isConnection) {
+                        delete self.dependencies.nodes[gmeId];
+                        self._cy.$('#'+idTag).neighborhood().forEach(function(ele) {
+                            if (ele && ele.isEdge()) {
+                                var edgeId = ele.data( 'id' );
+                                var edgeDesc = self.nodes[edgeId];
+                                self.checkDependencies(edgeDesc);
+                            }
+                        });
+                    }
+                    else {
+                        delete self.dependencies.edges[gmeId];
+                    }
+                    delete self.nodes[gmeId];
+                    delete self.waitingNodes[gmeId];
+                    self._cy.remove("#" + idTag);
+                    self.updateDependencies();
+                }
+            }
 	};
 
 	CommVizWidget.prototype.updateNode = function (desc) {
-            if (desc) {
-		this._logger.debug('Updating node:', desc);
-            }
+            var self = this;
+
+            if (self._el && self.nodes && desc) {
+                var oldDesc = self.nodes[desc.id];
+                if (oldDesc) {
+                    var idTag = desc.id.replace(/\//gm, "\\/");
+                    var cyNode = self._cy.$('#'+idTag);
+                    if (desc.isConnection) {
+                        if (desc.src != oldDesc.src || desc.dst != oldDesc.dst) {
+                            self._cy.remove('#' + idTag);
+                            self.checkDependencies( desc );
+                            self.updateDependencies();
+                        }
+                        else {
+                            cyNode.data( self.getDescData(desc) );
+                        }
+                    }
+                    else {
+                        cyNode.data( self.getDescData(desc) );
+                    }
+                }
+                self.nodes[desc.id] = desc;
+            }            
 	};
 
 	/* * * * * * * * Visualizer event handlers * * * * * * * */
@@ -564,6 +630,10 @@ define([
 
 	/* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
 	CommVizWidget.prototype.destroy = function () {
+            this._el.remove();
+            delete this._el;
+            delete this.nodes;
+            this._cy.destroy();
 	};
 
 	CommVizWidget.prototype.onActivate = function () {

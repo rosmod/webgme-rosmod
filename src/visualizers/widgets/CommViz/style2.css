@@ -17,6 +17,7 @@ edge {
 node {
     width: 40;
     height: 40;
+    border-width: 1;
     font-size: 10;
     font-weight: bold;
     min-zoomed-font-size: 4;
@@ -67,6 +68,27 @@ node[NodeType = "Component"] {
     /* height: mapData(Quality, 70, 100, 20, 50); */
 }
 
+node[noLogging = "True"] {
+    border-style : solid;
+    border-color : #E8F8FF;
+}
+
+node[userLogging = "True"] {
+    border-style : dashed;
+    border-color : #000;
+}
+
+node[traceLogging = "True"] {
+    border-style : dotted;
+    border-color : #000;
+}
+
+node[allLogging = "True"] {
+    border-style : double;
+    border-color : #000;
+    border-width : 5;
+}
+
 node[NodeType = "Message"],
 node[NodeType = "Advertised Message"] {
     background-color: green;
@@ -112,16 +134,4 @@ edge.faded {
 node.faded {
     opacity: 0.5;
     text-opacity: 0;
-}
-
-node:selected {
-    /* width: 40; */
-    /* height: 40; */
-    border-color: rgb(187, 219, 247);
-    border-opacity: 0.5;
-    border-width: 10;
-}
-
-.filtered {
-    display: none;
 }

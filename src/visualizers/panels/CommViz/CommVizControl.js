@@ -153,10 +153,13 @@
 		type: metaName,
                 name: node.getAttribute(nodePropertyNames.Attributes.name),
                 childrenIds: node.getChildrenIds(),
-                parentId: node.getParentId(),
-                isConnection: GMEConcepts.isConnection(nodeId)
+                parentId: node.getParentId()
             };
-	    if (connectionTypes.indexOf(objDescriptor.type) > -1) {
+            objDescriptor.isConnection = (connectionTypes.indexOf(objDescriptor.type) > -1);
+	    node.getAttributeNames().map(function(a) {
+		objDescriptor[a] = node.getAttribute(a);
+	    });
+	    if (objDescriptor.isConnection) {
 		objDescriptor.pointerName = connectionToPtrMap[objDescriptor.type];
 		objDescriptor.connection = node.getPointer(objDescriptor.pointerName).to;
 		this._nodeToEdge(objDescriptor);
