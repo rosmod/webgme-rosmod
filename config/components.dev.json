@@ -15,6 +15,7 @@
 	    "Experiments",
 	    "Systems",
 	    "Pseudo State",
+            "External Transition",
 	    "Initial",
 	    "End State"
 	],
