@@ -109,18 +109,13 @@
 		"Exit": "C++",
 		"Tick": "C++"
 	    },
-	    "External Transition": {
-		"Guard": "C++",
-		"Action": "C++"
-	    },
 	    "Internal Transition": {
 		"Guard": "C++",
 		"Action": "C++"
 	    }
 	},
         "nameTemplateMap": {
-            "Internal Transition": "IT: {{{Event}}}",
-            "External Transition": "ET: {{{Event}}}"
+            "Internal Transition": "IT: {{{Event}}}"
         }
     },
     "GenericUIProjectNavigatorController": {
