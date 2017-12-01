@@ -48,9 +48,41 @@ define([
 
         this.nodes = {};
 	this.plotIDs = [];
+        this.alignLogs = true;
 
         // set widget class
         this._el.addClass(WIDGET_CLASS);
+    };
+
+    ResultsVizWidget.prototype._addSplitPanelToolbarBtns = function(toolbarEl) {
+        var self = this;
+
+        // BUTTON EVENT HANDLERS
+
+        var enableAlignmentEl = [
+            '<span id="enableAlignment" class="split-panel-toolbar-btn fa fa-toggle-on">',
+            '</span>',
+        ].join('\n');
+
+        var disableAlignmentEl = [
+            '<span id="disableAlignment" class="split-panel-toolbar-btn fa fa-toggle-off">',
+            '</span>',
+        ].join('\n');
+
+        toolbarEl.append(enableAlignmentEl);
+        toolbarEl.append(disableAlignmentEl);
+
+        toolbarEl.find('#enableAlignment').on('click', function(){
+            self.alignLogs = true;
+            var id = Object.keys(self.nodes)[0];
+            self.updateNode( self.nodes[id] );
+        });
+
+        toolbarEl.find('#disableAlignment').on('click', function(){
+            self.alignLogs = false;
+            var id = Object.keys(self.nodes)[0];
+            self.updateNode( self.nodes[id] );
+        });
     };
 
     ResultsVizWidget.prototype.onWidgetContainerResize = function (width, height) {
@@ -152,7 +184,9 @@ define([
 			});
 
 			var data = datas[a];
-			data = UserParser.alignLogs(data, timeBeginEnd.begin, timeBeginEnd.end );
+                        if (self.alignLogs) {
+			    data = UserParser.alignLogs(data, timeBeginEnd.begin, timeBeginEnd.end );
+                        }
 			if (!_.isEmpty(data)) {
 			    Plotter.plotData(self._el, 'plot_'+a, data, self._onClick.bind(self, desc.id) );
 			    self.plotIDs.push('#plot_'+a);

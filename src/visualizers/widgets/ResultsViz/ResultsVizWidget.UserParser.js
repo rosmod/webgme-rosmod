@@ -29,6 +29,15 @@ define([], function() {
 	    });
 	    return log_data;
 	},
+        removeAlignment: function(log_data) {
+	    var logKeys = Object.keys(log_data);
+	    logKeys.map(function(key) {
+		var log = log_data[key];
+                log.data.splice(0, 1); // remove the first element
+                log.data.splice(-1, 1); // remove the last element
+	    });
+	    return log_data;
+        },
 	getDataFromAttribute: function(attribute) {
 	    var log_data = {};
 	    // get numerical data of the form:

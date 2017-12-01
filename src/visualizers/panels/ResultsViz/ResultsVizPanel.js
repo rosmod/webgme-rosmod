@@ -62,6 +62,18 @@ define(['js/PanelBase/PanelBaseWithHeader',
         this.onActivate();
     };
 
+    /* * * * * * * * Toolbar related Functions       * * * * * * * */
+
+    ResultsVizPanel.prototype.getSplitPanelToolbarEl = function() {
+        this._splitPanelToolbarEl = IActivePanel.prototype.getSplitPanelToolbarEl.call(this);
+        // Set the size bigger than 40 x 40 and add some padding for the scroll-bar.
+        this._splitPanelToolbarEl.css({
+            'padding-right': '10px'
+        });
+        this.widget._addSplitPanelToolbarBtns(this._splitPanelToolbarEl);
+        return this._splitPanelToolbarEl;
+    };
+    
     /* OVERRIDE FROM WIDGET-WITH-HEADER */
     /* METHOD CALLED WHEN THE WIDGET'S READ-ONLY PROPERTY CHANGES */
     ResultsVizPanel.prototype.onReadOnlyChanged = function (isReadOnly) {
