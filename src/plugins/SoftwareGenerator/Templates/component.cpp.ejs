@@ -45,8 +45,10 @@ if (compInfo['State Machine_list']) {
       // update the HFSM timer period and start the timer
       ros::Duration newPeriod = ros::Duration( <%- hfsm.sanitizedName %>_root->getActiveLeaf()->getTimerPeriod() );
       <%- hfsm.sanitizedName %>_HFSM_timer.stop();
-      <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newPeriod );
-      <%- hfsm.sanitizedName %>_HFSM_timer.start();
+      if (!<%- hfsm.sanitizedName %>_HFSM_root->hasStopped()) {
+        <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newPeriod );
+        <%- hfsm.sanitizedName %>_HFSM_timer.start();
+      }
     }
 <%
   });
@@ -89,8 +91,10 @@ void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const 
     // update the timer period according to new active state
     ros::Duration newPeriod = ros::Duration( <%- hfsm.sanitizedName %>_root->getActiveLeaf()->getTimerPeriod() );
     <%- hfsm.sanitizedName %>_HFSM_timer.stop();
-    <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newPeriod );
-    <%- hfsm.sanitizedName %>_HFSM_timer.start();
+    if (!<%- hfsm.sanitizedName %>_HFSM_root->hasStopped()) {
+      <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newPeriod );
+      <%- hfsm.sanitizedName %>_HFSM_timer.start();
+    }
   } catch (std::exception& e) {
     // catch exceptions
     logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation: %s", e.what());
