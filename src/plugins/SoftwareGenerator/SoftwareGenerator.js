@@ -526,7 +526,11 @@ define([
                     // get all constraints in the component
 		    if (comp.Constraint_list) {
 			comp.Constraint_list.map(function(constraint) {
-			    if (pkg.constraints.indexOf(constraint) == -1) {
+                            var deploymentOnly = constraint['Deployment Only'];
+                            if (deploymentOnly === null || deploymentOnly === undefined) {
+                                deploymentOnly = true;
+                            }
+			    if (!deploymentOnly && pkg.constraints.indexOf(constraint) == -1) {
 				pkg.constraints.push(constraint);
 			    }
 			});
