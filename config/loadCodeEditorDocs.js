@@ -40,6 +40,22 @@ function loadDocs(components) {
         var subscriberOp = fs.readFileSync(__dirname + '/../docs/subscriberOp.md', 'utf8');
         var subscriberABL = fs.readFileSync(__dirname + '/../docs/subscriberABL.md', 'utf8');
 
+        // HFSM Documentation:
+        var StateMachineDoc = fs.readFileSync(__dirname + '/../docs/StateMachine.md', 'utf8');
+        var StateMachineInclDoc = fs.readFileSync(__dirname + '/../docs/StateMachineIncl.md', 'utf8');
+        var StateMachineDefDoc = fs.readFileSync(__dirname + '/../docs/StateMachineDef.md', 'utf8');
+        var StateMachineDeclDoc = fs.readFileSync(__dirname + '/../docs/StateMachineDecl.md', 'utf8');
+        var StateMachineInitDoc = fs.readFileSync(__dirname + '/../docs/StateMachineInit.md', 'utf8');
+
+        var StateDoc = fs.readFileSync(__dirname + '/../docs/State.md', 'utf8');
+        var StateEntryDoc = fs.readFileSync(__dirname + '/../docs/StateEntry.md', 'utf8');
+        var StateExitDoc = fs.readFileSync(__dirname + '/../docs/StateExit.md', 'utf8');
+        var StateTickDoc = fs.readFileSync(__dirname + '/../docs/StateTick.md', 'utf8');
+
+        var InternalTransitionDoc = fs.readFileSync(__dirname + '/../docs/InternalTransition.md', 'utf8');
+        var InternalTransitionGuardDoc = fs.readFileSync(__dirname + '/../docs/InternalTransitionGuard.md', 'utf8');
+        var InternalTransitionActionDoc = fs.readFileSync(__dirname + '/../docs/InternalTransitionAction.md', 'utf8');
+
         components.CodeEditor.attrToInfoMap = {
             "Project": {
                 "ancestorDepth": 0,
@@ -165,7 +181,35 @@ function loadDocs(components) {
 		    "Brief Description": [],
 		    "Detailed Description": []
                 }
+	    },
+            "State Machine": {
+                "ancestorDepth": 1,
+                "docstring": [],
+                "attributes": {
+		    "Includes": [],
+		    "Initialization": [],
+		    "Definitions": [],
+		    "Declarations": []
+                }
+	    },
+	    "State": {
+                "ancestorDepth": 0,
+                "docstring": [],
+                "attributes": {
+		    "Entry": [],
+		    "Exit": [],
+		    "Tick": []
+                }
+	    },
+	    "Internal Transition": {
+                "ancestorDepth": 1,
+                "docstring": [],
+                "attributes": {
+		    "Guard": [],
+		    "Action": []
+                }
 	    }
+
 	};
 
 
@@ -221,6 +265,22 @@ function loadDocs(components) {
         components.CodeEditor.attrToInfoMap.Subscriber.attributes["Authors"] = authors;
         components.CodeEditor.attrToInfoMap.Subscriber.attributes["Brief Description"] = bDesc;
         components.CodeEditor.attrToInfoMap.Subscriber.attributes["Detailed Description"] = dDesc;
+
+        // HFSM docs
+        components.CodeEditor.attrToInfoMap['State Machine']['docstring'] = StateMachineDoc;
+        components.CodeEditor.attrToInfoMap['State Machine'].attributes["Includes"] = StateMachineInclDoc;
+        components.CodeEditor.attrToInfoMap['State Machine'].attributes["Definitions"] = StateMachineDefDoc;
+        components.CodeEditor.attrToInfoMap['State Machine'].attributes["Declarations"] = StateMachineDeclDoc;
+        components.CodeEditor.attrToInfoMap['State Machine'].attributes["Initialization"] = StateMachineInitDoc;
+
+        components.CodeEditor.attrToInfoMap.State['docstring'] = StateDoc;
+        components.CodeEditor.attrToInfoMap.State.attributes["Entry"] = StateEntryDoc;
+        components.CodeEditor.attrToInfoMap.State.attributes["Exit"] = StateExitDoc;
+        components.CodeEditor.attrToInfoMap.State.attributes["Tick"] = StateTickDoc;
+
+        components.CodeEditor.attrToInfoMap['Internal Transition']['docstring'] = InternalTransitionDoc;
+        components.CodeEditor.attrToInfoMap['Internal Transition'].attributes["Guard"] = InternalTransitionGuardDoc;
+        components.CodeEditor.attrToInfoMap['Internal Transition'].attributes["Action"] = InternalTransitionActionDoc;
     }
     catch(e){
         console.log(e)
