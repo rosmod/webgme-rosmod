@@ -346,9 +346,12 @@ define([
         };
 
         var deferred = Q.defer();
+
         exec(find_child_commands, options, function(error, stdout, stderr) {
             if (error) {
-                deferred.reject(error);
+                self.notify('warning', 'ROS Bridge couldnt stop, perhaps it died already?');
+                self.notify('warning', new String(error));
+                deferred.resolve();
             }
             var commands=[
                 'kill -9 ' + self.ROSBridgePID,
@@ -386,7 +389,7 @@ define([
         var info = {
             name: self.rosMCTExperimentName,
             rosbridgeurl: 'localhost',
-            rosbridgeport: self.rosBridgePort,
+            rosbridgeport: ""+self.rosBridgePort,
             status: 'CLOSE'
         };
 

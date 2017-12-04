@@ -852,14 +852,21 @@ define([
         var deferred = Q.defer();
         exec(commands, options, function(error, stdout, stderr) {
             if (error) {
-                throw new String(stderr);
+                self.rosBridgePID = 0;
+                self.notify('warning', 'ROS Bridge couldnt start, is it installed?');
+                self.notify('warning', new String(error));
+                deferred.resolve();
             }
-            self.rosBridgePID = parseInt(stdout);
-            self.notify('info', 'ROS Bridge started with PID: '+self.rosBridgePID+' on port '+self.rosBridgePort);
-            self.informRosMCT()
-                .then(function() {
-                    deferred.resolve();
-                });
+            else {
+                self.rosBridgePID = parseInt(stdout);
+                self.notify('info', 'ROS Bridge started with PID: '+self.rosBridgePID+' on port '+self.rosBridgePort);
+                setTimeout(function() {
+                    self.informRosMCT()
+                        .then(function() {
+                            deferred.resolve();
+                        });
+                }, 5000);
+            }
         });
         return deferred.promise;
     };
@@ -874,7 +881,7 @@ define([
         var info = {
             name: system_name,
             rosbridgeurl: 'localhost',
-            rosbridgeport: self.rosBridgePort,
+            rosbridgeport: ""+self.rosBridgePort,
             status: 'OPEN'
         };
 
