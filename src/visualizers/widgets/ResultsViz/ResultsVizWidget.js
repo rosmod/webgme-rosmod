@@ -228,15 +228,32 @@ define([
     };
 
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
+    ResultsVizWidget.prototype.clearNodes = function() {
+        if (this._el) {
+            this._el.empty();
+        }
+        delete this.nodes;
+        this.nodes = {};
+    };
+
+    ResultsVizWidget.prototype.shutdown = function() {
+        if (this._el) {
+            this._el.remove();
+            delete this._el;
+        }
+    };
+        
     ResultsVizWidget.prototype.destroy = function () {
+        this.clearNodes();
+        this.shutdown();
     };
 
     ResultsVizWidget.prototype.onActivate = function () {
-        //console.log('ResultsVizWidget has been activated');
     };
 
     ResultsVizWidget.prototype.onDeactivate = function () {
-        //console.log('ResultsVizWidget has been deactivated');
+        this.clearNodes();
+        this.shutdown();
     };
 
     return ResultsVizWidget;

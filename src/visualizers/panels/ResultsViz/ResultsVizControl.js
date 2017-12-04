@@ -39,6 +39,8 @@ define(['js/Constants',
         };
     };
 
+    var rootTypes = [ 'Results' ];
+
     /* * * * * * * * Visualizer content update callbacks * * * * * * * */
     // One major concept here is with managing the territory. The territory
     // defines the parts of the project that the visualizer is interested in
@@ -49,15 +51,19 @@ define(['js/Constants',
 
         self._logger.debug('activeObject nodeId \'' + nodeId + '\'');
 
-        // Remove current territory patterns
-        if (self._currentNodeId) {
-            self._client.removeUI(self._territoryId);
-        }
+        if (nodeId != self._currentNodeId && rootTypes.indexOf(desc.type) > -1) {
 
-        self._currentNodeId = nodeId;
-        self._currentNodeParentId = undefined;
+            // Remove current territory patterns
+            if (self._currentNodeId) {
+                self._widget.clearNodes();
+                self._selfPatterns = {};
+                self._client.removeUI(self._territoryId);
+                self._client.updateTerritory(self._territoryId, self._selfPatterns);
+            }
 
-        if (self._currentNodeId || self._currentNodeId === CONSTANTS.PROJECT_ROOT_ID) {
+            self._currentNodeId = nodeId;
+            self._currentNodeParentId = undefined;
+
             // Put new node's info into territory rules
             self._selfPatterns = {};
             self._selfPatterns[nodeId] = {children: 0};  // Territory "rule"
@@ -92,8 +98,14 @@ define(['js/Constants',
             objDescriptor;
 
         if (nodeObj) {
+	    var metaObj = this._client.getNode(nodeObj.getMetaTypeId()),
+		metaName = undefined;
+	    if (metaObj) {
+		metaName = metaObj.getAttribute(nodePropertyNames.Attributes.name);
+	    }
             objDescriptor = {
                 'id': undefined,
+                'type': metaName,
                 'name': undefined,
                 'childrenIds': undefined,
                 'parentId': undefined,
