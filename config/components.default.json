@@ -15,7 +15,6 @@
 	    "Experiments",
 	    "Systems",
 	    "Pseudo State",
-            "External Transition",
 	    "Initial",
 	    "End State"
 	],
@@ -113,10 +112,15 @@
 	    "Internal Transition": {
 		"Guard": "C++",
 		"Action": "C++"
+	    },
+	    "External Transition": {
+		"Guard": "C++",
+		"Action": "C++"
 	    }
 	},
         "nameTemplateMap": {
-            "Internal Transition": "IT: {{{Event}}}"
+            "Internal Transition": "IT: {{{Event}}}",
+            "External Transition": "ET: {{{Event}}}"
         }
     },
     "GenericUIProjectNavigatorController": {

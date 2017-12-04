@@ -208,8 +208,15 @@ function loadDocs(components) {
 		    "Guard": [],
 		    "Action": []
                 }
+	    },
+	    "External Transition": {
+                "ancestorDepth": 1,
+                "docstring": [],
+                "attributes": {
+		    "Guard": [],
+		    "Action": []
+                }
 	    }
-
 	};
 
 
@@ -281,6 +288,10 @@ function loadDocs(components) {
         components.CodeEditor.attrToInfoMap['Internal Transition']['docstring'] = InternalTransitionDoc;
         components.CodeEditor.attrToInfoMap['Internal Transition'].attributes["Guard"] = InternalTransitionGuardDoc;
         components.CodeEditor.attrToInfoMap['Internal Transition'].attributes["Action"] = InternalTransitionActionDoc;
+
+        components.CodeEditor.attrToInfoMap['External Transition']['docstring'] = InternalTransitionDoc;
+        components.CodeEditor.attrToInfoMap['External Transition'].attributes["Guard"] = InternalTransitionGuardDoc;
+        components.CodeEditor.attrToInfoMap['External Transition'].attributes["Action"] = InternalTransitionActionDoc;
     }
     catch(e){
         console.log(e)
