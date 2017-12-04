@@ -281,13 +281,14 @@ define([
 	    software_folder.Package_list.map(function(pkgInfo) {
 
 		if (pkgInfo.Component_list) {
+                    pkgInfo.generateComps = true;
 		    pkgInfo.Component_list.map(function(compInfo) {
 			self.generateComponentFiles(prefix, pkgInfo, compInfo);
 		    });
 		}
 
 		if (pkgInfo.Message_list) {
-                    self.generateTypes = true;
+                    pkgInfo.generateTypes = true;
 		    pkgInfo.Message_list.map(function(msgInfo) {
 			var msgFileName = [prefix,
 					   pkgInfo.name,
@@ -297,7 +298,7 @@ define([
 		    });
 		}
 		if (pkgInfo.Service_list) {
-                    self.generateTypes = true;
+                    pkgInfo.generateTypes = true;
 		    pkgInfo.Service_list.map(function(srvInfo) {
 			var srvFileName = [prefix,
 					   pkgInfo.name,'srv',
@@ -341,12 +342,9 @@ define([
 	    'catkin build --no-status',
 	    'mkdir bin',
             'mkdir share',
-	    'cp devel/lib/*.so bin/.'
+	    'cp devel/lib/*.so bin/.',
+            'cp -r devel/lib/python2.7/dist-packages/* share/.'
 	];
-        if (self.generateTypes) {
-            // only do this if we have generated services / messages
-            compile_script.push('cp -r devel/lib/python2.7/dist-packages/* share/.');
-        }
 
         // save the compilation script
         self.artifacts['compile_script.bash'] = compile_script.join('\n');
@@ -549,7 +547,7 @@ define([
         for (var arch in validHostList) {
             var hl = validHostList[ arch ];
             hl.map(function(h) {
-                h.compilePackages = [];
+                h.compilePackages = sortedPackages;
             });
         };
 
@@ -864,12 +862,19 @@ define([
 	    'rm -rf bin',
 	    'catkin config --extend ' + host.host['Build Workspace'],
 	    'catkin clean -b --yes',
-            buildCommand, 
-	    'mkdir bin',
+            'mkdir bin',
             'mkdir share',
-	    'cp devel/lib/*.so bin/.'
+            buildCommand
 	];
-        if (self.generateTypes) {
+        var hasComps = host.compilePackages.filter(function(p) { return p.generateComps == true; }).length > 0;
+        var hasDefs  = host.compilePackages.filter(function(p) { return p.generateTypes == true; }).length > 0;
+
+        if (hasComps) {
+            // only do this if we have generated components (and will therefore generate binaries
+            compile_commands.push('cp devel/lib/*.so bin/.');
+        }
+
+        if (hasDefs) {
             // only do this if we have generated services / messages
             compile_commands.push('cp -r devel/lib/python2.7/dist-packages/* share/.');
         }
@@ -967,23 +972,28 @@ define([
 		}
 	    })
 	    .then(function() {
-		// make the local binary folder for the architecture
-		mkdirp.sync(archBinPath);
-		// copy the compiled binaries from remote into the local bin folder
-		self.notify('info', 'copying from ' + host.intf.IP + ' into local storage.');
-		return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
-					  archBinPath + '/.',
-					  host.intf.IP,
-					  host.user);
+                if (hasComps) {
+		    // make the local binary folder for the architecture
+		    mkdirp.sync(archBinPath);
+		    // copy the compiled binaries from remote into the local bin folder
+		    self.notify('info', 'copying binaries from ' + host.intf.IP + ' into local storage.');
+		    return utils.copyFromHost(path.join(compile_dir, 'bin') + '/*', 
+					      archBinPath + '/.',
+					      host.intf.IP,
+					      host.user);
+                }
 	    })
             .then(function() {
-		// make the local binary folder for the architecture
-		mkdirp.sync(sharePath);
-                // copy the message/service deserialization generated as part of the build
-                return utils.copyFromHost(path.join(compile_dir, 'share') + '/*',
-                                          sharePath + '/.',
-                                          host.intf.IP,
-                                          host.user);
+                if (hasDefs) {
+		    // make the local binary folder for the architecture
+		    mkdirp.sync(sharePath);
+                    // copy the message/service deserialization generated as part of the build
+		    self.notify('info', 'copying definitions from ' + host.intf.IP + ' into local storage.');
+                    return utils.copyFromHost(path.join(compile_dir, 'share') + '/*',
+                                              sharePath + '/.',
+                                              host.intf.IP,
+                                              host.user);
+                }
             })
             .then(function() {
                 // remove all folders within share/<package name>/ except msg,srv
