@@ -351,6 +351,7 @@ define([
 			var capabilities = host.host.Capability_list;
 			if (self.capabilitiesMeetConstraints(capabilities, constraints)) {
 			    self.experiment.push([container, host]);
+			    self.notify('info', `mapping ${container.name} to ${host.host.name}`);
 			    hosts.splice(j,1);
 			    foundHost = true;
 			    break;
@@ -400,23 +401,25 @@ define([
 	var path = require('path');
 	var fs = require('fs');
 	var platforms = [];
-	var binaries = [];
+	var binaries = {};
 	self.experiment.map(function (containerToHostMap) {
+	    // get the platforms required
+	    var host = containerToHostMap[1];
+	    var devType = utils.getDeviceType(host.host);
+	    if (platforms.indexOf(devType) == -1) {
+		platforms.push(devType);
+		binaries[devType] = [];
+            }
 	    // get the components required
 	    var container = containerToHostMap[0];
 	    container.Node_list.map(function(node) {
 		var nodeConf = self.configs[ node.name ];
 		nodeConf['Component Instances'].map(function(ci) {
-		    if (binaries.indexOf(ci.Definition) == -1) {
-			binaries.push(ci.Definition);
+		    if (binaries[devType].indexOf(ci.Definition) == -1) {
+			binaries[devType].push(ci.Definition);
 		    }
 		});
 	    })
-	    // get the platforms required
-	    var host = containerToHostMap[1];
-	    var devType = utils.getDeviceType(host.host);
-	    if (platforms.indexOf(devType) == -1)
-		platforms.push(devType);
 	});
 	var tasks = platforms.map(function (platform) {
 	    var platformBinPath = path.join(self.root_dir,
@@ -425,7 +428,7 @@ define([
 	    if (!fs.existsSync(platformBinPath)) {
 		throw new String(platform + ' does not have compiled binaries!');
 	    }
-	    binaries.map(function(binary) {
+	    binaries[platform].map(function(binary) {
 		var libPath = platformBinPath + '/' + binary;
 		if (!fs.existsSync(libPath)) {
 		    var binName = path.basename(libPath);
