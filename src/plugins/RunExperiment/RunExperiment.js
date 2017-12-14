@@ -48,6 +48,9 @@ define([
     RunExperiment.prototype.constructor = RunExperiment;
 
     RunExperiment.prototype.notify = function(level, msg) {
+        if (typeof msg !== 'string') {
+            msg = new String(msg);
+        }
 	var self = this;
 	var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
 	var lines = msg.split('\n');
@@ -244,12 +247,12 @@ define([
 		callback(null, self.result);
 	    })
 	    .catch(function(err) {
+                if (typeof err !== 'string')
+                    err = new String(err);
 		self.removeTempFiles();
 		if (self.experiment.length && self.hasStartedDeploying) { // if we made a host to container map
 		    return self.stopHosts()
 			.then(function() {
-                            if (typeof err != 'String')
-                                err = new String(err);
         		    self.notify('error', err);
 			    self.result.setSuccess(false);
 			    callback(err, self.result);
