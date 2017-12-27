@@ -109,6 +109,7 @@ define([
         self.forceIsolation = currentConfig.forceIsolation;
         self.spawnROSBridge = currentConfig.spawnROSBridge;
         self.rosBridgePort = currentConfig.rosBridgePort;
+        self.rosBridgeServerIp = currentConfig.rosBridgeServerIp;
         if (self.rosBridgePort <= 1024) {
             self.rosBridgePort = Math.floor((Math.random() * (65535-1024) + 1024));
         }
@@ -847,6 +848,7 @@ define([
             'export PYTHONPATH='+sharePath+':$PYTHONPATH',
             'export ROS_PACKAGE_PATH='+sharePath+':$ROS_PACKAGE_PATH',
             'export ROS_MASTER_URI='+self.rosMasterURI,
+	    'export ROS_IP='+self.rosBridgeServerIp,
             'roslaunch rosbridge_server rosbridge_websocket.launch port:='+self.rosBridgePort+' > /opt/rosmod/rosbridge.log 2>&1 &',
             'echo $!',
         ].join('\n');

@@ -52,6 +52,14 @@
 	    "readOnly": false
 	},
 	{
+	    "name": "rosBridgeServerIp",
+	    "displayName": " ROSBridge server IP.",
+	    "description": "What is the ROS_IP of the rosbridge server - this is the IP that the nodes in the system will use to connect to the rosbridge server.",
+	    "value": "127.0.0.1",
+	    "valueType": "string",
+	    "readOnly": false
+	},
+	{
 	    "name": "returnZip",
 	    "displayName": "Zip and return generated artifacts.",
 	    "description": "If true, it enables the client to download a zip of the artifacts.",
