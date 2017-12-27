@@ -829,10 +829,12 @@ define([
 		.then(function(output) {
 		    // output.stdout should have the PIDs for any external nodes we launched!
 		    console.log(output.stdout);
-		    var PIDs = output.split('\n').map((o) => {
+		    var PIDs = output.stdout.split('\n').map((o) => {
 			return parseInt(o.trim());
-		    });
-		    console.log(PIDS);
+		    }).filter((o) => {
+                        return o !== NaN && o > 100;
+                    });
+		    console.log(PIDs);
 		});
 	});
 	return Q.all(tasks);
