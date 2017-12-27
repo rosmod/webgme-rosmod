@@ -43,6 +43,8 @@ define([], function() {
                 'Component': 'makeComponentConvenience',
                 'Message': 'makeMessageConvenience',
                 'Service': 'makeServiceConvenience',
+                'External Message': 'makeExternalMessageConvenience',
+                'External Service': 'makeExternalServiceConvenience',
                 'Advertised Message': 'makeAdvertisedMessageConvenience',
                 'Advertised Service': 'makeAdvertisedServiceConvenience',
                 'External Definitions': 'makeExternalDefinitionsConvenience',
@@ -151,6 +153,20 @@ define([], function() {
             var parent = objects[obj.parentPath];
             // make .Package convenience member for rendering code
             obj.Package = parent.name;
+            // make .TypeName convenience member for rendering code
+            obj.TypeName = obj.name;
+            // make .AdvertisedName convenience member for rendering code
+            obj.AdvertisedName = obj.Package + '/' + obj.name;
+        },
+        makeExternalMessageConvenience: function(obj, objects) {
+            // already will have .Package convenience member for rendering code from model
+            // make .TypeName convenience member for rendering code
+            obj.TypeName = obj.name;
+            // make .AdvertisedName convenience member for rendering code
+            obj.AdvertisedName = obj.Package + '/' + obj.name;
+        },
+        makeExternalServiceConvenience: function(obj, objects) {
+            // already will have .Package convenience member for rendering code from model
             // make .TypeName convenience member for rendering code
             obj.TypeName = obj.name;
             // make .AdvertisedName convenience member for rendering code
