@@ -91,6 +91,7 @@
 	'Deployment',
 	'Container',
 	'Node',
+	'External Node',
 	'Component',
 	'Publisher',
 	'Subscriber',

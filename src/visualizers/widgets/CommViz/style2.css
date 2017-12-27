@@ -61,6 +61,22 @@ node[NodeType = "Node"] {
     font-weight: bold;
 }
 
+node[NodeType = "External Node"] {
+    content: data(label);
+    shape: roundrectangle;
+    text-wrap: wrap;
+    text-max-width: 90px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    text-valign: top;
+    text-halign: center;
+    background-color: #3197EB;
+    color: #3399CC;
+    font-weight: bold;
+}
+
 node[NodeType = "Component"] {
     background-color: #E8F8FF; /*#FACD37;*/
     text-outline-color: #E8F8FF; /*#FACD37;*/
