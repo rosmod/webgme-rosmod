@@ -244,7 +244,7 @@ define([
                 var pids = host.externalNodePIDs.join(' ');
                 self.notify('info', 'stopping external node processes: ' + pids);
                 host.externalNodePIDs.map((pid) => {
-                    host_commands.push('kill -- -$( ps opgid= '+pid+' | tr -d ' ' )');
+                    host_commands.push("kill -- -$( ps opgid= "+pid+" | tr -d ' ' )");
                 });
             }
 	    self.notify('info', 'stopping processes on: '+ user.name + '@' + ip);
