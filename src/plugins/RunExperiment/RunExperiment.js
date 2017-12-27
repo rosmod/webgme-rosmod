@@ -809,6 +809,17 @@ define([
 				       nodeConfigName + redirect_command +' &');
 		});
 	    }
+	    if (container['External Node_list']) {
+		// TODO: figure out best way of getting all the PIDs
+		// of the External Nodes back so they can be saved
+		// into the model for later teardown by stop
+		// experiment
+		container['External Node_list'].map(function(node) {
+		    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
+			' 2> ' + self.configPrefix + node.name + '.stderr.log';
+		    host_commands.push('nohup roslaunch ' + node.name + ' ' + node['Launch File'] + redirect_command + ' &');
+		});
+	    }
             // now run the commands
 	    self.notify('info','starting binaries.');
 	    return utils.deployOnHost(host_commands, ip, user);
