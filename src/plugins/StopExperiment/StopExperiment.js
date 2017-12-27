@@ -171,6 +171,8 @@ define([
                             ip = self.core.getAttribute(node, 'IP'),
                             key = self.core.getAttribute(node, 'Key'),
 			    RunningRoscore = self.core.getAttribute(node, 'RunningRoscore'),
+                            // external node PIDS
+                            externalNodePIDs = self.core.getAttribute(node, 'External Nodes'),
                             // ROS Bridge
                             ROSBridgePID = self.core.getAttribute(node, 'ROS Bridge PID'),
                             ROSBridgePort = self.core.getAttribute(node, 'ROS Bridge Port'),
@@ -182,6 +184,10 @@ define([
                             self.rosBridgePort =ROSBridgePort;
                             self.rosBridgeURL =ROSBridgeUrl;
                             self.rosMCTExperimentName = rosMCTExperimentName;
+                        }
+
+                        if (externalNodePIDs) {
+                            externalNodePIDs = JSON.parse(externalNodePIDs);
                         }
 
                         if (ip && key && directory) {
@@ -201,6 +207,7 @@ define([
 			    intf: intf,
 			    artifacts: artifacts,
 			    RunningRoscore: RunningRoscore,
+                            externalNodePIDs: externalNodePIDs
 			});
 			self.core.deleteNode(node);
 		    }
@@ -232,6 +239,13 @@ define([
 	    ];
             if (host.RunningRoscore) {
                 host_commands.push('pkill roscore');
+            }
+            if (host.externalNodePIDs) {
+                var pids = host.externalNodePIDs.join(' ');
+                self.notify('info', 'stopping external node processes: ' + pids);
+                host.externalNodePIDs.map((pid) => {
+                    host_commands.push('kill -- -$( ps opgid= '+pid+' | tr -d ' ' )');
+                });
             }
 	    self.notify('info', 'stopping processes on: '+ user.name + '@' + ip);
 	    return utils.executeOnHost(host_commands, ip, user);

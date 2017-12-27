@@ -832,13 +832,12 @@ define([
 	    return utils.deployOnHost(host_commands, ip, user)
 		.then(function(output) {
 		    // output.stdout should have the PIDs for any external nodes we launched!
-		    console.log(output.stdout);
 		    var PIDs = output.stdout.split('\n').map((o) => {
 			return parseInt(o.trim());
 		    }).filter((o) => {
                         return o !== NaN && o > 100;
                     });
-		    console.log(PIDs);
+                    host.externalNodePIDs = PIDs;
 		});
 	});
 	return Q.all(tasks);
@@ -1038,7 +1037,11 @@ define([
                 self.core.setAttribute(hn, 'ROS Bridge URL', 'localhost');
 	        self.core.setAttributeMeta(hn, 'Experiment Name', {type: 'string'});
                 self.core.setAttribute(hn, 'Experiment Name', self.logFilePrefix + self.experimentName);
-                
+            }
+
+            if (host.externalNodePIDs) {
+	        self.core.setAttribute(hn, 'External Nodes', JSON.stringify(host.externalNodePIDs));
+                self.core.setAttributeMeta(hn, 'External Nodes', {type: 'string'});
             }
 
             // save all host related information
