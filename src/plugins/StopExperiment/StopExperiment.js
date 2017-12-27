@@ -240,7 +240,7 @@ define([
             if (host.RunningRoscore) {
                 host_commands.push('pkill roscore');
             }
-            if (host.externalNodePIDs) {
+            if (host.externalNodePIDs && host.externalNodePIDs.length) {
                 var pids = host.externalNodePIDs.join(' ');
                 self.notify('info', 'stopping external node processes: ' + pids);
                 host.externalNodePIDs.map((pid) => {
