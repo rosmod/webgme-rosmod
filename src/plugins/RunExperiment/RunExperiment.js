@@ -818,11 +818,20 @@ define([
 		    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
 			' 2> ' + self.configPrefix + node.name + '.stderr.log';
 		    host_commands.push('nohup roslaunch ' + node.name + ' ' + node['Launch File'] + redirect_command + ' &');
+		    host_commands.push('echo $!'); // what was the PID of this process?
 		});
 	    }
             // now run the commands
 	    self.notify('info','starting binaries.');
-	    return utils.deployOnHost(host_commands, ip, user);
+	    return utils.deployOnHost(host_commands, ip, user)
+		.then(function(output) {
+		    // output.stdout should have the PIDs for any external nodes we launched!
+		    console.log(output.stdout);
+		    var PIDs = output.split('\n').map((o) => {
+			return parseInt(o.trim());
+		    });
+		    console.log(PIDS);
+		});
 	});
 	return Q.all(tasks);
     };
