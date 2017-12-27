@@ -28,6 +28,8 @@ define([], function() {
             var orderedTypes = [
                 'Message',
                 'Service',
+                'External Message',
+                'External Service',
                 'Advertised Message',
                 'Advertised Service',
                 'Link',
