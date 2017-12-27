@@ -336,7 +336,9 @@ define([
 			});
 		    }
 		    else { // no nodes in the container
-			throw new String('Container ' + container.name + ' contains no runnable Nodes!');
+                        if (!container['External Node_list']) {
+			    throw new String('Container ' + container.name + ' contains no runnable Nodes!');
+                        }
 		    }
 		    sortedContainers.push(container);
 		});
