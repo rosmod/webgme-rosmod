@@ -418,29 +418,33 @@ define([
             }
 	    // get the components required
 	    var container = containerToHostMap[0];
-	    container.Node_list.map(function(node) {
-		var nodeConf = self.configs[ node.name ];
-		nodeConf['Component Instances'].map(function(ci) {
-		    if (binaries[devType].indexOf(ci.Definition) == -1) {
-			binaries[devType].push(ci.Definition);
-		    }
-		});
-	    })
+            if (container.Node_list) {
+	        container.Node_list.map(function(node) {
+		    var nodeConf = self.configs[ node.name ];
+		    nodeConf['Component Instances'].map(function(ci) {
+		        if (binaries[devType].indexOf(ci.Definition) == -1) {
+			    binaries[devType].push(ci.Definition);
+		        }
+		    });
+	        })
+            }
 	});
 	var tasks = platforms.map(function (platform) {
 	    var platformBinPath = path.join(self.root_dir,
 					    'bin',
 					    platform);
-	    if (!fs.existsSync(platformBinPath)) {
-		throw new String(platform + ' does not have compiled binaries!');
-	    }
-	    binaries[platform].map(function(binary) {
-		var libPath = platformBinPath + '/' + binary;
-		if (!fs.existsSync(libPath)) {
-		    var binName = path.basename(libPath);
-		    throw new String(platform + ' missing compiled binary : ' + binName);
-		}
-	    });
+            if (binaries[platform]) {
+	        if (!fs.existsSync(platformBinPath)) {
+		    throw new String(platform + ' does not have compiled binaries!');
+	        }
+	        binaries[platform].map(function(binary) {
+		    var libPath = platformBinPath + '/' + binary;
+		    if (!fs.existsSync(libPath)) {
+		        var binName = path.basename(libPath);
+		        throw new String(platform + ' missing compiled binary : ' + binName);
+		    }
+	        });
+            }
 	});
 	return Q.all(tasks);
     };
