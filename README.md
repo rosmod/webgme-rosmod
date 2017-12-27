@@ -1,5 +1,8 @@
 # ROSMOD
 
+[![npm](https://img.shields.io/npm/v/webgme-rosmod.svg)](https://www.npmjs.com/package/webgme-rosmod)
+[![npm](https://img.shields.io/npm/dm/webgme-rosmod.svg)](https://www.npmjs.com/package/webgme-rosmod)
+
 This repository contains the implementation of
 [ROSMOD - Journal of Electronics](http://www.mdpi.com/2079-9292/5/3/53),
 built on [WebGME](http://github.com/webgme/webgme).
