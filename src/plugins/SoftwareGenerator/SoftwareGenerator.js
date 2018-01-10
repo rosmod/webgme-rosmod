@@ -1039,11 +1039,7 @@ define([
 	var selectedHosts = [];
 
 	var path = require('path');
-	var binPath = utils.sanitizePath(path.join(self.gen_dir, 'bin'));
 	var child_process = require('child_process');
-
-	// clear out any previous binaries
-	child_process.execSync('rm -rf ' + binPath);
 
         self.mapPackagesToHosts( validHostList );
 
@@ -1081,7 +1077,6 @@ define([
 		self.notify('info', 'Compiled binaries.');
 	    })
 	    .catch(function(err) {
-		child_process.execSync('rm -rf ' + binPath);
 		var tasks = selectedHosts.map(function (host) {
 		    return self.cleanHost(host);
 		});
