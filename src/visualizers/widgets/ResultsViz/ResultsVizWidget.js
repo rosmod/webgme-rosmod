@@ -252,8 +252,6 @@ define([
     };
 
     ResultsVizWidget.prototype.onDeactivate = function () {
-        this.clearNodes();
-        this.shutdown();
     };
 
     return ResultsVizWidget;
