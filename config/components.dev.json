@@ -116,11 +116,32 @@
 	    "External Transition": {
 		"Guard": "C++",
 		"Action": "C++"
+	    },
+	    "Local Transition": {
+		"Guard": "C++",
+		"Action": "C++"
 	    }
 	},
+        "defaultAttributeMap": {
+            "Documentation": "documentation",
+            "Project": "Authors",
+            "Package": "Authors",
+            "Message": "Definition",
+            "Service": "Definition",
+            "Component": "Initialization",
+            "Timer": "Operation",
+            "Server": "Operation",
+            "Subscriber": "Operation",
+            "State Machine": "Initialization",
+            "State": "Entry",
+            "Internal Transition": "Action",
+            "External Transition": "Action",
+            "Local Transition": "Action"
+        },
         "nameTemplateMap": {
             "Internal Transition": "IT: {{{Event}}}",
-            "External Transition": "ET: {{{Event}}}"
+            "External Transition": "ET: {{{Event}}}",
+            "Local Transition": "LT: {{{Event}}}"
         }
     },
     "GenericUIProjectNavigatorController": {
