@@ -634,10 +634,21 @@ define([
 	return Q.all(tasks)
 	    .then(function (nestedArr) {
 		var validHosts = {};
+                var addresses = [];
 		nestedArr.forEach(function(subArr) {
 		    var arch = Object.keys(subArr)[0];
+                    var hostList = subArr[arch];
+                    hostList.map((host) => {
+                        if (addresses.indexOf(host.intf.IP) == -1) {
+                            addresses.push(host.intf.IP);
+                        }
+                        else {
+                            throw new String("Multiple hosts with different 'Architecture' and / or 'Device ID' have same IP and are reachable, IP: "+host.intf.IP);
+                        }
+                    });
 		    validHosts[arch] = subArr[arch];
 		});
+                
 		return validHosts;
 	    });
     };
