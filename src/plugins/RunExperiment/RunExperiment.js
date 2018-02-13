@@ -388,7 +388,7 @@ define([
 		    if (!foundHost) {
 			throw new String('Cannot map ' + container.name +
 					 ' to any host; constraints: ' +
-					 JSON.stringify(container.constraints,null,2) +
+					 JSON.stringify(container.constraints.map((c) => c.name),null,2) +
 					 ' not met.');
 		    }
 		}
