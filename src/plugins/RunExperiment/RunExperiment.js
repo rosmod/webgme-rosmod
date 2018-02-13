@@ -334,9 +334,31 @@ define([
 				throw new String('Node ' + node.name + ' contains no component instances to execute!');
 			    }
 			});
+                        if (container['External Node_list']) {
+			    container['External Node_list'].map(function(en) {
+			        if (en.Constraint_list) {
+				    en.Constraint_list.map(function(constraint) {
+				        if (container.constraints.indexOf(constraint) == -1) {
+					    container.constraints.push(constraint);
+				        }
+				    });
+			        }
+			    });
+                        }
 		    }
-		    else { // no nodes in the container
-                        if (!container['External Node_list']) {
+		    else { // no ROSMOD nodes in the container
+                        if (container['External Node_list']) {
+			    container['External Node_list'].map(function(en) {
+				if (en.Constraint_list) {
+				    en.Constraint_list.map(function(constraint) {
+					if (container.constraints.indexOf(constraint) == -1) {
+					    container.constraints.push(constraint);
+					}
+				    });
+				}
+			    });
+                        }
+                        else {
 			    throw new String('Container ' + container.name + ' contains no runnable Nodes!');
                         }
 		    }
