@@ -845,7 +845,13 @@ define([
 		container['External Node_list'].map(function(node) {
 		    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
 			' 2> ' + self.configPrefix + node.name + '.stderr.log';
-		    host_commands.push('nohup roslaunch ' + node.name + ' ' + node['Launch File'] + redirect_command + ' &');
+                    var args = (node['Arguments'] && JSON.parse(JSON.minify(node['Arguments']))) || '';
+                    if (args) {
+                        args = ' ' + Object.keys(args).map((key) => {
+                            return key + ':=' + args[key];
+                        }).join(' ');
+                    }
+		    host_commands.push('nohup roslaunch ' + node.name +' '+ node['Launch File'] + args + redirect_command + ' &');
 		    host_commands.push('echo $!'); // what was the PID of this process?
 		});
 	    }
