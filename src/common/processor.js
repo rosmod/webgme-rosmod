@@ -33,6 +33,7 @@ define([], function() {
                 'Advertised Message',
                 'Advertised Service',
                 'Link',
+                'Development Library',
                 'Source Library',
                 'System Library',
                 'External Definitions',
@@ -51,6 +52,7 @@ define([], function() {
                 'Advertised Service': 'makeAdvertisedServiceConvenience',
                 'External Definitions': 'makeExternalDefinitionsConvenience',
                 'Link': 'makeLinkConvenience',
+                'Development Library': 'makeDevelopmentLibraryConvenience',
                 'Source Library': 'makeSourceLibraryConvenience',
                 'System Library': 'makeSystemLibraryConvenience',
             };
@@ -123,7 +125,7 @@ define([], function() {
             // libraries
             if (obj.Libraries) {
                 obj.Libraries.map(function(lib) {
-                    if (lib.type == 'Source Library') {
+                    if (lib.type == 'Development Library' || lib.type == 'Source Library') {
                         if ( obj.Packages.indexOf(lib.name) == -1 ) {
                             // add to packages
                             obj.Packages.push(lib.name);
@@ -201,6 +203,17 @@ define([], function() {
             // this object is a child of the Software object
             // and contains external message and service
             // definitions, should make them easier to access.
+        },
+        makeDevelopmentLibraryConvenience: function(obj, objects) {
+            if (obj.CompilesToSO) {
+                obj.LIBRARY_NAME = "LIB_" + obj.name.toUpperCase();
+                obj.CMAKE_COMMANDS = "set (" +
+                    obj.LIBRARY_NAME +
+                    " ${PROJECT_SOURCE_DIR}/../../devel/lib/lib"+
+                    obj.name + ".so)";
+                // update it so it can be put in directly to target_link_libraries
+                obj.LIBRARIES = '${'+ obj.LIBRARY_NAME + '}';
+            }
         },
         makeSourceLibraryConvenience: function(obj, objects) {
             if (obj.CompilesToSO) {

@@ -176,6 +176,9 @@ define([
 		return self.downloadLibraries();
 	    })
 	    .then(function () {
+		return self.copyDevelopmentLibraries();
+	    })
+	    .then(function () {
 		return self.runCompilation();
 	    })
 	    .then(function () {
@@ -440,6 +443,70 @@ define([
 	}
 
 	return Q.all(tasks);
+    };
+
+    SoftwareGenerator.prototype.copyDevelopmentLibraries = function ()
+    {
+	var self = this;
+	if (self.runningOnClient) {
+	    self.notify('info', 'Skipping development library copy in client mode.');
+	    return;
+	}
+
+	var path = require('path'),
+            child_process = require('child_process'),
+	    dir = utils.sanitizePath(path.join(self.gen_dir, 'src'));
+
+        var deferred = Q.defer();
+
+	if (self.projectModel.Software_list[0]['Development Library_list']) {
+	    self.notify('info', 'Copying Development Libraries');
+
+            // make list of cp commands for the terminal
+	    var commands = self.projectModel.Software_list[0]['Development Library_list'].map(function(lib) {
+		self.notify('info', 'Copying: ' + lib.name + ' from '+ lib.Directory);
+                var fromDir = utils.sanitizePath(lib.Directory);
+                return `cp -r ${fromDir} ${dir}/.`;
+	    }).join("\n");
+
+            // set up stdout/stderr
+            var stdout = '',
+                stderr = '';
+            // execute commands
+            var terminal = child_process.spawn('bash', [], {cwd:self.gen_dir});
+            terminal.stdout.on('data', function (data) { stdout += data; });
+            terminal.stderr.on('data', function (data) { stderr += data; });
+            terminal.on('exit', function (code) {
+                if (code == 0) {
+                    deferred.resolve(code);
+                }
+                else {
+		    var files = {
+		        'developmentlibraries.stdout.txt': stdout,
+		        'developmentlibraries.stderr.txt': stderr
+		    };
+		    var fnames = Object.keys(files);
+		    var tasks = fnames.map((fname) => {
+		        return self.blobClient.putFile(fname, files[fname])
+			    .then((hash) => {
+			        self.result.addArtifact(hash);
+			    });
+		    });
+		    return Q.all(tasks)
+		        .then(() => {
+			    deferred.reject('copying development libraries:: child process exited with code ' + code);
+		        });
+                }
+            });
+	    setTimeout(function() {
+                terminal.stdin.write(commands);
+	        terminal.stdin.end();
+	    }, 1000);
+	}
+        else {
+            deferred.resolve();
+        }
+	return deferred.promise;
     };
 
     SoftwareGenerator.prototype.generateDocumentation = function () 
