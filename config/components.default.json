@@ -101,6 +101,9 @@
             "External Node": {
                 "Arguments": "JSON"
             },
+            "Node": {
+                "Arguments": "JSON"
+            },
 	    "State Machine": {
 		"Includes": "C++",
 		"Initialization": "C++",
@@ -135,6 +138,7 @@
             "Timer": "Operation",
             "Server": "Operation",
             "Subscriber": "Operation",
+            "Node": "Arguments",
             "External Node": "Arguments",
             "State Machine": "Initialization",
             "State": "Entry",

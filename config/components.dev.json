@@ -98,6 +98,9 @@
 		"Detailed Description": "gfm",
 		"AbstractBusinessLogic": "C++"
 	    },
+            "Node": {
+                "Arguments": "JSON"
+            },
             "External Node": {
                 "Arguments": "JSON"
             },
@@ -135,6 +138,7 @@
             "Timer": "Operation",
             "Server": "Operation",
             "Subscriber": "Operation",
+            "Node": "Arguments",
             "External Node": "Arguments",
             "State Machine": "Initialization",
             "State": "Entry",
