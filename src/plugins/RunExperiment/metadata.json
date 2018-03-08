@@ -28,6 +28,14 @@
 	    "readOnly": false
 	},	
 	{
+	    "name": "waitTime",
+	    "displayName": "Wait Time (s)",
+	    "description": "How long to wait (in seconds) between spawning of processes.",
+	    "value": 0,
+	    "valueType": "integer",
+	    "readOnly": false
+	},
+	{
 	    "name": "forceIsolation",
 	    "displayName": "Force Isolation.",
 	    "description": "If true, enforces that the spawned processes must run on hosts which are not currently running other ROSMOD processes.",

@@ -66,18 +66,8 @@ define([
                     var rosCoreConfig = self.makeRosCoreConfig( hosts );
                     pluginMetadata.configStructure = rosCoreConfig.concat(pluginMetadata.configStructure);
 
-                    //prevPluginConfig = hostConfig.concat(prevPluginConfig);
-                    //console.log(pluginMetadata);
-
-                    // Need to add:
-                    // * host drop-down to sleect where to run ROSCORE
-                    // * of the available hosts, which ones we will select for this experiment
-
-
                     // Need to make dynamic:
                     // * drag/drop list for ordered starting of containers / processes
-                    // * ROSCore location and port number if the user selects to automatically start ROSCore
-                    // * Per host - which user to run the experiment as (with the default chosen)
 
                     var pluginDialog = new PluginConfigDialog({client: self._client});
                     pluginDialog.show(globalConfigStructure, pluginMetadata, prevPluginConfig, callback);

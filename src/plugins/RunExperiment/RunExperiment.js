@@ -113,6 +113,7 @@ define([
         if (self.rosBridgePort <= 1024) {
             self.rosBridgePort = Math.floor((Math.random() * (65535-1024) + 1024));
         }
+        self.waitTime = currentConfig.waitTime;
 
         // get the selected hosts from the config
         self.selectedHostUserMap = {};
@@ -841,6 +842,9 @@ define([
                     }
 		    host_commands.push('nohup rosmod_actor --config ' + nodeConfigName +
                                        args + redirect_command +' &');
+                    if (self.waitTime > 0) {
+                        host_commands.push('sleep ' + self.waitTime);
+                    }
 		});
 	    }
 	    if (container['External Node_list']) {
@@ -859,6 +863,9 @@ define([
                     }
 		    host_commands.push('nohup roslaunch ' + node.name +' '+ node['Launch File'] + args + redirect_command + ' &');
 		    host_commands.push('echo $!'); // what was the PID of this process?
+                    if (self.waitTime > 0) {
+                        host_commands.push('sleep ' + self.waitTime);
+                    }
 		});
 	    }
             // now run the commands
