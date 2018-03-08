@@ -32,6 +32,8 @@
 	    "displayName": "Wait Time (s)",
 	    "description": "How long to wait (in seconds) between spawning of processes.",
 	    "value": 0,
+            "minValue": 0,
+            "maxValue": 200,
 	    "valueType": "integer",
 	    "readOnly": false
 	},
@@ -56,6 +58,8 @@
 	    "displayName": " ROSBridge server port.",
 	    "description": "What port number should we give ROSBridge server? Leave blank for a randomly assigned port",
 	    "value": 0,
+            "minValue": 0,
+            "maxValue": 65535,
 	    "valueType": "integer",
 	    "readOnly": false
 	},
