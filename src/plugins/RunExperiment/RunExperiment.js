@@ -116,14 +116,22 @@ define([
         self.waitTime = currentConfig.waitTime;
 
         // get the selected hosts from the config
+        // also get the ordered nodes from the config
         self.selectedHostUserMap = {};
         var disabledHostMessage = 'Excluded from Experiment';
+        self.orderedContainerNodeMap = {};
         Object.keys(currentConfig).map(function(k) {
             if (k.indexOf('Host_Selection:') > -1) {
                 var hostPath = k.split(':')[1];
                 var selectedUser = currentConfig[k];
                 if (selectedUser != disabledHostMessage)
                     self.selectedHostUserMap[ hostPath ] = selectedUser;
+            } else if (k.indexOf('Container:') > -1) {
+                var containerPath = k.split(':')[1];
+                var orderedNodes = currentConfig[k];
+                if (Array.isArray(orderedNodes)) {
+                    self.orderedContainerNodeMap[ containerPath ] = orderedNodes;
+                }
             }
         });
 
@@ -829,45 +837,66 @@ define([
             if (self.rosNamespace) {
                 host_commands.push('export ROS_NAMESPACE='+self.rosNamespace);
             }
-	    if (container.Node_list) {
-		container.Node_list.map(function(node) {
-                    var nodeConfigName = self.getConfigName( node );
-		    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
-			' 2> ' + self.configPrefix + node.name + '.stderr.log';
-                    var args = (node['Arguments'] && JSON.parse(JSON.minify(node['Arguments']))) || '';
-                    if (args) {
-                        args = ' ' + Object.keys(args).map((key) => {
-                            return key + ':=' + args[key];
-                        }).join(' ');
-                    }
-		    host_commands.push('nohup rosmod_actor --config ' + nodeConfigName +
-                                       args + redirect_command +' &');
-                    if (self.waitTime > 0) {
-                        host_commands.push('sleep ' + self.waitTime);
-                    }
-		});
-	    }
-	    if (container['External Node_list']) {
-		// TODO: figure out best way of getting all the PIDs
-		// of the External Nodes back so they can be saved
-		// into the model for later teardown by stop
-		// experiment
-		container['External Node_list'].map(function(node) {
-		    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
-			' 2> ' + self.configPrefix + node.name + '.stderr.log';
-                    var args = (node['Arguments'] && JSON.parse(JSON.minify(node['Arguments']))) || '';
-                    if (args) {
-                        args = ' ' + Object.keys(args).map((key) => {
-                            return key + ':=' + args[key];
-                        }).join(' ');
-                    }
-		    host_commands.push('nohup roslaunch ' + node.name +' '+ node['Launch File'] + args + redirect_command + ' &');
-		    host_commands.push('echo $!'); // what was the PID of this process?
-                    if (self.waitTime > 0) {
-                        host_commands.push('sleep ' + self.waitTime);
-                    }
-		});
-	    }
+
+            function makeNodeStart(node) {
+                var nodeConfigName = self.getConfigName( node );
+		var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
+		    ' 2> ' + self.configPrefix + node.name + '.stderr.log';
+                var args = (node['Arguments'] && JSON.parse(JSON.minify(node['Arguments']))) || '';
+                if (args) {
+                    args = ' ' + Object.keys(args).map((key) => {
+                        return key + ':=' + args[key];
+                    }).join(' ');
+                }
+		host_commands.push('nohup rosmod_actor --config ' + nodeConfigName +
+                                   args + redirect_command +' &');
+                if (self.waitTime > 0) {
+                    host_commands.push('sleep ' + self.waitTime);
+                }
+            }
+
+            function makeExternalNodeStart(node) {
+		var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
+		    ' 2> ' + self.configPrefix + node.name + '.stderr.log';
+                var args = (node['Arguments'] && JSON.parse(JSON.minify(node['Arguments']))) || '';
+                if (args) {
+                    args = ' ' + Object.keys(args).map((key) => {
+                        return key + ':=' + args[key];
+                    }).join(' ');
+                }
+		host_commands.push('nohup roslaunch ' + node.name +' '+ node['Launch File'] + args + redirect_command + ' &');
+		host_commands.push('echo $!'); // what was the PID of this process?
+                if (self.waitTime > 0) {
+                    host_commands.push('sleep ' + self.waitTime);
+                }
+            }
+
+            var allNodes = (container['Node_list'] || []).concat(container['External Node_list'] || []);
+
+            function getNodeByName(name) {
+                return allNodes.filter((n) => {
+                    return n.name == name;
+                })[0];
+            }
+
+            // use ordered starting now
+            var order = self.orderedContainerNodeMap[ container.path ];
+            
+            if (order) {
+                self.notify('info', `${container.name} starting nodes in order [${order}]`);
+                order.map((name) => {
+                    var n = getNodeByName(name);
+                    if (n.type == 'Node') makeNodeStart(n);
+                    else if (n.type == 'External Node') makeExternalNodeStart(n);
+                });
+            }
+            else {
+                allNodes.map((n) => {
+                    if (n.type == 'Node') makeNodeStart(n);
+                    else if (n.type == 'External Node') makeExternalNodeStart(n);
+                });
+            }
+
             // now run the commands
 	    self.notify('info','starting binaries.');
 	    return utils.deployOnHost(host_commands, ip, user)

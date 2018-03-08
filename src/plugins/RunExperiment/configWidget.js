@@ -46,16 +46,31 @@ define([
 
             var systemPointer = self.activeNode.getPointer('System').to;
             var systemNode = self._client.getNode( systemPointer );
+
+            var deploymentPointer = self.activeNode.getPointer('Deployment').to;
+            var deploymentNode = self._client.getNode( deploymentPointer );
+
             // get hosts in the system from pointer
-            var hosts, users;
-            self.getHosts( systemNode )
+            var hosts, users, containers;
+            self.getChildrenByType( systemNode, 'Host' )
                 .then(function(_hosts) {
                     hosts = _hosts;
-                    return self.getUsers( systemNode );
+                    return self.getChildrenByType( systemNode, 'User' );
                 })
                 .then(function(_users) {
                     users = _users;
-            
+                    return self.getChildrenByType( deploymentNode, 'Container' );
+                })
+                .then(function(_containers) {
+                    containers = _containers;
+                    return self.makeContainerNodeMap( containers );
+                })
+                .then(function(_containerNodeMap) {
+                    // for each container create sortable selection of nodes for ordering their starting
+                    var containerNodeMap = _containerNodeMap;
+                    var containerConfig = self.makeContainerConfig( containerNodeMap );
+                    pluginMetadata.configStructure = containerConfig.concat(pluginMetadata.configStructure);
+
                     // figure out their users
                     var hostUserMap = self.makeHostUserMap( hosts, users );
                     // for each host create selection in meta with options
@@ -63,11 +78,9 @@ define([
                     var hostConfig = self.makeHostConfig( hostUserMap );
                     pluginMetadata.configStructure = hostConfig.concat(pluginMetadata.configStructure);
 
+                    // where do we want to spawn roscore?
                     var rosCoreConfig = self.makeRosCoreConfig( hosts );
                     pluginMetadata.configStructure = rosCoreConfig.concat(pluginMetadata.configStructure);
-
-                    // Need to make dynamic:
-                    // * drag/drop list for ordered starting of containers / processes
 
                     var pluginDialog = new PluginConfigDialog({client: self._client});
                     pluginDialog.show(globalConfigStructure, pluginMetadata, prevPluginConfig, callback);
@@ -91,16 +104,6 @@ define([
 
                 return Q.all(filtered);
             });
-    };
-
-    ConfigWidget.prototype.getHosts = function(systemNode) {
-        var self = this;
-        return self.getChildrenByType(systemNode, 'Host');
-    };
-
-    ConfigWidget.prototype.getUsers = function(systemNode) {
-        var self = this;
-        return self.getChildrenByType(systemNode, 'User');
     };
 
     ConfigWidget.prototype.makeHostUserMap = function(hosts, users) {
@@ -127,6 +130,64 @@ define([
         });
 
         return hostUserMap;
+    };
+
+    ConfigWidget.prototype.makeContainerNodeMap = function( containers ) {
+        var self = this,
+            core = self.core,
+            containerNodeMap = {};
+
+        var validTypes = ['Node', 'External Node'];
+
+        var tasks = containers.map(function (container) {
+            var containerPath = core.getPath(container);
+            var containerName = core.getAttribute(container, 'name');
+            containerNodeMap[ containerPath ] = {
+                nodes: [],
+                name: containerName
+            };
+
+            return core.loadChildren(container).then((children) => {
+                children.map((child) => {
+                    var nodeName = core.getAttribute(child, 'name');
+                    var base = core.getMetaType(child);
+                    var metaType = core.getAttribute(base, 'name');
+                    if (validTypes.indexOf(metaType) > -1) {
+                        containerNodeMap[ containerPath ].nodes.push(nodeName);
+                    }
+                });
+            });
+        });
+
+        return Q.all(tasks).then(() => {
+            return containerNodeMap;
+        });
+    };
+
+    ConfigWidget.prototype.makeContainerConfig = function( containerNodeMap ) {
+        var self = this,
+            config = [];
+
+        var tmpl = {
+	    "name": "",
+	    "displayName": "",
+	    "description": "Sort the nodes in the order you wish to start them, top to bottom.",
+	    "value": "",
+	    "valueType": "sortable",
+	    "valueItems": [
+	    ]
+        };
+
+        Object.keys(containerNodeMap).map(function(containerPath) {
+            var containerTmpl = Object.assign({}, tmpl);
+            containerTmpl.name = 'Container:'+containerPath;
+            containerTmpl.displayName = containerNodeMap[ containerPath ].name;
+            containerTmpl.valueItems = containerNodeMap[ containerPath ].nodes;
+
+            config.push(containerTmpl);
+        });
+
+        return config;
     };
     
     ConfigWidget.prototype.makeHostConfig = function( hostUserMap ) {
