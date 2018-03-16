@@ -332,10 +332,13 @@ define([
 	var validExts = ['log', 'config'];
 
 	var tasks = logs.map(function(log) {
-	    var ext = log.split('.').slice(-1);
+	    var fname = log.split('/').slice(-1)[0];
+	    var ext = fname.split('.').slice(-1)[0];
+
 	    if (validExts.indexOf(ext) == -1)
 		return;
-	    var logName = log.split('/').slice(-1)[0].replace(/\./g, '_');
+
+	    var logName = fname.replace(/\./g, '_');
 	    self.notify('info', 'Adding ' + logName + ' to Results.');
 	    //self.logger.info('setting meta attr for '+logName);
 	    self.core.setAttributeMeta(rn, logName, {'type':'asset'});
