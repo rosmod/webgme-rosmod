@@ -350,18 +350,21 @@ define([
                     self.nodesWithDocs[obj.path] = obj;
                     self.srcData[obj.path] = documentation.documentation;
                     var result = '';
-                    var pandoc = child_process.spawn('pandoc', ['-f','markdown','-t','rst']);
-                    pandoc.stdout.on('data', function(data) {
+		    var pandoc = child_process.spawn('pandoc', ['-f','markdown','-t','rst']);
+		    pandoc.stdout.on('data', function(data) {
                         result += data + '';
-                    });
-                    pandoc.stdout.on('end', function() {
+		    });
+		    pandoc.stdout.on('end', function() {
                         self.rstData[obj.path] = result;
                         deferred.resolve();
-                    });
-                    pandoc.stderr.on('data', function(err) {
+		    });
+		    pandoc.stderr.on('data', function(err) {
                         deferred.reject('Conversion with pandoc failed: ' + err);
-                    });
-                    pandoc.stdin.end(documentation.documentation, 'utf-8');
+		    });
+		    pandoc.on('error', function(err) {
+                        deferred.reject('Failed to start pandoc process (pandoc might not be installed): ' + err);
+		    });
+		    pandoc.stdin.end(documentation.documentation, 'utf-8');
                 }
                 else {
                     deferred.resolve();
