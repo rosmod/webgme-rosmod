@@ -552,7 +552,7 @@ define([
 		    "Clients": [],
 		    "Servers": {}
 		};
-		config['Artifacts'].concat(userArtifacts);
+		config['Artifacts'] = config['Artifacts'].concat(userArtifacts);
 
 		// warn about user logging settings
 		if (!ci.Logging['Component Logger'].Enabled) {
