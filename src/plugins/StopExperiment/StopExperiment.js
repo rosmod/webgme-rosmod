@@ -328,7 +328,13 @@ define([
 	var logs = fs.readdirSync(localDir);
 	var rn = self.core.createNode({parent: self.activeNode, base: resultsNode});
 	self.core.setRegistry(rn, 'position', {x: 100, y:50});
+
+	var validExts = ['log', 'config'];
+
 	var tasks = logs.map(function(log) {
+	    var ext = log.split('.').slice(-1);
+	    if (validExts.indexOf(ext) == -1)
+		return;
 	    var logName = log.split('/').slice(-1)[0].replace(/\./g, '_');
 	    self.notify('info', 'Adding ' + logName + ' to Results.');
 	    //self.logger.info('setting meta attr for '+logName);
