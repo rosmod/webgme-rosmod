@@ -182,7 +182,7 @@ define([
 					// possibly refactor the code below to use Array.prototype.filter()
 					if (component.Publisher_list) {
 					    component.Publisher_list.map(function(publisher) {
-						var msg = publisher.Message.name;
+						var msg = publisher.Message.AdvertisedName;
 						if (!msg_map[msg]) {
 						    msg_map[msg] = {
 							publishers: [],
@@ -194,7 +194,7 @@ define([
 					}
 					if (component.Subscriber_list) {
 					    component.Subscriber_list.map(function(subscriber) {
-						var msg = subscriber.Message.name;
+						var msg = subscriber.Message.AdvertisedName;
 						if (!msg_map[msg]) {
 						    msg_map[msg] = {
 							publishers: [],
@@ -206,7 +206,7 @@ define([
 					}
 					if (component.Client_list) {
 					    component.Client_list.map(function(client) {
-						var srv = client.Service.name;
+						var srv = client.Service.AdvertisedName;
 						if (!srv_map[srv]) {
 						    srv_map[srv] = {
 							clients: [],
@@ -218,7 +218,7 @@ define([
 					}
 					if (component.Server_list) {
 					    component.Server_list.map(function(server) {
-						var srv = server.Service.name;
+						var srv = server.Service.AdvertisedName;
 						if (!srv_map[srv]) {
 						    srv_map[srv] = {
 							clients: [],
@@ -316,7 +316,7 @@ define([
 					if (component.Publisher_list) {
 					    component.Publisher_list.map(function(publisher) {
 						// publisher tokens
-						var topic = publisher.Message.name;
+						var topic = publisher.Message.AdvertisedName;
 						if (msg_map[topic].subscribers) {
 						    msg_map[topic].subscribers.map(function(subscriber) {
 							var subCompName= self.objectDict[subscriber.parentPath].name;
@@ -364,7 +364,7 @@ define([
 					if (component.Client_list) {
 					    component.Client_list.map(function(client) {
 						// client tokens
-						var service = client.Service.name;
+						var service = client.Service.AdvertisedName;
 						if (srv_map[service].servers) {
 						    srv_map[service].servers.map(function(server) {
 							var serverCompName = self.objectDict[server.parentPath].name;
