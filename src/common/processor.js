@@ -74,6 +74,18 @@ define([], function() {
                 });
             }
 
+	    if (obj.Message_list) {
+		obj.Message_list.map(function(o) {
+		    obj.Packages = self.union(obj.Packages, o.Dependencies);
+		});
+	    }
+
+	    if (obj.Service_list) {
+		obj.Service_list.map(function(o) {
+		    obj.Packages = self.union(obj.Packages, o.Dependencies);
+		});
+	    }
+
             obj.BuildDependencies = obj.Packages.filter((p) => { return p != obj.name; });
             obj.RunDependencies = obj.BuildDependencies;
             obj.PackageDependencies = obj.BuildDependencies;
@@ -145,6 +157,7 @@ define([], function() {
             }
         },
         makeMessageConvenience: function(obj, objects) {
+	    var self = this;
             var parent = objects[obj.parentPath];
             // make .Package convenience member for rendering code
             obj.Package = parent.name;
@@ -152,8 +165,11 @@ define([], function() {
             obj.TypeName = obj.name;
             // make .AdvertisedName convenience member for rendering code
             obj.AdvertisedName = obj.Package + '/' + obj.name;
+	    // get packages that this message is dependent on
+	    obj.Dependencies = self.getTypeDependencies(obj.Definition);
         },
         makeServiceConvenience: function(obj, objects) {
+	    var self = this;
             var parent = objects[obj.parentPath];
             // make .Package convenience member for rendering code
             obj.Package = parent.name;
@@ -161,6 +177,8 @@ define([], function() {
             obj.TypeName = obj.name;
             // make .AdvertisedName convenience member for rendering code
             obj.AdvertisedName = obj.Package + '/' + obj.name;
+	    // get packages that this service is dependent on
+	    obj.Dependencies = self.getTypeDependencies(obj.Definition);
         },
         makeExternalMessageConvenience: function(obj, objects) {
             // already will have .Package convenience member for rendering code from model
@@ -229,16 +247,24 @@ define([], function() {
         makeSystemLibraryConvenience: function(obj, objects) {
             obj.LIBRARIES = obj['Link Libraries'];
         },
-        validName: function(name) {
-	    var varDeclExp = new RegExp(/^[a-zA-Z_][a-zA-Z0-9_]*$/gi);
-	    return varDeclExp.test(name);
-        },
+	getTypeDependencies: function(definition) {
+	    var validDeclaration = new RegExp(/^([a-zA-Z_][a-zA-Z0-9_]*)\//gm);
+	    var matches = [];
+	    var res = validDeclaration.exec(definition);
+	    if (res) {
+		while (res != null) {
+		    matches.push(res[1]);
+		    res = validDeclaration.exec(definition);
+		}
+	    }
+	    return matches;
+	},
         checkName: function(o) {
-            var self = this;
-            if (!self.validName( o.name )) {
+	    var validName = new RegExp(/^([a-zA-Z_][a-zA-Z0-9_]*)$/g);
+            if (!validName.test( o.name )) {
                 throw new String(o.type + ' ' +
                                  o.name + ' has invalid name: '+o.name+
-                                 '. Name must be valid c/c++ name, following regex pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/');
+                                 '. Name must be valid c/c++ name, following regex pattern: '+validName.toString());
             }
         },
 	checkObjects: function(objects) {

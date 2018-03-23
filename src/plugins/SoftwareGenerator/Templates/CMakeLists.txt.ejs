@@ -16,9 +16,18 @@ else()
     message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-find_package(catkin REQUIRED COMPONENTS message_generation rosmod rosmod_actor
-# external packages that we depend on
-<%- pkgInfo.PackageDependencies.join(' ') %>
+find_package(catkin REQUIRED COMPONENTS
+<%
+if (pkgInfo.Message_list || pkgInfo.Service_list) {
+-%>
+  message_generation
+<%
+}
+-%>
+  rosmod
+  rosmod_actor
+  # external packages that we depend on
+  <%- pkgInfo.PackageDependencies.join(' ') %>
 )
 
 <% 
@@ -71,7 +80,7 @@ if (pkgInfo.Message_list || pkgInfo.Service_list) {
 # Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
-  std_msgs
+  <%- pkgInfo.PackageDependencies.join(' ') %>
 )
 <%
 }
@@ -96,7 +105,20 @@ if (pkgInfo.Component_list) {
 -%>
 #  LIBRARIES client_server_package
 #  CATKIN_DEPENDS roscpp std_msgs
+<%
+if (pkgInfo.Message_list || pkgInfo.Service_list) {
+-%>
+  CATKIN_DEPENDS <%- pkgInfo.PackageDependencies.join(' ') %>
+<%
+}
+-%>
+<%
+if (pkgInfo.Message_list || pkgInfo.Service_list) {
+-%>
   CATKIN_DEPENDS message_runtime
+<%
+}
+-%>
 #  DEPENDS system_lib
 )
 
