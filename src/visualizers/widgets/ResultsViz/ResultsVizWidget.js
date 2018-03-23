@@ -88,11 +88,9 @@ define([
     ResultsVizWidget.prototype.onWidgetContainerResize = function (width, height) {
         //console.log('Widget is resizing...');
 	var self = this;
-	this.plotIDs.map(function(plotID) {
-	    var n = d3.selectAll(self._el).select(plotID).node();
-	    if (n && $(self._el).find(plotID).css('display') != 'none')
-		Plotly.Plots.resize(n);
-	});
+	var n = d3.selectAll(self._el).select('#plot').node();
+	if (n)
+	    Plotly.Plots.resize(n);
     };
 
     // Adding/Removing/Updating items
@@ -153,48 +151,22 @@ define([
 	    });
 	    return Q.allSettled(tasks)
 		.then(() => {
-		    //console.log(timeBeginEnd);
 		    var sortedLogs = Object.keys(desc.logs).sort();
-		    sortedLogs.map(function(a) {
-			// setup the html
-			self._el.append(PlotHtml);
-			var container = self._el.find('#log');
-			container.attr('id', 'log_'+a);
-			
-			var title = self._el.find('#title');
-			var displayTitle = desc.displayNames[a];
-			displayTitle = displayTitle.replace(/\.user\.log/gm, ' User Log');
-			displayTitle = displayTitle.replace(/\.trace\.log/gm, ' Trace Log');
-			displayTitle = displayTitle.replace(/\./gm, '::');
 
-			title.attr('id','title_'+a)
-			    .on('click', function(_a) {
-				return function() {
-				    self._onClick(desc.id);
-				    hidePlotFunc(_a);
-				};
-			    }(a));
-
-			title.append('<b>'+displayTitle+'</b>');
-
-			var p = self._el.find('#plot');
-			p.attr('id',"plot_" + a);
-			p.click(function() {
-			    self._onClick(desc.id);
-			});
-
-			var data = datas[a];
-                        if (self.alignLogs) {
+		    // setup the html
+		    self._el.append(PlotHtml);
+		    
+		    var title = self._el.find('#title');
+		    var sortedDatas = sortedLogs.map((logKey) => {
+			var data = datas[logKey];
+			if (self.alignLogs) {
 			    data = UserParser.alignLogs(data, timeBeginEnd.begin, timeBeginEnd.end );
-                        }
-			if (!_.isEmpty(data)) {
-			    Plotter.plotData(self._el, 'plot_'+a, data, self._onClick.bind(self, desc.id) );
-			    self.plotIDs.push('#plot_'+a);
 			}
-			else {
-			    container.detach();
-			}
+			return data;
 		    });
+
+		    Plotter.plotData(self._el, 'plot', sortedDatas, self._onClick.bind(self, desc.id) );
+
 		    self.nodes[desc.id] = desc;
 		});
         }

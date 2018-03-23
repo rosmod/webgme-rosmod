@@ -1,23 +1,45 @@
 define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
     'use strict';
     return {
-	plotData: function(container, plotId, data, onclick) {
-	    // extent returns array: [min, max]
-            // data[key].data contains an array of xys arrays, which are x, y, size of marker
-            /*
-	    var maxXs = Object.keys(data).map(function(key) {
-		return d3.extent(data[key].data, function(xys) { return xys[0]; })[1];
-	    });
-	    var maxYs = Object.keys(data).map(function(key) {
-		return d3.extent(data[key].data, function(xys) { return xys[1]; })[1];
-	    });
-	    var xdomain = d3.max(maxXs);
-	    var ydomain = d3.max(maxYs);
-
-	    var tzOffset = new Date().getTimezoneOffset();
-	    // convert from minutes to milliseconds
-	    tzOffset = tzOffset * 60000;
-            */
+	makeLayout: function(datas) {
+	    var self = this;
+	    var layout = {
+		xaxis: {
+		    title: 'Time (s)'
+		},
+                legend: {
+                    xanchor: 'right'
+                },
+		//annotations: annotations,
+                margin: {
+                    pad: 0,
+                    l: 50,
+                    r: 0,
+                    b: 50,
+                    t: 0
+                },
+                hovermode: 'closest',
+                autosize: true,
+                showlegend: true
+	    };
+	    var numDatas = datas.length;
+	    var yDomain = 1.0 / numDatas;
+	    var current = 0;
+	    for (var i=0; i<numDatas; i++) {
+		var key = 'yaxis'+self.getSuffix(i);
+		layout[key] = { domain: [current, current+(yDomain*0.9)] };
+		current += yDomain;
+	    }
+	    console.log(layout);
+	    return layout;
+	},
+	getSuffix: function(index) {
+	    return ((index+1) > 1) ? (index+1) : '';
+	},
+	convertData: function(plotId, data) {
+	},
+	plotData: function(container, plotId, datas, onclick) {
+	    var self = this;
 
 	    var pdata = [];
 	    var annotations = [];
@@ -46,65 +68,61 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		}
 	    }
 
-	    Object.keys(data).sort(dataSort).map(function(key) {
-		if (data[key].annotations.length) {
-		    data[key].annotations.map(function(ann) {
-			annotations.push({
-			    x: ann.x,
-			    y: ann.y,
-			    xref: 'x',
-			    yref: 'y',
-                            key: key,
-			    text: ann.text,
-			    showarrow: true,
-			    arrowhead: 7,
-			    ax: 0,
-			    ay: -40
+	    var dataNum = 0;
+	    datas.map((data) => {
+		Object.keys(data).sort(dataSort).map(function(key) {
+		    if (data[key].annotations.length) {
+			data[key].annotations.map(function(ann) {
+			    annotations.push({
+				x: ann.x,
+				y: ann.y,
+				xref: 'x',
+				yref: 'y',
+				key: key,
+				text: ann.text,
+				showarrow: true,
+				arrowhead: 7,
+				ax: 0,
+				ay: -40
+			    });
 			});
+		    }
+		    pdata.push({
+			x : data[key].data.map(function(xys) { return new Date(xys[0]).toISOString(); }),
+			y : data[key].data.map(function(xys) { return xys[1]; }),
+			mode: !data[key].annotations.length ? 'lines' : 'markers+lines',
+			type: 'scatter',
+			name: key,
+			yaxis: 'y' + self.getSuffix(dataNum),
+			marker: {
+                            maxdisplayed: 1000,
+                            size: !data[key].annotations.length ? [] : data[key].data.map(function(xys) { return xys[2] })
+                            /*
+                              color: "rgb(164, 194, 244)",
+                              line: {
+                              color: "white",
+                              width: 0.5
+                              }
+                            */
+			}
 		    });
-		}
-		pdata.push({
-		    x : data[key].data.map(function(xys) { return new Date(xys[0]).toISOString(); }),
-		    y : data[key].data.map(function(xys) { return xys[1]; }),
-		    mode: !data[key].annotations.length ? 'lines' : 'markers+lines',
-                    type: 'scattergl',
-		    name: key,
-                    marker: {
-                        maxdisplayed: 1000,
-                        size: !data[key].annotations.length ? [] : data[key].data.map(function(xys) { return xys[2] })
-                        /*
-                          color: "rgb(164, 194, 244)",
-                          line: {
-                          color: "white",
-                          width: 0.5
-                          }
-                        */
-                    }
 		});
+		dataNum += 1;
 	    });
 
-	    var layout = {
-		xaxis: {
-		    title: 'Time (s)'
-		},
-                legend: {
-                    xanchor: 'right'
-                },
-		//annotations: annotations,
-                margin: {
-                    pad: 0,
-                    l: 50,
-                    r: 0,
-                    b: 50,
-                    t: 0
-                },
-                hovermode: 'closest',
-                autosize: true,
-                showlegend: true
-	    };
+	    var layout = self.makeLayout(datas);
 
 	    var id = '#'+plotId;
-	    Plotly.plot(d3.selectAll(container).select(id).node(), pdata, layout, {
+	    var gd3 = d3.selectAll(container).select(id)
+		.style({
+		    width: '100%',
+		    'min-width': '400px',
+		    height: '100%',
+		    'min-height': '200px'
+		});
+
+	    var gd = gd3.node();
+	    Plotly.plot(gd, pdata, layout, {
 		modeBarButtons: [[{
 		    'name': 'toImage',
 		    'title': 'Download plot as png',
