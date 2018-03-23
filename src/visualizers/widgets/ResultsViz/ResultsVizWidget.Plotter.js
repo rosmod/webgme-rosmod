@@ -13,6 +13,10 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 	    });
 	    var xdomain = d3.max(maxXs);
 	    var ydomain = d3.max(maxYs);
+
+	    var tzOffset = new Date().getTimezoneOffset();
+	    // convert from minutes to milliseconds
+	    tzOffset = tzOffset * 60000;
             */
 
 	    var pdata = [];
@@ -20,11 +24,11 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 
 	    var findAnnotations = function(key, x, y, floorAnn) {
 		var foundAnnotations = annotations.filter(function(ann) {
-		    //console.log('comparing x,y point ('+x+', '+y+')');
-		    //console.log('           to ann   ('+ann.x+', '+ann.y+')');
                     if (ann.key != key)
                         return false;
-                    var annTime = new Date(ann.x).toISOString();
+                    var annTime = Math.floor(ann.x);
+		    //console.log('comparing x,y point ('+x+', '+y+')');
+		    //console.log('           to ann   ('+ann.x+', '+ann.y+')');
 		    return annTime == x && ann.y == y;
 		});
 		return foundAnnotations;
@@ -140,7 +144,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
                 data.points.map(function(point) {
 		    var foundAnnotations = findAnnotations(
                         point.data.name,
-                        new Date(point.x).toISOString(),
+                        point.xaxis.d2l(point.x),
 		        point.y,
 		        true
                     );
