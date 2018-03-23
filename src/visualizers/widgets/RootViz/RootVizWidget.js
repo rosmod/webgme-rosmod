@@ -13,7 +13,7 @@ define([
     'decorators/DocumentDecorator/DiagramDesigner/DocumentEditorDialog',
     // showdown
     'showdown/dist/showdown.min',
-    'common/util/ejs',
+    'ejs',
     './Templates',
     'js/Controls/ContextMenu',
     'js/Utils/GMEConcepts',

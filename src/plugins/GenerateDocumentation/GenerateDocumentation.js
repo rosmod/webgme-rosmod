@@ -9,7 +9,7 @@ define([
     'plugin/PluginConfig',
     'plugin/PluginBase',
     'text!./metadata.json',
-    'common/util/ejs', // for ejs templates
+    'ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/GenerateDocumentation/GenerateDocumentation/Templates/Templates', // 
     'remote-utils/remote-utils',
