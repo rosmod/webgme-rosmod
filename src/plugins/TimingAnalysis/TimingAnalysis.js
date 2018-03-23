@@ -9,7 +9,7 @@ define([
     'plugin/PluginConfig',
     'plugin/PluginBase',    
     'text!./metadata.json',
-    'common/util/ejs', // for ejs templates
+    'ejs', // for ejs templates
     'common/util/xmljsonconverter', // used to save model as json
     'plugin/TimingAnalysis/TimingAnalysis/Templates/Templates', // 
     'remote-utils/remote-utils',
@@ -105,6 +105,10 @@ define([
 	    self.runningOnClient = true;
         }
 
+	// the active node for this plugin is software -> project
+	var projectNode = self.activeNode;
+	self.projectName = self.core.getAttribute(projectNode, 'name');
+
 	if (!self.runningOnClient) {
 	    var path = require('path');
 	    // Setting up variables that will be used by various functions of this plugin
@@ -115,10 +119,6 @@ define([
 				     self.projectName);
 	}
 	
-	// the active node for this plugin is software -> project
-	var projectNode = self.activeNode;
-	self.projectName = self.core.getAttribute(projectNode, 'name');
-
 	self.projectModel = {}; // will be filled out by loadProjectModel (and associated functions)
 
 	webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
@@ -451,20 +451,22 @@ define([
 	}
 	var path = require('path');
 	var dir = path.join(self.gen_dir,'cpn');
+	var mkdirp = require('mkdirp');
 	var child_process = require('child_process');
 
 	// clear out any previous project files
-	child_process.execSync('rm -rf ' + dir);
+	child_process.execSync('rm -rf ' + utils.sanitizePath(dir));
+	mkdirp.sync(dir);
 
 	// Get the dummy cpn template
 	var file_url = 'https://github.com/rosmod/rosmod-cpn/releases/download/v1.0.0/cpn.zip';
-	return utils.wgetAndUnzipLibrary(file_url, dir)
+	return utils.wgetAndUnzipLibrary(file_url, self.gen_dir)
 	    .then(function() {
 		self.notify('info', 'Downloaded CPN template');
 		var filendir = require('filendir');
 		var fileKeys = Object.keys(self.artifacts);
 		var tasks = fileKeys.map(function(key) {
-		    var fname = path.join(dir,'cpn', key),
+		    var fname = path.join(dir,key),
 		    data = self.artifacts[key];
 
 		    return new Promise(function(resolve, reject) {
