@@ -17,7 +17,7 @@
 .controls {
     height: 10%;
     width: 100%;
-    overflow: scroll;
+    overflow: auto ;
     margin: 15px;
 }
 .plot-div {

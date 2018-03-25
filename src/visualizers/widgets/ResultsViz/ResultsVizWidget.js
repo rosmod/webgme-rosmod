@@ -65,7 +65,6 @@ define([
 	this._controls = $(this._el).find('#controls').first();
 	this._plotSelectors = $(this._controls).find('#plotSelectors').first();
 	this._plotContainer = $(this._el).find('#plot-div').first();
-	this._plotEl = $(this._el).find('#plot').first();
 
 	// checkbox for shared axes
 	this.sharedAxes = false;
@@ -107,9 +106,6 @@ define([
         var toggle = event.target;
         var checked = toggle.checked;
 
-	console.log(logName);
-	console.log(checked);
-	
 	self.logs[logName].enabled = checked;
 
 	self.plotLogs();
@@ -119,9 +115,7 @@ define([
 	var self = this;
 	var key = logName.replace(/\./g, '_');
 	self._plotSelectors.append(`<div class="toggle">${logName}: <input id="${key}" type="checkbox" checked></div>`);
-	console.log(logName);
 	var _el = $(self._plotSelectors).find(`#${key}`).first();
-	console.log(_el);
 	_el.on('change', self.onLogToggled.bind(self, logName));
     };
 

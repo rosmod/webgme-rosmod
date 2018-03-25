@@ -2,6 +2,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
     'use strict';
     return {
 	sharedAxes: false,
+	lockedZooming: true,
 	makeLayout: function(datas) {
 	    var self = this;
 	    var layout = {
