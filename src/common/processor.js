@@ -65,6 +65,7 @@ define([], function() {
         makePackageConvenience: function(obj, objects) {
             var self = this;
             obj.Packages = [];
+	    obj.GenerateMessageDependencies = [];
             obj.CMAKE_COMMANDS = [];
 
             if (obj.Component_list) {
@@ -77,12 +78,14 @@ define([], function() {
 	    if (obj.Message_list) {
 		obj.Message_list.map(function(o) {
 		    obj.Packages = self.union(obj.Packages, o.Dependencies);
+		    obj.GenerateMessageDependencies = self.union(obj.GenerateMessageDependencies, o.Dependencies);
 		});
 	    }
 
 	    if (obj.Service_list) {
 		obj.Service_list.map(function(o) {
 		    obj.Packages = self.union(obj.Packages, o.Dependencies);
+		    obj.GenerateMessageDependencies = self.union(obj.GenerateMessageDependencies, o.Dependencies);
 		});
 	    }
 
