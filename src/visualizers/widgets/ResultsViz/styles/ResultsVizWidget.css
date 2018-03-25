@@ -6,9 +6,18 @@
  * simply write css if you prefer
  */
 
-.results-viz {
-    outline: none; 
+.ui-layout-center {
+    overflow-x: auto;
+    overflow-y: hidden;
 }
+
+.results-viz {
+    outline: none;
+    overflow: visible;
+    width: 100%;
+    height: 100%;
+}
+
 .toggle {
     float: left;
     margin-right: 5px;
@@ -18,7 +27,6 @@
     height: 10%;
     width: 100%;
     overflow: auto ;
-    margin: 15px;
 }
 .plot-div {
     height: 90%;

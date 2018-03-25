@@ -11,6 +11,8 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		},
                 legend: {
                     xanchor: 'right'
+		    //x: 1,
+		    //y: 1
                 },
 		//annotations: annotations,
                 margin: {
