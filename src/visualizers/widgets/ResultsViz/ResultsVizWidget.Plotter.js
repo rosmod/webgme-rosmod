@@ -1,19 +1,15 @@
 define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
     'use strict';
     return {
-	sharedAxes: false,
-	lockedZooming: true,
+	sharedY: false,
+	sharedX: true,
+	legendInPlot: false,
 	makeLayout: function(datas) {
 	    var self = this;
 	    var layout = {
 		xaxis: {
 		    title: 'Time (s)'
 		},
-                legend: {
-                    xanchor: 'right'
-		    //x: 1,
-		    //y: 1
-                },
 		//annotations: annotations,
                 margin: {
                     pad: 0,
@@ -26,21 +22,40 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
                 autosize: true,
                 showlegend: true
 	    };
-	    if (!self.sharedAxes) {
+	    if (!self.legendInPlot) {
+		layout['legend'] = {
+		    x: 1,
+		    y: 1,
+		};
+	    } else {
+		layout['legend'] = {
+		    xanchor: 'right'
+		}
+	    }
+
+	    if (!self.sharedY) {
 		var numDatas = datas.length;
 		var yDomain = 1.0 / numDatas;
 		var current = 0;
 		for (var i=0; i<numDatas; i++) {
-		    var key = 'yaxis'+self.getSuffix(i);
+		    var key = 'yaxis'+self.getYSuffix(i);
 		    layout[key] = { domain: [current, current+(yDomain*0.9)] };
 		    current += yDomain;
 		}
 	    }
 	    return layout;
 	},
-	getSuffix: function(index) {
+	getXSuffix: function(index) {
 	    var self = this;
-	    if (!self.sharedAxes) {
+	    if (!self.sharedX) {
+		return ((index+1) > 1) ? (index+1) : '';
+	    } else {
+		return '';
+	    }
+	},
+	getYSuffix: function(index) {
+	    var self = this;
+	    if (!self.sharedY) {
 		return ((index+1) > 1) ? (index+1) : '';
 	    } else {
 		return '';
@@ -103,7 +118,8 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 			mode: !data[key].annotations.length ? 'lines' : 'markers+lines',
 			type: 'scatter',
 			name: key,
-			yaxis: 'y' + self.getSuffix(dataNum),
+			xaxis: 'x' + self.getXSuffix(dataNum),
+			yaxis: 'y' + self.getYSuffix(dataNum),
 			marker: {
                             maxdisplayed: 1000,
                             size: !data[key].annotations.length ? [] : data[key].data.map(function(xys) { return xys[2] })

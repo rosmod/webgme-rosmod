@@ -67,36 +67,30 @@ define([
 	this._plotContainer = $(this._el).find('#plot-div').first();
 
 	// checkbox for shared axes
-	this.sharedAxes = false;
-        this.sharedAxes_toggle = this._el.find("#cbSharedAxes").first();
-        $(this.sharedAxes_toggle).prop('checked', this.sharedAxes);
-        this.sharedAxes_toggle.on('change', this.toggleSharedAxes.bind(this));
+	Plotter.sharedX = true;
+        this.sharedXAxes_toggle = this._el.find("#cbSharedX").first();
+        $(this.sharedXAxes_toggle).prop('checked', Plotter.sharedX);
+        this.sharedXAxes_toggle.on('change', this.togglePlot.bind(this, 'sharedX'));
 
-	// checkbox for aligning logs
-	this.alignLogs = true;
-        this.alignLogs_toggle = this._el.find("#cbAlignment").first();
-        $(this.alignLogs_toggle).prop('checked', this.alignLogs);
-        this.alignLogs_toggle.on('change', this.toggleAlignLogs.bind(this));
+	Plotter.sharedY = true;
+        this.sharedYAxes_toggle = this._el.find("#cbSharedY").first();
+        $(this.sharedYAxes_toggle).prop('checked', Plotter.sharedY);
+        this.sharedYAxes_toggle.on('change', this.togglePlot.bind(this, 'sharedY'));
+
+	// checkbox for legend
+	Plotter.legendInPlot = false;
+	this.legednInPlot_toggle = this._el.find("#cbLegendInPlot").first();
+	$(this.legednInPlot_toggle).prop('checked', Plotter.legendInPlot);
+        this.legednInPlot_toggle.on('change', this.togglePlot.bind(this, 'legendInPlot'));
     };
 
     // built-in toggles 
-    ResultsVizWidget.prototype.toggleSharedAxes = function(event) {
+    ResultsVizWidget.prototype.togglePlot = function(key, event) {
         var self=this;
         var toggle = event.target;
         var checked = toggle.checked;
 
-        this.sharedAxes = checked;
-	Plotter.sharedAxes = this.sharedAxes;
-        var id = Object.keys(self.nodes)[0];
-        self.plotLogs();
-    };
-
-    ResultsVizWidget.prototype.toggleAlignLogs = function(event) {
-        var self=this;
-        var toggle = event.target;
-        var checked = toggle.checked;
-
-        this.alignLogs = checked;
+	Plotter[key] = checked;
         var id = Object.keys(self.nodes)[0];
         self.plotLogs();
     };
@@ -190,12 +184,7 @@ define([
 
 	// data from the sorted & enabled logs
 	var sortedDatas = sortedLogs.map((logKey) => {
-	    var data = self.logs[logKey].data;
-	    if (self.alignLogs) {
-		// now align them if the user wants us to
-		data = UserParser.alignLogs(data, self.timeBeginEnd.begin, self.timeBeginEnd.end );
-	    }
-	    return data;
+	    return self.logs[logKey].data;
 	});
 
 	Plotter.plotData(self._plotContainer, 'plot', sortedDatas, self._onClick.bind(self, self.activeId) );
