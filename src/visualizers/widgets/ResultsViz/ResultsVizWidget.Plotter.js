@@ -1,6 +1,7 @@
 define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
     'use strict';
     return {
+	sharedAxes: false,
 	makeLayout: function(datas) {
 	    var self = this;
 	    var layout = {
@@ -22,19 +23,25 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
                 autosize: true,
                 showlegend: true
 	    };
-	    var numDatas = datas.length;
-	    var yDomain = 1.0 / numDatas;
-	    var current = 0;
-	    for (var i=0; i<numDatas; i++) {
-		var key = 'yaxis'+self.getSuffix(i);
-		layout[key] = { domain: [current, current+(yDomain*0.9)] };
-		current += yDomain;
+	    if (!self.sharedAxes) {
+		var numDatas = datas.length;
+		var yDomain = 1.0 / numDatas;
+		var current = 0;
+		for (var i=0; i<numDatas; i++) {
+		    var key = 'yaxis'+self.getSuffix(i);
+		    layout[key] = { domain: [current, current+(yDomain*0.9)] };
+		    current += yDomain;
+		}
 	    }
-	    console.log(layout);
 	    return layout;
 	},
 	getSuffix: function(index) {
-	    return ((index+1) > 1) ? (index+1) : '';
+	    var self = this;
+	    if (!self.sharedAxes) {
+		return ((index+1) > 1) ? (index+1) : '';
+	    } else {
+		return '';
+	    }
 	},
 	convertData: function(plotId, data) {
 	},

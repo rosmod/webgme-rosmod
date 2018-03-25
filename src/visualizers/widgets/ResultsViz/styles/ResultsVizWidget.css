@@ -9,40 +9,18 @@
 .results-viz {
     outline: none; 
 }
-.svg-content-responsive {
-    display: inline-block;
-    /*position: absolute;*/
+.toggle {
+    float: left;
+    margin-right: 5px;
+    margin-left: 5px;
 }
-.axis path, .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
+.controls {
+    height: 10%;
+    width: 100%;
+    overflow: scroll;
+    margin: 15px;
 }
-.legend {
-    padding: 5px;
-    font: 10px sans-serif;
-    background: yellow;
-    box-shadow: 2px 2px 1px #888;
+.plot-div {
+    height: 90%;
+    width: 100%;
 }
-path.line {
-    fill: none;
-    stroke-width: 1px;
-}
-.zoomOut {
-    fill: #66a;
-    cursor: pointer;
-}
-.zoomOutText {
-    pointer-events: none;
-    fill : #ccc;
-}
-.zoomOverlay {
-    pointer-events: all;
-    fill:none;
-}
-.band {
-    fill : none;
-    stroke-width: 1px;
-    stroke: red;
-}
-
