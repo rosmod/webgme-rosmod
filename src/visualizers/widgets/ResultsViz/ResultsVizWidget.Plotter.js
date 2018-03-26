@@ -133,7 +133,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 			x : data[key].data.map(function(xys) { return new Date(xys[0]).toISOString(); }),
 			y : data[key].data.map(function(xys) { return xys[1]; }),
 			mode: !data[key].annotations.length ? 'lines' : 'markers+lines',
-			type: 'scatter',
+			type: 'scattergl',
 			name: key,
 			xaxis: 'x' + self.getXSuffix(dataNum),
 			yaxis: 'y' + self.getYSuffix(dataNum),
