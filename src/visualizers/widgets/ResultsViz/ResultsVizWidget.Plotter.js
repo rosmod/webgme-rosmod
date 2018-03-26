@@ -118,8 +118,10 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 			    annotations.push({
 				x: ann.x,
 				y: ann.y,
-				xref: 'x',
-				yref: 'y',
+				//xref: 'x',
+				//yref: 'y',
+				xref: 'x' + self.getXSuffix(dataNum),
+				yref: 'y' + self.getYSuffix(dataNum),
 				key: key,
 				text: ann.text,
 				showarrow: true,
@@ -216,6 +218,8 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 			    var newAnnotation = {
 			        x: new Date(foundAnn.x).toISOString(),
 			        y: foundAnn.y,
+				xref: foundAnn.xref,
+				yref: foundAnn.yref,
 			        arrowhead: 6,
 			        ax: 0,
 			        ay: -80 - yOffset,
