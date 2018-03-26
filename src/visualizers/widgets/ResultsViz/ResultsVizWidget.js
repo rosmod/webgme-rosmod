@@ -72,7 +72,7 @@ define([
         $(this.sharedXAxes_toggle).prop('checked', Plotter.sharedX);
         this.sharedXAxes_toggle.on('change', this.togglePlot.bind(this, 'sharedX'));
 
-	Plotter.sharedY = true;
+	Plotter.sharedY = false;
         this.sharedYAxes_toggle = this._el.find("#cbSharedY").first();
         $(this.sharedYAxes_toggle).prop('checked', Plotter.sharedY);
         this.sharedYAxes_toggle.on('change', this.togglePlot.bind(this, 'sharedY'));

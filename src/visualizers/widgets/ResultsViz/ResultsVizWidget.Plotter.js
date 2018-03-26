@@ -33,16 +33,33 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 		}
 	    }
 
+	    if (!self.sharedX) {
+		var numDatas = datas.length;
+		var domain = 1.0 / numDatas;
+		var current = 0;
+		for (var i=0; i<numDatas; i++) {
+		    var key = 'xaxis'+self.getXSuffix(i);
+		    var anchor = 'y' + self.getXSuffix(i);
+		    layout[key] = {
+			'domain': [0, 1],
+			'anchor': anchor
+		    };
+		    current += domain;
+		}
+	    }
 	    if (!self.sharedY) {
 		var numDatas = datas.length;
-		var yDomain = 1.0 / numDatas;
+		var domain = 1.0 / numDatas;
 		var current = 0;
 		for (var i=0; i<numDatas; i++) {
 		    var key = 'yaxis'+self.getYSuffix(i);
-		    layout[key] = { domain: [current, current+(yDomain*0.9)] };
-		    current += yDomain;
+		    layout[key] = {
+			'domain': [current, current+(domain*0.9)]
+		    };
+		    current += domain;
 		}
 	    }
+
 	    return layout;
 	},
 	getXSuffix: function(index) {
