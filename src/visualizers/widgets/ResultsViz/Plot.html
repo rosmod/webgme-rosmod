@@ -1,14 +1,16 @@
 <div id="controls" class="controls">
-  <div class="toggle">
-    Shared X Axes: <input id="cbSharedX" type="checkbox" checked>
+  <div style="display: table-row;">
+    <div class="toggle">
+      Shared X Axes: <input id="cbSharedX" type="checkbox" checked>
+    </div>
+    <div class="toggle">
+      Shared Y Axes: <input id="cbSharedY" type="checkbox">
+    </div>
+    <div class="toggle">
+      Legend in Plot: <input id="cbLegendInPlot" type="checkbox">
+    </div>
   </div>
-  <div class="toggle">
-    Shared Y Axes: <input id="cbSharedY" type="checkbox">
-  </div>
-  <div class="toggle">
-    Legend in Plot: <input id="cbLegendInPlot" type="checkbox">
-  </div>
-  <div class="toggle" id="plotSelectors">
+  <div class="selector">Select logs to plot: <select id="plotSelectors" class="plot-selector" name="logs[]" multiple="multiple"></select>
   </div>
 </div>
 <div id="plot-div" class="plot-div">

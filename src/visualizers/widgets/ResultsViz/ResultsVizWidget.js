@@ -12,8 +12,10 @@ define([
     './ResultsVizWidget.UserParser',
     './ResultsVizWidget.Plotter',
     'plotly-js/plotly.min',
+    'select2/js/select2.min',
     'd3',
     'q',
+    'css!select2/css/select2.min.css',
     'css!./styles/ResultsVizWidget.css'
 ], function (
     PlotHtml,
@@ -22,6 +24,7 @@ define([
     UserParser,
     Plotter,
     Plotly,
+    select2,
     d3,
     Q) {
 
@@ -64,6 +67,7 @@ define([
 		    
 	this._controls = $(this._el).find('#controls').first();
 	this._plotSelectors = $(this._controls).find('#plotSelectors').first();
+	$(this._plotSelectors).select2();
 	this._plotContainer = $(this._el).find('#plot-div').first();
 
 	// checkbox for shared axes
@@ -95,22 +99,36 @@ define([
         self.plotLogs();
     };
 
-    ResultsVizWidget.prototype.onLogToggled = function(logName, event) {
+    ResultsVizWidget.prototype.onLogToggled = function(event) {
 	var self = this;
-        var toggle = event.target;
-        var checked = toggle.checked;
-
-	self.logs[logName].enabled = checked;
-
+	// set all to false
+	Object.keys(self.logs).map((logName) => {
+	    self.logs[logName].enabled = false;
+	});
+	// now set the selected ones to true
+	var selectedLogs = $(self._plotSelectors).select2("data");
+	selectedLogs.map((log) => {
+	    var logName = log.text;
+	    self.logs[logName].enabled = true;
+	});
+	// update the plot
 	self.plotLogs();
     };
 
-    ResultsVizWidget.prototype.addLogToggle = function(logName) {
+    ResultsVizWidget.prototype.clearLogToggles = function() {
 	var self = this;
-	var key = logName.replace(/\./g, '_');
-	self._plotSelectors.append(`<div class="toggle">${logName}: <input id="${key}" type="checkbox" checked></div>`);
-	var _el = $(self._plotSelectors).find(`#${key}`).first();
-	_el.on('change', self.onLogToggled.bind(self, logName));
+	if (self._plotSelectors) {
+	    self._plotSelectors.empty();
+	}
+    };
+
+    ResultsVizWidget.prototype.makeLogControls = function() {
+	var self = this;
+	Object.keys(self.logs).sort().map((logName) => {
+	    var key = logName.replace(/\./g, '_');
+	    self._plotSelectors.append(`<option selected="selected" value="${key}">${logName}</option>`);
+	});
+	self._plotSelectors.on('change', self.onLogToggled.bind(self));
     };
 
     ResultsVizWidget.prototype.loadNodeData = function (desc) {
@@ -123,6 +141,9 @@ define([
 	};
 	self.datas = {};
 	self.logs = {};
+
+	// clear out log toggles
+	self.clearLogToggles();
 
 	var attributes = desc.attributes.concat(desc.userLogs);
 	var tasks = attributes.map((key) => {
@@ -137,8 +158,6 @@ define([
 		    .then((metadata) => {
 			// save the name
 			logName = metadata.name;
-			// add a toggle for it
-			self.addLogToggle(logName);
 			// now get the log data
 			return self._blobClient.getObjectAsString(logHash)
 		    })
@@ -170,6 +189,9 @@ define([
 	    }
 	});
 	return Q.allSettled(tasks)
+	    .then(function() {
+		return self.makeLogControls();
+	    });
     };
 
     ResultsVizWidget.prototype.plotLogs = function () {
