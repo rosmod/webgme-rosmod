@@ -19,6 +19,7 @@
     "path": "0.11.x",
     "plotly.js": "^1.35.2",
     "remote-utils": "^1.0.14",
+    "select2": "^4.0.6-rc.1",
     "showdown": "^1.8.1",
     "strip-ansi": "^4.0.0",
     "tar": "^2.2.1",

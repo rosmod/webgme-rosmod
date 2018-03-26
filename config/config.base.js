@@ -48,6 +48,8 @@ config.requirejsPaths['cytoscape-edgehandles'] = "./node_modules/webgme-hfsm/bow
 config.requirejsPaths['cytoscape-context-menus'] = "./node_modules/webgme-hfsm/bower_components/cytoscape-context-menus/cytoscape-context-menus";
 config.requirejsPaths['cytoscape-panzoom'] = "./node_modules/webgme-hfsm/bower_components/cytoscape-panzoom/cytoscape-panzoom";
 
+config.requirejsPaths['select2'] = "./node_modules/select2/dist";
+
 config.client.log.level = 'info';
 
 var path = require('path');

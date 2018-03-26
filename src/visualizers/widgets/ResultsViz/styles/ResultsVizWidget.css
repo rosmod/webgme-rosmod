@@ -7,42 +7,40 @@
  */
 
 .results-viz {
-    outline: none; 
-}
-.svg-content-responsive {
-    display: inline-block;
-    /*position: absolute;*/
-}
-.axis path, .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-}
-.legend {
-    padding: 5px;
-    font: 10px sans-serif;
-    background: yellow;
-    box-shadow: 2px 2px 1px #888;
-}
-path.line {
-    fill: none;
-    stroke-width: 1px;
-}
-.zoomOut {
-    fill: #66a;
-    cursor: pointer;
-}
-.zoomOutText {
-    pointer-events: none;
-    fill : #ccc;
-}
-.zoomOverlay {
-    pointer-events: all;
-    fill:none;
-}
-.band {
-    fill : none;
-    stroke-width: 1px;
-    stroke: red;
+    width: 100%;
+    height: 100%;
 }
 
+.results-viz .controls {
+    height: 75px;
+    width: 100%;
+    overflow: auto;
+}
+
+.results-viz .toggle {
+    float: left;
+    font-weight: bold;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.results-viz .selector {
+    font-weight: bold;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.results-viz .select2-container {
+    min-width: 200px;
+}
+
+.results-viz .select2-dropdown {
+    min-width: 200px;
+}
+
+.results-viz .plot-div {
+    width: 100%;
+    height: calc(100% - 75px);
+}

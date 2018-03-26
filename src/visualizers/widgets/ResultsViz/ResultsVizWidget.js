@@ -12,8 +12,10 @@ define([
     './ResultsVizWidget.UserParser',
     './ResultsVizWidget.Plotter',
     'plotly-js/plotly.min',
+    'select2/js/select2.min',
     'd3',
     'q',
+    'css!select2/css/select2.min.css',
     'css!./styles/ResultsVizWidget.css'
 ], function (
     PlotHtml,
@@ -22,6 +24,7 @@ define([
     UserParser,
     Plotter,
     Plotly,
+    select2,
     d3,
     Q) {
 
@@ -46,156 +49,178 @@ define([
             height = this._el.height(),
             self = this;
 
+	// data we need
         this.nodes = {};
-	this.plotIDs = [];
-        this.alignLogs = true;
+	this.activeId = null;
+	this.datas = {};
+	this.logs = {};
+	this.timeBeginEnd = {
+	    begin: -1,
+	    end: -1
+	};
 
         // set widget class
         this._el.addClass(WIDGET_CLASS);
+
+	// setup the html
+	this._el.append(PlotHtml);
+		    
+	this._controls = $(this._el).find('#controls').first();
+	this._plotSelectors = $(this._controls).find('#plotSelectors').first();
+	$(this._plotSelectors).select2();
+	this._plotContainer = $(this._el).find('#plot-div').first();
+
+	// checkbox for shared axes
+	Plotter.sharedX = true;
+        this.sharedXAxes_toggle = this._el.find("#cbSharedX").first();
+        $(this.sharedXAxes_toggle).prop('checked', Plotter.sharedX);
+        this.sharedXAxes_toggle.on('change', this.togglePlot.bind(this, 'sharedX'));
+
+	Plotter.sharedY = false;
+        this.sharedYAxes_toggle = this._el.find("#cbSharedY").first();
+        $(this.sharedYAxes_toggle).prop('checked', Plotter.sharedY);
+        this.sharedYAxes_toggle.on('change', this.togglePlot.bind(this, 'sharedY'));
+
+	// checkbox for legend
+	Plotter.legendInPlot = false;
+	this.legednInPlot_toggle = this._el.find("#cbLegendInPlot").first();
+	$(this.legednInPlot_toggle).prop('checked', Plotter.legendInPlot);
+        this.legednInPlot_toggle.on('change', this.togglePlot.bind(this, 'legendInPlot'));
     };
 
-    ResultsVizWidget.prototype._addSplitPanelToolbarBtns = function(toolbarEl) {
-        var self = this;
+    // built-in toggles 
+    ResultsVizWidget.prototype.togglePlot = function(key, event) {
+        var self=this;
+        var toggle = event.target;
+        var checked = toggle.checked;
 
-        // BUTTON EVENT HANDLERS
-
-        var enableAlignmentEl = [
-            '<span id="enableAlignment" class="split-panel-toolbar-btn fa fa-toggle-on">',
-            '</span>',
-        ].join('\n');
-
-        var disableAlignmentEl = [
-            '<span id="disableAlignment" class="split-panel-toolbar-btn fa fa-toggle-off">',
-            '</span>',
-        ].join('\n');
-
-        toolbarEl.append(enableAlignmentEl);
-        toolbarEl.append(disableAlignmentEl);
-
-        toolbarEl.find('#enableAlignment').on('click', function(){
-            self.alignLogs = true;
-            var id = Object.keys(self.nodes)[0];
-            self.updateNode( self.nodes[id] );
-        });
-
-        toolbarEl.find('#disableAlignment').on('click', function(){
-            self.alignLogs = false;
-            var id = Object.keys(self.nodes)[0];
-            self.updateNode( self.nodes[id] );
-        });
+	Plotter[key] = checked;
+        var id = Object.keys(self.nodes)[0];
+        self.plotLogs();
     };
 
-    ResultsVizWidget.prototype.onWidgetContainerResize = function (width, height) {
-        //console.log('Widget is resizing...');
+    ResultsVizWidget.prototype.onLogToggled = function(event) {
 	var self = this;
-	this.plotIDs.map(function(plotID) {
-	    var n = d3.selectAll(self._el).select(plotID).node();
-	    if (n && $(self._el).find(plotID).css('display') != 'none')
-		Plotly.Plots.resize(n);
+	// set all to false
+	Object.keys(self.logs).map((logName) => {
+	    self.logs[logName].enabled = false;
 	});
+	// now set the selected ones to true
+	var selectedLogs = $(self._plotSelectors).select2("data");
+	selectedLogs.map((log) => {
+	    var logName = log.text;
+	    self.logs[logName].enabled = true;
+	});
+	// update the plot
+	self.plotLogs();
+    };
+
+    ResultsVizWidget.prototype.clearLogToggles = function() {
+	var self = this;
+	if (self._plotSelectors) {
+	    self._plotSelectors.empty();
+	}
+    };
+
+    ResultsVizWidget.prototype.makeLogControls = function() {
+	var self = this;
+	Object.keys(self.logs).sort().map((logName) => {
+	    var key = logName.replace(/\./g, '_');
+	    self._plotSelectors.append(`<option selected="selected" value="${key}">${logName}</option>`);
+	});
+	self._plotSelectors.on('change', self.onLogToggled.bind(self));
+    };
+
+    ResultsVizWidget.prototype.loadNodeData = function (desc) {
+	var self = this;
+
+	// reset begin / end times
+	self.timeBeginEnd = {
+	    begin: -1,
+	    end: -1
+	};
+	self.datas = {};
+	self.logs = {};
+
+	// clear out log toggles
+	self.clearLogToggles();
+
+	var attributes = desc.attributes.concat(desc.userLogs);
+	var tasks = attributes.map((key) => {
+	    var a = key;
+	    // load the attribute
+	    var nodeObj = self._client.getNode(desc.id);
+	    var logHash = nodeObj.getAttribute(a);
+	    var logName = a;
+	    if (logHash) {
+		// get the name of the file <node>.<comp>.<user/trace>.log
+		return self._blobClient.getMetadata(logHash)
+		    .then((metadata) => {
+			// save the name
+			logName = metadata.name;
+			// now get the log data
+			return self._blobClient.getObjectAsString(logHash)
+		    })
+		    .then((data) => {
+			self.logs[logName] = {
+			    data:    null, // will be filled out by parsers
+			    logName: logName,
+			    logHash: logHash,
+			    enabled: true,
+			};
+			// parse the logs
+			var parsed = Parser.getDataFromAttribute(data);
+			if (_.isEmpty(parsed))
+			    parsed = UserParser.getDataFromAttribute(data);
+			self.logs[logName].data = parsed;
+			// figure out time range
+			if (!_.isEmpty(parsed)) {
+			    var logTimeRange = UserParser.getTimeBeginEnd( self.logs[logName].data );
+			    if (self.timeBeginEnd.begin == -1 ||
+				self.timeBeginEnd.begin > logTimeRange.begin) {
+				self.timeBeginEnd.begin = logTimeRange.begin;
+			    }
+			    if (self.timeBeginEnd.end == -1 ||
+				self.timeBeginEnd.end < logTimeRange.end) {
+				self.timeBeginEnd.end = logTimeRange.end;
+			    }
+			}
+		    });
+	    }
+	});
+	return Q.allSettled(tasks)
+	    .then(function() {
+		return self.makeLogControls();
+	    });
+    };
+
+    ResultsVizWidget.prototype.plotLogs = function () {
+	var self = this;
+
+	self.clearPlot();
+
+	// logs sorted by name and with disabled logs removed
+	var sortedLogs = Object.keys(self.logs).sort().filter((logKey) => {
+	    return self.logs[logKey].enabled;
+	});
+
+	// data from the sorted & enabled logs
+	var sortedDatas = sortedLogs.map((logKey) => {
+	    return self.logs[logKey].data;
+	});
+
+	Plotter.plotData(self._plotContainer, 'plot', sortedDatas, self._onClick.bind(self, self.activeId) );
     };
 
     // Adding/Removing/Updating items
     ResultsVizWidget.prototype.addNode = function (desc) {
 	var self = this;
         if (desc && !self.nodes[desc.id]) {
-	    var datas = {};
-	    desc.logs = {};
-	    desc.displayNames = {};
-
-	    var hidePlotFunc = function(a) {
-		var active = datas[a].active ? false : true;
-		var opacity = active ? 0 : 1;
-		var visibility = active ? 'hidden' : 'visible';
-		var display = active ? 'none' : 'block';
-		self._el.find('#plot_'+a)
-		    .css('display', display);
-		datas[a].active = active;
-	    };
-
-	    var attributes = desc.attributes.concat(desc.userLogs);
-	    var timeBeginEnd = {
-		begin: -1,
-		end: -1
-	    };
-	    var tasks = attributes.map((key) => {
-		var a = key;
-		// load the attribute
-		var nodeObj = self._client.getNode(desc.id);
-		var logHash = nodeObj.getAttribute(a);
-		if (logHash) {
-		    return self._blobClient.getObjectAsString(logHash)
-			.then((data) => {
-			    desc.logs[a] = data;
-			    // parse the logs
-			    var parsed = Parser.getDataFromAttribute(data);
-			    if (_.isEmpty(parsed))
-				parsed = UserParser.getDataFromAttribute(data);
-			    datas[a] = parsed;
-			    // figure out time range
-			    if (!_.isEmpty(parsed)) {
-				var logTimeRange = UserParser.getTimeBeginEnd( datas[a] );
-				if (timeBeginEnd.begin == -1 || timeBeginEnd.begin > logTimeRange.begin) {
-				    timeBeginEnd.begin = logTimeRange.begin;
-				}
-				if (timeBeginEnd.end == -1 || timeBeginEnd.end < logTimeRange.end) {
-				    timeBeginEnd.end = logTimeRange.end;
-				}
-			    }
-			    // now get the metadata for the display name
-			    return self._blobClient.getMetadata(logHash);
-			})
-			.then((metadata) => {
-			    // get the name of the file <node>.<comp>.<user/trace>.log
-			    desc.displayNames[a] = metadata.name;
-			});
-		}
-	    });
-	    return Q.allSettled(tasks)
-		.then(() => {
-		    //console.log(timeBeginEnd);
-		    var sortedLogs = Object.keys(desc.logs).sort();
-		    sortedLogs.map(function(a) {
-			// setup the html
-			self._el.append(PlotHtml);
-			var container = self._el.find('#log');
-			container.attr('id', 'log_'+a);
-			
-			var title = self._el.find('#title');
-			var displayTitle = desc.displayNames[a];
-			displayTitle = displayTitle.replace(/\.user\.log/gm, ' User Log');
-			displayTitle = displayTitle.replace(/\.trace\.log/gm, ' Trace Log');
-			displayTitle = displayTitle.replace(/\./gm, '::');
-
-			title.attr('id','title_'+a)
-			    .on('click', function(_a) {
-				return function() {
-				    self._onClick(desc.id);
-				    hidePlotFunc(_a);
-				};
-			    }(a));
-
-			title.append('<b>'+displayTitle+'</b>');
-
-			var p = self._el.find('#plot');
-			p.attr('id',"plot_" + a);
-			p.click(function() {
-			    self._onClick(desc.id);
-			});
-
-			var data = datas[a];
-                        if (self.alignLogs) {
-			    data = UserParser.alignLogs(data, timeBeginEnd.begin, timeBeginEnd.end );
-                        }
-			if (!_.isEmpty(data)) {
-			    Plotter.plotData(self._el, 'plot_'+a, data, self._onClick.bind(self, desc.id) );
-			    self.plotIDs.push('#plot_'+a);
-			}
-			else {
-			    container.detach();
-			}
-		    });
-		    self.nodes[desc.id] = desc;
+	    self.nodes[desc.id] = desc;
+	    self.activeId = desc.id;
+	    self.loadNodeData(desc)
+		.then(function() {
+		    self.plotLogs();
 		});
         }
     };
@@ -203,15 +228,14 @@ define([
     ResultsVizWidget.prototype.removeNode = function (gmeId) {
         var desc = this.nodes[gmeId];
 	if (desc) { // if this is our results object
-	    this._el.empty();
-            delete this.nodes[gmeId];
+	    this.clearNodes();
 	}
     };
 
     ResultsVizWidget.prototype.updateNode = function (desc) {
 	if (this.nodes[desc.id]) { // if this is our results object
 	    // remove old data
-	    this.removeNode(desc.id);
+	    this.clearNodes();
 	    // recreate with new data
 	    this.addNode(desc);
         }
@@ -227,11 +251,40 @@ define([
     ResultsVizWidget.prototype.onBackgroundDblClick = function () {
     };
 
+    ResultsVizWidget.prototype.onWidgetContainerResize = function (width, height) {
+        //console.log('Widget is resizing...');
+	var self = this;
+	if (self._el) {
+	    var p = d3.selectAll(self._el).select('#plot')
+	    if (p) {
+		var n = p.node();
+		if (n && Plotly.Plots && Plotly.Plots.resize) {
+		    Plotly.Plots.resize(n);
+		}
+	    }
+	}
+    };
+
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
+    ResultsVizWidget.prototype._addSplitPanelToolbarBtns = function(toolbarEl) {
+        var self = this;
+    };
+
+    ResultsVizWidget.prototype.clearPlot = function() {
+	if (this._plotContainer) {
+	    this._plotContainer.empty();
+	    this._plotContainer.append('<div id="plot"></div>');
+	    this._plotEl = $(this._plotContainer).find('#plot').first();
+	}
+    };
+
     ResultsVizWidget.prototype.clearNodes = function() {
-        if (this._el) {
-            this._el.empty();
+        if (this._plotEl) {
+            this._plotEl.empty();
         }
+	if (this._plotSelectors) {
+	    this._plotSelectors.empty();
+	}
         delete this.nodes;
         this.nodes = {};
     };
