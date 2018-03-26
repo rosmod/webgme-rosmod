@@ -8,6 +8,8 @@
 #define <%- compInfo.name.toUpperCase() %>_INCLUDE_GUARD
 #include "rosmod_actor/component.hpp"
 
+#include <actionlib/client/simple_action_client.h>
+#include <actionlib/server/simple_action_server.h>
 
 <%
 if (compInfo['State Machine_list']) {
