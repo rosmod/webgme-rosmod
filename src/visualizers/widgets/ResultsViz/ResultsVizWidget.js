@@ -162,19 +162,19 @@ define([
 			return self._blobClient.getObjectAsString(logHash)
 		    })
 		    .then((data) => {
-			self.logs[logName] = {
-			    data:    null, // will be filled out by parsers
-			    logName: logName,
-			    logHash: logHash,
-			    enabled: true,
-			};
 			// parse the logs
 			var parsed = Parser.getDataFromAttribute(data);
 			if (_.isEmpty(parsed))
 			    parsed = UserParser.getDataFromAttribute(data);
-			self.logs[logName].data = parsed;
 			// figure out time range
 			if (!_.isEmpty(parsed)) {
+			    self.logs[logName] = {
+				data:    parsed,
+				logName: logName,
+				logHash: logHash,
+				enabled: true,
+			    };
+
 			    var logTimeRange = UserParser.getTimeBeginEnd( self.logs[logName].data );
 			    if (self.timeBeginEnd.begin == -1 ||
 				self.timeBeginEnd.begin > logTimeRange.begin) {
