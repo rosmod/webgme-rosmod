@@ -309,6 +309,15 @@ define([
 			self.artifacts[srvFileName] = srvInfo.Definition;
 		    });
 		}
+		if (pkgInfo.Action_list) {
+                    pkgInfo.generateTypes = true;
+		    pkgInfo.Action_list.map(function(actInfo) {
+			var actFileName = [prefix,
+					   pkgInfo.name,'action',
+					   actInfo.name + '.action'].join('/');
+			self.artifacts[actFileName] = actInfo.Definition;
+		    });
+		}
 
 		var cmakeFileName = [prefix,
 				     pkgInfo.name,

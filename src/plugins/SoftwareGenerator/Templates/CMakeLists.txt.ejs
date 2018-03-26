@@ -18,7 +18,7 @@ endif()
 
 find_package(catkin REQUIRED COMPONENTS
 <%
-if (pkgInfo.Message_list || pkgInfo.Service_list) {
+if (pkgInfo.Message_list || pkgInfo.Service_list || pkgInfo.Action_list) {
 -%>
   message_generation
 <%
@@ -66,16 +66,26 @@ add_message_files(
 } 
 -%>
 
-
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+<%
+if (pkgInfo.Action_list) { 
+-%>
+# Generate actions in the 'action' folder
+add_action_files(
+  FILES
+<%
+  pkgInfo.Action_list.map(function(act) { 
+-%>
+  <%- act.name %>.action
+<%
+  }); 
+-%>
+)
+<%
+} 
+-%>
 
 <%
-if (pkgInfo.Message_list || pkgInfo.Service_list) {
+if (pkgInfo.Message_list || pkgInfo.Service_list || pkgInfo.Action_list) {
 -%>
 # Generate added messages and services with any dependencies listed here
 generate_messages(
@@ -106,14 +116,14 @@ if (pkgInfo.Component_list) {
 #  LIBRARIES client_server_package
 #  CATKIN_DEPENDS roscpp std_msgs
 <%
-if (pkgInfo.Message_list || pkgInfo.Service_list) {
+if (pkgInfo.Message_list || pkgInfo.Service_list || pkgInfo.Action_list) {
 -%>
   CATKIN_DEPENDS <%- pkgInfo.PackageDependencies.join(' ') %>
 <%
 }
 -%>
 <%
-if (pkgInfo.Message_list || pkgInfo.Service_list) {
+if (pkgInfo.Message_list || pkgInfo.Service_list || pkgInfo.Action_list) {
 -%>
   CATKIN_DEPENDS message_runtime
 <%

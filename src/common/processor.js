@@ -98,7 +98,9 @@ define([], function() {
 	    if (obj.Action_list) {
 		obj.Action_list.map(function(o) {
 		    obj.Packages = self.union(obj.Packages, o.Dependencies);
-		    //obj.GenerateMessageDependencies = self.union(obj.GenerateMessageDependencies, o.Dependencies);
+		    obj.GenerateMessageDependencies = self.union(
+			obj.GenerateMessageDependencies, ['actionlib_msgs']
+		    );
 		});
 	    }	    
 
@@ -212,7 +214,9 @@ define([], function() {
             // make .AdvertisedName convenience member for rendering code
             obj.AdvertisedName = obj.Package + '/' + obj.name;
 	    // get packages that this service is dependent on
-	    obj.Dependencies = self.getTypeDependencies(obj.Definition);
+	    obj.Dependencies = ['actionlib', 'actionlib_msgs'].concat(
+		self.getTypeDependencies(obj.Definition)
+	    );
         },
         makeExternalMessageConvenience: function(obj, objects) {
             // already will have .Package convenience member for rendering code from model
