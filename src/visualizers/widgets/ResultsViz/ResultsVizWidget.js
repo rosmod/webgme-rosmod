@@ -162,10 +162,14 @@ define([
 			return self._blobClient.getObjectAsString(logHash)
 		    })
 		    .then((data) => {
+			var parsed = {};
 			// parse the logs
-			var parsed = Parser.getDataFromAttribute(data);
-			if (_.isEmpty(parsed))
+			if (logName.indexOf('.trace.log') > -1) {
+			    parsed = Parser.getDataFromAttribute(data);
+			} else {
 			    parsed = UserParser.getDataFromAttribute(data);
+			}
+
 			// figure out time range
 			if (!_.isEmpty(parsed)) {
 			    self.logs[logName] = {
