@@ -864,7 +864,7 @@ define([
                         return key + ':=' + args[key];
                     }).join(' ');
                 }
-		host_commands.push('nohup roslaunch ' + node.name +' '+ node['Launch File'] + args + redirect_command + ' &');
+		host_commands.push('nohup roslaunch ' + (node.Package || node.name) +' '+ node['Launch File'] + args + redirect_command + ' &');
 		host_commands.push('echo $!'); // what was the PID of this process?
                 if (self.waitTime > 0) {
                     host_commands.push('sleep ' + self.waitTime);
