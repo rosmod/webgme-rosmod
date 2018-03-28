@@ -938,12 +938,13 @@ define([
         const { exec } = require('child_process');
         var path = require('path');
 
-	var sharePath = utils.sanitizePath(path.join(self.root_dir, 'share'));
+	var installPath = utils.sanitizePath(path.join(self.root_dir, 'install'));
 
         var commands=[
-            'source /opt/rosmod/setup.bash',
-            'export PYTHONPATH='+sharePath+':$PYTHONPATH',
-            'export ROS_PACKAGE_PATH='+sharePath+':$ROS_PACKAGE_PATH',
+	    'source ' + installPath + '/setup.bash',
+            //'source /opt/rosmod/setup.bash',
+            //'export PYTHONPATH='+installPath+':$PYTHONPATH',
+            //'export ROS_PACKAGE_PATH='+installPath+':$ROS_PACKAGE_PATH',
             'export ROS_MASTER_URI='+self.rosMasterURI,
 	    'export ROS_IP='+self.rosBridgeServerIp,
             'roslaunch rosbridge_server rosbridge_websocket.launch port:='+self.rosBridgePort+' > /opt/rosmod/rosbridge.log 2>&1 &',

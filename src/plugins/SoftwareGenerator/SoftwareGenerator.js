@@ -329,24 +329,18 @@ define([
 		    'model': self.projectModel,
                     'objects': self.projectObjects
 		});
-
-                // generate the pkg xml under share/<package name>
-		var sharedPackageXMLFileName = ['share',
-					        pkgInfo.name,
-					        'package.xml'].join('/');
-		self.artifacts[sharedPackageXMLFileName] = self.artifacts[packageXMLFileName];
 	    });
 	}
         
 
 	var compile_script = [
 	    'catkin config --extend ${HOST_WORKSPACE}',
+	    'catkin config -i install',
+	    'catkin config --install',
 	    'catkin clean -b --yes',
 	    'catkin build --no-status',
 	    'mkdir bin',
-            'mkdir share',
-	    'cp devel/lib/*.so bin/.',
-            'cp -r devel/lib/python2.7/dist-packages/* share/.'
+	    'cp devel/lib/*.so bin/.'
 	];
 
         // save the compilation script
@@ -930,31 +924,27 @@ define([
 	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
 	var archBinPath = path.join(self.gen_dir, 'bin' , utils.getDeviceType(host.host));
 
-        // share folder for storing package.xmls (generated above) and the msg/srv deserialization
-	var sharePath = path.join(self.gen_dir, 'share');
+        // install folder for storing package.xmls (generated above) and the msg/srv deserialization
+	var installPath = path.join(self.gen_dir, 'install');
 
         var buildCommand = 'catkin build --no-status '+host.compilePackages.map(function(p) { return p.name; }).join(' ');
 
 	var compile_commands = [
 	    'cd ' + utils.sanitizePath(compile_dir),
 	    'rm -rf bin',
+	    'rm -rf install',
 	    'catkin config --extend ' + host.host['Build Workspace'],
+	    'catkin config -i install',
+	    'catkin config --install',
 	    'catkin clean -b --yes',
             'mkdir bin',
-            'mkdir share',
             buildCommand
 	];
         var hasComps = host.compilePackages.filter(function(p) { return p.generateComps == true; }).length > 0;
-        var hasDefs  = host.compilePackages.filter(function(p) { return p.generateTypes == true; }).length > 0;
 
         if (hasComps) {
             // only do this if we have generated components (and will therefore generate binaries
             compile_commands.push('cp devel/lib/*.so bin/.');
-        }
-
-        if (hasDefs) {
-            // only do this if we have generated services / messages
-            compile_commands.push('cp -r devel/lib/python2.7/dist-packages/* share/.');
         }
 
         // save the compilation script
@@ -963,6 +953,7 @@ define([
 	var compilationFailed = false;
 
 	child_process.execSync('rm -rf ' + utils.sanitizePath(archBinPath));
+	child_process.execSync('rm -rf ' + utils.sanitizePath(installPath));
 
 	// make the compile dir
 	return new Promise(function(resolve,reject) {
@@ -1062,21 +1053,14 @@ define([
                 }
 	    })
             .then(function() {
-                if (hasDefs) {
-		    // make the local binary folder for the architecture
-		    mkdirp.sync(sharePath);
-                    // copy the message/service deserialization generated as part of the build
-		    self.notify('info', 'copying definitions from ' + host.intf.IP + ' into local storage.');
-                    return utils.copyFromHost(path.join(compile_dir, 'share') + '/*',
-                                              sharePath + '/.',
-                                              host.intf.IP,
-                                              host.user);
-                }
-            })
-            .then(function() {
-                // remove all folders within share/<package name>/ except msg,srv
-                var fs = require('fs');
-                //fs.unlinkSync();
+		// make the local binary folder for the architecture
+		mkdirp.sync(installPath);
+                // copy the message/service deserialization generated as part of the build
+		self.notify('info', 'copying definitions from ' + host.intf.IP + ' into local storage.');
+                return utils.copyFromHost(path.join(compile_dir, 'install') + '/*',
+                                          installPath + '/.',
+                                          host.intf.IP,
+                                          host.user);
             })
 	    .then(function() {
 		// remove the remote folders
