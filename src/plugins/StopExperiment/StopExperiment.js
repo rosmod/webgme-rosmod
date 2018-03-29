@@ -172,7 +172,7 @@ define([
                             key = self.core.getAttribute(node, 'Key'),
 			    RunningRoscore = self.core.getAttribute(node, 'RunningRoscore'),
                             // external node PIDS
-                            externalNodePIDs = self.core.getAttribute(node, 'External Nodes'),
+                            PIDs = self.core.getAttribute(node, 'PIDs'),
                             // ROS Bridge
                             ROSBridgePID = self.core.getAttribute(node, 'ROS Bridge PID'),
                             ROSBridgePort = self.core.getAttribute(node, 'ROS Bridge Port'),
@@ -186,8 +186,8 @@ define([
                             self.rosMCTExperimentName = rosMCTExperimentName;
                         }
 
-                        if (externalNodePIDs) {
-                            externalNodePIDs = JSON.parse(externalNodePIDs);
+                        if (PIDs) {
+                            PIDs = JSON.parse(PIDs);
                         }
 
                         if (ip && key && directory) {
@@ -207,7 +207,7 @@ define([
 			    intf: intf,
 			    artifacts: artifacts,
 			    RunningRoscore: RunningRoscore,
-                            externalNodePIDs: externalNodePIDs
+                            PIDs: PIDs
 			});
 			self.core.deleteNode(node);
 		    }
@@ -232,21 +232,19 @@ define([
 	var tasks = self.activeHosts.map(function(host) {
 	    var ip = host.intf.IP;
 	    var user = host.user;
-	    var host_commands = [
-		'pkill -SIGINT rosmod_actor',
-                'sleep 5',
-		'rc_kill'
-	    ];
-            if (host.RunningRoscore) {
-                host_commands.push('pkill roscore');
-            }
-            if (host.externalNodePIDs && host.externalNodePIDs.length) {
-                var pids = host.externalNodePIDs.join(' ');
-                self.notify('info', 'stopping external node processes: ' + pids);
-                host.externalNodePIDs.map((pid) => {
+	    var host_commands = [];
+            if (host.PIDs && host.PIDs.length) {
+                var pids = host.PIDs.join(' ');
+                self.notify('info', 'stopping node processes: ' + pids);
+                host.PIDs.map((pid) => {
                     host_commands.push("kill -- -$( ps opgid= "+pid+" | tr -d ' ' )");
                 });
             }
+            if (host.RunningRoscore) {
+                host_commands.push('pkill roscore');
+            }
+	    host_commands.push('sleep 5');
+	    host_commands.push('rc_kill');
 	    self.notify('info', 'stopping processes on: '+ user.name + '@' + ip);
 	    return utils.executeOnHost(host_commands, ip, user);
 	});

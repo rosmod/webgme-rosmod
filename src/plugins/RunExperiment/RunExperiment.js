@@ -114,6 +114,7 @@ define([
             self.rosBridgePort = Math.floor((Math.random() * (65535-1024) + 1024));
         }
         self.waitTime = currentConfig.waitTime;
+	self.launchWithValgrind = currentConfig.launchWithValgrind;
 
         // get the selected hosts from the config
         // also get the ordered nodes from the config
@@ -838,6 +839,12 @@ define([
                 host_commands.push('export ROS_NAMESPACE='+self.rosNamespace);
             }
 
+	    var valgrind_command = "";
+	    if (self.launchWithValgrind) {
+		self.notify('info', 'Debugging with valgrind, MAKE SURE ALL HOSTS HAVE VALGRIND INSTALLED!');
+		valgrind_command = " valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 --track-fds=yes ";
+	    }
+
             function makeNodeStart(node) {
                 var nodeConfigName = self.getConfigName( node );
 		var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
@@ -848,8 +855,14 @@ define([
                         return key + ':=' + args[key];
                     }).join(' ');
                 }
-		host_commands.push('nohup rosmod_actor --config ' + nodeConfigName +
-                                   args + redirect_command +' &');
+		host_commands.push('nohup ' +
+				   valgrind_command + 
+				   ' rosmod_actor --config ' +
+				   nodeConfigName +
+                                   args +
+				   redirect_command +
+				   ' &');
+		host_commands.push('echo $!'); // what was the PID of this process?
                 if (self.waitTime > 0) {
                     host_commands.push('sleep ' + self.waitTime);
                 }
@@ -907,7 +920,7 @@ define([
 		    }).filter((o) => {
                         return o !== NaN && o > 100;
                     });
-                    host.externalNodePIDs = PIDs;
+                    host.PIDs = PIDs;
 		});
 	});
 	return Q.all(tasks);
@@ -1110,9 +1123,9 @@ define([
                 self.core.setAttribute(hn, 'Experiment Name', self.logFilePrefix + self.experimentName);
             }
 
-            if (host.externalNodePIDs) {
-	        self.core.setAttribute(hn, 'External Nodes', JSON.stringify(host.externalNodePIDs));
-                self.core.setAttributeMeta(hn, 'External Nodes', {type: 'string'});
+            if (host.PIDs) {
+	        self.core.setAttribute(hn, 'PIDs', JSON.stringify(host.PIDs));
+                self.core.setAttributeMeta(hn, 'PIDs', {type: 'string'});
             }
 
             // save all host related information
