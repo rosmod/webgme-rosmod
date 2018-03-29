@@ -953,7 +953,6 @@ define([
 	var compilationFailed = false;
 
 	child_process.execSync('rm -rf ' + utils.sanitizePath(archBinPath));
-	child_process.execSync('rm -rf ' + utils.sanitizePath(installPath));
 
 	// make the compile dir
 	return new Promise(function(resolve,reject) {
@@ -1053,8 +1052,6 @@ define([
                 }
 	    })
             .then(function() {
-		// make the local binary folder for the architecture
-		mkdirp.sync(installPath);
                 // copy the message/service deserialization generated as part of the build
 		self.notify('info', 'copying definitions from ' + host.intf.IP + ' into local storage.');
                 return utils.copyFromHost(path.join(compile_dir, 'install') + '/*',
@@ -1101,7 +1098,13 @@ define([
 	var selectedHosts = [];
 
 	var path = require('path');
+	var mkdirp = require('mkdirp');
 	var child_process = require('child_process');
+
+        // install folder for storing package.xmls (generated above) and the msg/srv deserialization
+	var installPath = path.join(self.gen_dir, 'install');
+	child_process.execSync('rm -rf ' + utils.sanitizePath(installPath));
+	mkdirp.sync(installPath);
 
         self.mapPackagesToHosts( validHostList );
 
