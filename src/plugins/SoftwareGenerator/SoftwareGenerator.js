@@ -415,6 +415,65 @@ define([
 	});
     };
 
+    SoftwareGenerator.prototype.addMarkup = function(level, summary, details) {
+	var self = this,
+	    Convert = require('ansi-to-html'),
+	    convert = new Convert();
+	// ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
+	var msg = `<details><summary><b>${summary}</b></summary>` +
+	    '<pre>' +
+	    '<code>'+
+	    convert.toHtml(details) +
+	    '</code>'+
+	    '</pre>' +
+	    '</details>';
+	self.createMessage(self.activeNode, msg, level);
+    };
+
+    SoftwareGenerator.prototype.cloneLibrary = function(lib, dir) {
+	var self = this,
+	    path = require('path'),
+	    fs = require('fs'),
+	    sanitizedDir = utils.sanitizePath(dir);
+
+	const { exec } = require('child_process');
+
+	self.notify('info', 'Cloning: ' + lib.name + ' from '+ lib.URL);
+
+	var options = {
+	    shell: '/bin/bash',
+	};
+
+	var commands = [
+	    `git clone --depth=1 --branch=${lib.Branch || 'master'} ${lib.URL} ${sanitizedDir}/${lib.name}`,
+	    'rm -rf !$/.git'
+	].join('\n');
+
+	var deferred = Q.defer();
+
+	var hasError = function(error, stdout, stderr) {
+	    self.addMarkup('error', `STDERR cloning ${lib.name} from ${lib.URL}:`, stderr);
+	    var errMsg = `Failed to clone ${lib.name} from ${lib.URL}: Make sure the URL is correct and the name does not conflict with any other libraries.`;
+	    deferred.reject(errMsg);
+	};
+
+	exec(commands, options, function(error, stdout, stderr) {
+	    if (error) {
+		hasError(error, stdout, stderr);
+	    } else {
+		fs.access(path.join(dir, lib.name), (err) => {
+		    if (err) {
+			hasError(error, stdout, stderr);
+		    } else {
+			deferred.resolve();
+		    }
+		});
+	    }
+	});
+
+	return deferred.promise;
+    };
+
     SoftwareGenerator.prototype.downloadLibraries = function ()
     {
 	var self = this;
@@ -431,8 +490,12 @@ define([
 	var tasks = [];
 	if (self.projectModel.Software_list[0]['Source Library_list']) {
 	    tasks = self.projectModel.Software_list[0]['Source Library_list'].map(function(lib) {
-		self.notify('info', 'Downloading: ' + lib.name + ' from '+ lib.URL);
-		return utils.wgetAndUnzipLibrary(lib.URL, dir);
+		if (lib.Branch || lib.URL.indexOf(".zip") == -1) {
+		    return self.cloneLibrary(lib, dir);
+		} else {
+		    self.notify('info', 'Downloading: ' + lib.name + ' from '+ lib.URL);
+		    return utils.wgetAndUnzipLibrary(lib.URL, dir);
+		}
 	    });
 	}
 
@@ -998,25 +1061,8 @@ define([
 			compilationFailed = true;
 		    })
 			.finally(function() {
-			    var Convert = require('ansi-to-html');
-			    var convert = new Convert();
-			    // ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
-			    var msg = '<details><summary><b>Compile STDOUT from '+host.intf.IP+':</b></summary>' +
-				'<pre>' +
-				'<code>'+
-				convert.toHtml(host.stdOut) + 
-				'</code>'+
-				'</pre>' +
-				'</details>';
-			    self.createMessage(self.activeNode, msg, 'error');
-			    msg = '<details><summary><b>Compile STDERR from '+host.intf.IP+':</b></summary>' +
-				'<pre>' +
-				'<code>'+
-				convert.toHtml(host.stdErr) + 
-				'</code>' +
-				'</pre>' +
-				'</details>';
-			    self.createMessage(self.activeNode, msg, 'error');
+			    self.addMarkup('error', `Compile STDOUT from ${host.intf.IP}:`, host.stdOut);
+			    self.addMarkup('error', `Compile STDERR from ${host.intf.IP}:`, host.stdErr);
 			    // ADD STDOUT / STDERR TO RESULTS AS BLOBS
 			    var files = {};
 			    var stripANSI = require('strip-ansi');
