@@ -341,7 +341,7 @@ define([
 	    //self.logger.info('setting meta attr for '+logName);
 	    self.core.setAttributeMeta(rn, logName, {'type':'asset'});
 	    //self.logger.info('set meta attr for '+logName);
-	    return self.blobClient.putFile(log, fs.readFileSync(localDir + '/' + log, 'utf8'))
+	    return self.blobClient.putFile(log, fs.readFileSync(localDir + '/' + log))
 		.then(function (hash) {
 		    //self.logger.info('got hash for '+log+': ' + hash);
 		    self.core.setAttribute(rn, logName, hash);
