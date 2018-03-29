@@ -64,11 +64,11 @@ define([
 
 	// setup the html
 	this._el.append(PlotHtml);
-		    
-	this._controls = $(this._el).find('#controls').first();
-	this._plotSelectors = $(this._controls).find('#plotSelectors').first();
-	$(this._plotSelectors).select2();
-	this._plotContainer = $(this._el).find('#plot-div').first();
+
+	this._controls = this._el.find('#controls').first();
+	this._plotSelectors = this._el.find('.plot-selector').first();
+	this._plotSelectors.select2();
+	this._plotContainer = this._el.find('#plot-div').first();
 
 	// checkbox for shared axes
 	Plotter.sharedX = true;
@@ -106,7 +106,7 @@ define([
 	    self.logs[logName].enabled = false;
 	});
 	// now set the selected ones to true
-	var selectedLogs = $(self._plotSelectors).select2("data");
+	var selectedLogs = self._plotSelectors.select2("data");
 	selectedLogs.map((log) => {
 	    var logName = log.text;
 	    self.logs[logName].enabled = true;
@@ -118,7 +118,7 @@ define([
     ResultsVizWidget.prototype.clearLogToggles = function() {
 	var self = this;
 	if (self._plotSelectors) {
-	    self._plotSelectors.empty();
+	    self._plotSelectors.val(null);
 	}
     };
 
@@ -278,7 +278,7 @@ define([
 	if (this._plotContainer) {
 	    this._plotContainer.empty();
 	    this._plotContainer.append('<div id="plot"></div>');
-	    this._plotEl = $(this._plotContainer).find('#plot').first();
+	    this._plotEl = this._el.find('#plot').first();
 	}
     };
 
