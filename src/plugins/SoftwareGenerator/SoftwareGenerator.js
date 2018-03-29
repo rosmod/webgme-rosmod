@@ -446,7 +446,7 @@ define([
 
 	var commands = [
 	    `git clone --depth=1 --branch=${lib.Branch || 'master'} ${lib.URL} ${sanitizedDir}/${lib.name}`,
-	    'rm -rf !$/.git'
+	    `rm -rf ${sanitizedDir}/${lib.name}/.git`
 	].join('\n');
 
 	var deferred = Q.defer();
