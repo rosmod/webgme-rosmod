@@ -38,14 +38,6 @@
 	    "readOnly": false
 	},
 	{
-	    "name": "launchWithValgrind",
-	    "displayName": "Debug With Valgrind.",
-	    "description": "If true, spawns ROSMOD nodes with valgrind - the stderr will contain valgrind's output. Note: Make sure valgrind is installed on all target systems!",
-	    "value": false,
-	    "valueType": "boolean",
-	    "readOnly": false
-	},
-	{
 	    "name": "forceIsolation",
 	    "displayName": "Force Isolation.",
 	    "description": "If true, enforces that the spawned processes must run on hosts which are not currently running other ROSMOD processes.",

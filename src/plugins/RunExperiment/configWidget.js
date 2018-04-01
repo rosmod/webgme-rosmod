@@ -71,6 +71,10 @@ define([
                     var containerConfig = self.makeContainerConfig( containerNodeMap );
                     pluginMetadata.configStructure = containerConfig.concat(pluginMetadata.configStructure);
 
+		    // how do we want to do debugging?
+		    var debugConfig = self.makeDebugConfig( containerNodeMap );
+                    pluginMetadata.configStructure = debugConfig.concat(pluginMetadata.configStructure);
+
                     // figure out their users
                     var hostUserMap = self.makeHostUserMap( hosts, users );
                     // for each host create selection in meta with options
@@ -162,6 +166,34 @@ define([
         return Q.all(tasks).then(() => {
             return containerNodeMap;
         });
+    };
+
+    ConfigWidget.prototype.makeDebugConfig = function( containerNodeMap ) {
+        var self = this,
+            config = [];
+
+        var tmpl = {
+	    "name": "debugging",
+	    "displayName": "Debugging Configuration",
+	    "description": "Select if and how you would like to debug.",
+	    "value": "None",
+	    "valueType": "string",
+	    "valueItems": [
+		"None",
+		"Valgrind on all ROSMOD Nodes",
+	    ]
+        };
+
+        Object.keys(containerNodeMap).map(function(containerPath) {
+	    var nodeDebugging = containerNodeMap[ containerPath ].nodes.map(function(node) {
+		return `gdb+${node}`;
+	    });
+	    tmpl.valueItems = tmpl.valueItems.concat(nodeDebugging);
+        });
+
+	config.push(tmpl);
+
+        return config;
     };
 
     ConfigWidget.prototype.makeContainerConfig = function( containerNodeMap ) {

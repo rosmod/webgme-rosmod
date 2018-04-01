@@ -114,7 +114,18 @@ define([
             self.rosBridgePort = Math.floor((Math.random() * (65535-1024) + 1024));
         }
         self.waitTime = currentConfig.waitTime;
-	self.launchWithValgrind = currentConfig.launchWithValgrind;
+
+	// get debugging configuration
+	self.debuggingEnabled = false;
+	self.launchWithValgrind = false;
+	self.selectedDebugNode = '';
+	if (currentConfig.debugging && currentConfig.debugging !== 'None') {
+	    if (currentConfig.debugging === 'Valgrind on all ROSMOD Nodes') {
+		self.launchWithValgrind = true;
+	    } else {
+		self.selectedDebugNode = currentConfig.debugging.split('+')[1];
+	    }
+	}
 
         // get the selected hosts from the config
         // also get the ordered nodes from the config
@@ -855,8 +866,13 @@ define([
                         return key + ':=' + args[key];
                     }).join(' ');
                 }
+		var gdbserver_command = '';
+		if (self.selectedDebugNode == node.name) {
+		    gdbserver_command = ' gdbserver :9092 ';
+		}
 		host_commands.push('nohup ' +
-				   valgrind_command + 
+				   valgrind_command +
+				   gdbserver_command + 
 				   ' rosmod_actor --config ' +
 				   nodeConfigName +
                                    args +
