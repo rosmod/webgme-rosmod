@@ -289,6 +289,21 @@ define([
 		.done();
     };
 
+    RunExperiment.prototype.addMarkup = function(level, summary, details) {
+	var self = this,
+	    Convert = require('ansi-to-html'),
+	    convert = new Convert();
+	// ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
+	var msg = `<details><summary><b>${summary}</b></summary>` +
+	    '<pre>' +
+	    '<code>'+
+	    convert.toHtml(details) +
+	    '</code>'+
+	    '</pre>' +
+	    '</details>';
+	self.createMessage(self.activeNode, msg, level);
+    };
+
     RunExperiment.prototype.mapContainersToHosts = function () {
 	var self = this;
 
@@ -822,6 +837,21 @@ define([
 	return utils.deployOnHost(host_commands, ip, user);
     };
 
+    RunExperiment.prototype.displayGDBCommands = function(node, host) {
+	var self = this;
+	self.addMarkup('info', 'How to connect to running gdbserver:',
+		       '\x1b[107;90m# on the server machine:\n'+
+		       '#   you will need to scp rosmod_actor from the target\n' +
+		       '\x1b[107;94m$ \x1b[40;92m'+
+		       `<span style="user-select:text;">scp -i ${host.user.Key} ${host.user.name}@${host.intf.IP}:/opt/rosmod/bin/rosmod_actor .\n</span>` +
+		       '\x1b[107;94m$ \x1b[40;92m'+
+		       '<span style="user-select:text;">gdb-multiarch ./rosmod_actor\n</span>' +
+		       '\x1b[107;90m#   then within gdb:\n' +
+		       '\x1b[107;94m(gdb) ' +
+		       `\x1b[40;92m<span style="user-select:text;">target remote ${host.intf.IP}:9092\n</span>` +
+			     '\x1b[107;94m(gdb) \x1b[40;92m<span style="user-select:text;">continue\n</span>');
+    };
+
     RunExperiment.prototype.startProcesses = function() {
 	var self = this;
 	var path = require('path');
@@ -869,6 +899,8 @@ define([
 		var gdbserver_command = '';
 		if (self.selectedDebugNode == node.name) {
 		    gdbserver_command = ' gdbserver :9092 ';
+		    self.notify('info', `Starting gdbserver for ${node.name} on ${host.intf.IP}`);
+		    self.displayGDBCommands(node, host);
 		}
 		host_commands.push('nohup ' +
 				   valgrind_command +

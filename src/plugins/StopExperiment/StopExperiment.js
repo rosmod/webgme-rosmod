@@ -244,6 +244,7 @@ define([
                 host_commands.push('pkill roscore');
             }
 	    host_commands.push('sleep 5');
+	    host_commands.push('pkill rosmod_actor');
 	    host_commands.push('rc_kill');
 	    self.notify('info', 'stopping processes on: '+ user.name + '@' + ip);
 	    return utils.executeOnHost(host_commands, ip, user);
