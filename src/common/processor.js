@@ -152,11 +152,11 @@ define([], function() {
 	    if (obj.Server_list) {
 		obj.Server_list.map(function(srv) { tFunc(srv, 'Service'); });
 	    }
-	    if (obj.ActionClient_list) {
-		obj.ActionClient_list.map(function(cli) { tFunc(cli, 'Action'); });
+	    if (obj['Action Client_list']) {
+		obj['Action Client_list'].map(function(cli) { tFunc(cli, 'Action'); });
 	    }
-	    if (obj.ActionServer_list) {
-		obj.ActionServer_list.map(function(srv) { tFunc(srv, 'Action'); });
+	    if (obj['Action Server_list']) {
+		obj['Action Server_list'].map(function(srv) { tFunc(srv, 'Action'); });
 	    }
             // libraries
             if (obj.Libraries) {
