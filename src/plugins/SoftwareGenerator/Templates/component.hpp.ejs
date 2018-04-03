@@ -154,6 +154,72 @@ if (compInfo.Server_list) {
  }
 -%>
 
+<%
+if (compInfo['Action Server_list']) {
+  compInfo['Action Server_list'].map(function(srv) {
+-%>
+  /**
+   * @brief <%- srv.name %>_execute_cb; <%- srv['Brief Description'] %>
+   *
+   * This operation is executed every time the  
+   * <%- srv.name %> operation request is serviced 
+   * @param[in] goal goal received from the action client
+   *
+   * <%- srv['Detailed Description'] %>
+   */
+  void <%- srv.name %>_execute_cb(const <%- srv.Action.Package %>::<%- srv.Action.TypeName %>GoalConstPtr &goal);
+  /**
+   * @brief <%- srv.name %>_goal_cb;
+   *
+   * This operation is executed every time the  
+   * <%- srv.name %> receives a new goal
+   */
+  void <%- srv.name %>_goal_cb();
+  /**
+   * @brief <%- srv.name %>_preempt_cb;
+   *
+   * This operation is executed every time the  
+   * <%- srv.name %> is preempted
+   */
+  void <%- srv.name %>_preempt_cb();
+<%
+    });
+ }
+-%>
+
+<%
+if (compInfo['Action Client_list']) {
+  compInfo['Action Client_list'].map(function(clt) {
+-%>
+  /**
+   * @brief <%- clt.name %>_feedback_cb; <%- clt['Brief Description'] %>
+   *
+   * This operation is executed every time the  
+   * <%- clt.name %> receives feedback from the action server
+   * @param[in] feedback feedback received from the action server
+   *
+   * <%- clt['Detailed Description'] %>
+   */
+  void <%- clt.name %>_feedback_cb(const <%- clt.Action.Package %>::<%- clt.Action.TypeName %>FeedbackConstPtr &feedback);
+  /**
+   * @brief <%- clt.name %>_active_cb
+   *
+   * This operation is executed when the goal becomes active
+   */
+  void <%- clt.name %>_active_cb();
+  /**
+   * @brief <%- clt.name %>_done_cb
+   *
+   * This operation is executed when the goal completes.
+   * @param[in] state state received from the action server
+   * @param[in] result the result message received from the action server
+   */
+  void <%- clt.name %>_done_cb(const actionlib::SimpleClientGoalState& state, const <%- clt.Action.Package %>::<%- clt.Action.TypeName %>ResultConstPtr &result);
+<%
+    });
+ }
+-%>
+
  /**
    * @brief Component startup function
    *
@@ -183,6 +249,24 @@ if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
   rosmod::Timer <%- tmr.name %>;  /*!< <%- tmr.name %> Component Timer */
+<%
+    });
+ }
+-%>
+<%
+if (compInfo['Action Server_list']) {
+  compInfo['Action Server_list'].map(function(srv) {
+-%>
+  actionlib::SimpleActionServer<<%- srv.Action.Package %>::<%- srv.Action.TypeName %>> <%- srv.name %>;  /*!< <%- srv.name %> Component Action Server */
+<%
+    });
+ }
+-%>
+<%
+if (compInfo['Action Client_list']) {
+  compInfo['Action Client_list'].map(function(clt) {
+-%>
+  actionlib::SimpleActionClient<<%- clt.Action.Package %>::<%- clt.Action.TypeName %>> <%- clt.name %>;  /*!< <%- clt.name %> Component Action Client */
 <%
     });
  }

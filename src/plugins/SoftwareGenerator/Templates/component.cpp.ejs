@@ -186,6 +186,114 @@ bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- srv.Service.Packa
  }
 -%>
 
+<%
+if (compInfo['Action Server_list']) {
+  compInfo['Action Server_list'].map(function(srv) {
+-%>
+// Action Server Execute Callback - <%- srv.name %>
+void <%- compInfo.name %>::<%- srv.name %>_execute_cb(const <%- srv.Action.Package %>::<%- srv.Action.TypeName %>GoalConstPtr &goal )
+{
+  try {
+    // now run the user's action server execute code
+    //::::<%- srv.path %>::::Execute Callback::::
+    <%- srv['Execute Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- srv.name %>_execute_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_execute_cb");
+  }
+}
+// Action Server Goal Callback - <%- srv.name %>
+void <%- compInfo.name %>::<%- srv.name %>_goal_cb( )
+{
+  try {
+    // now run the user's action server goal recv code
+    //::::<%- srv.path %>::::Goal Callback::::
+    <%- srv['Goal Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- srv.name %>_goal_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_goal_cb");
+  }
+}
+// Action Server Preempt Callback - <%- srv.name %>
+void <%- compInfo.name %>::<%- srv.name %>_preempt_cb( )
+{
+  try {
+    // now run the user's action server preempt code
+    //::::<%- srv.path %>::::Preempt Callback::::
+    <%- srv['Preempt Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- srv.name %>_preempt_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_preempt_cb");
+  }
+}
+<%
+  });
+ }
+-%>
+
+<%
+if (compInfo['Action Client_list']) {
+  compInfo['Action Client_list'].map(function(clt) {
+-%>
+// Action Client Feedback Callback - <%- clt.name %>
+void <%- compInfo.name %>::<%- clt.name %>_feedback_cb(const <%- clt.Action.Package %>::<%- clt.Action.TypeName %>FeedbackConstPtr &feedback)
+{
+  try {
+    // now run the user's action client feedback code
+    //::::<%- clt.path %>::::Feedback Callback::::
+    <%- clt['Feedback Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- clt.name %>_feedback_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- clt.name %>_feedback_cb");
+  }
+}
+// Action Client Active Callback - <%- clt.name %>
+void <%- compInfo.name %>::<%- clt.name %>_active_cb( )
+{
+  try {
+    // now run the user's action client active code
+    //::::<%- clt.path %>::::Active Callback::::
+    <%- clt['Active Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- clt.name %>_active_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- clt.name %>_active_cb");
+  }
+}
+// Action Client Done Callback - <%- clt.name %>
+void <%- compInfo.name %>::<%- clt.name %>_done_cb(const actionlib::SimpleClientGoalState& state, const <%- clt.Action.Package %>::<%- clt.Action.TypeName %>ResultConstPtr &result)
+{
+  try {
+    // now run the user's action client done code
+    //::::<%- clt.path %>::::Done Callback::::
+    <%- clt['Done Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- clt.name %>_done_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- clt.name %>_done_cb");
+  }
+}
+<%
+    });
+ }
+-%>
+
 // Destructor - Cleanup Ports & Timers
 <%- compInfo.name %>::~<%- compInfo.name %>()
 {
