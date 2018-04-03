@@ -14,7 +14,8 @@
    x="0px"
    y="0px"
    viewBox="0 0 409.6 409.6"
-   width="64px" height="64px"
+   width="64px"
+   height="64px"
    style="enable-background:new 0 0 409.6 409.6;"
    xml:space="preserve"
    inkscape:version="0.91 r13725"
@@ -35,14 +36,14 @@
      inkscape:window-height="884"
      id="namedview3602"
      showgrid="false"
-     inkscape:zoom="1.1523437"
-     inkscape:cx="103.06305"
-     inkscape:cy="202.68742"
-     inkscape:window-x="527"
-     inkscape:window-y="629"
+     inkscape:zoom="6.5186403"
+     inkscape:cx="16.966217"
+     inkscape:cy="39.579446"
+     inkscape:window-x="919"
+     inkscape:window-y="1056"
      inkscape:window-maximized="0"
-     inkscape:current-layer="Capa_1" /><circle
-     style="fill:#334D5C;"
+     inkscape:current-layer="g3481" /><circle
+     style="fill:#334d5c;fill-opacity:1"
      cx="204.8"
      cy="204.8"
      r="204.8"
@@ -61,7 +62,11 @@
      id="g3594" /><g
      id="g3596" /><g
      id="g3598" /><g
-     id="g3600" /><g
+     id="g3600" /><path
+     style="fill:#ffffff"
+     d="m 287.3539,214.57755 -165.10779,0 c -22.796722,0 -41.278251,-12.50679 -41.278251,-27.93641 l 0,-111.744568 c 0,-15.428439 18.479779,-27.936429 41.278251,-27.936429 l 165.10779,0 c 22.79672,0 41.27825,12.506811 41.27825,27.936429 l 0,111.744568 c 0,15.42843 -18.47979,27.93641 -41.27825,27.93641 z"
+     id="path3511"
+     inkscape:connector-curvature="0" /><g
      id="g3481"
      transform="translate(7.0720836,33.229001)"><g
        id="g3471"><g
@@ -95,16 +100,16 @@
            style="fill:#3ea69b" /></g></g><text
        sodipodi:linespacing="125%"
        id="text3420"
-       y="83.010597"
+       y="79.88604"
        x="90.813858"
-       style="font-style:normal;font-weight:normal;font-size:70px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#00ffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-weight:normal;font-size:70px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#334d5c;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        xml:space="preserve"><tspan
-         y="83.010597"
+         y="79.88604"
          x="90.813858"
          id="tspan3422"
          sodipodi:role="line">Action</tspan><tspan
          id="tspan3424"
-         y="170.51059"
+         y="167.38603"
          x="90.813858"
          sodipodi:role="line">Client</tspan></text>
 </g></svg>

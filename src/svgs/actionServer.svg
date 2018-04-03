@@ -14,7 +14,8 @@
    x="0px"
    y="0px"
    viewBox="0 0 409.6 409.6"
-   width="64px" height="64px"
+   width="64px"
+   height="64px"
    style="enable-background:new 0 0 409.6 409.6;"
    xml:space="preserve"
    inkscape:version="0.91 r13725"
@@ -35,13 +36,13 @@
      inkscape:window-height="1050"
      id="namedview61"
      showgrid="false"
-     inkscape:zoom="1.1523437"
-     inkscape:cx="67.421334"
-     inkscape:cy="232.16258"
-     inkscape:window-x="1706"
-     inkscape:window-y="609"
+     inkscape:zoom="9.2187496"
+     inkscape:cx="30.909974"
+     inkscape:cy="19.879691"
+     inkscape:window-x="2104"
+     inkscape:window-y="1011"
      inkscape:window-maximized="0"
-     inkscape:current-layer="g3423" /><g
+     inkscape:current-layer="g3375" /><g
      id="g31"
      transform="translate(-3.8964844e-6,-3.8964844e-6)" /><g
      id="g33"
@@ -89,7 +90,11 @@
      cy="204.8"
      r="204.8"
      id="circle3" /><g
-     id="g3423"><g
+     id="g3423"><path
+       style="fill:#ffffff"
+       d="m 287.35389,211.89547 -165.10779,0 c -22.796715,0 -41.278247,-12.50679 -41.278247,-27.93641 l 0,-111.744576 c 0,-15.42844 18.479781,-27.93643 41.278247,-27.93643 l 165.10779,0 c 22.79672,0 41.27826,12.506811 41.27826,27.93643 l 0,111.744576 c 0,15.42842 -18.4798,27.93641 -41.27826,27.93641 z"
+       id="path3511"
+       inkscape:connector-curvature="0" /><g
        id="g3375"
        transform="translate(0,34.986945)"><g
          id="g3415"><g
@@ -124,17 +129,17 @@
                points="139.649,142.841 139.649,170.684 83.607,129.075 197.39,129.075 197.39,142.841 "
                style="fill:#d15241" /></g></g></g><text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:70px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#00ffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         style="font-style:normal;font-weight:normal;font-size:70px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#334d5c;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
          x="89.716995"
-         y="84.17627"
+         y="75.446007"
          id="text3420"
          sodipodi:linespacing="125%"><tspan
            sodipodi:role="line"
            id="tspan3422"
            x="89.716995"
-           y="84.17627">Action</tspan><tspan
+           y="75.446007">Action</tspan><tspan
            sodipodi:role="line"
            x="89.716995"
-           y="171.67627"
+           y="162.94601"
            id="tspan3424">Server</tspan></text>
 </g></g></svg>
