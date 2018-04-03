@@ -351,6 +351,15 @@ if (compInfo.Server_list) {
 	});
  }
 -%>
+<%
+if (compInfo['Action Server_list']) {
+  compInfo['Action Server_list'].map(function(srv) {
+-%>
+  <%- srv.name %>.shutdown();
+<%
+	});
+ }
+-%>
   // User Destruction
   //::::<%- compInfo.path %>::::Destruction::::
   <%- compInfo.Destruction %>
@@ -389,6 +398,58 @@ void <%- compInfo.name %>::startUp()
   
   this->comp_queue.scheduling_scheme = config["SchedulingScheme"].asString();
 
+  // Action Servers
+<%
+if (compInfo['Action Server_list']) {
+  compInfo['Action Server_list'].map(function(srv) {
+-%>
+  // Action Server - <%- srv.name %>
+  // TODO: Add support for callback options (Priority / Deadline) to Action Servers
+  advertiseName = "<%- srv.Action.AdvertisedName %>";
+  this-><%- srv.name %>.initialize(
+      advertiseName,
+      boost::bind(&<%- compInfo.name %>::<%- srv.name %>_execute_cb, this, _1),
+      false // don't auto-start the action server
+  );
+  this-><%- srv.name %>.registerGoalCallback(
+      boost::bind(&<%- compInfo.name %>::<%- srv.name %>_goal_cb, this)
+  );
+  this-><%- srv.name %>.registerPreemptCallback(
+      boost::bind(&<%- compInfo.name %>::<%- srv.name %>_preempt_cb, this)
+  );
+  this-><%- srv.name %>.start();
+<%
+    });
+}
+-%>
+  // Action Clients
+<%
+if (compInfo['Action Client_list']) {
+  compInfo['Action Client_list'].map(function(clt) {
+-%>
+  // Action Client - <%- clt.name %>
+  // TODO: Add support for callback options (Priority / Deadline) to Action Client Callbacks
+  advertiseName = "<%- clt.Action.AdvertisedName %>";
+  this-><%- clt.name %>.initialize(
+      ((ros::NodeHandle&)nh),
+      advertiseName,
+      ((ros::CallbackQueue*)&this->comp_queue)
+  );
+  this-><%- clt.name %>.registerFeedbackCallback(
+      boost::bind(&<%- compInfo.name %>::<%- clt.name %>_feedback_cb, this, _1)
+  );
+  this-><%- clt.name %>.registerDoneCallback(
+      boost::bind(&<%- compInfo.name %>::<%- clt.name %>_done_cb, this, _1, _2)
+  );
+  this-><%- clt.name %>.registerActiveCallback(
+      boost::bind(&<%- compInfo.name %>::<%- clt.name %>_active_cb, this)
+  );
+  this-><%- clt.name %>.waitForServer();
+  logger->log("DEBUG", "<%- clt.name %> connected!");
+<%
+    });
+ }
+-%>
   // Servers
 <%
 if (compInfo.Server_list) {

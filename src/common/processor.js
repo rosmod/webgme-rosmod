@@ -210,7 +210,9 @@ define(['underscore'], function(_) {
             // make .Package convenience member for rendering code
             obj.Package = parent.name;
             // make .TypeName convenience member for rendering code
-            obj.TypeName = obj.name + 'Action';
+            obj.TypeName = obj.name;
+            // make .IncludeName convenience member for rendering code
+            obj.IncludeName = obj.name + 'Action';
             // make .AdvertisedName convenience member for rendering code
             obj.AdvertisedName = obj.Package + '/' + obj.name;
 	    // get packages that this service is dependent on
@@ -233,7 +235,9 @@ define(['underscore'], function(_) {
         makeExternalActionConvenience: function(obj, objects) {
             // already will have .Package convenience member for rendering code from model
             // make .TypeName convenience member for rendering code
-            obj.TypeName = obj.name + 'Action';
+            obj.TypeName = obj.name;
+            // make .IncludeName convenience member for rendering code
+            obj.IncludeName = obj.name + 'Action';
             // make .AdvertisedName convenience member for rendering code
             obj.AdvertisedName = obj.Package + '/' + obj.name;
         },
@@ -260,7 +264,9 @@ define(['underscore'], function(_) {
             // make .Package convenience member for rendering code
             obj.Package = TopicType.Package;
             // make .TypeName convenience member for rendering code
-            obj.TypeName = TopicType.name + 'Action';
+            obj.TypeName = TopicType.name;
+            // make .IncludeName convenience member for rendering code
+            obj.IncludeName = TopicType.name + 'Action';
             // make .AdvertisedName convenience member for rendering code
             obj.AdvertisedName = obj.name;
         },

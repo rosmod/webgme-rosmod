@@ -30,7 +30,7 @@ namespace StateMachine {
 if (compInfo.Types.length) {
   compInfo.Types.map(function(type) {
 -%>
-#include "<%- type.Package %>/<%- type.TypeName %>.h"
+#include "<%- type.Package %>/<%- type.IncludeName || type.TypeName %>.h"
 <%
     });
  }
@@ -257,7 +257,7 @@ if (compInfo.Timer_list) {
 if (compInfo['Action Server_list']) {
   compInfo['Action Server_list'].map(function(srv) {
 -%>
-  actionlib::SimpleActionServer<<%- srv.Action.Package %>::<%- srv.Action.TypeName %>> <%- srv.name %>;  /*!< <%- srv.name %> Component Action Server */
+  actionlib::SimpleActionServer<<%- srv.Action.Package %>::<%- srv.Action.TypeName %>Action> <%- srv.name %>;  /*!< <%- srv.name %> Component Action Server */
 <%
     });
  }
@@ -266,7 +266,7 @@ if (compInfo['Action Server_list']) {
 if (compInfo['Action Client_list']) {
   compInfo['Action Client_list'].map(function(clt) {
 -%>
-  actionlib::SimpleActionClient<<%- clt.Action.Package %>::<%- clt.Action.TypeName %>> <%- clt.name %>;  /*!< <%- clt.name %> Component Action Client */
+  actionlib::SimpleActionClient<<%- clt.Action.Package %>::<%- clt.Action.TypeName %>Action> <%- clt.name %>;  /*!< <%- clt.name %> Component Action Client */
 <%
     });
  }
