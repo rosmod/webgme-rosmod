@@ -115,6 +115,18 @@ define([
         }
         self.waitTime = currentConfig.waitTime;
 
+	// get debugging configuration
+	self.debuggingEnabled = false;
+	self.launchWithValgrind = false;
+	self.selectedDebugNode = '';
+	if (currentConfig.debugging && currentConfig.debugging !== 'None') {
+	    if (currentConfig.debugging === 'Valgrind on all ROSMOD Nodes') {
+		self.launchWithValgrind = true;
+	    } else {
+		self.selectedDebugNode = currentConfig.debugging.split('+')[1];
+	    }
+	}
+
         // get the selected hosts from the config
         // also get the ordered nodes from the config
         self.selectedHostUserMap = {};
@@ -275,6 +287,21 @@ define([
 		}
 	    })
 		.done();
+    };
+
+    RunExperiment.prototype.addMarkup = function(level, summary, details) {
+	var self = this,
+	    Convert = require('ansi-to-html'),
+	    convert = new Convert();
+	// ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
+	var msg = `<details><summary><b>${summary}</b></summary>` +
+	    '<pre>' +
+	    '<code>'+
+	    convert.toHtml(details) +
+	    '</code>'+
+	    '</pre>' +
+	    '</details>';
+	self.createMessage(self.activeNode, msg, level);
     };
 
     RunExperiment.prototype.mapContainersToHosts = function () {
@@ -810,6 +837,21 @@ define([
 	return utils.deployOnHost(host_commands, ip, user);
     };
 
+    RunExperiment.prototype.displayGDBCommands = function(node, host) {
+	var self = this;
+	self.addMarkup('info', 'How to connect to running gdbserver:',
+		       '\x1b[107;90m# on the server machine:\n'+
+		       '#   you will need to scp rosmod_actor from the target\n' +
+		       '\x1b[107;94m$ \x1b[40;92m'+
+		       `<span style="user-select:text;">scp -i ${host.user.Key} ${host.user.name}@${host.intf.IP}:/opt/rosmod/bin/rosmod_actor .\n</span>` +
+		       '\x1b[107;94m$ \x1b[40;92m'+
+		       '<span style="user-select:text;">gdb-multiarch ./rosmod_actor\n</span>' +
+		       '\x1b[107;90m#   then within gdb:\n' +
+		       '\x1b[107;94m(gdb) ' +
+		       `\x1b[40;92m<span style="user-select:text;">target remote ${host.intf.IP}:9092\n</span>` +
+			     '\x1b[107;94m(gdb) \x1b[40;92m<span style="user-select:text;">continue\n</span>');
+    };
+
     RunExperiment.prototype.startProcesses = function() {
 	var self = this;
 	var path = require('path');
@@ -838,6 +880,12 @@ define([
                 host_commands.push('export ROS_NAMESPACE='+self.rosNamespace);
             }
 
+	    var valgrind_command = "";
+	    if (self.launchWithValgrind) {
+		self.notify('info', 'Debugging with valgrind, MAKE SURE ALL HOSTS HAVE VALGRIND INSTALLED!');
+		valgrind_command = " valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 --track-fds=yes ";
+	    }
+
             function makeNodeStart(node) {
                 var nodeConfigName = self.getConfigName( node );
 		var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
@@ -848,8 +896,21 @@ define([
                         return key + ':=' + args[key];
                     }).join(' ');
                 }
-		host_commands.push('nohup rosmod_actor --config ' + nodeConfigName +
-                                   args + redirect_command +' &');
+		var gdbserver_command = '';
+		if (self.selectedDebugNode == node.name) {
+		    gdbserver_command = ' gdbserver :9092 ';
+		    self.notify('info', `Starting gdbserver for ${node.name} on ${host.intf.IP}`);
+		    self.displayGDBCommands(node, host);
+		}
+		host_commands.push('nohup ' +
+				   valgrind_command +
+				   gdbserver_command + 
+				   ' rosmod_actor --config ' +
+				   nodeConfigName +
+                                   args +
+				   redirect_command +
+				   ' &');
+		host_commands.push('echo $!'); // what was the PID of this process?
                 if (self.waitTime > 0) {
                     host_commands.push('sleep ' + self.waitTime);
                 }
@@ -864,7 +925,7 @@ define([
                         return key + ':=' + args[key];
                     }).join(' ');
                 }
-		host_commands.push('nohup roslaunch ' + node.name +' '+ node['Launch File'] + args + redirect_command + ' &');
+		host_commands.push('nohup roslaunch ' + (node.Package || node.name) +' '+ node['Launch File'] + args + redirect_command + ' &');
 		host_commands.push('echo $!'); // what was the PID of this process?
                 if (self.waitTime > 0) {
                     host_commands.push('sleep ' + self.waitTime);
@@ -907,7 +968,7 @@ define([
 		    }).filter((o) => {
                         return o !== NaN && o > 100;
                     });
-                    host.externalNodePIDs = PIDs;
+                    host.PIDs = PIDs;
 		});
 	});
 	return Q.all(tasks);
@@ -938,12 +999,13 @@ define([
         const { exec } = require('child_process');
         var path = require('path');
 
-	var sharePath = utils.sanitizePath(path.join(self.root_dir, 'share'));
+	var installPath = utils.sanitizePath(path.join(self.root_dir, 'install'));
 
         var commands=[
-            'source /opt/rosmod/setup.bash',
-            'export PYTHONPATH='+sharePath+':$PYTHONPATH',
-            'export ROS_PACKAGE_PATH='+sharePath+':$ROS_PACKAGE_PATH',
+	    'source ' + installPath + '/setup.bash',
+            //'source /opt/rosmod/setup.bash',
+            //'export PYTHONPATH='+installPath+':$PYTHONPATH',
+            //'export ROS_PACKAGE_PATH='+installPath+':$ROS_PACKAGE_PATH',
             'export ROS_MASTER_URI='+self.rosMasterURI,
 	    'export ROS_IP='+self.rosBridgeServerIp,
             'roslaunch rosbridge_server rosbridge_websocket.launch port:='+self.rosBridgePort+' > /opt/rosmod/rosbridge.log 2>&1 &',
@@ -1109,9 +1171,9 @@ define([
                 self.core.setAttribute(hn, 'Experiment Name', self.logFilePrefix + self.experimentName);
             }
 
-            if (host.externalNodePIDs) {
-	        self.core.setAttribute(hn, 'External Nodes', JSON.stringify(host.externalNodePIDs));
-                self.core.setAttributeMeta(hn, 'External Nodes', {type: 'string'});
+            if (host.PIDs) {
+	        self.core.setAttribute(hn, 'PIDs', JSON.stringify(host.PIDs));
+                self.core.setAttributeMeta(hn, 'PIDs', {type: 'string'});
             }
 
             // save all host related information

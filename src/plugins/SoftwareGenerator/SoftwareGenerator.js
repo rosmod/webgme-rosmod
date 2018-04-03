@@ -338,24 +338,18 @@ define([
 		    'model': self.projectModel,
                     'objects': self.projectObjects
 		});
-
-                // generate the pkg xml under share/<package name>
-		var sharedPackageXMLFileName = ['share',
-					        pkgInfo.name,
-					        'package.xml'].join('/');
-		self.artifacts[sharedPackageXMLFileName] = self.artifacts[packageXMLFileName];
 	    });
 	}
         
 
 	var compile_script = [
 	    'catkin config --extend ${HOST_WORKSPACE}',
+	    'catkin config -i install',
+	    'catkin config --install',
 	    'catkin clean -b --yes',
 	    'catkin build --no-status',
 	    'mkdir bin',
-            'mkdir share',
-	    'cp devel/lib/*.so bin/.',
-            'cp -r devel/lib/python2.7/dist-packages/* share/.'
+	    'cp devel/lib/*.so bin/.'
 	];
 
         // save the compilation script
@@ -430,6 +424,65 @@ define([
 	});
     };
 
+    SoftwareGenerator.prototype.addMarkup = function(level, summary, details) {
+	var self = this,
+	    Convert = require('ansi-to-html'),
+	    convert = new Convert();
+	// ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
+	var msg = `<details><summary><b>${summary}</b></summary>` +
+	    '<pre>' +
+	    '<code>'+
+	    convert.toHtml(details) +
+	    '</code>'+
+	    '</pre>' +
+	    '</details>';
+	self.createMessage(self.activeNode, msg, level);
+    };
+
+    SoftwareGenerator.prototype.cloneLibrary = function(lib, dir) {
+	var self = this,
+	    path = require('path'),
+	    fs = require('fs'),
+	    sanitizedDir = utils.sanitizePath(dir);
+
+	const { exec } = require('child_process');
+
+	self.notify('info', 'Cloning: ' + lib.name + ' from '+ lib.URL);
+
+	var options = {
+	    shell: '/bin/bash',
+	};
+
+	var commands = [
+	    `git clone --depth=1 --branch=${lib.Branch || 'master'} ${lib.URL} ${sanitizedDir}/${lib.name}`,
+	    `rm -rf ${sanitizedDir}/${lib.name}/.git`
+	].join('\n');
+
+	var deferred = Q.defer();
+
+	var hasError = function(error, stdout, stderr) {
+	    self.addMarkup('error', `STDERR cloning ${lib.name} from ${lib.URL}:`, stderr);
+	    var errMsg = `Failed to clone ${lib.name} from ${lib.URL}: Make sure the URL is correct and the name does not conflict with any other libraries.`;
+	    deferred.reject(errMsg);
+	};
+
+	exec(commands, options, function(error, stdout, stderr) {
+	    if (error) {
+		hasError(error, stdout, stderr);
+	    } else {
+		fs.access(path.join(dir, lib.name), (err) => {
+		    if (err) {
+			hasError(error, stdout, stderr);
+		    } else {
+			deferred.resolve();
+		    }
+		});
+	    }
+	});
+
+	return deferred.promise;
+    };
+
     SoftwareGenerator.prototype.downloadLibraries = function ()
     {
 	var self = this;
@@ -446,8 +499,12 @@ define([
 	var tasks = [];
 	if (self.projectModel.Software_list[0]['Source Library_list']) {
 	    tasks = self.projectModel.Software_list[0]['Source Library_list'].map(function(lib) {
-		self.notify('info', 'Downloading: ' + lib.name + ' from '+ lib.URL);
-		return utils.wgetAndUnzipLibrary(lib.URL, dir);
+		if (lib.Branch || lib.URL.indexOf(".zip") == -1) {
+		    return self.cloneLibrary(lib, dir);
+		} else {
+		    self.notify('info', 'Downloading: ' + lib.name + ' from '+ lib.URL);
+		    return utils.wgetAndUnzipLibrary(lib.URL, dir);
+		}
 	    });
 	}
 
@@ -939,31 +996,27 @@ define([
 	var compile_dir = path.join(base_compile_dir, self.project.projectId, self.branchName);
 	var archBinPath = path.join(self.gen_dir, 'bin' , utils.getDeviceType(host.host));
 
-        // share folder for storing package.xmls (generated above) and the msg/srv deserialization
-	var sharePath = path.join(self.gen_dir, 'share');
+        // install folder for storing package.xmls (generated above) and the msg/srv deserialization
+	var installPath = path.join(self.gen_dir, 'install');
 
         var buildCommand = 'catkin build --no-status '+host.compilePackages.map(function(p) { return p.name; }).join(' ');
 
 	var compile_commands = [
 	    'cd ' + utils.sanitizePath(compile_dir),
 	    'rm -rf bin',
+	    'rm -rf install',
 	    'catkin config --extend ' + host.host['Build Workspace'],
+	    'catkin config -i install',
+	    'catkin config --install',
 	    'catkin clean -b --yes',
             'mkdir bin',
-            'mkdir share',
             buildCommand
 	];
         var hasComps = host.compilePackages.filter(function(p) { return p.generateComps == true; }).length > 0;
-        var hasDefs  = host.compilePackages.filter(function(p) { return p.generateTypes == true; }).length > 0;
 
         if (hasComps) {
             // only do this if we have generated components (and will therefore generate binaries
             compile_commands.push('cp devel/lib/*.so bin/.');
-        }
-
-        if (hasDefs) {
-            // only do this if we have generated services / messages
-            compile_commands.push('cp -r devel/lib/python2.7/dist-packages/* share/.');
         }
 
         // save the compilation script
@@ -1017,25 +1070,8 @@ define([
 			compilationFailed = true;
 		    })
 			.finally(function() {
-			    var Convert = require('ansi-to-html');
-			    var convert = new Convert();
-			    // ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
-			    var msg = '<details><summary><b>Compile STDOUT from '+host.intf.IP+':</b></summary>' +
-				'<pre>' +
-				'<code>'+
-				convert.toHtml(host.stdOut) + 
-				'</code>'+
-				'</pre>' +
-				'</details>';
-			    self.createMessage(self.activeNode, msg, 'error');
-			    msg = '<details><summary><b>Compile STDERR from '+host.intf.IP+':</b></summary>' +
-				'<pre>' +
-				'<code>'+
-				convert.toHtml(host.stdErr) + 
-				'</code>' +
-				'</pre>' +
-				'</details>';
-			    self.createMessage(self.activeNode, msg, 'error');
+			    self.addMarkup('error', `Compile STDOUT from ${host.intf.IP}:`, host.stdOut);
+			    self.addMarkup('error', `Compile STDERR from ${host.intf.IP}:`, host.stdErr);
 			    // ADD STDOUT / STDERR TO RESULTS AS BLOBS
 			    var files = {};
 			    var stripANSI = require('strip-ansi');
@@ -1071,21 +1107,12 @@ define([
                 }
 	    })
             .then(function() {
-                if (hasDefs) {
-		    // make the local binary folder for the architecture
-		    mkdirp.sync(sharePath);
-                    // copy the message/service deserialization generated as part of the build
-		    self.notify('info', 'copying definitions from ' + host.intf.IP + ' into local storage.');
-                    return utils.copyFromHost(path.join(compile_dir, 'share') + '/*',
-                                              sharePath + '/.',
-                                              host.intf.IP,
-                                              host.user);
-                }
-            })
-            .then(function() {
-                // remove all folders within share/<package name>/ except msg,srv
-                var fs = require('fs');
-                //fs.unlinkSync();
+                // copy the message/service deserialization generated as part of the build
+		self.notify('info', 'copying definitions from ' + host.intf.IP + ' into local storage.');
+                return utils.copyFromHost(path.join(compile_dir, 'install') + '/*',
+                                          installPath + '/.',
+                                          host.intf.IP,
+                                          host.user);
             })
 	    .then(function() {
 		// remove the remote folders
@@ -1126,7 +1153,13 @@ define([
 	var selectedHosts = [];
 
 	var path = require('path');
+	var mkdirp = require('mkdirp');
 	var child_process = require('child_process');
+
+        // install folder for storing package.xmls (generated above) and the msg/srv deserialization
+	var installPath = path.join(self.gen_dir, 'install');
+	child_process.execSync('rm -rf ' + utils.sanitizePath(installPath));
+	mkdirp.sync(installPath);
 
         self.mapPackagesToHosts( validHostList );
 

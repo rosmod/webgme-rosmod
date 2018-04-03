@@ -27,7 +27,10 @@ Please see the [WIKI](https://github.com/rosmod/webgme-rosmod/wiki) for in-depth
 	3. [Features](#features)
 2. [How to set up ROSMOD](#how-to-set-up-rosmod)
     1. [Setting up the ROSMOD server](#setting-up-the-rosmod-server)
-	2. [Setting up target systems to run ROSMOD](#setting-up-target-systems-to-run-rosmod)
+        1. [Required Dependencies](#required-dependencies)
+        2. [Optional Dependencies](#optional-dependencies)
+        3. [Start the Server](#start-the-server)
+    2. [Setting up target systems to run ROSMOD](#setting-up-target-systems-to-run-rosmod)
 3. [How to use ROSMOD](#how-to-use-rosmod)
     1. [Creating a ROSMOD project](#creating-a-rosmod-project)
        1. [Creating a WebGME project](#creating-a-webgme-project)
@@ -155,12 +158,14 @@ compilation and deployment as requested by the users.
 
 ### Setting up the ROSMOD Server
 
+#### Required Dependencies 
+
 1. Install [Node.js LTS](https://nodejs.org)
    ```bash
    cd ~/Downloads
-   wget https://nodejs.org/dist/v6.11.3/node-v6.11.3-linux-x64.tar.xz
-   tar xvf node-v6.11.3-linux-x64.tar.xz
-   sudo cp -r node-v6.11.3-linux-x64/{bin,include,lib} /usr/.
+   wget https://nodejs.org/dist/v8.11.1/node-v8.11.1-linux-x64.tar.xz
+   tar xvf node-v8.11.1-linux-x64.tar.xz
+   sudo cp -r node-v8.11.1-linux-x64/{bin,include,lib} /usr/.
    ```
 2. Install Bower
    ```bash
@@ -169,11 +174,6 @@ compilation and deployment as requested by the users.
 3. Install [MongoDB](http://mongodb.com)
    ```bash
    sudo apt-get install mongodb
-   ```
-4. Install [ROS Bridge](http://wiki.ros.org/rosbridge_suite)
-   ```bash
-   sudo apt-get install ros-kinetic-rosbridge-suite
-   ```
 
 4. Clone this repo
    ```bash
@@ -184,11 +184,32 @@ compilation and deployment as requested by the users.
    cd webgme-rosmod
    npm install
    ```
-6. Start the server
-   ```bash
-   npm start
-   ```
+
+#### Optional Dependencies
+
+```
+# for documentation generation
+sudo apt-get install pandoc doxygen texlive-full
+
+# for debugging
+sudo apt-get install gdbserver gdb-multiarch valgrind
+
+# add repo for rosbridge - this is copied from http://wiki.ros.org/kinetic/Installation/Ubuntu
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+sudo apt-get update
+
+# for connection to rosmct / rosbridge
+sudo apt-get install ros-kinetic-rosbridge-suite
+```
    
+   
+#### Start the server
+
+```bash
+npm start
+```
+
 *NOTE:* to make changes to the `META` or to view the `META`, you can run 
 
 ``` bash
@@ -211,6 +232,11 @@ which enables the `META` visualizer.
    
    *NOTE:* password-based authentication is not allowed for ROSMOD
     targets.
+4. (Optional) If you want to perform **debugging** - you should install valgrind and gdbserver on the target systems
+
+    ```bash
+    sudo apt-get install valgrind gdbserver
+    ```
 
 ## How to use ROSMOD
 
