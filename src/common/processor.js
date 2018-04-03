@@ -1,13 +1,8 @@
 
 
-define([], function() {
+define(['underscore'], function(_) {
     'use strict';
     return {
-        union: function(a,b) {
-            return a.concat(b.filter(function (item) {
-                return a.indexOf(item) < 0;
-            }));
-        },
 	processModel: function(collection) {
 	    var self = this;
 	    self.checkObjects(collection.objects);
@@ -76,30 +71,35 @@ define([], function() {
 
             if (obj.Component_list) {
                 obj.Component_list.map(function(o) {
-                    obj.Packages = self.union(obj.Packages, o.Packages);
-                    obj.CMAKE_COMMANDS = self.union(obj.CMAKE_COMMANDS, o.CMAKE_COMMANDS);
+                    obj.Packages = _.union(obj.Packages, o.Packages);
+                    obj.CMAKE_COMMANDS = _.union(obj.CMAKE_COMMANDS, o.CMAKE_COMMANDS);
                 });
             }
 
 	    if (obj.Message_list) {
 		obj.Message_list.map(function(o) {
-		    obj.Packages = self.union(obj.Packages, o.Dependencies);
-		    obj.GenerateMessageDependencies = self.union(obj.GenerateMessageDependencies, o.Dependencies);
+		    obj.Packages = _.union(obj.Packages, o.Dependencies);
+		    obj.GenerateMessageDependencies = _.union(
+			obj.GenerateMessageDependencies, o.Dependencies
+		    );
 		});
 	    }
 
 	    if (obj.Service_list) {
 		obj.Service_list.map(function(o) {
-		    obj.Packages = self.union(obj.Packages, o.Dependencies);
-		    obj.GenerateMessageDependencies = self.union(obj.GenerateMessageDependencies, o.Dependencies);
+		    obj.Packages = _.union(obj.Packages, o.Dependencies);
+		    obj.GenerateMessageDependencies = _.union(
+			obj.GenerateMessageDependencies, o.Dependencies
+		    );
 		});
 	    }
 
 	    if (obj.Action_list) {
+		var actionReq = ['actionlib', 'actionlib_msgs'];
 		obj.Action_list.map(function(o) {
-		    obj.Packages = self.union(obj.Packages, o.Dependencies);
-		    obj.GenerateMessageDependencies = self.union(
-			obj.GenerateMessageDependencies, ['actionlib_msgs']
+		    obj.Packages = _.union(obj.Packages, actionReq.concat(o.Dependencies));
+		    obj.GenerateMessageDependencies = _.union(
+			obj.GenerateMessageDependencies, ['actionlib_msgs'].concat(o.Dependencies)
 		    );
 		});
 	    }	    
@@ -214,9 +214,7 @@ define([], function() {
             // make .AdvertisedName convenience member for rendering code
             obj.AdvertisedName = obj.Package + '/' + obj.name;
 	    // get packages that this service is dependent on
-	    obj.Dependencies = ['actionlib', 'actionlib_msgs'].concat(
-		self.getTypeDependencies(obj.Definition)
-	    );
+	    obj.Dependencies = self.getTypeDependencies(obj.Definition);
         },
         makeExternalMessageConvenience: function(obj, objects) {
             // already will have .Package convenience member for rendering code from model
@@ -311,7 +309,7 @@ define([], function() {
 		    res = validDeclaration.exec(definition);
 		}
 	    }
-	    return matches;
+	    return _.uniq(matches);
 	},
         checkName: function(o) {
 	    var validName = new RegExp(/^([a-zA-Z_][a-zA-Z0-9_]*)$/g);
