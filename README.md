@@ -232,6 +232,11 @@ which enables the `META` visualizer.
    
    *NOTE:* password-based authentication is not allowed for ROSMOD
     targets.
+4. (Optional) If you want to perform **debugging** - you should install valgrind and gdbserver on the target systems
+
+    ```bash
+    sudo apt-get install valgrind gdbserver
+    ```
 
 ## How to use ROSMOD
 
