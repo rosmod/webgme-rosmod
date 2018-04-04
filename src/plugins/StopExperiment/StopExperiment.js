@@ -233,19 +233,20 @@ define([
 	    var ip = host.intf.IP;
 	    var user = host.user;
 	    var host_commands = [];
+            if (host.RunningRoscore) {
+		self.notify('info', 'stopping roscore');
+                host_commands.push('pkill roscore');
+            }
             if (host.PIDs && host.PIDs.length) {
                 var pids = host.PIDs.join(' ');
                 self.notify('info', 'stopping node processes: ' + pids);
                 host.PIDs.map((pid) => {
-                    host_commands.push("kill -- -$( ps opgid= "+pid+" | tr -d ' ' )");
+                    host_commands.push("if ps -p "+pid+" > /dev/null; then kill -- -$( ps opgid= "+pid+" | tr -d ' ' ) > /dev/null 2>&1; fi");
                 });
-            }
-            if (host.RunningRoscore) {
-                host_commands.push('pkill roscore');
             }
 	    host_commands.push('sleep 5');
 	    host_commands.push('pkill rosmod_actor');
-	    host_commands.push('rc_kill');
+	    host_commands.push('if hash rc_kill 2>/dev/null; then rc_kill; fi');
 	    self.notify('info', 'stopping processes on: '+ user.name + '@' + ip);
 	    return utils.executeOnHost(host_commands, ip, user);
 	});
