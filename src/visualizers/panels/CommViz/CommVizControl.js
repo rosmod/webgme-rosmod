@@ -100,7 +100,9 @@
 	'Message',
 	'Service',
 	'Advertised Message',
-	'Advertised Service'
+	'Advertised Service',
+	'External Message',
+	'External Service'
     ];
 
     var connectionTypes = [
@@ -172,7 +174,9 @@
 		objDescriptor.type == 'Message' ||
 		objDescriptor.type == 'Service' ||
 		objDescriptor.type == 'Advertised Message' ||
-		objDescriptor.type == 'Advertised Service') {
+		objDescriptor.type == 'Advertised Service' ||
+		objDescriptor.type == 'External Message' ||
+		objDescriptor.type == 'Exteranl Service') {
 		objDescriptor.parentId = null;
 	    }
         }

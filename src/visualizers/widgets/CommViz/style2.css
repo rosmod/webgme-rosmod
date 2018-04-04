@@ -106,6 +106,7 @@ node[allLogging = "True"] {
 }
 
 node[NodeType = "Message"],
+node[NodeType = "External Message"],
 node[NodeType = "Advertised Message"] {
     background-color: green;
     text-outline-color: green;
@@ -118,6 +119,7 @@ edge[type = "Publisher"] {
 }
 
 node[NodeType = "Service"],
+node[NodeType = "External Service"],
 node[NodeType = "Advertised Service"] {
     background-color: #DE3128;
     text-outline-color: #DE3128;
