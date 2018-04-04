@@ -408,7 +408,9 @@ define([
 	    'Publisher',
 	    'Subscriber',
 	    'Client',
-	    'Server'
+	    'Server',
+	    'Action Client',
+	    'Action Server'
 	];
 
 	CommVizWidget.prototype.checkDependencies = function(desc) {

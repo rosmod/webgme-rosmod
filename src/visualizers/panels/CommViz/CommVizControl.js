@@ -93,39 +93,53 @@
 	'Node',
 	'External Node',
 	'Component',
+	// message related
 	'Publisher',
 	'Subscriber',
+	'Message',
+	'Advertised Message',
+	'External Message',
+	// service related
 	'Client',
 	'Server',
-	'Message',
 	'Service',
-	'Advertised Message',
 	'Advertised Service',
-	'External Message',
-	'External Service'
+	'External Service',
+	// action related
+	'Action Client',
+	'Action Server',
+	'Action',
+	'External Action',
+	'Advertised Action',
     ];
 
     var connectionTypes = [
 	'Publisher',
 	'Subscriber',
 	'Client',
-	'Server'
+	'Server',
+	'Action Client',
+	'Action Server'
     ];
 
     var srcConnTypes = [
 	'Publisher',
-	'Client'
+	'Client',
+	'Action Client'
     ];
     var dstConnTypes = [
 	'Subscriber',
-	'Server'
+	'Server',
+	'Action Server'
     ];
 
     var connectionToPtrMap = {
 	'Publisher': 'Message',
 	'Subscriber': 'Message',
 	'Client': 'Service',
-	'Server': 'Service'
+	'Server': 'Service',
+	'Action Client': 'Action',
+	'Action Server': 'Action'
     };
 
     CommVizControl.prototype._nodeToEdge = function (desc) {
@@ -172,11 +186,14 @@
 	    if (objDescriptor.type == 'Container' ||
 		objDescriptor.type == 'Deployment' ||
 		objDescriptor.type == 'Message' ||
-		objDescriptor.type == 'Service' ||
 		objDescriptor.type == 'Advertised Message' ||
-		objDescriptor.type == 'Advertised Service' ||
 		objDescriptor.type == 'External Message' ||
-		objDescriptor.type == 'Exteranl Service') {
+		objDescriptor.type == 'Service' ||
+		objDescriptor.type == 'Advertised Service' ||
+		objDescriptor.type == 'External Service' ||
+		objDescriptor.type == 'Action' ||
+		objDescriptor.type == 'Advertised Action' ||
+		objDescriptor.type == 'External Action') {
 		objDescriptor.parentId = null;
 	    }
         }
