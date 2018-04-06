@@ -101,17 +101,20 @@ define([
                 return Q.all(tasks);
             })
             .then(function(hostList) {
-                var archs = [];
+                var archs = {}
                 hostList = _.flatten(hostList);
                 hostList.map(function(h) {
                     var host = {
                         'Architecture': self.core.getAttribute(h, 'Architecture'),
                         'Device ID': self.core.getAttribute(h, 'Device ID'),
+			'name': self.core.getAttribute(h, 'name'),
+			'path': self.core.getPath(h)
                     };
                     var arch = utils.getDeviceType( host );
-                    if (archs.indexOf(arch) == -1) {
-                        archs.push( arch );
-                    }
+		    if (!archs[arch]) {
+			archs[arch] = [];
+		    }
+		    archs[arch].push(host);
                 });
                 return archs;
             });
@@ -130,11 +133,28 @@ define([
             "readOnly": false
         };
 
-        architectures.map(function(arch) {
+        var hostSelectorTempl = {
+	    "name": "",
+	    "displayName": "",
+	    "description": "",
+	    "value": "",
+	    "valueType": "sortable",
+	    "valueItems": [],
+            "readOnly": false
+        };
+
+        Object.keys(architectures).map(function(arch) {
             var archTempl = Object.assign({}, templ);
             archTempl.name = arch + '_ARCH_SELECTION';
             archTempl.displayName = 'Compile on ' + arch;
             archConfig.push( archTempl );
+
+	    var hostTempl = Object.assign({}, hostSelectorTempl);
+	    hostTempl.name = arch + '_HOST_SELECTION';
+	    hostTempl.displayName = arch + " Compilation Priority";
+	    hostTempl.description = "Sort the "+arch+" hosts for compilation priority, top to bottom.";
+	    hostTempl.valueItems = architectures[arch].map(host => `${host.path}::${host.name}`);
+	    archConfig.push( hostTempl );
         });
 
         return archConfig;
