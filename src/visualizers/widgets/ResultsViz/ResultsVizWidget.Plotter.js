@@ -8,9 +8,11 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 	    var self = this;
 	    var layout = {
 		xaxis: {
-		    title: 'Time (s)'
+		    'title': 'Time (s)',
 		},
-		//annotations: annotations,
+		yaxis: {
+		    'title': 'Time (s)',
+		},
                 margin: {
                     pad: 0,
                     l: 50,
@@ -35,28 +37,27 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 
 	    if (!self.sharedX) {
 		var numDatas = datas.length;
-		var domain = 1.0 / numDatas;
-		var current = 0;
 		for (var i=0; i<numDatas; i++) {
 		    var key = 'xaxis'+self.getXSuffix(i);
 		    var anchor = 'y' + self.getXSuffix(i);
 		    layout[key] = {
+			'title': 'Time (s)',
 			'domain': [0, 1],
 			'anchor': anchor
 		    };
-		    current += domain;
 		}
 	    }
 	    if (!self.sharedY) {
 		var numDatas = datas.length;
 		var domain = 1.0 / numDatas;
-		var current = 0;
+		var current = 1.0;
 		for (var i=0; i<numDatas; i++) {
 		    var key = 'yaxis'+self.getYSuffix(i);
 		    layout[key] = {
-			'domain': [current, current+(domain*0.9)]
+			'title': 'Time (s)',
+			'domain': [current-(domain*0.8), current],
 		    };
-		    current += domain;
+		    current -= domain;
 		}
 	    }
 
@@ -135,7 +136,7 @@ define(['plotly-js/plotly.min', 'd3'], function(Plotly,d3) {
 			x : data[key].data.map(function(xys) { return new Date(xys[0]).toISOString(); }),
 			y : data[key].data.map(function(xys) { return xys[1]; }),
 			mode: !data[key].annotations.length ? 'lines' : 'markers+lines',
-			type: 'scattergl',
+			type: 'scatter',
 			name: key,
 			xaxis: 'x' + self.getXSuffix(dataNum),
 			yaxis: 'y' + self.getYSuffix(dataNum),

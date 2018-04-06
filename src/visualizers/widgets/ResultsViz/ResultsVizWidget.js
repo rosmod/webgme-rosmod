@@ -169,7 +169,6 @@ define([
 			} else {
 			    parsed = UserParser.getDataFromAttribute(data);
 			}
-
 			// figure out time range
 			if (!_.isEmpty(parsed)) {
 			    self.logs[logName] = {
