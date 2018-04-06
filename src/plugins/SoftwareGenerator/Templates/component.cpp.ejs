@@ -26,6 +26,7 @@ if (compInfo['State Machine_list']) {
 // Component Initialization 
 void <%- compInfo.name %>::init_timer_operation(const ros::TimerEvent& event)
 {
+  ros::Time __dequeue__ = ros::Time::now();
   // User Initialization Code
   try {
     {
@@ -65,6 +66,19 @@ if (compInfo['State Machine_list']) {
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::initialization");
   }
   init_timer.stop();
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("init_timer_operation, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 
 <%
@@ -74,6 +88,7 @@ if (compInfo['State Machine_list']) {
 // <%- hfsm.name %> Timer function
 void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const ros::TimerEvent& event)
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     StateMachine::Event* e = nullptr;
     // process all pending events
@@ -102,6 +117,19 @@ void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const 
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- hfsm.sanitizedName %>, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 <%
   });
@@ -115,6 +143,7 @@ if (compInfo.Timer_list) {
 // Timer Operation - <%- tmr.name %>
 void <%- compInfo.name %>::<%- tmr.name %>_operation(const ros::TimerEvent& event)
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     //::::<%- tmr.path %>::::Operation::::
     <%- tmr.Operation %>
@@ -125,6 +154,19 @@ void <%- compInfo.name %>::<%- tmr.name %>_operation(const ros::TimerEvent& even
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- tmr.name %>_operation");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- tmr.name %>, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 <%
   });
@@ -138,6 +180,7 @@ if (compInfo.Subscriber_list) {
 // Subscriber Operation - <%- sub.name %>
 void <%- compInfo.name %>::<%- sub.name %>_operation(const ros::MessageEvent<<%- sub.Message.Package %>::<%- sub.Message.TypeName %> const>& event)
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     // get the publisher name, header, receipt time, and received_data from the event
     const std::string& publisher_node_name = event.getPublisherName();
@@ -155,6 +198,19 @@ void <%- compInfo.name %>::<%- sub.name %>_operation(const ros::MessageEvent<<%-
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- sub.name %>_operation");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- sub.name %>, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 <%
   });
@@ -168,6 +224,7 @@ if (compInfo.Server_list) {
 // Server Operation - <%- srv.name %>
 bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- srv.Service.Package %>::<%- srv.Service.TypeName %>::Request &req, <%- srv.Service.Package %>::<%- srv.Service.TypeName %>::Response &res )
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     // now run the user's server operation code
     //::::<%- srv.path %>::::Operation::::
@@ -179,6 +236,19 @@ bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- srv.Service.Packa
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_operation");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- srv.name %>, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
   return true;
 }
 <%
@@ -193,6 +263,7 @@ if (compInfo['Action Server_list']) {
 // Action Server Execute Callback - <%- srv.name %>
 void <%- compInfo.name %>::<%- srv.name %>_execute_cb(const <%- srv.Action.Package %>::<%- srv.Action.TypeName %>GoalConstPtr &goal )
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     // now run the user's action server execute code
     //::::<%- srv.path %>::::Execute Callback::::
@@ -204,10 +275,24 @@ void <%- compInfo.name %>::<%- srv.name %>_execute_cb(const <%- srv.Action.Packa
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_execute_cb");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- srv.name %>_execute, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 // Action Server Goal Callback - <%- srv.name %>
 void <%- compInfo.name %>::<%- srv.name %>_goal_cb( )
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     // now run the user's action server goal recv code
     //::::<%- srv.path %>::::Goal Callback::::
@@ -219,10 +304,24 @@ void <%- compInfo.name %>::<%- srv.name %>_goal_cb( )
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_goal_cb");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- srv.name %>_goal, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 // Action Server Preempt Callback - <%- srv.name %>
 void <%- compInfo.name %>::<%- srv.name %>_preempt_cb( )
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     // now run the user's action server preempt code
     //::::<%- srv.path %>::::Preempt Callback::::
@@ -234,6 +333,19 @@ void <%- compInfo.name %>::<%- srv.name %>_preempt_cb( )
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_preempt_cb");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- srv.name %>_preempt, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 <%
   });
@@ -247,6 +359,7 @@ if (compInfo['Action Client_list']) {
 // Action Client Feedback Callback - <%- clt.name %>
 void <%- compInfo.name %>::<%- clt.name %>_feedback_cb(const <%- clt.Action.Package %>::<%- clt.Action.TypeName %>FeedbackConstPtr &feedback)
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     // now run the user's action client feedback code
     //::::<%- clt.path %>::::Feedback Callback::::
@@ -258,10 +371,24 @@ void <%- compInfo.name %>::<%- clt.name %>_feedback_cb(const <%- clt.Action.Pack
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- clt.name %>_feedback_cb");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- clt.name %>_feedback, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 // Action Client Active Callback - <%- clt.name %>
 void <%- compInfo.name %>::<%- clt.name %>_active_cb( )
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     // now run the user's action client active code
     //::::<%- clt.path %>::::Active Callback::::
@@ -273,10 +400,24 @@ void <%- compInfo.name %>::<%- clt.name %>_active_cb( )
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- clt.name %>_active_cb");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- clt.name %>_active, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 // Action Client Done Callback - <%- clt.name %>
 void <%- compInfo.name %>::<%- clt.name %>_done_cb(const actionlib::SimpleClientGoalState& state, const <%- clt.Action.Package %>::<%- clt.Action.TypeName %>ResultConstPtr &result)
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     // now run the user's action client done code
     //::::<%- clt.path %>::::Done Callback::::
@@ -288,6 +429,19 @@ void <%- compInfo.name %>::<%- clt.name %>_done_cb(const actionlib::SimpleClient
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- clt.name %>_done_cb");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- clt.name %>_done, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 <%
     });
@@ -363,8 +517,10 @@ if (compInfo['Action Server_list']) {
   // User Destruction
   //::::<%- compInfo.path %>::::Destruction::::
   <%- compInfo.Destruction %>
-  // make sure all logs are written
+  // make sure all user logs are written
   logger->write(); // flushes internally
+  // make sure all trace logs are written
+  trace->write(); // flushes internally
 }
 
 // Startup - Setup Component Ports & Timers
@@ -375,27 +531,30 @@ void <%- compInfo.name %>::startUp()
   bool isOneShot;
   ros::TimerOptions timer_options;
 
-
   // extra data we add to the header for service connections
   std::map<std::string, std::string> service_header;
   service_header["component instance"] = config["Name"].asString();
 
   if ( config["Logging"]["Component Logger"]["Enabled"].asBool() ) {
     logger->enable_logging();
-    logger->create_file(workingDir + "/" + config["Logging"]["Component Logger"]["FileName"].asString());
+    logger->create_file(workingDir+"/"+config["Logging"]["Component Logger"]["FileName"].asString());
     logger->set_is_periodic(config["Logging"]["Component Logger"]["Enabled"].asBool());
     logger->set_max_log_unit(config["Logging"]["Component Logger"]["Unit"].asInt());
 
-    ROS_INFO_STREAM("Saving trace log to " << workingDir << "/" << config["Logging"]["Component Logger"]["FileName"].asString());
+    ROS_INFO_STREAM("Saving user log to " <<
+		    workingDir << "/" <<
+		    config["Logging"]["Component Logger"]["FileName"].asString());
   }
   
   if ( config["Logging"]["ROSMOD Logger"]["Enabled"].asBool() ) {
-    comp_queue.LOGGER->enable_logging();
-    comp_queue.LOGGER->create_file( workingDir + "/" + config["Logging"]["ROSMOD Logger"]["FileName"].asString());
-    comp_queue.LOGGER->set_is_periodic(config["Logging"]["ROSMOD Logger"]["Enabled"].asBool());
-    comp_queue.LOGGER->set_max_log_unit(config["Logging"]["ROSMOD Logger"]["Unit"].asInt());
+    trace->enable_logging();
+    trace->create_file(workingDir+"/"+config["Logging"]["ROSMOD Logger"]["FileName"].asString());
+    trace->set_is_periodic(config["Logging"]["ROSMOD Logger"]["Enabled"].asBool());
+    trace->set_max_log_unit(config["Logging"]["ROSMOD Logger"]["Unit"].asInt());
 
-    ROS_INFO_STREAM("Saving trace log to " << workingDir + "/" + config["Logging"]["ROSMOD Logger"]["FileName"].asString());
+    ROS_INFO_STREAM("Saving trace log to " <<
+		    workingDir + "/" +
+		    config["Logging"]["ROSMOD Logger"]["FileName"].asString());
   }
 
   // Action Servers
@@ -409,7 +568,7 @@ if (compInfo['Action Server_list']) {
   this-><%- srv.name %>.initialize(
       advertiseName,
       boost::bind(&<%- compInfo.name %>::<%- srv.name %>_execute_cb, this, _1),
-      true // don't auto-start the action server
+      false // don't auto-start the action server
   );
 <%
     });
@@ -437,8 +596,8 @@ if (compInfo['Action Client_list']) {
       advertiseName,
       &this->comp_queue
   );
-  //this-><%- clt.name %>.waitForServer();
-  logger->log("DEBUG", "<%- clt.name %> connected!");
+  this-><%- clt.name %>.waitForServer();
+  logger->log("DEBUG", "<Action Client><%- clt.name %> connected!");
 <%
     });
  }
@@ -474,7 +633,7 @@ if (compInfo.Client_list) {
                                                                                                 service_header
                                                                                                 );//, true); 
   this-><%- clt.name %>.waitForExistence();
-  logger->log("DEBUG", "<%- clt.name %> connected!");
+  logger->log("DEBUG", "<Client><%- clt.name %> connected!");
 <%
     });
  }
