@@ -110,6 +110,7 @@ define([
 
         // which architectures did the user ask us to compile on?
         self.selectedArchitectures = [];
+	self.archPriorities = {};
         Object.keys(currentConfig).map(function(k) {
             if (k.indexOf('_ARCH_SELECTION') > -1) {
                 var arch = k.replace('_ARCH_SELECTION', '');
@@ -117,7 +118,13 @@ define([
                 if (isSelected) {
                     self.selectedArchitectures.push( arch );
                 }
-            }
+            } else if (k.indexOf('_HOST_SELECTION') > -1) {
+                var arch = k.replace('_HOST_SELECTION', '');
+                var orderedHosts = currentConfig[k];
+                if (Array.isArray(orderedHosts)) {
+                    self.archPriorities[ arch ] = orderedHosts;
+                }
+	    }
         });
         // make sure we don't try to compile if we don't have architectures
         self.compileCode = self.selectedArchitectures.length && self.compileCode;
