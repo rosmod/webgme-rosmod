@@ -1171,8 +1171,8 @@ define([
 		    var pkgCmp = (b.compilePackages.length || 0) - (a.compilePackages.length || 0);
 		    var akey = `${a.host.path}::${a.host.name}`;
 		    var bkey = `${b.host.path}::${b.host.name}`;
-		    var priCmp = self.archPriorities[arch].indexOf(akey) -
-			self.archPriorities[arch].indexOf(bkey);
+		    var priCmp = (self.archPriorities[arch] || []).indexOf(akey) -
+			(self.archPriorities[arch] || []).indexOf(bkey);
                     return priCmp/1000 + (self.enforceConstraints && pkgCmp);
                 });
                 if (!self.enforceConstraints || hosts[0].compilePackages.length) {
