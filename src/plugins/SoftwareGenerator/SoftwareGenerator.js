@@ -1164,11 +1164,22 @@ define([
 	for (var arch in validHostList) {
 	    var hosts = validHostList[arch];
 	    if (hosts.length) {
+		// sort hosts based on:
+		//   * which host can compile the most packages
+		//   * user-provided compilation priority
                 hosts.sort(function(a,b) {
-                    return b.compilePackages.length - a.compilePackages.length;
+		    var pkgCmp = (b.compilePackages.length || 0) - (a.compilePackages.length || 0);
+		    var akey = `${a.host.path}::${a.host.name}`;
+		    var bkey = `${b.host.path}::${b.host.name}`;
+		    var priCmp = self.archPriorities[arch].indexOf(akey) -
+			self.archPriorities[arch].indexOf(bkey);
+                    return priCmp/1000 + (self.enforceConstraints && pkgCmp);
                 });
                 if (!self.enforceConstraints || hosts[0].compilePackages.length) {
-		    selectedHosts.push(hosts[0]); // compile on the arch's host that can compile the most packages
+		    // compile on the arch's host that can compile the
+		    // most packages and had the highest user-provided
+		    // priority
+		    selectedHosts.push(hosts[0]);
                 }
                 else {
 		    var msg = 'No hosts could be found for (constrained) compilation on ' + arch;

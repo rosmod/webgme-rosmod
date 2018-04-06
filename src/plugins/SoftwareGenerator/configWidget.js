@@ -108,6 +108,7 @@ define([
                         'Architecture': self.core.getAttribute(h, 'Architecture'),
                         'Device ID': self.core.getAttribute(h, 'Device ID'),
 			'name': self.core.getAttribute(h, 'name'),
+			'path': self.core.getPath(h)
                     };
                     var arch = utils.getDeviceType( host );
 		    if (!archs[arch]) {
@@ -152,7 +153,7 @@ define([
 	    hostTempl.name = arch + '_HOST_SELECTION';
 	    hostTempl.displayName = arch + " Compilation Priority";
 	    hostTempl.description = "Sort the "+arch+" hosts for compilation priority, top to bottom.";
-	    hostTempl.valueItems = architectures[arch].map(host => host.name);
+	    hostTempl.valueItems = architectures[arch].map(host => `${host.path}::${host.name}`);
 	    archConfig.push( hostTempl );
         });
 
