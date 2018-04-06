@@ -65,8 +65,7 @@ if (compInfo['State Machine_list']) {
    * @brief <%- compInfo.name %> Constructor.
    * @param _config Component configuration parsed from deployment JSON
    */
-  <%- compInfo.name %>(Json::Value& _config)
-  : Component(_config) {}
+  <%- compInfo.name %>(Json::Value& _config);
 
   /**
    * @brief <%- compInfo.name %> Initializer

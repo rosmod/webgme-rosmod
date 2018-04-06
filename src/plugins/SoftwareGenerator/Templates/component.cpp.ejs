@@ -23,6 +23,12 @@ if (compInfo['State Machine_list']) {
 //::::<%- compInfo.path %>::::Definitions::::
 <%- compInfo.Definitions %>
 
+// Component Constructor
+<%- compInfo.name %>::<%- compInfo.name %>(Json::Value& _config):
+  Component::Component(_config)
+{
+}
+
 // Component Initialization 
 void <%- compInfo.name %>::init_timer_operation(const ros::TimerEvent& event)
 {
@@ -526,7 +532,6 @@ if (compInfo['Action Server_list']) {
 // Startup - Setup Component Ports & Timers
 void <%- compInfo.name %>::startUp()
 {
-  ros::NodeHandle nh;
   std::string advertiseName;
   bool isOneShot;
   ros::TimerOptions timer_options;
@@ -564,12 +569,20 @@ if (compInfo['Action Server_list']) {
 -%>
   // Action Server - <%- srv.name %>
   // TODO: Add support for callback options (Priority / Deadline) to Action Servers
-  advertiseName = "<%- srv.Action.AdvertisedName %>";
-  this-><%- srv.name %>.initialize(
-      advertiseName,
-      boost::bind(&<%- compInfo.name %>::<%- srv.name %>_execute_cb, this, _1),
-      false // don't auto-start the action server
+  this-><%- srv.name %>.registerGoalCallback(
+    boost::bind(&<%- compInfo.name %>::<%- srv.name %>_goal_cb, this)
   );
+  this-><%- srv.name %>.registerPreemptCallback(
+    boost::bind(&<%- compInfo.name %>::<%- srv.name %>_preempt_cb, this)
+  );
+  this-><%- srv.name %>.initialize(
+    nh_,
+    "<%- srv.Action.AdvertisedName %>",
+    boost::bind(&<%- compInfo.name %>::<%- srv.name %>_execute_cb, this, _1),
+    false,  // don't auto-start the action server
+    &comp_queue
+  );
+  this-><%- srv.name %>.start();
 <%
     });
 }
@@ -581,21 +594,16 @@ if (compInfo['Action Client_list']) {
 -%>
   // Action Client - <%- clt.name %>
   // TODO: Add support for callback options (Priority / Deadline) to Action Client Callbacks
-  advertiseName = "<%- clt.Action.AdvertisedName %>";
-  this-><%- clt.name %>.registerFeedbackCallback(
-      boost::bind(&<%- compInfo.name %>::<%- clt.name %>_feedback_cb, this, _1)
-  );
   this-><%- clt.name %>.registerDoneCallback(
       boost::bind(&<%- compInfo.name %>::<%- clt.name %>_done_cb, this, _1, _2)
   );
   this-><%- clt.name %>.registerActiveCallback(
       boost::bind(&<%- compInfo.name %>::<%- clt.name %>_active_cb, this)
   );
-  this-><%- clt.name %>.initialize(
-      nh,
-      advertiseName,
-      &this->comp_queue
+  this-><%- clt.name %>.registerFeedbackCallback(
+      boost::bind(&<%- compInfo.name %>::<%- clt.name %>_feedback_cb, this, _1)
   );
+  this-><%- clt.name %>.initialize("<%- clt.Action.AdvertisedName %>", &comp_queue);
   this-><%- clt.name %>.waitForServer();
   logger->log("DEBUG", "<Action Client><%- clt.name %> connected!");
 <%
@@ -614,8 +622,8 @@ if (compInfo.Server_list) {
       (advertiseName.c_str(),
        boost::bind(&<%- compInfo.name %>::<%- srv.name %>_operation, this, _1, _2),
        ros::VoidPtr(),
-       &this->comp_queue);
-  this-><%- srv.name %> = nh.advertiseService(<%- srv.name %>_server_options);
+       &comp_queue);
+  this-><%- srv.name %> = nh_.advertiseService(<%- srv.name %>_server_options);
 <%
     });
 }
@@ -627,7 +635,7 @@ if (compInfo.Client_list) {
 -%>
   // Client - <%- clt.name %>
   advertiseName = "<%- clt.Service.AdvertisedName %>";
-  this-><%- clt.name %> = nh.serviceClient<<%- clt.Service.Package %>::<%- clt.Service.TypeName %>>(
+  this-><%- clt.name %> = nh_.serviceClient<<%- clt.Service.Package %>::<%- clt.Service.TypeName %>>(
                                                                                                 advertiseName.c_str(),
                                                                                                 false, // not persistent
                                                                                                 service_header
@@ -647,7 +655,7 @@ if (compInfo.Publisher_list) {
   // Publisher - <%- pub.name %>
   advertiseName = "<%- pub.Message.AdvertisedName %>";
   latching = <%- pub.Latching ? "true" : "false" %>;
-  this-><%- pub.name %> = nh.advertise<<%- pub.Message.Package %>::<%- pub.Message.TypeName %>>(
+  this-><%- pub.name %> = nh_.advertise<<%- pub.Message.Package %>::<%- pub.Message.TypeName %>>(
                                                                                             advertiseName.c_str(),
                                                                                             1000,
                                                                                             latching
@@ -669,8 +677,8 @@ if (compInfo.Subscriber_list) {
        1000,
        boost::bind(&<%- compInfo.name %>::<%- sub.name %>_operation, this, _1),
        ros::VoidPtr(),
-       &this->comp_queue);
-  this-><%- sub.name %> = nh.subscribe(<%- sub.name %>_options);
+       &comp_queue);
+  this-><%- sub.name %> = nh_.subscribe(<%- sub.name %>_options);
 <%
     });
 }
@@ -681,10 +689,10 @@ if (compInfo.Subscriber_list) {
     ros::TimerOptions
     (ros::Duration(-1),
      boost::bind(&<%- compInfo.name %>::init_timer_operation, this, _1),
-     &this->comp_queue,
+     &comp_queue,
      true,
      false); 
-  this->init_timer = nh.createTimer(timer_options);
+  this->init_timer = nh_.createTimer(timer_options);
   this->init_timer.stop();
 
   // Timers
@@ -698,10 +706,10 @@ if (compInfo.Timer_list) {
     ros::TimerOptions
     (ros::Duration(config["Timers"]["<%- tmr.name %>"]["Period"].asFloat()),
      boost::bind(&<%- compInfo.name %>::<%- tmr.name %>_operation, this, _1),
-     &this->comp_queue,
+     &comp_queue,
      isOneShot,
      false);
-  this-><%- tmr.name %> = nh.createTimer(timer_options);
+  this-><%- tmr.name %> = nh_.createTimer(timer_options);
   this-><%- tmr.name %>.stop();
 <%
     });
@@ -719,10 +727,10 @@ if (compInfo['State Machine_list']) {
         ros::TimerOptions
         (hfsmPeriod,
          boost::bind(&<%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation, this, _1),
-         &this->comp_queue,
+         &comp_queue,
          isOneShot,
          false);
-      <%- hfsm.sanitizedName %>_HFSM_timer = nh.createTimer(timer_options);
+      <%- hfsm.sanitizedName %>_HFSM_timer = nh_.createTimer(timer_options);
 <%
   });
 }
