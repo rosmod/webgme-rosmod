@@ -684,7 +684,7 @@ define([
 
                     var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
 		        ' 2> ' + self.configPrefix + node.name + '.stderr.log';
-		    rosmod_actor_script.push('nohup rosmod_actor --config ' +
+		    rosmod_actor_script.push('nohup rosrun rosmod_actor rosmod_actor --config ' +
 				             nodeConfigName + redirect_command +' &');
 
 		});
@@ -843,7 +843,7 @@ define([
 		       '\x1b[107;90m# on the server machine:\n'+
 		       '#   you will need to scp rosmod_actor from the target\n' +
 		       '\x1b[107;94m$ \x1b[40;92m'+
-		       `<span style="user-select:text;">scp -i ${host.user.Key} ${host.user.name}@${host.intf.IP}:/opt/rosmod/bin/rosmod_actor .\n</span>` +
+		       `<span style="user-select:text;">scp -i ${host.user.Key} ${host.user.name}@${host.intf.IP}:/opt/rosmod/lib/rosmod_actor/rosmod_actor .\n</span>` +
 		       '\x1b[107;94m$ \x1b[40;92m'+
 		       '<span style="user-select:text;">gdb-multiarch ./rosmod_actor\n</span>' +
 		       '\x1b[107;90m#   then within gdb:\n' +
@@ -905,7 +905,7 @@ define([
 		host_commands.push('nohup ' +
 				   valgrind_command +
 				   gdbserver_command + 
-				   ' rosmod_actor --config ' +
+				   ' rosrun rosmod_actor rosmod_actor --config ' +
 				   nodeConfigName +
                                    args +
 				   redirect_command +

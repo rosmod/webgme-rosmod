@@ -24,7 +24,7 @@ if (compInfo['State Machine_list']) {
 <%- compInfo.Definitions %>
 
 // Component Initialization 
-void <%- compInfo.name %>::init_timer_operation(const rosmod::TimerEvent& event)
+void <%- compInfo.name %>::init_timer_operation(const ros::TimerEvent& event)
 {
   // User Initialization Code
   try {
@@ -72,7 +72,7 @@ if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
 // <%- hfsm.name %> Timer function
-void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const rosmod::TimerEvent& event)
+void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const ros::TimerEvent& event)
 {
   try {
     StateMachine::Event* e = nullptr;
@@ -113,7 +113,7 @@ if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
 // Timer Operation - <%- tmr.name %>
-void <%- compInfo.name %>::<%- tmr.name %>_operation(const rosmod::TimerEvent& event)
+void <%- compInfo.name %>::<%- tmr.name %>_operation(const ros::TimerEvent& event)
 {
   try {
     //::::<%- tmr.path %>::::Operation::::
@@ -370,12 +370,10 @@ if (compInfo['Action Server_list']) {
 // Startup - Setup Component Ports & Timers
 void <%- compInfo.name %>::startUp()
 {
-  rosmod::NodeHandle nh;
+  ros::NodeHandle nh;
   std::string advertiseName;
-  ros::Duration deadline;
   bool isOneShot;
-  rosmod::TimerOptions timer_options;
-  rosmod::ROSMOD_Callback_Options callback_options;
+  ros::TimerOptions timer_options;
 
 
   // extra data we add to the header for service connections
@@ -383,20 +381,22 @@ void <%- compInfo.name %>::startUp()
   service_header["component instance"] = config["Name"].asString();
 
   if ( config["Logging"]["Component Logger"]["Enabled"].asBool() ) {
+    logger->enable_logging();
     logger->create_file(workingDir + "/" + config["Logging"]["Component Logger"]["FileName"].asString());
     logger->set_is_periodic(config["Logging"]["Component Logger"]["Enabled"].asBool());
     logger->set_max_log_unit(config["Logging"]["Component Logger"]["Unit"].asInt());
+
     ROS_INFO_STREAM("Saving trace log to " << workingDir << "/" << config["Logging"]["Component Logger"]["FileName"].asString());
   }
-
-  if ( config["Logging"]["ROSMOD Logger"]["Enabled"].asBool() ) {
-    ROS_INFO_STREAM("Saving trace log to " << workingDir + "/" + config["Logging"]["ROSMOD Logger"]["FileName"].asString());
-    comp_queue.ROSMOD_LOGGER->enable_logging();
-    comp_queue.ROSMOD_LOGGER->create_file( workingDir + "/" + config["Logging"]["ROSMOD Logger"]["FileName"].asString());
-    comp_queue.ROSMOD_LOGGER->set_max_log_unit(config["Logging"]["ROSMOD Logger"]["Unit"].asInt());
-  }
   
-  this->comp_queue.scheduling_scheme = config["SchedulingScheme"].asString();
+  if ( config["Logging"]["ROSMOD Logger"]["Enabled"].asBool() ) {
+    comp_queue.LOGGER->enable_logging();
+    comp_queue.LOGGER->create_file( workingDir + "/" + config["Logging"]["ROSMOD Logger"]["FileName"].asString());
+    comp_queue.LOGGER->set_is_periodic(config["Logging"]["ROSMOD Logger"]["Enabled"].asBool());
+    comp_queue.LOGGER->set_max_log_unit(config["Logging"]["ROSMOD Logger"]["Unit"].asInt());
+
+    ROS_INFO_STREAM("Saving trace log to " << workingDir + "/" + config["Logging"]["ROSMOD Logger"]["FileName"].asString());
+  }
 
   // Action Servers
 <%
@@ -409,15 +409,8 @@ if (compInfo['Action Server_list']) {
   this-><%- srv.name %>.initialize(
       advertiseName,
       boost::bind(&<%- compInfo.name %>::<%- srv.name %>_execute_cb, this, _1),
-      false // don't auto-start the action server
+      true // don't auto-start the action server
   );
-  this-><%- srv.name %>.registerGoalCallback(
-      boost::bind(&<%- compInfo.name %>::<%- srv.name %>_goal_cb, this)
-  );
-  this-><%- srv.name %>.registerPreemptCallback(
-      boost::bind(&<%- compInfo.name %>::<%- srv.name %>_preempt_cb, this)
-  );
-  this-><%- srv.name %>.start();
 <%
     });
 }
@@ -430,11 +423,6 @@ if (compInfo['Action Client_list']) {
   // Action Client - <%- clt.name %>
   // TODO: Add support for callback options (Priority / Deadline) to Action Client Callbacks
   advertiseName = "<%- clt.Action.AdvertisedName %>";
-  this-><%- clt.name %>.initialize(
-      ((ros::NodeHandle&)nh),
-      advertiseName,
-      ((ros::CallbackQueue*)&this->comp_queue)
-  );
   this-><%- clt.name %>.registerFeedbackCallback(
       boost::bind(&<%- compInfo.name %>::<%- clt.name %>_feedback_cb, this, _1)
   );
@@ -444,7 +432,12 @@ if (compInfo['Action Client_list']) {
   this-><%- clt.name %>.registerActiveCallback(
       boost::bind(&<%- compInfo.name %>::<%- clt.name %>_active_cb, this)
   );
-  this-><%- clt.name %>.waitForServer();
+  this-><%- clt.name %>.initialize(
+      nh,
+      advertiseName,
+      &this->comp_queue
+  );
+  //this-><%- clt.name %>.waitForServer();
   logger->log("DEBUG", "<%- clt.name %> connected!");
 <%
     });
@@ -456,21 +449,13 @@ if (compInfo.Server_list) {
   compInfo.Server_list.map(function(srv) {
 -%>
   // Server - <%- srv.name %>
-  callback_options.alias = "<%- srv.name %>_operation";
-  
-  callback_options.priority = config["Servers"]["<%- srv.name %>"]["Priority"].asInt();
-  deadline = ros::Duration(config["Servers"]["<%- srv.name %>"]["Deadline"].asFloat());
-  callback_options.deadline.sec = deadline.sec;
-  callback_options.deadline.nsec = deadline.nsec;
-
   advertiseName = "<%- srv.Service.AdvertisedName %>";
-  rosmod::AdvertiseServiceOptions <%- srv.name %>_server_options;
-  <%- srv.name %>_server_options = rosmod::AdvertiseServiceOptions::create<<%- srv.Service.Package %>::<%- srv.Service.TypeName %>>
+  ros::AdvertiseServiceOptions <%- srv.name %>_server_options;
+  <%- srv.name %>_server_options = ros::AdvertiseServiceOptions::create<<%- srv.Service.Package %>::<%- srv.Service.TypeName %>>
       (advertiseName.c_str(),
        boost::bind(&<%- compInfo.name %>::<%- srv.name %>_operation, this, _1, _2),
-       rosmod::VoidPtr(),
-       &this->comp_queue,
-       callback_options);
+       ros::VoidPtr(),
+       &this->comp_queue);
   this-><%- srv.name %> = nh.advertiseService(<%- srv.name %>_server_options);
 <%
     });
@@ -518,26 +503,14 @@ if (compInfo.Subscriber_list) {
   compInfo.Subscriber_list.map(function(sub) {
 -%>
   // Subscriber - <%- sub.name %>
-  callback_options.alias = "<%- sub.name %>_operation";
-
-  callback_options.priority = config["Subscribers"]["<%- sub.name %>"]["Priority"].asInt();
-  deadline = ros::Duration(config["Subscribers"]["<%- sub.name %>"]["Deadline"].asFloat());
-  callback_options.deadline.sec = deadline.sec;
-  callback_options.deadline.nsec = deadline.nsec;
-
-  callback_options.priority = <%- sub.Priority %>;
-  callback_options.deadline.sec = <%- Math.floor(sub.Deadline) %>;
-  callback_options.deadline.nsec = <%- Math.floor((sub.Deadline % 1) * 1000000000) %>;
-
   advertiseName = "<%- sub.Message.AdvertisedName %>";
-  rosmod::SubscribeOptions <%- sub.name %>_options;
-  <%- sub.name %>_options = rosmod::SubscribeOptions::create<<%- sub.Message.Package %>::<%- sub.Message.TypeName %>>
+  ros::SubscribeOptions <%- sub.name %>_options;
+  <%- sub.name %>_options = ros::SubscribeOptions::create<<%- sub.Message.Package %>::<%- sub.Message.TypeName %>>
       (advertiseName.c_str(),
        1000,
        boost::bind(&<%- compInfo.name %>::<%- sub.name %>_operation, this, _1),
-       rosmod::VoidPtr(),
-       &this->comp_queue,
-       callback_options);
+       ros::VoidPtr(),
+       &this->comp_queue);
   this-><%- sub.name %> = nh.subscribe(<%- sub.name %>_options);
 <%
     });
@@ -545,16 +518,11 @@ if (compInfo.Subscriber_list) {
 -%>
 
   // Init Timer
-  callback_options.alias = "init_timer_operation";
-  callback_options.priority = 99;
-  callback_options.deadline.sec = 1;
-  callback_options.deadline.nsec = 0;
   timer_options = 
-    rosmod::TimerOptions
+    ros::TimerOptions
     (ros::Duration(-1),
      boost::bind(&<%- compInfo.name %>::init_timer_operation, this, _1),
      &this->comp_queue,
-     callback_options,
      true,
      false); 
   this->init_timer = nh.createTimer(timer_options);
@@ -566,19 +534,12 @@ if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
   // Component Timer - <%- tmr.name %>
-  callback_options.alias = "<%- tmr.name %>_operation";
-  
-  callback_options.priority = config["Timers"]["<%- tmr.name %>"]["Priority"].asInt();
-  deadline = ros::Duration(config["Timers"]["<%- tmr.name %>"]["Deadline"].asFloat());
-  callback_options.deadline.sec = deadline.sec;
-  callback_options.deadline.nsec = deadline.nsec;
   isOneShot = (config["Timers"]["<%- tmr.name %>"]["Period"].asFloat() == 0) ? true : false;
   timer_options = 
-    rosmod::TimerOptions
+    ros::TimerOptions
     (ros::Duration(config["Timers"]["<%- tmr.name %>"]["Period"].asFloat()),
      boost::bind(&<%- compInfo.name %>::<%- tmr.name %>_operation, this, _1),
      &this->comp_queue,
-     callback_options,
      isOneShot,
      false);
   this-><%- tmr.name %> = nh.createTimer(timer_options);
@@ -592,21 +553,14 @@ if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
       // HFSM Timer
-      callback_options.alias = "<%- hfsm.sanitizedName %>_HFSM_timer_operation";
-  
       // NEED TO FIGURE OUT HOW TO SPECIFY PRIORITY FOR THE HFSM TIMER IN THE MODEL
-      //callback_options.priority = config["Timers"]["<%- hfsm.sanitizedName %>"]["Priority"].asInt();
       ros::Duration hfsmPeriod = ros::Duration( 0 );
-      deadline = hfsmPeriod;
-      callback_options.deadline.sec = deadline.sec;
-      callback_options.deadline.nsec = deadline.nsec;
       isOneShot = false;
       timer_options = 
-        rosmod::TimerOptions
+        ros::TimerOptions
         (hfsmPeriod,
          boost::bind(&<%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation, this, _1),
          &this->comp_queue,
-         callback_options,
          isOneShot,
          false);
       <%- hfsm.sanitizedName %>_HFSM_timer = nh.createTimer(timer_options);

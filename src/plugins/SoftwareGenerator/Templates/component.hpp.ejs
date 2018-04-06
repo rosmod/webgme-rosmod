@@ -36,7 +36,7 @@ if (compInfo.Types.length) {
  }
 -%>
 
-#include "rosmod/rosmod_ros.h"
+#include "ros/ros.h"
 
 /**
  * Forward declarations
@@ -74,7 +74,7 @@ if (compInfo['State Machine_list']) {
    * @param[in] event a oneshot timer event
    * @see startUp()
    */
-  void init_timer_operation(const rosmod::TimerEvent& event);
+  void init_timer_operation(const ros::TimerEvent& event);
 
 <%
 if (compInfo['State Machine_list']) {
@@ -90,7 +90,7 @@ if (compInfo['State Machine_list']) {
    * @param[in] event a timer event
    * @see startUp()
    */
-  void <%- hfsm.sanitizedName %>_HFSM_timer_operation(const rosmod::TimerEvent& event);
+  void <%- hfsm.sanitizedName %>_HFSM_timer_operation(const ros::TimerEvent& event);
 <%
   });
 }
@@ -109,7 +109,7 @@ if (compInfo.Timer_list) {
    *
    * <%- tmr['Detailed Description'] %>
    */
-  void <%- tmr.name %>_operation(const rosmod::TimerEvent& event);
+  void <%- tmr.name %>_operation(const ros::TimerEvent& event);
 <%
     });
  }
@@ -238,7 +238,7 @@ private:
 if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
-  rosmod::Timer <%- hfsm.sanitizedName %>_HFSM_timer; /*!< <%- hfsm.name %> HFSM Timer */
+  ros::Timer <%- hfsm.sanitizedName %>_HFSM_timer; /*!< <%- hfsm.name %> HFSM Timer */
 <%
   });
 }
@@ -248,7 +248,7 @@ if (compInfo['State Machine_list']) {
 if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
-  rosmod::Timer <%- tmr.name %>;  /*!< <%- tmr.name %> Component Timer */
+  ros::Timer <%- tmr.name %>;  /*!< <%- tmr.name %> Component Timer */
 <%
     });
  }
@@ -275,7 +275,7 @@ if (compInfo['Action Client_list']) {
 if (compInfo.Server_list) {
   compInfo.Server_list.map(function(srv) {
 -%>
-  rosmod::ServiceServer <%- srv.name %>;  /*!< <%- srv.name %> Component Server */
+  ros::ServiceServer <%- srv.name %>;  /*!< <%- srv.name %> Component Server */
 <%
     });
  }
@@ -284,7 +284,7 @@ if (compInfo.Server_list) {
 if (compInfo.Client_list) {
   compInfo.Client_list.map(function(clt) {
  -%>
-  rosmod::ServiceClient <%- clt.name %>;  /*!< <%- clt.name %> Component Client */
+  ros::ServiceClient <%- clt.name %>;  /*!< <%- clt.name %> Component Client */
 <%
     });
  }
@@ -293,7 +293,7 @@ if (compInfo.Client_list) {
 if (compInfo.Publisher_list) {
   compInfo.Publisher_list.map(function(pub) {
  -%>
-  rosmod::Publisher <%- pub.name %>;  /*!< <%- pub.name %> Component Publisher */
+  ros::Publisher <%- pub.name %>;  /*!< <%- pub.name %> Component Publisher */
 <%
     });
  }
@@ -302,7 +302,7 @@ if (compInfo.Publisher_list) {
 if (compInfo.Subscriber_list) {
   compInfo.Subscriber_list.map(function(sub) {
  -%>
-  rosmod::Subscriber <%- sub.name %>;  /*!< <%- sub.name %> Component Subscriber */
+  ros::Subscriber <%- sub.name %>;  /*!< <%- sub.name %> Component Subscriber */
 <%
     });
  }
