@@ -40,6 +40,12 @@ function loadDocs(components) {
         var subscriberOp = fs.readFileSync(__dirname + '/../docs/subscriberOp.md', 'utf8');
         var subscriberABL = fs.readFileSync(__dirname + '/../docs/subscriberABL.md', 'utf8');
 
+	// action documentation:
+        var action = fs.readFileSync(__dirname + '/../docs/action.md', 'utf8');
+        var actionDef = fs.readFileSync(__dirname + '/../docs/actionDef.md', 'utf8');
+        var actionServer = fs.readFileSync(__dirname + '/../docs/actionServer.md', 'utf8');
+        var actionClient = fs.readFileSync(__dirname + '/../docs/actionClient.md', 'utf8');
+
         // HFSM Documentation:
         var StateMachineDoc = fs.readFileSync(__dirname + '/../docs/StateMachine.md', 'utf8');
         var StateMachineInclDoc = fs.readFileSync(__dirname + '/../docs/StateMachineIncl.md', 'utf8');
@@ -144,6 +150,13 @@ function loadDocs(components) {
 		    "Definition": []
                 }
 	    },
+	    "Action": {
+                "ancestorDepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Definition": []
+                }
+	    },
 	    "Timer": {
                 "ancestorDepth": 1,
                 "docstring" : [],
@@ -163,6 +176,30 @@ function loadDocs(components) {
                 "docstring" : [],
                 "attributes": {
 		    "Operation": [],
+		    "Authors": [],
+		    "Brief Description": [],
+		    "Detailed Description": []
+                }
+	    },
+	    "Action Server": {
+                "ancestorDepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Preempt Callback": [],
+		    "Goal Callback": [],
+		    "Execute Callback": [],
+		    "Authors": [],
+		    "Brief Description": [],
+		    "Detailed Description": []
+                }
+	    },
+	    "Action Client": {
+                "ancestorDepth": 1,
+                "docstring" : [],
+                "attributes": {
+		    "Active Callback": [],
+		    "Done Callback": [],
+		    "Feedback Callback": [],
 		    "Authors": [],
 		    "Brief Description": [],
 		    "Detailed Description": []
@@ -252,6 +289,8 @@ function loadDocs(components) {
         components.CodeEditor.attrToInfoMap.Message.attributes["Definition"] = msgDef;
         components.CodeEditor.attrToInfoMap.Service["docstring"] = service;
         components.CodeEditor.attrToInfoMap.Service.attributes["Definition"] = serviceDef;
+        components.CodeEditor.attrToInfoMap.Action["docstring"] = action;
+        components.CodeEditor.attrToInfoMap.Action.attributes["Definition"] = actionDef;
         components.CodeEditor.attrToInfoMap.Timer["docstring"] = timer;
         components.CodeEditor.attrToInfoMap.Timer.attributes["Operation"] = timerOp;
         components.CodeEditor.attrToInfoMap.Timer.attributes["AbstractBusinessLogic"] = timerABL;
@@ -260,6 +299,8 @@ function loadDocs(components) {
         components.CodeEditor.attrToInfoMap.Timer.attributes["Detailed Description"] = dDesc;
         components.CodeEditor.attrToInfoMap.Client["docstring"] = client;
         components.CodeEditor.attrToInfoMap.Server["docstring"] = server;
+        components.CodeEditor.attrToInfoMap['Action Server']["docstring"] = actionServer;
+        components.CodeEditor.attrToInfoMap['Action Client']["docstring"] = actionClient;
         components.CodeEditor.attrToInfoMap.Server.attributes["Operation"] = serverOp;
         components.CodeEditor.attrToInfoMap.Server.attributes["AbstractBusinessLogic"] = serverABL;
         components.CodeEditor.attrToInfoMap.Server.attributes["Authors"] = authors;
