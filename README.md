@@ -227,16 +227,20 @@ which enables the `META` visualizer.
    
 2. Install [ROSMOD-Actor](http://github.com/rosmod/rosmod-actor) onto
    the target platform.
+
 3. Ensure the target has *SSH capabilities*; configure an ssh key that
    the ROSMOD server can use to remotely access the target device.
    
    *NOTE:* password-based authentication is not allowed for ROSMOD
     targets.
+
 4. (Optional) If you want to perform **debugging** - you should install valgrind and gdbserver on the target systems
 
     ```bash
     sudo apt-get install valgrind gdbserver
     ```
+
+5. (Optional) If you want to use `Action Clients` or `Action Servers` from [actionlib](https://github.com/ros/actionlib), you will need to **install our custom fork of actionlib** from [rosmod/actionlib](https://github.com/rosmod/actionlib)
 
 ## How to use ROSMOD
 
