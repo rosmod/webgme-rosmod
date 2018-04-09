@@ -241,7 +241,7 @@ define([
                 var pids = host.PIDs.join(' ');
                 self.notify('info', 'stopping node processes: ' + pids);
                 host.PIDs.map((pid) => {
-                    host_commands.push("if ps -p "+pid+" > /dev/null; then kill -- -$( ps opgid= "+pid+" | tr -d ' ' ) > /dev/null 2>&1; fi");
+                    host_commands.push("if ps -p "+pid+" > /dev/null; then kill -s SIGINT -$( ps opgid= "+pid+" | tr -d ' ' ) > /dev/null 2>&1; fi");
                 });
             }
 	    host_commands.push('sleep 5');

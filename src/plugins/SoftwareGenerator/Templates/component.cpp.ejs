@@ -457,11 +457,16 @@ void <%- compInfo.name %>::<%- clt.name %>_done_cb(const actionlib::SimpleClient
 // Destructor - Cleanup Ports & Timers
 <%- compInfo.name %>::~<%- compInfo.name %>()
 {
+  try {
+    logger->log("DEBUG", "<%- compInfo.name %> calling user defined destruction");
+    // User Destruction
+    //::::<%- compInfo.path %>::::Destruction::::
+    <%- compInfo.Destruction %>
 <%
 if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
-  <%- hfsm.sanitizedName %>_HFSM_timer.stop();
+    <%- hfsm.sanitizedName %>_HFSM_timer.stop();
 <%
   });
 }
@@ -470,7 +475,7 @@ if (compInfo['State Machine_list']) {
 if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
-  <%- tmr.name %>.stop();
+    <%- tmr.name %>.stop();
 <%
 	});
  }
@@ -479,7 +484,7 @@ if (compInfo.Timer_list) {
 if (compInfo.Publisher_list) {
   compInfo.Publisher_list.map(function(pub) {
 -%>
-  <%- pub.name %>.shutdown();
+    <%- pub.name %>.shutdown();
 <%
 	});
  }
@@ -488,7 +493,7 @@ if (compInfo.Publisher_list) {
 if (compInfo.Subscriber_list) {
   compInfo.Subscriber_list.map(function(sub) {
 -%>
-  <%- sub.name %>.shutdown();
+    <%- sub.name %>.shutdown();
 <%
 	});
  }
@@ -497,7 +502,7 @@ if (compInfo.Subscriber_list) {
 if (compInfo.Client_list) {
   compInfo.Client_list.map(function(clt) {
 -%>
-  <%- clt.name %>.shutdown();
+    <%- clt.name %>.shutdown();
 <%
 	});
  }
@@ -506,7 +511,7 @@ if (compInfo.Client_list) {
 if (compInfo.Server_list) {
   compInfo.Server_list.map(function(srv) {
 -%>
-  <%- srv.name %>.shutdown();
+    <%- srv.name %>.shutdown();
 <%
 	});
  }
@@ -515,18 +520,18 @@ if (compInfo.Server_list) {
 if (compInfo['Action Server_list']) {
   compInfo['Action Server_list'].map(function(srv) {
 -%>
-  <%- srv.name %>.shutdown();
+    <%- srv.name %>.shutdown();
 <%
 	});
  }
 -%>
-  // User Destruction
-  //::::<%- compInfo.path %>::::Destruction::::
-  <%- compInfo.Destruction %>
-  // make sure all user logs are written
-  logger->write(); // flushes internally
-  // make sure all trace logs are written
-  trace->write(); // flushes internally
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::~<%- compInfo.name %>: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::~<%- compInfo.name %>");
+  }
 }
 
 // Startup - Setup Component Ports & Timers

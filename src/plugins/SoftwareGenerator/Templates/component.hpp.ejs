@@ -67,13 +67,25 @@ if (compInfo['State Machine_list']) {
    */
   <%- compInfo.name %>(Json::Value& _config);
 
+ /**
+   * @brief <%- compInfo.name %> Destructor
+   */ 
+  ~<%- compInfo.name %>() override;
+
+ /**
+   * @brief Component startup function
+   *
+   * This function configures all the component ports and timers
+   */ 
+  void startUp() override;
+
   /**
    * @brief <%- compInfo.name %> Initializer
    * This operation is executed immediately after startup.
    * @param[in] event a oneshot timer event
    * @see startUp()
    */
-  void init_timer_operation(const ros::TimerEvent& event);
+  void init_timer_operation(const ros::TimerEvent& event) override;
 
 <%
 if (compInfo['State Machine_list']) {
@@ -218,18 +230,6 @@ if (compInfo['Action Client_list']) {
     });
  }
 -%>
-
- /**
-   * @brief Component startup function
-   *
-   * This function configures all the component ports and timers
-   */ 
-  void startUp();
-
- /**
-   * @brief <%- compInfo.name %> Destructor
-   */ 
-  ~<%- compInfo.name %>();
 
 private:
 
