@@ -131,6 +131,19 @@ edge[type = "Client"] {
     target-arrow-color: #DE3128;
 }
 
+node[NodeType = "Action"],
+node[NodeType = "External Action"],
+node[NodeType = "Advertised Action"] {
+    background-color: #334d5c;
+    text-outline-color: #334d5c;
+}
+
+edge[type = "Action Server"],
+edge[type = "Action Client"] {
+    line-color: #334d5c;
+    target-arrow-color: #334d5c;
+}
+
 node.highlighted {
     min-zoomed-font-size: 0;
     font-size: 10;

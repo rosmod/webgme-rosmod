@@ -23,9 +23,16 @@ if (compInfo['State Machine_list']) {
 //::::<%- compInfo.path %>::::Definitions::::
 <%- compInfo.Definitions %>
 
-// Component Initialization 
-void <%- compInfo.name %>::init_timer_operation(const rosmod::TimerEvent& event)
+// Component Constructor
+<%- compInfo.name %>::<%- compInfo.name %>(Json::Value& _config):
+  Component::Component(_config)
 {
+}
+
+// Component Initialization 
+void <%- compInfo.name %>::init_timer_operation(const ros::TimerEvent& event)
+{
+  ros::Time __dequeue__ = ros::Time::now();
   // User Initialization Code
   try {
     {
@@ -65,6 +72,19 @@ if (compInfo['State Machine_list']) {
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::initialization");
   }
   init_timer.stop();
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("init_timer_operation, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 
 <%
@@ -72,8 +92,9 @@ if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
 // <%- hfsm.name %> Timer function
-void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const rosmod::TimerEvent& event)
+void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const ros::TimerEvent& event)
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     StateMachine::Event* e = nullptr;
     // process all pending events
@@ -102,6 +123,19 @@ void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const 
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- hfsm.sanitizedName %>, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 <%
   });
@@ -113,8 +147,9 @@ if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
 // Timer Operation - <%- tmr.name %>
-void <%- compInfo.name %>::<%- tmr.name %>_operation(const rosmod::TimerEvent& event)
+void <%- compInfo.name %>::<%- tmr.name %>_operation(const ros::TimerEvent& event)
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     //::::<%- tmr.path %>::::Operation::::
     <%- tmr.Operation %>
@@ -125,6 +160,19 @@ void <%- compInfo.name %>::<%- tmr.name %>_operation(const rosmod::TimerEvent& e
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- tmr.name %>_operation");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- tmr.name %>, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 <%
   });
@@ -138,6 +186,7 @@ if (compInfo.Subscriber_list) {
 // Subscriber Operation - <%- sub.name %>
 void <%- compInfo.name %>::<%- sub.name %>_operation(const ros::MessageEvent<<%- sub.Message.Package %>::<%- sub.Message.TypeName %> const>& event)
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     // get the publisher name, header, receipt time, and received_data from the event
     const std::string& publisher_node_name = event.getPublisherName();
@@ -155,6 +204,19 @@ void <%- compInfo.name %>::<%- sub.name %>_operation(const ros::MessageEvent<<%-
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- sub.name %>_operation");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- sub.name %>, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
 }
 <%
   });
@@ -168,6 +230,7 @@ if (compInfo.Server_list) {
 // Server Operation - <%- srv.name %>
 bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- srv.Service.Package %>::<%- srv.Service.TypeName %>::Request &req, <%- srv.Service.Package %>::<%- srv.Service.TypeName %>::Response &res )
 {
+  ros::Time __dequeue__ = ros::Time::now();
   try {
     // now run the user's server operation code
     //::::<%- srv.path %>::::Operation::::
@@ -179,10 +242,215 @@ bool <%- compInfo.name %>::<%- srv.name %>_operation(const <%- srv.Service.Packa
     // catch everything else
     logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_operation");
   }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- srv.name %>, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
   return true;
 }
 <%
   });
+ }
+-%>
+
+<%
+if (compInfo['Action Server_list']) {
+  compInfo['Action Server_list'].map(function(srv) {
+-%>
+// Action Server Execute Callback - <%- srv.name %>
+void <%- compInfo.name %>::<%- srv.name %>_execute_cb(const <%- srv.Action.Package %>::<%- srv.Action.TypeName %>GoalConstPtr &goal )
+{
+  ros::Time __dequeue__ = ros::Time::now();
+  try {
+    // now run the user's action server execute code
+    //::::<%- srv.path %>::::Execute Callback::::
+    <%- srv['Execute Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- srv.name %>_execute_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_execute_cb");
+  }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- srv.name %>_execute, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
+}
+// Action Server Goal Callback - <%- srv.name %>
+void <%- compInfo.name %>::<%- srv.name %>_goal_cb( )
+{
+  ros::Time __dequeue__ = ros::Time::now();
+  try {
+    // now run the user's action server goal recv code
+    //::::<%- srv.path %>::::Goal Callback::::
+    <%- srv['Goal Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- srv.name %>_goal_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_goal_cb");
+  }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- srv.name %>_goal, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
+}
+// Action Server Preempt Callback - <%- srv.name %>
+void <%- compInfo.name %>::<%- srv.name %>_preempt_cb( )
+{
+  ros::Time __dequeue__ = ros::Time::now();
+  try {
+    // now run the user's action server preempt code
+    //::::<%- srv.path %>::::Preempt Callback::::
+    <%- srv['Preempt Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- srv.name %>_preempt_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- srv.name %>_preempt_cb");
+  }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- srv.name %>_preempt, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
+}
+<%
+  });
+ }
+-%>
+
+<%
+if (compInfo['Action Client_list']) {
+  compInfo['Action Client_list'].map(function(clt) {
+-%>
+// Action Client Feedback Callback - <%- clt.name %>
+void <%- compInfo.name %>::<%- clt.name %>_feedback_cb(const <%- clt.Action.Package %>::<%- clt.Action.TypeName %>FeedbackConstPtr &feedback)
+{
+  ros::Time __dequeue__ = ros::Time::now();
+  try {
+    // now run the user's action client feedback code
+    //::::<%- clt.path %>::::Feedback Callback::::
+    <%- clt['Feedback Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- clt.name %>_feedback_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- clt.name %>_feedback_cb");
+  }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- clt.name %>_feedback, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
+}
+// Action Client Active Callback - <%- clt.name %>
+void <%- compInfo.name %>::<%- clt.name %>_active_cb( )
+{
+  ros::Time __dequeue__ = ros::Time::now();
+  try {
+    // now run the user's action client active code
+    //::::<%- clt.path %>::::Active Callback::::
+    <%- clt['Active Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- clt.name %>_active_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- clt.name %>_active_cb");
+  }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- clt.name %>_active, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
+}
+// Action Client Done Callback - <%- clt.name %>
+void <%- compInfo.name %>::<%- clt.name %>_done_cb(const actionlib::SimpleClientGoalState& state, const <%- clt.Action.Package %>::<%- clt.Action.TypeName %>ResultConstPtr &result)
+{
+  ros::Time __dequeue__ = ros::Time::now();
+  try {
+    // now run the user's action client done code
+    //::::<%- clt.path %>::::Done Callback::::
+    <%- clt['Done Callback'] %>
+  } catch (std::exception& e) {
+    // catch exceptions
+    logger->log("ERROR", "std::exception caught in <%- compInfo.name %>::<%- clt.name %>_done_cb: %s", e.what());
+  } catch ( ... ) {
+    // catch everything else
+    logger->log("ERROR", "unknown exception caught in <%- compInfo.name %>::<%- clt.name %>_done_cb");
+  }
+  ros::Time __completion__ = ros::Time::now();
+  ros::Duration __execution__ = __completion__ - __dequeue__;
+  trace->raw_log("<%- clt.name %>_done, %d.%09d, %d.%09d, %d.%09d, %d.%09d, %d.%09d",
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __dequeue__.sec,
+		 __dequeue__.nsec,
+		 __completion__.sec,
+		 __completion__.nsec,
+		 __execution__.sec,
+		 __execution__.nsec,
+		 0,
+		 0);
+}
+<%
+    });
  }
 -%>
 
@@ -243,66 +511,118 @@ if (compInfo.Server_list) {
 	});
  }
 -%>
+<%
+if (compInfo['Action Server_list']) {
+  compInfo['Action Server_list'].map(function(srv) {
+-%>
+  <%- srv.name %>.shutdown();
+<%
+	});
+ }
+-%>
   // User Destruction
   //::::<%- compInfo.path %>::::Destruction::::
   <%- compInfo.Destruction %>
-  // make sure all logs are written
+  // make sure all user logs are written
   logger->write(); // flushes internally
+  // make sure all trace logs are written
+  trace->write(); // flushes internally
 }
 
 // Startup - Setup Component Ports & Timers
 void <%- compInfo.name %>::startUp()
 {
-  rosmod::NodeHandle nh;
   std::string advertiseName;
-  ros::Duration deadline;
   bool isOneShot;
-  rosmod::TimerOptions timer_options;
-  rosmod::ROSMOD_Callback_Options callback_options;
-
+  ros::TimerOptions timer_options;
 
   // extra data we add to the header for service connections
   std::map<std::string, std::string> service_header;
   service_header["component instance"] = config["Name"].asString();
 
   if ( config["Logging"]["Component Logger"]["Enabled"].asBool() ) {
-    logger->create_file(workingDir + "/" + config["Logging"]["Component Logger"]["FileName"].asString());
+    logger->enable_logging();
+    logger->create_file(workingDir+"/"+config["Logging"]["Component Logger"]["FileName"].asString());
     logger->set_is_periodic(config["Logging"]["Component Logger"]["Enabled"].asBool());
     logger->set_max_log_unit(config["Logging"]["Component Logger"]["Unit"].asInt());
-    ROS_INFO_STREAM("Saving trace log to " << workingDir << "/" << config["Logging"]["Component Logger"]["FileName"].asString());
-  }
 
-  if ( config["Logging"]["ROSMOD Logger"]["Enabled"].asBool() ) {
-    ROS_INFO_STREAM("Saving trace log to " << workingDir + "/" + config["Logging"]["ROSMOD Logger"]["FileName"].asString());
-    comp_queue.ROSMOD_LOGGER->enable_logging();
-    comp_queue.ROSMOD_LOGGER->create_file( workingDir + "/" + config["Logging"]["ROSMOD Logger"]["FileName"].asString());
-    comp_queue.ROSMOD_LOGGER->set_max_log_unit(config["Logging"]["ROSMOD Logger"]["Unit"].asInt());
+    ROS_INFO_STREAM("Saving user log to " <<
+		    workingDir << "/" <<
+		    config["Logging"]["Component Logger"]["FileName"].asString());
   }
   
-  this->comp_queue.scheduling_scheme = config["SchedulingScheme"].asString();
+  if ( config["Logging"]["ROSMOD Logger"]["Enabled"].asBool() ) {
+    trace->enable_logging();
+    trace->create_file(workingDir+"/"+config["Logging"]["ROSMOD Logger"]["FileName"].asString());
+    trace->set_is_periodic(config["Logging"]["ROSMOD Logger"]["Enabled"].asBool());
+    trace->set_max_log_unit(config["Logging"]["ROSMOD Logger"]["Unit"].asInt());
 
+    ROS_INFO_STREAM("Saving trace log to " <<
+		    workingDir + "/" +
+		    config["Logging"]["ROSMOD Logger"]["FileName"].asString());
+  }
+
+  // Action Servers
+<%
+if (compInfo['Action Server_list']) {
+  compInfo['Action Server_list'].map(function(srv) {
+-%>
+  // Action Server - <%- srv.name %>
+  // TODO: Add support for callback options (Priority / Deadline) to Action Servers
+  this-><%- srv.name %>.registerGoalCallback(
+    boost::bind(&<%- compInfo.name %>::<%- srv.name %>_goal_cb, this)
+  );
+  this-><%- srv.name %>.registerPreemptCallback(
+    boost::bind(&<%- compInfo.name %>::<%- srv.name %>_preempt_cb, this)
+  );
+  this-><%- srv.name %>.initialize(
+    nh_,
+    "<%- srv.Action.AdvertisedName %>",
+    boost::bind(&<%- compInfo.name %>::<%- srv.name %>_execute_cb, this, _1),
+    false,  // don't auto-start the action server
+    &comp_queue
+  );
+  this-><%- srv.name %>.start();
+<%
+    });
+}
+-%>
+  // Action Clients
+<%
+if (compInfo['Action Client_list']) {
+  compInfo['Action Client_list'].map(function(clt) {
+-%>
+  // Action Client - <%- clt.name %>
+  // TODO: Add support for callback options (Priority / Deadline) to Action Client Callbacks
+  this-><%- clt.name %>.registerDoneCallback(
+      boost::bind(&<%- compInfo.name %>::<%- clt.name %>_done_cb, this, _1, _2)
+  );
+  this-><%- clt.name %>.registerActiveCallback(
+      boost::bind(&<%- compInfo.name %>::<%- clt.name %>_active_cb, this)
+  );
+  this-><%- clt.name %>.registerFeedbackCallback(
+      boost::bind(&<%- compInfo.name %>::<%- clt.name %>_feedback_cb, this, _1)
+  );
+  this-><%- clt.name %>.initialize(nh_, "<%- clt.Action.AdvertisedName %>", &comp_queue);
+  logger->log("DEBUG", "<Action Client><%- clt.name %> connected!");
+<%
+    });
+ }
+-%>
   // Servers
 <%
 if (compInfo.Server_list) {
   compInfo.Server_list.map(function(srv) {
 -%>
   // Server - <%- srv.name %>
-  callback_options.alias = "<%- srv.name %>_operation";
-  
-  callback_options.priority = config["Servers"]["<%- srv.name %>"]["Priority"].asInt();
-  deadline = ros::Duration(config["Servers"]["<%- srv.name %>"]["Deadline"].asFloat());
-  callback_options.deadline.sec = deadline.sec;
-  callback_options.deadline.nsec = deadline.nsec;
-
   advertiseName = "<%- srv.Service.AdvertisedName %>";
-  rosmod::AdvertiseServiceOptions <%- srv.name %>_server_options;
-  <%- srv.name %>_server_options = rosmod::AdvertiseServiceOptions::create<<%- srv.Service.Package %>::<%- srv.Service.TypeName %>>
+  ros::AdvertiseServiceOptions <%- srv.name %>_server_options;
+  <%- srv.name %>_server_options = ros::AdvertiseServiceOptions::create<<%- srv.Service.Package %>::<%- srv.Service.TypeName %>>
       (advertiseName.c_str(),
        boost::bind(&<%- compInfo.name %>::<%- srv.name %>_operation, this, _1, _2),
-       rosmod::VoidPtr(),
-       &this->comp_queue,
-       callback_options);
-  this-><%- srv.name %> = nh.advertiseService(<%- srv.name %>_server_options);
+       ros::VoidPtr(),
+       &comp_queue);
+  this-><%- srv.name %> = nh_.advertiseService(<%- srv.name %>_server_options);
 <%
     });
 }
@@ -314,13 +634,13 @@ if (compInfo.Client_list) {
 -%>
   // Client - <%- clt.name %>
   advertiseName = "<%- clt.Service.AdvertisedName %>";
-  this-><%- clt.name %> = nh.serviceClient<<%- clt.Service.Package %>::<%- clt.Service.TypeName %>>(
+  this-><%- clt.name %> = nh_.serviceClient<<%- clt.Service.Package %>::<%- clt.Service.TypeName %>>(
                                                                                                 advertiseName.c_str(),
                                                                                                 false, // not persistent
                                                                                                 service_header
                                                                                                 );//, true); 
   this-><%- clt.name %>.waitForExistence();
-  logger->log("DEBUG", "<%- clt.name %> connected!");
+  logger->log("DEBUG", "<Client><%- clt.name %> connected!");
 <%
     });
  }
@@ -334,7 +654,7 @@ if (compInfo.Publisher_list) {
   // Publisher - <%- pub.name %>
   advertiseName = "<%- pub.Message.AdvertisedName %>";
   latching = <%- pub.Latching ? "true" : "false" %>;
-  this-><%- pub.name %> = nh.advertise<<%- pub.Message.Package %>::<%- pub.Message.TypeName %>>(
+  this-><%- pub.name %> = nh_.advertise<<%- pub.Message.Package %>::<%- pub.Message.TypeName %>>(
                                                                                             advertiseName.c_str(),
                                                                                             1000,
                                                                                             latching
@@ -349,46 +669,29 @@ if (compInfo.Subscriber_list) {
   compInfo.Subscriber_list.map(function(sub) {
 -%>
   // Subscriber - <%- sub.name %>
-  callback_options.alias = "<%- sub.name %>_operation";
-
-  callback_options.priority = config["Subscribers"]["<%- sub.name %>"]["Priority"].asInt();
-  deadline = ros::Duration(config["Subscribers"]["<%- sub.name %>"]["Deadline"].asFloat());
-  callback_options.deadline.sec = deadline.sec;
-  callback_options.deadline.nsec = deadline.nsec;
-
-  callback_options.priority = <%- sub.Priority %>;
-  callback_options.deadline.sec = <%- Math.floor(sub.Deadline) %>;
-  callback_options.deadline.nsec = <%- Math.floor((sub.Deadline % 1) * 1000000000) %>;
-
   advertiseName = "<%- sub.Message.AdvertisedName %>";
-  rosmod::SubscribeOptions <%- sub.name %>_options;
-  <%- sub.name %>_options = rosmod::SubscribeOptions::create<<%- sub.Message.Package %>::<%- sub.Message.TypeName %>>
+  ros::SubscribeOptions <%- sub.name %>_options;
+  <%- sub.name %>_options = ros::SubscribeOptions::create<<%- sub.Message.Package %>::<%- sub.Message.TypeName %>>
       (advertiseName.c_str(),
        1000,
        boost::bind(&<%- compInfo.name %>::<%- sub.name %>_operation, this, _1),
-       rosmod::VoidPtr(),
-       &this->comp_queue,
-       callback_options);
-  this-><%- sub.name %> = nh.subscribe(<%- sub.name %>_options);
+       ros::VoidPtr(),
+       &comp_queue);
+  this-><%- sub.name %> = nh_.subscribe(<%- sub.name %>_options);
 <%
     });
 }
 -%>
 
   // Init Timer
-  callback_options.alias = "init_timer_operation";
-  callback_options.priority = 99;
-  callback_options.deadline.sec = 1;
-  callback_options.deadline.nsec = 0;
   timer_options = 
-    rosmod::TimerOptions
+    ros::TimerOptions
     (ros::Duration(-1),
      boost::bind(&<%- compInfo.name %>::init_timer_operation, this, _1),
-     &this->comp_queue,
-     callback_options,
+     &comp_queue,
      true,
      false); 
-  this->init_timer = nh.createTimer(timer_options);
+  this->init_timer = nh_.createTimer(timer_options);
   this->init_timer.stop();
 
   // Timers
@@ -397,22 +700,15 @@ if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
   // Component Timer - <%- tmr.name %>
-  callback_options.alias = "<%- tmr.name %>_operation";
-  
-  callback_options.priority = config["Timers"]["<%- tmr.name %>"]["Priority"].asInt();
-  deadline = ros::Duration(config["Timers"]["<%- tmr.name %>"]["Deadline"].asFloat());
-  callback_options.deadline.sec = deadline.sec;
-  callback_options.deadline.nsec = deadline.nsec;
   isOneShot = (config["Timers"]["<%- tmr.name %>"]["Period"].asFloat() == 0) ? true : false;
   timer_options = 
-    rosmod::TimerOptions
+    ros::TimerOptions
     (ros::Duration(config["Timers"]["<%- tmr.name %>"]["Period"].asFloat()),
      boost::bind(&<%- compInfo.name %>::<%- tmr.name %>_operation, this, _1),
-     &this->comp_queue,
-     callback_options,
+     &comp_queue,
      isOneShot,
      false);
-  this-><%- tmr.name %> = nh.createTimer(timer_options);
+  this-><%- tmr.name %> = nh_.createTimer(timer_options);
   this-><%- tmr.name %>.stop();
 <%
     });
@@ -423,24 +719,17 @@ if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
       // HFSM Timer
-      callback_options.alias = "<%- hfsm.sanitizedName %>_HFSM_timer_operation";
-  
       // NEED TO FIGURE OUT HOW TO SPECIFY PRIORITY FOR THE HFSM TIMER IN THE MODEL
-      //callback_options.priority = config["Timers"]["<%- hfsm.sanitizedName %>"]["Priority"].asInt();
       ros::Duration hfsmPeriod = ros::Duration( 0 );
-      deadline = hfsmPeriod;
-      callback_options.deadline.sec = deadline.sec;
-      callback_options.deadline.nsec = deadline.nsec;
       isOneShot = false;
       timer_options = 
-        rosmod::TimerOptions
+        ros::TimerOptions
         (hfsmPeriod,
          boost::bind(&<%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation, this, _1),
-         &this->comp_queue,
-         callback_options,
+         &comp_queue,
          isOneShot,
          false);
-      <%- hfsm.sanitizedName %>_HFSM_timer = nh.createTimer(timer_options);
+      <%- hfsm.sanitizedName %>_HFSM_timer = nh_.createTimer(timer_options);
 <%
   });
 }

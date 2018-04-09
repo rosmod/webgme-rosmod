@@ -8,6 +8,8 @@
 #define <%- compInfo.name.toUpperCase() %>_INCLUDE_GUARD
 #include "rosmod_actor/component.hpp"
 
+#include <actionlib/client/simple_action_client.h>
+#include <actionlib/server/simple_action_server.h>
 
 <%
 if (compInfo['State Machine_list']) {
@@ -28,13 +30,13 @@ namespace StateMachine {
 if (compInfo.Types.length) {
   compInfo.Types.map(function(type) {
 -%>
-#include "<%- type.Package %>/<%- type.TypeName %>.h"
+#include "<%- type.Package %>/<%- type.IncludeName || type.TypeName %>.h"
 <%
     });
  }
 -%>
 
-#include "rosmod/rosmod_ros.h"
+#include "ros/ros.h"
 
 /**
  * Forward declarations
@@ -63,8 +65,7 @@ if (compInfo['State Machine_list']) {
    * @brief <%- compInfo.name %> Constructor.
    * @param _config Component configuration parsed from deployment JSON
    */
-  <%- compInfo.name %>(Json::Value& _config)
-  : Component(_config) {}
+  <%- compInfo.name %>(Json::Value& _config);
 
   /**
    * @brief <%- compInfo.name %> Initializer
@@ -72,7 +73,7 @@ if (compInfo['State Machine_list']) {
    * @param[in] event a oneshot timer event
    * @see startUp()
    */
-  void init_timer_operation(const rosmod::TimerEvent& event);
+  void init_timer_operation(const ros::TimerEvent& event);
 
 <%
 if (compInfo['State Machine_list']) {
@@ -88,7 +89,7 @@ if (compInfo['State Machine_list']) {
    * @param[in] event a timer event
    * @see startUp()
    */
-  void <%- hfsm.sanitizedName %>_HFSM_timer_operation(const rosmod::TimerEvent& event);
+  void <%- hfsm.sanitizedName %>_HFSM_timer_operation(const ros::TimerEvent& event);
 <%
   });
 }
@@ -107,7 +108,7 @@ if (compInfo.Timer_list) {
    *
    * <%- tmr['Detailed Description'] %>
    */
-  void <%- tmr.name %>_operation(const rosmod::TimerEvent& event);
+  void <%- tmr.name %>_operation(const ros::TimerEvent& event);
 <%
     });
  }
@@ -152,6 +153,72 @@ if (compInfo.Server_list) {
  }
 -%>
 
+<%
+if (compInfo['Action Server_list']) {
+  compInfo['Action Server_list'].map(function(srv) {
+-%>
+  /**
+   * @brief <%- srv.name %>_execute_cb; <%- srv['Brief Description'] %>
+   *
+   * This operation is executed every time the  
+   * <%- srv.name %> operation request is serviced 
+   * @param[in] goal goal received from the action client
+   *
+   * <%- srv['Detailed Description'] %>
+   */
+  void <%- srv.name %>_execute_cb(const <%- srv.Action.Package %>::<%- srv.Action.TypeName %>GoalConstPtr &goal);
+  /**
+   * @brief <%- srv.name %>_goal_cb;
+   *
+   * This operation is executed every time the  
+   * <%- srv.name %> receives a new goal
+   */
+  void <%- srv.name %>_goal_cb();
+  /**
+   * @brief <%- srv.name %>_preempt_cb;
+   *
+   * This operation is executed every time the  
+   * <%- srv.name %> is preempted
+   */
+  void <%- srv.name %>_preempt_cb();
+<%
+    });
+ }
+-%>
+
+<%
+if (compInfo['Action Client_list']) {
+  compInfo['Action Client_list'].map(function(clt) {
+-%>
+  /**
+   * @brief <%- clt.name %>_feedback_cb; <%- clt['Brief Description'] %>
+   *
+   * This operation is executed every time the  
+   * <%- clt.name %> receives feedback from the action server
+   * @param[in] feedback feedback received from the action server
+   *
+   * <%- clt['Detailed Description'] %>
+   */
+  void <%- clt.name %>_feedback_cb(const <%- clt.Action.Package %>::<%- clt.Action.TypeName %>FeedbackConstPtr &feedback);
+  /**
+   * @brief <%- clt.name %>_active_cb
+   *
+   * This operation is executed when the goal becomes active
+   */
+  void <%- clt.name %>_active_cb();
+  /**
+   * @brief <%- clt.name %>_done_cb
+   *
+   * This operation is executed when the goal completes.
+   * @param[in] state state received from the action server
+   * @param[in] result the result message received from the action server
+   */
+  void <%- clt.name %>_done_cb(const actionlib::SimpleClientGoalState& state, const <%- clt.Action.Package %>::<%- clt.Action.TypeName %>ResultConstPtr &result);
+<%
+    });
+ }
+-%>
+
  /**
    * @brief Component startup function
    *
@@ -170,7 +237,7 @@ private:
 if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
-  rosmod::Timer <%- hfsm.sanitizedName %>_HFSM_timer; /*!< <%- hfsm.name %> HFSM Timer */
+  ros::Timer <%- hfsm.sanitizedName %>_HFSM_timer; /*!< <%- hfsm.name %> HFSM Timer */
 <%
   });
 }
@@ -180,7 +247,25 @@ if (compInfo['State Machine_list']) {
 if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
-  rosmod::Timer <%- tmr.name %>;  /*!< <%- tmr.name %> Component Timer */
+  ros::Timer <%- tmr.name %>;  /*!< <%- tmr.name %> Component Timer */
+<%
+    });
+ }
+-%>
+<%
+if (compInfo['Action Server_list']) {
+  compInfo['Action Server_list'].map(function(srv) {
+-%>
+  actionlib::SimpleActionServer<<%- srv.Action.Package %>::<%- srv.Action.TypeName %>Action> <%- srv.name %>;  /*!< <%- srv.name %> Component Action Server */
+<%
+    });
+ }
+-%>
+<%
+if (compInfo['Action Client_list']) {
+  compInfo['Action Client_list'].map(function(clt) {
+-%>
+  actionlib::SimpleActionClient<<%- clt.Action.Package %>::<%- clt.Action.TypeName %>Action> <%- clt.name %>;  /*!< <%- clt.name %> Component Action Client */
 <%
     });
  }
@@ -189,7 +274,7 @@ if (compInfo.Timer_list) {
 if (compInfo.Server_list) {
   compInfo.Server_list.map(function(srv) {
 -%>
-  rosmod::ServiceServer <%- srv.name %>;  /*!< <%- srv.name %> Component Server */
+  ros::ServiceServer <%- srv.name %>;  /*!< <%- srv.name %> Component Server */
 <%
     });
  }
@@ -198,7 +283,7 @@ if (compInfo.Server_list) {
 if (compInfo.Client_list) {
   compInfo.Client_list.map(function(clt) {
  -%>
-  rosmod::ServiceClient <%- clt.name %>;  /*!< <%- clt.name %> Component Client */
+  ros::ServiceClient <%- clt.name %>;  /*!< <%- clt.name %> Component Client */
 <%
     });
  }
@@ -207,7 +292,7 @@ if (compInfo.Client_list) {
 if (compInfo.Publisher_list) {
   compInfo.Publisher_list.map(function(pub) {
  -%>
-  rosmod::Publisher <%- pub.name %>;  /*!< <%- pub.name %> Component Publisher */
+  ros::Publisher <%- pub.name %>;  /*!< <%- pub.name %> Component Publisher */
 <%
     });
  }
@@ -216,7 +301,7 @@ if (compInfo.Publisher_list) {
 if (compInfo.Subscriber_list) {
   compInfo.Subscriber_list.map(function(sub) {
  -%>
-  rosmod::Subscriber <%- sub.name %>;  /*!< <%- sub.name %> Component Subscriber */
+  ros::Subscriber <%- sub.name %>;  /*!< <%- sub.name %> Component Subscriber */
 <%
     });
  }

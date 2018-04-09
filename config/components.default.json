@@ -65,6 +65,9 @@
 	    "Service": {
 		"Definition": "ROS"
 	    },
+	    "Action": {
+		"Definition": "ROS"
+	    },
 	    "Component": {
 		"Forwards": "C++",
 		"Members": "C++",
@@ -93,6 +96,24 @@
 	    },
 	    "Subscriber": {
 		"Operation": "C++",
+		"Authors": "gfm",
+		"Brief Description": "gfm",
+		"Detailed Description": "gfm",
+		"AbstractBusinessLogic": "C++"
+	    },
+	    "Action Client": {
+		"Active Callback": "C++",
+		"Done Callback": "C++",
+		"Feedback Callback": "C++",
+		"Authors": "gfm",
+		"Brief Description": "gfm",
+		"Detailed Description": "gfm",
+		"AbstractBusinessLogic": "C++"
+	    },
+	    "Action Server": {
+		"Goal Callback": "C++",
+		"Preempt Callback": "C++",
+		"Execute Callback": "C++",
 		"Authors": "gfm",
 		"Brief Description": "gfm",
 		"Detailed Description": "gfm",
@@ -134,10 +155,13 @@
             "Package": "Authors",
             "Message": "Definition",
             "Service": "Definition",
+            "Action": "Definition",
             "Component": "Initialization",
             "Timer": "Operation",
             "Server": "Operation",
             "Subscriber": "Operation",
+            "Action Client": "Feedback Callback",
+            "Action Server": "Execute Callback",
             "Node": "Arguments",
             "External Node": "Arguments",
             "State Machine": "Initialization",

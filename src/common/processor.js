@@ -1,13 +1,8 @@
 
 
-define([], function() {
+define(['underscore'], function(_) {
     'use strict';
     return {
-        union: function(a,b) {
-            return a.concat(b.filter(function (item) {
-                return a.indexOf(item) < 0;
-            }));
-        },
 	processModel: function(collection) {
 	    var self = this;
 	    self.checkObjects(collection.objects);
@@ -28,10 +23,13 @@ define([], function() {
             var orderedTypes = [
                 'Message',
                 'Service',
+		'Action',
                 'External Message',
                 'External Service',
+		'External Action',
                 'Advertised Message',
                 'Advertised Service',
+		'Advertised Action',
                 'Link',
                 'Development Library',
                 'Source Library',
@@ -46,10 +44,13 @@ define([], function() {
                 'Component': 'makeComponentConvenience',
                 'Message': 'makeMessageConvenience',
                 'Service': 'makeServiceConvenience',
+		'Action': 'makeActionConvenience',
                 'External Message': 'makeExternalMessageConvenience',
                 'External Service': 'makeExternalServiceConvenience',
+		'External Action': 'makeExternalActionConvenience',
                 'Advertised Message': 'makeAdvertisedMessageConvenience',
                 'Advertised Service': 'makeAdvertisedServiceConvenience',
+		'Advertised Action': 'makeAdvertisedActionConvenience',
                 'External Definitions': 'makeExternalDefinitionsConvenience',
                 'Link': 'makeLinkConvenience',
                 'Development Library': 'makeDevelopmentLibraryConvenience',
@@ -70,24 +71,38 @@ define([], function() {
 
             if (obj.Component_list) {
                 obj.Component_list.map(function(o) {
-                    obj.Packages = self.union(obj.Packages, o.Packages);
-                    obj.CMAKE_COMMANDS = self.union(obj.CMAKE_COMMANDS, o.CMAKE_COMMANDS);
+                    obj.Packages = _.union(obj.Packages, o.Packages);
+                    obj.CMAKE_COMMANDS = _.union(obj.CMAKE_COMMANDS, o.CMAKE_COMMANDS);
                 });
             }
 
 	    if (obj.Message_list) {
 		obj.Message_list.map(function(o) {
-		    obj.Packages = self.union(obj.Packages, o.Dependencies);
-		    obj.GenerateMessageDependencies = self.union(obj.GenerateMessageDependencies, o.Dependencies);
+		    obj.Packages = _.union(obj.Packages, o.Dependencies);
+		    obj.GenerateMessageDependencies = _.union(
+			obj.GenerateMessageDependencies, o.Dependencies
+		    );
 		});
 	    }
 
 	    if (obj.Service_list) {
 		obj.Service_list.map(function(o) {
-		    obj.Packages = self.union(obj.Packages, o.Dependencies);
-		    obj.GenerateMessageDependencies = self.union(obj.GenerateMessageDependencies, o.Dependencies);
+		    obj.Packages = _.union(obj.Packages, o.Dependencies);
+		    obj.GenerateMessageDependencies = _.union(
+			obj.GenerateMessageDependencies, o.Dependencies
+		    );
 		});
 	    }
+
+	    if (obj.Action_list) {
+		var actionReq = ['actionlib', 'actionlib_msgs'];
+		obj.Action_list.map(function(o) {
+		    obj.Packages = _.union(obj.Packages, actionReq.concat(o.Dependencies));
+		    obj.GenerateMessageDependencies = _.union(
+			obj.GenerateMessageDependencies, ['actionlib_msgs'].concat(o.Dependencies)
+		    );
+		});
+	    }	    
 
             obj.BuildDependencies = obj.Packages.filter((p) => { return p != obj.name; });
             obj.RunDependencies = obj.BuildDependencies;
@@ -137,6 +152,12 @@ define([], function() {
 	    if (obj.Server_list) {
 		obj.Server_list.map(function(srv) { tFunc(srv, 'Service'); });
 	    }
+	    if (obj['Action Client_list']) {
+		obj['Action Client_list'].map(function(cli) { tFunc(cli, 'Action'); });
+	    }
+	    if (obj['Action Server_list']) {
+		obj['Action Server_list'].map(function(srv) { tFunc(srv, 'Action'); });
+	    }
             // libraries
             if (obj.Libraries) {
                 obj.Libraries.map(function(lib) {
@@ -183,6 +204,20 @@ define([], function() {
 	    // get packages that this service is dependent on
 	    obj.Dependencies = self.getTypeDependencies(obj.Definition);
         },
+        makeActionConvenience: function(obj, objects) {
+	    var self = this;
+            var parent = objects[obj.parentPath];
+            // make .Package convenience member for rendering code
+            obj.Package = parent.name;
+            // make .TypeName convenience member for rendering code
+            obj.TypeName = obj.name;
+            // make .IncludeName convenience member for rendering code
+            obj.IncludeName = obj.name + 'Action';
+            // make .AdvertisedName convenience member for rendering code
+            obj.AdvertisedName = obj.Package + '/' + obj.name;
+	    // get packages that this service is dependent on
+	    obj.Dependencies = self.getTypeDependencies(obj.Definition);
+        },
         makeExternalMessageConvenience: function(obj, objects) {
             // already will have .Package convenience member for rendering code from model
             // make .TypeName convenience member for rendering code
@@ -194,6 +229,15 @@ define([], function() {
             // already will have .Package convenience member for rendering code from model
             // make .TypeName convenience member for rendering code
             obj.TypeName = obj.name;
+            // make .AdvertisedName convenience member for rendering code
+            obj.AdvertisedName = obj.Package + '/' + obj.name;
+        },
+        makeExternalActionConvenience: function(obj, objects) {
+            // already will have .Package convenience member for rendering code from model
+            // make .TypeName convenience member for rendering code
+            obj.TypeName = obj.name;
+            // make .IncludeName convenience member for rendering code
+            obj.IncludeName = obj.name + 'Action';
             // make .AdvertisedName convenience member for rendering code
             obj.AdvertisedName = obj.Package + '/' + obj.name;
         },
@@ -212,6 +256,17 @@ define([], function() {
             obj.Package = TopicType.Package;
             // make .TypeName convenience member for rendering code
             obj.TypeName = TopicType.name;
+            // make .AdvertisedName convenience member for rendering code
+            obj.AdvertisedName = obj.name;
+        },
+        makeAdvertisedActionConvenience: function(obj, objects) {
+            var TopicType = objects[obj.pointers['Type']];
+            // make .Package convenience member for rendering code
+            obj.Package = TopicType.Package;
+            // make .TypeName convenience member for rendering code
+            obj.TypeName = TopicType.name;
+            // make .IncludeName convenience member for rendering code
+            obj.IncludeName = TopicType.name + 'Action';
             // make .AdvertisedName convenience member for rendering code
             obj.AdvertisedName = obj.name;
         },
@@ -260,7 +315,7 @@ define([], function() {
 		    res = validDeclaration.exec(definition);
 		}
 	    }
-	    return matches;
+	    return _.uniq(matches);
 	},
         checkName: function(o) {
 	    var validName = new RegExp(/^([a-zA-Z_][a-zA-Z0-9_]*)$/g);
