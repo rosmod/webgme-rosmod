@@ -225,7 +225,7 @@ which enables the `META` visualizer.
    *NOTE:* only *ros-\<version\>-ros-base* is required, but any install
     target works.
    
-2. Install [ROSMOD-COMM](http://github.com/rosmod/rosmod-comm) onto
+2. Install [ROSMOD-Actor](http://github.com/rosmod/rosmod-actor) onto
    the target platform.
 3. Ensure the target has *SSH capabilities*; configure an ssh key that
    the ROSMOD server can use to remotely access the target device.
