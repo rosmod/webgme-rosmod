@@ -141,6 +141,14 @@ define([
 
         self.$table.find('#'+panelId+'-node-panel').first().remove();
         self.$table.append(projectHtml);
+	// sort alphabetically
+	var items = $(self.$table).children('div');
+	items.detach().sort(function(a, b) {
+	    var contentA =$(a).data('sort');
+	    var contentB =$(b).data('sort');
+	    return (contentA < contentB) ? -1 : (contentA > contentB) ? 1 : 0;	    
+	});
+	self.$table.append(items);
 
         function dialogPopup(gmeId, attrName) {
             var node = self._client.getNode(gmeId);
