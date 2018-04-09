@@ -103,7 +103,7 @@
 	    },
 	    "Action Client": {
 		"Active Callback": "C++",
-		"Complete Callback": "C++",
+		"Done Callback": "C++",
 		"Feedback Callback": "C++",
 		"Authors": "gfm",
 		"Brief Description": "gfm",

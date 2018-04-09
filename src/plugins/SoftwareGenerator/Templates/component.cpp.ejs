@@ -603,8 +603,7 @@ if (compInfo['Action Client_list']) {
   this-><%- clt.name %>.registerFeedbackCallback(
       boost::bind(&<%- compInfo.name %>::<%- clt.name %>_feedback_cb, this, _1)
   );
-  this-><%- clt.name %>.initialize("<%- clt.Action.AdvertisedName %>", &comp_queue);
-  this-><%- clt.name %>.waitForServer();
+  this-><%- clt.name %>.initialize(nh_, "<%- clt.Action.AdvertisedName %>", &comp_queue);
   logger->log("DEBUG", "<Action Client><%- clt.name %> connected!");
 <%
     });
