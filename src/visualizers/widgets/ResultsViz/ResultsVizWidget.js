@@ -8,7 +8,7 @@
 define([
     'text!./Plot.html',
     'blob/BlobClient',
-    './ResultsVizWidget.Parser',
+    './ResultsVizWidget.TraceParser',
     './ResultsVizWidget.UserParser',
     './ResultsVizWidget.Plotter',
     'plotly-js/plotly.min',
@@ -20,7 +20,7 @@ define([
 ], function (
     PlotHtml,
     BlobClient,
-    Parser,
+    TraceParser,
     UserParser,
     Plotter,
     Plotly,
@@ -165,7 +165,7 @@ define([
 			var parsed = {};
 			// parse the logs
 			if (logName.indexOf('.trace.log') > -1) {
-			    parsed = Parser.getDataFromAttribute(data);
+			    parsed = TraceParser.getDataFromAttribute(data);
 			} else {
 			    parsed = UserParser.getDataFromAttribute(data);
 			}
