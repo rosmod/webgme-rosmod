@@ -26,7 +26,7 @@
     "unzip": "0.1.x",
     "webgme": "^2.24.0",
     "webgme-codeeditor": "^3.6.0",
-    "webgme-hfsm": "^1.2.5",
+    "webgme-hfsm": "^1.2.11",
     "webgme-to-json": "^1.0.4",
     "ws": "^3.3.2"
   },
