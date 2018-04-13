@@ -220,6 +220,9 @@ which enables the `META` visualizer.
 
 ### Setting up target systems to run ROSMOD
 
+**Note:** If you want to be able to compile on the server, you will need to follow these steps for the server as well.  
+**Note:** These steps have changed and no longer depend on `rosmod-comm`, please make sure to update your targets accordingly.
+
 1. Install [ROS](http://www.ros.org) onto the target platform.
    
    *NOTE:* only *ros-\<version\>-ros-base* is required, but any install
