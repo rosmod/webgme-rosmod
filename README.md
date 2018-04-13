@@ -242,6 +242,16 @@ which enables the `META` visualizer.
 
 5. (Optional) If you want to use `Action Clients` or `Action Servers` from [actionlib](https://github.com/ros/actionlib), you will need to **install our custom fork of actionlib** from [rosmod/actionlib](https://github.com/rosmod/actionlib)
 
+   ```bash
+   mkdir ~/actionlib_ws
+   cd ~/actionlib_ws
+   catkin config --extend /opt/ros/kinetic
+   catkin config -i /opt/actionlib
+   catkin config --install
+   git clone https://github.com/rosmod/actionlib
+   catkin build
+   ```
+
 ## How to use ROSMOD
 
 This section serves as a short guide for users who want to develop
