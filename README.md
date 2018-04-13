@@ -226,7 +226,19 @@ which enables the `META` visualizer.
     target works.
    
 2. Install [ROSMOD-Actor](http://github.com/rosmod/rosmod-actor) onto
-   the target platform.
+   the target platform. (Optionally) If you want to use `Action Clients` or `Action Servers` from [actionlib](https://github.com/ros/actionlib), you will need to **install our custom fork of actionlib** from [rosmod/actionlib](https://github.com/rosmod/actionlib).  To install both, simply copy these commands below.
+
+   ```bash
+   # install both rosmod/actionlib and rosmod/rosmod-actor to /opt/rosmod
+   mkdir ~/rosmod_ws
+   cd ~/rosmod_ws
+   catkin config --extend /opt/ros/kinetic
+   catkin config -i /opt/rosmod
+   catkin config --install
+   git clone https://github.com/rosmod/actionlib
+   git clone https://github.com/rosmod/rosmod-actor
+   catkin build
+   ```
 
 3. Ensure the target has *SSH capabilities*; configure an ssh key that
    the ROSMOD server can use to remotely access the target device.
@@ -239,18 +251,6 @@ which enables the `META` visualizer.
     ```bash
     sudo apt-get install valgrind gdbserver
     ```
-
-5. (Optional) If you want to use `Action Clients` or `Action Servers` from [actionlib](https://github.com/ros/actionlib), you will need to **install our custom fork of actionlib** from [rosmod/actionlib](https://github.com/rosmod/actionlib)
-
-   ```bash
-   mkdir ~/actionlib_ws
-   cd ~/actionlib_ws
-   catkin config --extend /opt/ros/kinetic
-   catkin config -i /opt/actionlib
-   catkin config --install
-   git clone https://github.com/rosmod/actionlib
-   catkin build
-   ```
 
 ## How to use ROSMOD
 
