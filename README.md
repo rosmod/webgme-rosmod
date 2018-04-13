@@ -230,13 +230,13 @@ which enables the `META` visualizer.
 
    ```bash
    # install both rosmod/actionlib and rosmod/rosmod-actor to /opt/rosmod
-   mkdir ~/rosmod_ws
+   mkdir -p ~/rosmod_ws/src
    cd ~/rosmod_ws
    catkin config --extend /opt/ros/kinetic
    catkin config -i /opt/rosmod
    catkin config --install
-   git clone https://github.com/rosmod/actionlib
-   git clone https://github.com/rosmod/rosmod-actor
+   git clone https://github.com/rosmod/actionlib src/actionlib
+   git clone https://github.com/rosmod/rosmod-actor src/rosmod-actor
    catkin build
    ```
 
