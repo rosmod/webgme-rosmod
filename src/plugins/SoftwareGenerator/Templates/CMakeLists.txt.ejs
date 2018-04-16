@@ -144,6 +144,7 @@ include_directories(
 if (pkgInfo.Component_list) {
 -%>
 	include
+    <%- pkgInfo.CMAKE_INCLUDES.join('\n') %>
 <%
 }
 -%>
