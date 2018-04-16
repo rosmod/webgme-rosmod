@@ -220,13 +220,28 @@ which enables the `META` visualizer.
 
 ### Setting up target systems to run ROSMOD
 
+**Note:** If you want to be able to compile on the server, you will need to follow these steps for the server as well.  
+**Note:** These steps have changed and no longer depend on `rosmod-comm`, please make sure to update your targets accordingly.
+
 1. Install [ROS](http://www.ros.org) onto the target platform.
    
    *NOTE:* only *ros-\<version\>-ros-base* is required, but any install
     target works.
    
 2. Install [ROSMOD-Actor](http://github.com/rosmod/rosmod-actor) onto
-   the target platform.
+   the target platform. (Optionally) If you want to use `Action Clients` or `Action Servers` from [actionlib](https://github.com/ros/actionlib), you will need to **install our custom fork of actionlib** from [rosmod/actionlib](https://github.com/rosmod/actionlib).  To install both, simply copy these commands below.
+
+   ```bash
+   # install both rosmod/actionlib and rosmod/rosmod-actor to /opt/rosmod
+   mkdir -p ~/rosmod_ws/src
+   cd ~/rosmod_ws
+   catkin config --extend /opt/ros/kinetic
+   catkin config -i /opt/rosmod
+   catkin config --install
+   git clone https://github.com/rosmod/actionlib src/actionlib
+   git clone https://github.com/rosmod/rosmod-actor src/rosmod-actor
+   catkin build
+   ```
 
 3. Ensure the target has *SSH capabilities*; configure an ssh key that
    the ROSMOD server can use to remotely access the target device.
@@ -239,8 +254,6 @@ which enables the `META` visualizer.
     ```bash
     sudo apt-get install valgrind gdbserver
     ```
-
-5. (Optional) If you want to use `Action Clients` or `Action Servers` from [actionlib](https://github.com/ros/actionlib), you will need to **install our custom fork of actionlib** from [rosmod/actionlib](https://github.com/rosmod/actionlib)
 
 ## How to use ROSMOD
 
