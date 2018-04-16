@@ -19,6 +19,13 @@ An example server running ROSMOD can be found on
 
 Please see the [WIKI](https://github.com/rosmod/webgme-rosmod/wiki) for in-depth information about ROSMOD, how to use it, and links to various Youtube videos that walk through development and usage of ROSMOD.
 
+**Note: WebGME ROSMOD code generators have changed** - they no longer
+generate for `rosmod-comm`, please see [Setting up target systems to
+run ROSMOD](#setting-up-target-systems-to-run-rosmod) to properly
+install the new dependencies.
+
+
+
 ## Contents
 
 1. [What is ROSMOD](#what-is-rosmod)
@@ -52,11 +59,13 @@ component-based software for the Robot Operating System (ROS)
 middleware.
 
 ROSMOD consists of 
-1. The *ROSMOD Server*, which provides collaborative model-driven
-   development, and
-2. The *ROSMOD Comm* layer, which extends ROS to provide a more well
-   defined component execution model with support for prioritization
-   of component event triggers.
+1. The *ROSMOD Server* (this repo), which provides collaborative
+   model-driven development, and
+2. The *ROSMOD Actor*
+   ([github](https://github.com/rosmod/rosmod-actor)), which is a
+   standardized `ros::Node` that provides a well defined component
+   execution model which helps reduce the complexity of writing
+   multi-threaded code.
 
 ### Motivation
 
@@ -220,7 +229,7 @@ which enables the `META` visualizer.
 
 ### Setting up target systems to run ROSMOD
 
-**Note:** If you want to be able to compile on the server, you will need to follow these steps for the server as well.  
+**Note:** If you want to be able to compile on the server, you will need to follow these steps for the server as well.
 **Note:** These steps have changed and no longer depend on `rosmod-comm`, please make sure to update your targets accordingly.
 
 1. Install [ROS](http://www.ros.org) onto the target platform.
