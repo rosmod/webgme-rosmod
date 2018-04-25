@@ -267,10 +267,34 @@ define([
             self.createProject( gmeId );
     };
 
+    var pmid = null;
+
+    RootVizWidget.prototype.getProjectMetaId = function ( ) {
+        if (!pmid) {
+            var self = this;
+            var client = self._client;
+            var parentId = '/v';
+            var parentNode = client.getNode(parentId);
+            var types = parentNode.getValidChildrenTypesDetailed();
+            var metaId = null;
+            Object.keys(types).map((k) => {
+                var n = client.getNode(k);
+                if (n.getAttribute('name') == 'Project') {
+                    pmid = n.getId();
+                }
+            });
+        }
+        return pmid;
+    };
+
     RootVizWidget.prototype.newProject = function( ) {
         var self = this;
-        var projectMetaId = '/3/h';
-        self.createProject( projectMetaId );
+        var projectMetaId = self.getProjectMetaId();
+        if (projectMetaId) {
+            self.createProject( projectMetaId );
+        } else {
+            console.log('Could not find project meta node - cannot create new project!');
+        }
     };
 
     // RESIZE
