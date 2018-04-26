@@ -247,6 +247,7 @@ which enables the `META` visualizer.
    catkin config --extend /opt/ros/kinetic
    catkin config -i /opt/rosmod
    catkin config --install
+   git clone https://github.com/ros/common_msgs.git src/common_msgs
    git clone https://github.com/rosmod/actionlib src/actionlib
    git clone https://github.com/rosmod/rosmod-actor src/rosmod-actor
    catkin build
