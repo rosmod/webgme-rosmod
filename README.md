@@ -17,7 +17,7 @@ environment for distributed embedded applications built using
 An example server running ROSMOD can be found on
 [rosmod.rcps.isis.vanderbilt.edu](http://rosmod.rcps.isis.vanderbilt.edu).
 
-Please see the [WIKI](https://github.com/rosmod/webgme-rosmod/wiki) for in-depth information about ROSMOD, how to use it, and links to various Youtube videos that walk through development and usage of ROSMOD.
+**Please see the [WIKI](https://github.com/rosmod/webgme-rosmod/wiki) for in-depth information about ROSMOD, how to use it, and links to various Youtube videos that walk through development and usage of ROSMOD.**
 
 **Note: WebGME ROSMOD code generators have changed** - they no longer
 generate for `rosmod-comm`, please see [Setting up target systems to
@@ -247,6 +247,7 @@ which enables the `META` visualizer.
    catkin config --extend /opt/ros/kinetic
    catkin config -i /opt/rosmod
    catkin config --install
+   git clone https://github.com/ros/common_msgs.git src/common_msgs
    git clone https://github.com/rosmod/actionlib src/actionlib
    git clone https://github.com/rosmod/rosmod-actor src/rosmod-actor
    catkin build
