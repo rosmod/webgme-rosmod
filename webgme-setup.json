@@ -20,6 +20,10 @@
       "GenerateDocumentation": {
         "src": "src/plugins/GenerateDocumentation",
         "test": "test/plugins/GenerateDocumentation"
+      },
+      "InstallRuntime": {
+        "src": "src/plugins/InstallRuntime",
+        "test": "test/plugins/InstallRuntime"
       }
     },
     "addons": {},

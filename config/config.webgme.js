@@ -34,10 +34,13 @@ config.requirejsPaths = {
   'panels/HFSMViz': './node_modules/webgme-hfsm/src/visualizers/panels/HFSMViz',
   'widgets/HFSMViz': './node_modules/webgme-hfsm/src/visualizers/widgets/HFSMViz',
   'panels/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/panels/CodeEditor',
-  'widgets/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/widgets/CodeEditor'
+  'widgets/CodeEditor': './node_modules/webgme-codeeditor/src/visualizers/widgets/CodeEditor',
+  'webgme-hfsm': './node_modules/webgme-hfsm/src/common',
+  'webgme-codeeditor': './node_modules/webgme-codeeditor/src/common',
+  'webgme-rosmod': './src/common'
 };
 
 
-config.mongo.uri = 'mongodb://127.0.0.1:27017/rosmod';
+config.mongo.uri = 'mongodb://127.0.0.1:27017/webgme_rosmod';
 validateConfig(config);
 module.exports = config;
