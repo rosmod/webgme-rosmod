@@ -1,14 +1,15 @@
 {
-  "id": "InstallRuntime",
-  "name": "Install Runtime",
-  "version": "0.1.0",
-  "description": "",
-  "icon": {
-    "class": "glyphicon glyphicon-cog",
-    "src": ""
-  },
-  "disableServerSideExecution": false,
-  "disableBrowserSideExecution": false,
-  "writeAccessRequired": false,
-  "configStructure": []
+    "id": "InstallRuntime",
+    "name": "Install Runtime",
+    "version": "0.1.0",
+    "description": "",
+    "icon": {
+        "class": "glyphicon glyphicon-cog",
+        "src": ""
+    },
+    "disableServerSideExecution": false,
+    "disableBrowserSideExecution": true,
+    "writeAccessRequired": true,
+    "configWidget": "plugin/RunExperiment/InstallRuntime/configWidget",
+    "configStructure": []
 }
