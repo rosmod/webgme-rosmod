@@ -209,6 +209,12 @@ define([
         // context menu:
         var onProjectItems = [
             {
+                name: 'Open ' + desc.name,
+                icon: '',
+                doNotHide: false,
+                callback: self.onNodeClick.bind(self)
+            },
+            {
                 name: 'Copy ' + desc.name,
                 icon: '',
                 doNotHide: false,
