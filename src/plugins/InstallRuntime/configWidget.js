@@ -142,7 +142,7 @@ define([
             var users = map.users;
             var hostName = map.name;
             var installPath = map.installPath;
-            var disabledMessage = 'Excluded from Experiment';
+            var disabledMessage = 'Do not install on this host';
 
             // make the user config
             var hostTmpl = Object.assign({}, userTmpl);

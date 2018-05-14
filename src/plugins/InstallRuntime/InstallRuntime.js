@@ -10,11 +10,19 @@
 define([
     'plugin/PluginConfig',
     'text!./metadata.json',
-    'plugin/PluginBase'
+    'plugin/PluginBase',
+    'remote-utils/remote-utils',
+    'webgme-to-json/webgme-to-json',
+    'rosmod/processor',
+    'q'
 ], function (
     PluginConfig,
     pluginMetadata,
-    PluginBase) {
+    PluginBase,
+    utils,
+    webgmeToJson,
+    processor,
+    Q) {
     'use strict';
 
     pluginMetadata = JSON.parse(pluginMetadata);
@@ -55,36 +63,76 @@ define([
     InstallRuntime.prototype.main = function (callback) {
         // Use self to access core, project, result, logger etc from PluginBase.
         // These are all instantiated at this point.
-        var self = this,
-            nodeObject;
+        var self = this;
 
+        // Default fails
+        self.result.success = false;        self.updateMETA({});
 
-        // Using the logger.
-        self.logger.debug('This is a debug message.');
-        self.logger.info('This is an info message.');
-        self.logger.warn('This is a warning message.');
-        self.logger.error('This is an error message.');
+        // What did the user select for our configuration?
+        var currentConfig = self.getCurrentConfig();
+        // get the selected hosts from the config
+        // also get the ordered nodes from the config
+        self.selectedHostConfig = {};
+        var disabledHostMessage = 'Do not install on this host';
+        Object.keys(currentConfig).map(function(k) {
+            if (k.indexOf('Host_User_Selection:') > -1) {
+                var hostPath = k.split(':')[1];
+                var selectedUser = currentConfig[k];
+                if (!self.selectedHostConfig[ hostPath ]) {
+                    self.selectedHostConfig[ hostPath ] = { user: '', enabled: false, path: '' };
+                }
+                if (selectedUser != disabledHostMessage) {
+                    self.selectedHostConfig[ hostPath ].user = selectedUser;
+                    self.selectedHostConfig[ hostPath ].enabled = true;
+                }
+            } else if (k.indexOf('Host_Install_Selection:') > -1) {
+                var hostPath = k.split(':')[1];
+                var installPath = currentConfig[k];
+                if (!self.selectedHostConfig[ hostPath ]) {
+                    self.selectedHostConfig[ hostPath ] = { user: '', enabled: false, path: '' };
+                }
+                self.selectedHostConfig[ hostPath ].path = installPath;
+            }
+        });
 
-        // Using the coreAPI to make changes.
+        // set up libraries
+        webgmeToJson.notify = function(level, msg) {self.notify(level, msg);}
+        utils.notify = function(level, msg) {self.notify(level, msg);}
+        utils.trackedProcesses = ['catkin', 'rosmod_actor', 'roscore'];
 
-        nodeObject = self.activeNode;
-
-        self.core.setAttribute(nodeObject, 'name', 'My new obj');
-        self.core.setRegistry(nodeObject, 'position', {x: 70, y: 70});
-
-
-        // This will save the changes. If you don't want to save;
-        // exclude self.save and call callback directly from this scope.
-        self.save('Install Runtime updated model.')
+        // the active node for this plugin is system -> systems -> project
+        var systemName = self.core.getAttribute(self.activeNode, 'name');
+        
+        webgmeToJson.loadModel(self.core, self.rootNode, self.activeNode, true, true)
+            .then(function(projectModel) {
+                processor.processModel(projectModel);
+                self.projectModel = projectModel.root;
+                self.objectDict = projectModel.objects;
+                // check to make sure we have the right experiment
+                var expPath = self.core.getPath(self.activeNode);
+                self.selectedExperiment = self.objectDict[expPath];
+                if (!self.selectedExperiment) {
+                    throw new String("Cannot find experiment!");
+                }
+                return self.mapContainersToHosts();
+            })
+            .then(function() {
+                // send the deployment + binaries off to hosts for execution
+                self.notify('info','deploying onto system');
+                return self.deployExperiment();
+            })
             .then(function () {
                 self.result.setSuccess(true);
                 callback(null, self.result);
             })
-            .catch(function (err) {
-                // Result success is false at invocation.
+            .catch(function(err) {
+                if (typeof err !== 'string')
+                    err = new String(err);
+                self.notify('error', err);
+                self.result.setSuccess(false);
                 callback(err, self.result);
-            });
-
+            })
+                .done();
     };
 
     return InstallRuntime;

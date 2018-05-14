@@ -705,7 +705,7 @@ if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
 -%>
   // Component Timer - <%- tmr.name %>
-  isOneShot = (config["Timers"]["<%- tmr.name %>"]["Period"].asFloat() == 0) ? true : false;
+  isOneShot = (config["Timers"]["<%- tmr.name %>"]["Period"].asFloat() <= 0) ? true : false;
   timer_options = 
     ros::TimerOptions
     (ros::Duration(config["Timers"]["<%- tmr.name %>"]["Period"].asFloat()),
