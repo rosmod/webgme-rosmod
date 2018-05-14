@@ -437,6 +437,7 @@ define([
             'model': self.projectModel,
             'objects': self.projectObjects
         });
+        console.log(self.artifacts[srcFileName]);
         // re-render so any user-provided templates get rendered
         self.artifacts[srcFileName] = ejs.render(self.artifacts[srcFileName], {
             'compInfo': compInfo,

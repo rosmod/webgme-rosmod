@@ -137,6 +137,14 @@ define([
             "valueType": "string"
         };
 
+        var extendTmpl = {
+            "name": "",
+            "displayName": "",
+            "description": "Select workspace to extend.",
+            "value": "",
+            "valueType": "string"
+        };
+
         Object.keys(hostUserMap).map(function(hostPath) {
             var map = hostUserMap[hostPath];
             var users = map.users;
@@ -160,34 +168,15 @@ define([
             hostInstallTmpl.value = installPath;
 
             config.push(hostInstallTmpl);
+
+            // make the extend directory config
+            var hostExtendTmpl = Object.assign({}, extendTmpl);
+            hostExtendTmpl.name = 'Host_Extend_Selection:' + hostPath;
+            hostExtendTmpl.displayName = 'Workspace to extend for ' + hostName;
+            hostExtendTmpl.value = '/opt/ros/kinetic/';
+
+            config.push(hostExtendTmpl);
         });
-
-        return config;
-    };
-
-    ConfigWidget.prototype.makeRosCoreConfig = function( hosts ) {
-        var self = this,
-            config = [];
-        
-        var hostNames = [ 'Any' ];
-        hostNames = hostNames.concat(
-            hosts.map(function(h) {
-                return self.core.getAttribute(h,'name');
-            })
-        );
-
-        hostNames.push('None');
-        
-        var tmpl = {
-            "name": "rosCoreHost",
-            "displayName": "ROS Core Host",
-            "description": "Select Host / Any / None to select where and whether to spawn ROS Core / ROS Master.",
-            "value": hostNames[0],
-            "valueType": "string",
-            "valueItems": hostNames
-        };
-
-        config.push(tmpl);
 
         return config;
     };

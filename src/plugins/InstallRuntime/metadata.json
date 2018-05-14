@@ -11,5 +11,14 @@
     "disableBrowserSideExecution": true,
     "writeAccessRequired": true,
     "configWidget": "plugin/RunExperiment/InstallRuntime/configWidget",
-    "configStructure": []
+    "configStructure": [
+	    {
+	        "name": "forceIsolation",
+	        "displayName": "Force Isolation.",
+	        "description": "If true, enforces that the compilation must run on hosts which are not currently running other ROSMOD/ROSCore/catkin processes.",
+	        "value": true,
+	        "valueType": "boolean",
+	        "readOnly": false
+	    }
+    ]
 }

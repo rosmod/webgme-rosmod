@@ -51,6 +51,27 @@ define([
     InstallRuntime.prototype = Object.create(PluginBase.prototype);
     InstallRuntime.prototype.constructor = InstallRuntime;
 
+    InstallRuntime.prototype.notify = function(level, msg) {
+        if (typeof msg !== 'string') {
+            msg = new String(msg);
+        }
+	    var self = this;
+	    var prefix = self.projectId + '::' + self.projectName + '::' + level + '::';
+	    var lines = msg.split('\n');
+	    lines.map(function(line) {
+	        if (level=='error')
+		        self.logger.error(line);
+	        else if (level=='debug')
+		        self.logger.debug(line);
+	        else if (level=='info')
+		        self.logger.info(line);
+	        else if (level=='warning')
+		        self.logger.warn(line);
+	        self.createMessage(self.activeNode, line, level);
+	        self.sendNotification(prefix+line);
+	    });
+    };
+
     /**
      * Main function for the plugin to execute. This will perform the execution.
      * Notes:
@@ -70,16 +91,23 @@ define([
 
         // What did the user select for our configuration?
         var currentConfig = self.getCurrentConfig();
+        self.forceIsolation = currentConfig.forceIsolation;
         // get the selected hosts from the config
         // also get the ordered nodes from the config
         self.selectedHostConfig = {};
         var disabledHostMessage = 'Do not install on this host';
+        var hostConfigTmpl = {
+            user: '',
+            enabled: false,
+            install: '',
+            workspace: ''
+        };
         Object.keys(currentConfig).map(function(k) {
             if (k.indexOf('Host_User_Selection:') > -1) {
                 var hostPath = k.split(':')[1];
                 var selectedUser = currentConfig[k];
                 if (!self.selectedHostConfig[ hostPath ]) {
-                    self.selectedHostConfig[ hostPath ] = { user: '', enabled: false, path: '' };
+                    self.selectedHostConfig[ hostPath ] = Object.assign({}, hostConfigTmpl);
                 }
                 if (selectedUser != disabledHostMessage) {
                     self.selectedHostConfig[ hostPath ].user = selectedUser;
@@ -89,9 +117,16 @@ define([
                 var hostPath = k.split(':')[1];
                 var installPath = currentConfig[k];
                 if (!self.selectedHostConfig[ hostPath ]) {
-                    self.selectedHostConfig[ hostPath ] = { user: '', enabled: false, path: '' };
+                    self.selectedHostConfig[ hostPath ] = Object.assign({}, hostConfigTmpl);
                 }
-                self.selectedHostConfig[ hostPath ].path = installPath;
+                self.selectedHostConfig[ hostPath ].install = installPath;
+            } else if (k.indexOf('Host_Extend_Selection:') > -1) {
+                var hostPath = k.split(':')[1];
+                var extendDir = currentConfig[k];
+                if (!self.selectedHostConfig[ hostPath ]) {
+                    self.selectedHostConfig[ hostPath ] = Object.assign({}, hostConfigTmpl);
+                }
+                self.selectedHostConfig[ hostPath ].workspace = extendDir;
             }
         });
 
@@ -101,6 +136,8 @@ define([
         utils.trackedProcesses = ['catkin', 'rosmod_actor', 'roscore'];
 
         // the active node for this plugin is system -> systems -> project
+	    var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
+	    var projectName = self.core.getAttribute(projectNode, 'name');
         var systemName = self.core.getAttribute(self.activeNode, 'name');
         
         webgmeToJson.loadModel(self.core, self.rootNode, self.activeNode, true, true)
@@ -108,18 +145,8 @@ define([
                 processor.processModel(projectModel);
                 self.projectModel = projectModel.root;
                 self.objectDict = projectModel.objects;
-                // check to make sure we have the right experiment
-                var expPath = self.core.getPath(self.activeNode);
-                self.selectedExperiment = self.objectDict[expPath];
-                if (!self.selectedExperiment) {
-                    throw new String("Cannot find experiment!");
-                }
-                return self.mapContainersToHosts();
-            })
-            .then(function() {
-                // send the deployment + binaries off to hosts for execution
-                self.notify('info','deploying onto system');
-                return self.deployExperiment();
+                self.notify('info',`Installing onto hosts in ${self.systemName}`);
+                return self.install();
             })
             .then(function () {
                 self.result.setSuccess(true);
@@ -133,6 +160,155 @@ define([
                 callback(err, self.result);
             })
                 .done();
+    };
+
+    InstallRuntime.prototype.addMarkup = function(level, summary, details) {
+	    var self = this,
+	        Convert = require('ansi-to-html'),
+	        convert = new Convert();
+	    // ADD STDOUT / STDERR TO RESULTS AS HIDABLE TEXT
+	    var msg = `<details><summary><b>${summary}</b></summary>` +
+	        '<pre>' +
+	        '<code>'+
+	        convert.toHtml(details) +
+	        '</code>'+
+	        '</pre>' +
+	        '</details>';
+	    self.createMessage(self.activeNode, msg, level);
+    };
+
+    InstallRuntime.prototype.getAvailableHosts = function() {
+        var self = this;
+        var _ = require('underscore');
+        var validHosts = Object.keys(self.selectedHostConfig)
+            .filter(hostPath => {
+                return self.selectedHostConfig[hostPath].enabled;
+            })
+            .map(hostPath => {
+                return self.objectDict[hostPath];
+            });
+
+        if (_.isEmpty(validHosts)) {
+            throw new String("No Hosts selected or in model!");
+        }
+        return utils.getAvailableHosts(validHosts, self.forceIsolation);
+    };
+
+    InstallRuntime.prototype.install = function() {
+        var self = this;
+        return self.getAvailableHosts()
+            .then((hosts) => {
+                var tasks = hosts.map((host) => {
+                    return self.installOnHost(host);
+                });
+                return Q.all(tasks);
+            });
+    };
+
+    InstallRuntime.prototype.installOnHost = function(host) {
+        var self = this;
+        var path = require('path');
+        // need to get the right host using the config's host name
+        var hostPath = host.host.path;
+        var ip = host.intf.IP;
+        var user = host.user;
+        var build_dir = path.join(user.Directory, 'rosmod_runtime_bulid_ws');
+        var sanitizedBuildDir = utils.sanitizePath(build_dir);
+
+        var hostConfig = self.selectedHostConfig[hostPath];
+        
+        var compile_commands = [
+            'rm -rf ' + sanitizedBuildDir,
+            'mkdir -p ' + sanitizedBuildDir + '/src',
+            'cd ' + sanitizedBuildDir,
+            'catkin config --extend ' + hostConfig.workspace,
+            'catkin config -i ' + hostConfig.install,
+            'catkin config --install',
+            'git clone https://github.com/ros/common_msgs.git src/common_msgs',
+            'git clone https://github.com/rosmod/actionlib src/actionlib',
+            'git clone https://github.com/rosmod/rosmod-actor src/rosmod-actor',
+            'catkin build',
+            'rm -rf ' + sanitizedBuildDir,
+        ];
+        // now run the commands
+        self.notify('info',`Building and installing ROSMOD Runtime on ${host.host.name}::${ip}`);
+        host.hasError = false;
+        host.stdErr = '';
+        host.stdOut = '';
+        var compileDataCallback = function(host) {
+            return function(data) {
+                return self.parseCompileData(host, data);
+            };
+        }(host);
+        var compileErrorCallback = function(host) {
+            return function(data) {
+                return self.parseCompileError(host, data);
+            };
+        }(host);
+        return utils.executeOnHost(compile_commands,
+                                   ip, 
+                                   user,
+                                   compileErrorCallback,
+                                   compileDataCallback,
+                                   true)
+            .catch(function(err) {
+                self.notify('error',`Compiling ran into an error: ${err}`);
+            })
+                .finally(function() {
+                    if (host.hasError) {
+                        self.notify('error',`Host ran into an error during compilation - check the stderr.`);
+                    } else {
+                        self.notify('info',`Host compilation and install succeeded.`);
+                    }
+                    self.addMarkup('error', `Compile STDOUT from ${host.intf.IP}:`, host.stdOut);
+                    self.addMarkup('error', `Compile STDERR from ${host.intf.IP}:`, host.stdErr);
+                    // ADD STDOUT / STDERR TO RESULTS AS BLOBS
+                    var files = {};
+                    var stripANSI = require('strip-ansi');
+                    files[ host.intf.IP + '.compile.stdout.txt' ] = stripANSI(host.stdOut);
+                    files[ host.intf.IP + '.compile.stderr.txt' ] = stripANSI(host.stdErr);
+                    var fnames = Object.keys(files);
+                    var tasks = fnames.map((fname) => {
+                        return self.blobClient.putFile(fname, files[fname])
+                            .then((hash) => {
+                                self.result.addArtifact(hash);
+                            });
+                    });
+                    return Q.all(tasks);
+                });
+    };
+
+       InstallRuntime.prototype.parseCompileError = function(host, data) {
+        var self = this;
+        var stripANSI = require('strip-ansi');
+        var strippedData = stripANSI(data);
+
+        host.stdErr += data;
+        
+        if (host.hasError || self.compileHasError(strippedData)) {
+            host.hasError = true;
+        }
+        return false;
+    };
+
+    InstallRuntime.prototype.parseCompileData = function(host, data) {
+        var self = this;
+        var stripANSI = require('strip-ansi');
+        var strippedData = stripANSI(data);
+        
+        if (host.hasError || self.compileHasError(strippedData)) {
+            return self.parseCompileError(host, data);
+        }
+        else {
+            host.stdOut += data;
+        }
+        return false;
+    };
+
+    InstallRuntime.prototype.compileHasError = function(data) {
+        return data.indexOf('Errors     << ') > -1 ||
+            data.indexOf('Traceback (most recent call last):') > -1 ||
+            data.indexOf('error:') > -1;
     };
 
     return InstallRuntime;
