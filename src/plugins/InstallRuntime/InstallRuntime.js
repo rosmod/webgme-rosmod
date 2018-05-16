@@ -224,9 +224,9 @@ define([
             'catkin config --extend ' + hostConfig.workspace,
             'catkin config -i ' + hostConfig.install,
             'catkin config --install',
-            'git clone https://github.com/ros/common_msgs.git src/common_msgs',
-            'git clone https://github.com/rosmod/actionlib src/actionlib',
-            'git clone https://github.com/rosmod/rosmod-actor src/rosmod-actor',
+            'git clone --depth=1 https://github.com/ros/common_msgs.git src/common_msgs',
+            'git clone --depth=1 https://github.com/rosmod/actionlib src/actionlib',
+            'git clone --depth=1 https://github.com/rosmod/rosmod-actor src/rosmod-actor',
             'catkin build',
             'rm -rf ' + sanitizedBuildDir,
         ];
