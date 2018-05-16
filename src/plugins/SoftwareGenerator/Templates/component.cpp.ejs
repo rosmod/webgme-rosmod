@@ -51,10 +51,10 @@ if (compInfo['State Machine_list']) {
       <%- hfsm.sanitizedName %>_root->initialize();
       // update the HFSM timer period and start the timer
       ros::Duration newPeriod = ros::Duration( <%- hfsm.sanitizedName %>_root->getActiveLeaf()->getTimerPeriod() );
-      <%- hfsm.sanitizedName %>_HFSM_timer.stop();
       if (!<%- hfsm.sanitizedName %>_root->hasStopped()) {
-        <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newPeriod );
-        <%- hfsm.sanitizedName %>_HFSM_timer.start();
+        <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newPeriod, false );
+      } else {
+        <%- hfsm.sanitizedName %>_HFSM_timer.stop();
       }
     }
 <%
@@ -111,10 +111,10 @@ void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const 
     }
     // update the timer period according to new active state
     ros::Duration newPeriod = ros::Duration( <%- hfsm.sanitizedName %>_root->getActiveLeaf()->getTimerPeriod() );
-    <%- hfsm.sanitizedName %>_HFSM_timer.stop();
     if (!<%- hfsm.sanitizedName %>_root->hasStopped()) {
-      <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newPeriod );
-      <%- hfsm.sanitizedName %>_HFSM_timer.start();
+      <%- hfsm.sanitizedName %>_HFSM_timer.setPeriod( newPeriod, false );
+    } else {
+      <%- hfsm.sanitizedName %>_HFSM_timer.stop();
     }
   } catch (std::exception& e) {
     // catch exceptions
@@ -697,7 +697,7 @@ if (compInfo.Subscriber_list) {
      true,
      false); 
   this->init_timer = nh_.createTimer(timer_options);
-  this->init_timer.stop();
+  this->init_timer.start();
 
   // Timers
 <%
@@ -713,8 +713,8 @@ if (compInfo.Timer_list) {
      &comp_queue,
      isOneShot,
      false);
+
   this-><%- tmr.name %> = nh_.createTimer(timer_options);
-  this-><%- tmr.name %>.stop();
 <%
     });
  }
@@ -735,12 +735,12 @@ if (compInfo['State Machine_list']) {
          isOneShot,
          false);
       <%- hfsm.sanitizedName %>_HFSM_timer = nh_.createTimer(timer_options);
+      <%- hfsm.sanitizedName %>_HFSM_timer.start();
 <%
   });
 }
 -%>
   // Start the timers
-  this->init_timer.start();
 <%
 if (compInfo.Timer_list) {
   compInfo.Timer_list.map(function(tmr) {
