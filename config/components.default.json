@@ -1,154 +1,168 @@
 {
+    "GenericUIProjectRepositoryWidget": {
+        "commitBadges": {
+            "UIReplayCommitBadge": {
+                "path": "widgets/UIReplay/UIReplayCommitBadge"
+            }
+        }
+    },
+    "GenericUIFooterControlsPanel": {
+        "extraWidgets": {
+            "UIReplayWidget": {
+                "path": "widgets/UIReplay/UIReplayWidget"
+            }
+        }
+    },
     "CodeEditor": {
-	"theme": "default",
-	"enableThemeSelection": true,
-	"keyBinding": "sublime",
-	"enableKeybindingSelection": true,
-	"lineWrapping": false,
-	"enableLineWrappingToggle": true,
+        "theme": "default",
+        "enableThemeSelection": true,
+        "keyBinding": "sublime",
+        "enableKeybindingSelection": true,
+        "lineWrapping": false,
+        "enableLineWrappingToggle": true,
         "autoSaveInterval": "2000",
-	"rootTypes": [
+        "rootTypes": [
             "Project"
         ],
-	"excludeTypes": [
+        "excludeTypes": [
             "Projects",
-	    "Experiments",
-	    "Systems",
-	    "Pseudo State",
-	    "Initial",
-	    "End State"
-	],
-	"loadDepth": -1,
-	"syntaxToModeMap": {
-	    "C++": { "name": "text/x-c++src", "useCPP": true },
-	    "JSON": { "name": "application/json" },
-	    "Javascript": {"name":"text/javascript"},
-	    "gfm": { "name": "gfm" },
-	    "ROS": { 
-		"name":"text/x-c++src", 
-		"keywords": {
-		    "int8": "int8",
-		    "int16": "int16",
-		    "int32": "int32",
-		    "int64": "int64",
-		    "uint8": "uint8",
-		    "uint16": "uint16",
-		    "uint32": "uint32",
-		    "uint64": "uint64",
-		    "bool": "bool",
-		    "string": "string",
-		    "float32": "float32",
-		    "float64": "float64",
-		    "time": "time",
-		    "duration": "duration"
-		},
-		"useCPP":true
-	    }
-	},
-	"attrToSyntaxMap": {
-	    "Documentation": {
-		"documentation": "gfm"
-	    },
-	    "Project": {
-		"Authors": "gfm",
-		"Brief Description": "gfm",
-		"Detailed Description": "gfm"
-	    },	
-	    "Package": {
-		"Authors": "gfm",
-		"Brief Description": "gfm",
-		"Detailed Description": "gfm"
-	    },
-	    "Message": {
-		"Definition": "ROS"
-	    },
-	    "Service": {
-		"Definition": "ROS"
-	    },
-	    "Action": {
-		"Definition": "ROS"
-	    },
-	    "Component": {
-		"Forwards": "C++",
-		"Members": "C++",
-		"Definitions": "C++",
-		"Initialization": "C++",
-		"Destruction": "C++",
-		"User Configuration": "JSON",
-		"User Artifacts": "JSON",
-		"Authors": "gfm",
-		"Brief Description": "gfm",
-		"Detailed Description": "gfm"
-	    },
-	    "Timer": {
-		"Operation": "C++",
-		"Authors": "gfm",
-		"Brief Description": "gfm",
-		"Detailed Description": "gfm",
-		"AbstractBusinessLogic": "C++"
-	    },
-	    "Server": {
-		"Operation": "C++",
-		"Authors": "gfm",
-		"Brief Description": "gfm",
-		"Detailed Description": "gfm",
-		"AbstractBusinessLogic": "C++"
-	    },
-	    "Subscriber": {
-		"Operation": "C++",
-		"Authors": "gfm",
-		"Brief Description": "gfm",
-		"Detailed Description": "gfm",
-		"AbstractBusinessLogic": "C++"
-	    },
-	    "Action Client": {
-		"Active Callback": "C++",
-		"Done Callback": "C++",
-		"Feedback Callback": "C++",
-		"Authors": "gfm",
-		"Brief Description": "gfm",
-		"Detailed Description": "gfm",
-		"AbstractBusinessLogic": "C++"
-	    },
-	    "Action Server": {
-		"Goal Callback": "C++",
-		"Preempt Callback": "C++",
-		"Execute Callback": "C++",
-		"Authors": "gfm",
-		"Brief Description": "gfm",
-		"Detailed Description": "gfm",
-		"AbstractBusinessLogic": "C++"
-	    },
+            "Experiments",
+            "Systems",
+            "Pseudo State",
+            "Initial",
+            "End State"
+        ],
+        "loadDepth": -1,
+        "syntaxToModeMap": {
+            "C++": { "name": "text/x-c++src", "useCPP": true },
+            "JSON": { "name": "application/json" },
+            "Javascript": {"name":"text/javascript"},
+            "gfm": { "name": "gfm" },
+            "ROS": { 
+                "name":"text/x-c++src", 
+                "keywords": {
+                    "int8": "int8",
+                    "int16": "int16",
+                    "int32": "int32",
+                    "int64": "int64",
+                    "uint8": "uint8",
+                    "uint16": "uint16",
+                    "uint32": "uint32",
+                    "uint64": "uint64",
+                    "bool": "bool",
+                    "string": "string",
+                    "float32": "float32",
+                    "float64": "float64",
+                    "time": "time",
+                    "duration": "duration"
+                },
+                "useCPP":true
+            }
+        },
+        "attrToSyntaxMap": {
+            "Documentation": {
+                "documentation": "gfm"
+            },
+            "Project": {
+                "Authors": "gfm",
+                "Brief Description": "gfm",
+                "Detailed Description": "gfm"
+            },  
+            "Package": {
+                "Authors": "gfm",
+                "Brief Description": "gfm",
+                "Detailed Description": "gfm"
+            },
+            "Message": {
+                "Definition": "ROS"
+            },
+            "Service": {
+                "Definition": "ROS"
+            },
+            "Action": {
+                "Definition": "ROS"
+            },
+            "Component": {
+                "Forwards": "C++",
+                "Members": "C++",
+                "Definitions": "C++",
+                "Initialization": "C++",
+                "Destruction": "C++",
+                "User Configuration": "JSON",
+                "User Artifacts": "JSON",
+                "Authors": "gfm",
+                "Brief Description": "gfm",
+                "Detailed Description": "gfm"
+            },
+            "Timer": {
+                "Operation": "C++",
+                "Authors": "gfm",
+                "Brief Description": "gfm",
+                "Detailed Description": "gfm",
+                "AbstractBusinessLogic": "C++"
+            },
+            "Server": {
+                "Operation": "C++",
+                "Authors": "gfm",
+                "Brief Description": "gfm",
+                "Detailed Description": "gfm",
+                "AbstractBusinessLogic": "C++"
+            },
+            "Subscriber": {
+                "Operation": "C++",
+                "Authors": "gfm",
+                "Brief Description": "gfm",
+                "Detailed Description": "gfm",
+                "AbstractBusinessLogic": "C++"
+            },
+            "Action Client": {
+                "Active Callback": "C++",
+                "Done Callback": "C++",
+                "Feedback Callback": "C++",
+                "Authors": "gfm",
+                "Brief Description": "gfm",
+                "Detailed Description": "gfm",
+                "AbstractBusinessLogic": "C++"
+            },
+            "Action Server": {
+                "Goal Callback": "C++",
+                "Preempt Callback": "C++",
+                "Execute Callback": "C++",
+                "Authors": "gfm",
+                "Brief Description": "gfm",
+                "Detailed Description": "gfm",
+                "AbstractBusinessLogic": "C++"
+            },
             "External Node": {
                 "Arguments": "JSON"
             },
             "Node": {
                 "Arguments": "JSON"
             },
-	    "State Machine": {
-		"Includes": "C++",
-		"Initialization": "C++",
-		"Definitions": "C++",
-		"Declarations": "C++"
-	    },
-	    "State": {
-		"Entry": "C++",
-		"Exit": "C++",
-		"Tick": "C++"
-	    },
-	    "Internal Transition": {
-		"Guard": "C++",
-		"Action": "C++"
-	    },
-	    "External Transition": {
-		"Guard": "C++",
-		"Action": "C++"
-	    },
-	    "Local Transition": {
-		"Guard": "C++",
-		"Action": "C++"
-	    }
-	},
+            "State Machine": {
+                "Includes": "C++",
+                "Initialization": "C++",
+                "Definitions": "C++",
+                "Declarations": "C++"
+            },
+            "State": {
+                "Entry": "C++",
+                "Exit": "C++",
+                "Tick": "C++"
+            },
+            "Internal Transition": {
+                "Guard": "C++",
+                "Action": "C++"
+            },
+            "External Transition": {
+                "Guard": "C++",
+                "Action": "C++"
+            },
+            "Local Transition": {
+                "Guard": "C++",
+                "Action": "C++"
+            }
+        },
         "defaultAttributeMap": {
             "Documentation": "documentation",
             "Project": "Authors",
@@ -177,26 +191,26 @@
         }
     },
     "GenericUIProjectNavigatorController": {
-	"disableProjectActions": false,
-	"rootMenuClass": "gme-root",
-	"rootDisplayName": "ROSMOD",
-	"projectMenuClass": "",
-	"branchMenuClass": ""
+        "disableProjectActions": false,
+        "rootMenuClass": "gme-root",
+        "rootDisplayName": "ROSMOD",
+        "projectMenuClass": "",
+        "branchMenuClass": ""
     },
     "GenericUIWebGMEStart": {
-	"pageTitle": "ROSMOD",
-	"disableProjectsDialog": false,
-	"nodeAtOpen": "/v"
+        "pageTitle": "ROSMOD",
+        "disableProjectsDialog": false,
+        "nodeAtOpen": "/v"
     },
     "GenericUITreeBrowserControl": {
-	"filters": {
-	    "toggled": {
-		"hideConnections": false,
-		"hideAbstracts": false,
-		"hideLeaves": false,
-		"hideLibraries": false
-	    }
-	},
-	"treeRoot": "/v"
+        "filters": {
+            "toggled": {
+                "hideConnections": false,
+                "hideAbstracts": false,
+                "hideLeaves": false,
+                "hideLibraries": false
+            }
+        },
+        "treeRoot": "/v"
     }
 }

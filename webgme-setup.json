@@ -55,7 +55,8 @@
         "widget": "src/visualizers/widgets/CommViz"
       }
     },
-    "layouts": {}
+    "layouts": {},
+    "routers": {}
   },
   "dependencies": {
     "plugins": {
@@ -87,8 +88,23 @@
         "secondary": false,
         "widget": "src/visualizers/widgets/HFSMViz",
         "project": "webgme-hfsm"
+      },
+      "UIReplay": {
+        "src": "panels/UIReplay/UIReplayControllers",
+        "title": "UIReplay",
+        "panel": "src/visualizers/panels/UIReplay",
+        "secondary": true,
+        "widget": "src/visualizers/widgets/UIReplay",
+        "project": "webgme-ui-replay"
       }
     },
-    "layouts": {}
+    "layouts": {},
+    "routers": {
+      "UIRecorder": {
+        "project": "webgme-ui-replay",
+        "path": "node_modules/webgme-ui-replay/src/routers/UIRecorder",
+        "mount": "routers/UIRecorder"
+      }
+    }
   }
 }
