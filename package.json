@@ -25,8 +25,8 @@
     "tar": "^2.2.1",
     "unzip": "0.1.x",
     "webgme": "^2.26.0",
-    "webgme-codeeditor": "^3.6.11",
-    "webgme-hfsm": "^1.2.19",
+    "webgme-codeeditor": "^3.6.16",
+    "webgme-hfsm": "^1.2.20",
     "webgme-to-json": "^1.0.4",
     "webgme-ui-replay": "github:webgme/ui-replay",
     "ws": "^3.3.2"
