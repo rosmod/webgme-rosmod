@@ -8,7 +8,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/finger563)
 
-![rosmod.rcps.isis.vanderbilt.edu](https://img.shields.io/website-up-down-green-red/http/rosmod.rcps.isis.vanderbilt.edu/profile/login.svg?label=rosmod.rcps.isis.vanderbilt.edu)
+![rosmod.collaborative-design.org](https://img.shields.io/website-up-down-green-red/http/rosmod.collaborative-design.org/profile/login.svg?label=rosmod.collaborative-design.org)
 
 This repository contains the implementation of
 [ROSMOD - Journal of Electronics](http://www.mdpi.com/2079-9292/5/3/53),
@@ -19,7 +19,7 @@ environment for distributed embedded applications built using
 [ROS](http://www.ros.org).
 
 An example server running ROSMOD can be found on
-[rosmod.rcps.isis.vanderbilt.edu](http://rosmod.rcps.isis.vanderbilt.edu).
+[rosmod.collaborative-design.org](http://rosmod.collaborative-design.org).
 
 **Please see the [WIKI](https://github.com/rosmod/webgme-rosmod/wiki) for in-depth information about ROSMOD, how to use it, and links to various Youtube videos that walk through development and usage of ROSMOD.**
 
