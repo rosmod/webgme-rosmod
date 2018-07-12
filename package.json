@@ -9,6 +9,7 @@
   "dependencies": {
     "ansi-to-html": "^0.6.4",
     "blob-util": "^1.3.0",
+    "bower": "^1.8.4",
     "cytoscape": "^2.7.29",
     "cytoscape-cose-bilkent": "1.3.8",
     "filendir": "^1.0.1",
