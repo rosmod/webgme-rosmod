@@ -6,9 +6,9 @@
 [![npm](https://img.shields.io/npm/dm/webgme-rosmod.svg)](https://www.npmjs.com/package/webgme-rosmod)
 [![npm](https://img.shields.io/npm/dt/webgme-rosmod.svg)](https://www.npmjs.com/package/webgme-rosmod)
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/finger563)
-
 ![rosmod.collaborative-design.org](https://img.shields.io/website-up-down-green-red/https/rosmod.collaborative-design.org/profile/login.svg?label=rosmod.collaborative-design.org)
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/finger563)
 
 This repository contains the implementation of
 [ROSMOD - Journal of Electronics](http://www.mdpi.com/2079-9292/5/3/53),
