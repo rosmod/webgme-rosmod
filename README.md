@@ -8,7 +8,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/finger563)
 
-![rosmod.collaborative-design.org](https://img.shields.io/website-up-down-green-red/http/rosmod.collaborative-design.org/profile/login.svg?label=rosmod.collaborative-design.org)
+![rosmod.collaborative-design.org](https://img.shields.io/website-up-down-green-red/http/rosmod.collaborative_design.org/profile/login.svg?label=rosmod.collaborative-design.org)
 
 This repository contains the implementation of
 [ROSMOD - Journal of Electronics](http://www.mdpi.com/2079-9292/5/3/53),
