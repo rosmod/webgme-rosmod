@@ -149,7 +149,7 @@ define([
 
         // figure out where to run roscore
         self.rosCoreHost = currentConfig.rosCoreHost;
-        
+
         // will be filled out by the plugin
         self.hasStartedDeploying = false;
 
@@ -192,19 +192,19 @@ define([
         // the active node for this plugin is experiment -> experiments -> project
         var projectNode = self.core.getParent(self.core.getParent(self.activeNode));
         var projectName = self.core.getAttribute(projectNode, 'name');
-        
+
         self.experimentName = self.core.getAttribute(self.activeNode, 'name');
         self.artifactName = self.experimentName + '+Configs';
 
         if (!self.runningOnClient) {
             var path = require('path');
-            self.root_dir = path.join(process.cwd(), 
-                                      'generated', 
-                                      self.project.projectId, 
+            self.root_dir = path.join(process.cwd(),
+                                      'generated',
+                                      self.project.projectId,
                                       self.branchName,
                                       projectName);
             self.config_dir = path.join(self.root_dir,
-                                        'experiments', 
+                                        'experiments',
                                         self.experimentName,
                                         'config-'+(new Date()).toUTCString().replace(/:/gm, '-'));
         }
@@ -307,7 +307,7 @@ define([
     RunExperiment.prototype.mapContainersToHosts = function () {
         var self = this;
 
-        self.notify('info','Experiment mapping containers in ' + 
+        self.notify('info','Experiment mapping containers in ' +
                     self.selectedExperiment.Deployment.name +
                     ' to hosts in '  + self.selectedExperiment.System.name);
 
@@ -330,7 +330,7 @@ define([
                 return {host: host, intf: intf, user: user};
             });
         }
-        
+
         return Q.all(tasks)
             .then(function(hosts) {
                 self.notify('info', containers.length + ' mapping to ' + hosts.length);
@@ -339,18 +339,33 @@ define([
                                      ' containers to ' + hosts.length +
                                      ' available hosts.');
                 }
-                var sortedContainers = [];
-                /*
-                // TEMPORARY: ADD CONSTRAINTS JSON TO RESULT FOR SUBHAV
-                self.blobClient.putFile(
-                'constraints.json',
-                JSON.stringify({containers: containers, hosts: hosts},null,2)
-                )
-                .then(function (hash) {
-                self.result.addArtifact(hash);
-                });
-                */
+				// determine the ros core host here!
+				if (self.deployRosMaster()) {
+					// update self.rosCoreHost to actually point to the right host!
+					if (self.rosCoreHost !== 'Any') {
+						var filt = hosts.filter((h) => h.host.name == self.rosCoreHost);
+						if (filt && filt.length) {
+							if (filt.length > 1) {
+								self.notify(
+									"warning",
+									"Found more than one host with name: "+
+										self.rosCoreHost+", selecting first one."
+								);
+							}
+							self.rosCoreHost = filt[0];
+						} else {
+							throw new String("Couldn't find selected ros core host: " +
+											 self.rosCoreHost);
+						}
+					} else {
+						// we want any host - so just choose the first one!
+						self.rosCoreHost = hosts[0];
+					}
+					self.notify('info', 'Selected ROSCORE host at ' +
+								self.rosCoreHost.intf.IP);
+				}
                 // figure out which containers have which constraints;
+                var sortedContainers = [];
                 containers.map(function(container) {
                     container.constraints = [];
                     if (container.Node_list) {
@@ -402,7 +417,7 @@ define([
                 });
                 // Sort containers by decreasing number of constraints
                 // sort function :  < 0 -> a < b ; = 0 -> a==b ; > 0 -> b < a
-                sortedContainers.sort(function(a,b) { 
+                sortedContainers.sort(function(a,b) {
                     return b.constraints.length - a.constraints.length
                 });
                 // Actually perform the mapping
@@ -461,7 +476,7 @@ define([
             self.notify('info', 'Skipping binary check in client mode.');
             return;
         }
-        
+
         var path = require('path');
         var fs = require('fs');
         var platforms = [];
@@ -564,7 +579,7 @@ define([
                     "Logging": {
                         "Component Logger": {
                             "FileName": self.logFilePrefix + node.name + '.' + comp.name + '.user.log',
-                            "Enabled": comp.Logging_UserEnable || comp.EnableLogging, 
+                            "Enabled": comp.Logging_UserEnable || comp.EnableLogging,
                             "Unit": comp.Logging_UserUnit || comp.LoggingUnit,
                         },
                         "ROSMOD Logger": {
@@ -673,7 +688,7 @@ define([
                 if (self.rosNamespace) {
                     rosmod_actor_script.push('export ROS_NAMESPACE='+self.rosNamespace);
                 }
-                
+
                 nodes.map(function(node) {
                     var nodeConfigName = prefix + self.getConfigName( node );
                     var config = self.configs[ node.name ];
@@ -689,7 +704,7 @@ define([
 
                 });
                 // save roscore startup script
-                self.artifacts['rosmod_actor-startup-'+host.intf.IP+'.bash'] = rosmod_actor_script.join('\n');   
+                self.artifacts['rosmod_actor-startup-'+host.intf.IP+'.bash'] = rosmod_actor_script.join('\n');
             }
         });
         var roscore_commands = [
@@ -710,7 +725,7 @@ define([
         if (self.runningOnClient) {
             self.notify('info', 'Skipping config generation in client mode.');
             return;
-        }   
+        }
 
         var fnames = Object.keys(self.artifacts);
         var tasks = fnames.map(function(f) {
@@ -794,25 +809,7 @@ define([
         var self = this;
         var path = require('path');
         // need to get the right host using the config's host name
-        var host = null;
-        if (self.rosCoreHost != 'Any') {
-            var filt = self.experiment.filter(function(e) {
-                var h = e[1].host;
-                return h.name == self.rosCoreHost;
-            });
-            if (filt && filt.length) {
-                if (filt.length > 1) {
-                    self.notify("warning", "Found more than one host with name: "+self.rosCoreHost+", selecting first one.");
-                }
-                host = filt[0][1];
-            }
-            else {
-                self.notify('warning', "Couldn't find selected host by name, this should not be possible!");
-            }
-        }
-        if (host == null) {
-            host = self.experiment[0][1];
-        }
+        var host = self.rosCoreHost
         var ip = host.intf.IP;
         host.RunningRoscore = true;
         self.rosMasterURI = 'http://'+ip+':'+self.rosCorePort;
@@ -904,7 +901,7 @@ define([
                     }
                     host_commands.push('nohup ' +
                                        valgrind_command +
-                                       gdbserver_command + 
+                                       gdbserver_command +
                                        ' rosrun rosmod_actor rosmod_actor --config ' +
                                        nodeConfigName +
                                        args +
@@ -942,7 +939,7 @@ define([
 
                 // use ordered starting now
                 var order = self.orderedContainerNodeMap[ container.path ];
-                
+
                 if (order) {
                     self.notify('info', `${container.name} starting nodes in order [${order}]`);
                     order.map((name) => {
@@ -978,7 +975,7 @@ define([
             var self = this;
             return self.rosCoreHost != 'None';
         };
-        
+
         RunExperiment.prototype.cleanHost = function(host) {
             var self = this;
             if (!self.hasStartedDeploying)
@@ -990,7 +987,7 @@ define([
 
         RunExperiment.prototype.startRosbridge = function() {
             var self = this;
-            
+
             if (!self.spawnROSBridge)
                 return;
 
@@ -1129,7 +1126,7 @@ define([
                 // use self.core.createNode(parameters);
                 //    parameters here has the following optional values:
                 //       * parent (node)
-                //       * base   (node) 
+                //       * base   (node)
                 //       * relid  (string)
                 //       * guid   (GUID)
 
@@ -1224,15 +1221,15 @@ define([
             });
             return deferred.promise;
         };
-        
+
         RunExperiment.prototype.createZip = function() {
             var self = this;
-            
+
             if (!self.returnZip) {
                 self.notify('info', 'Skipping compression.');
                 return;
             }
-            
+
             return new Promise(function(resolve, reject) {
                 var zlib = require('zlib'),
                     tar = require('tar'),
