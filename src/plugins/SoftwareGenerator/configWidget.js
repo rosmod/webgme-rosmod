@@ -53,7 +53,7 @@ define([
                 })
                 .then(function(archs) {
                     var archConfig = self.makeArchConfig( archs );
-                    pluginMetadata.configStructure = archConfig.concat(pluginMetadata.configStructure);
+                    pluginMetadata.configStructure = pluginMetadata.configStructure.concat(archConfig);
                     
                     var pluginDialog = new PluginConfigDialog({client: self._client});
                     pluginDialog.show(globalConfigStructure, pluginMetadata, prevPluginConfig, callback);
