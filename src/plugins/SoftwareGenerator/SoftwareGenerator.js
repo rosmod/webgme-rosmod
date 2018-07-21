@@ -113,29 +113,29 @@ define([
         self.archPriorities = {};
         self.archJobConfig = {};
         Object.keys(currentConfig).map(function(k) {
-            if (k.indexOf('_ARCH_SELECTION') > -1) {
-                var arch = k.replace('_ARCH_SELECTION', '');
-                var isSelected = currentConfig[k];
+            if (k.indexOf("_COMPILATION_CONFIG") > -1) {
+                var arch = k.replace("_COMPILATION_CONFIG", "");
+                var archConfig = currentConfig[k];
+                // is the arch selected for compilation
+                var isSelected = archConfig.enabled;
                 if (isSelected) {
                     self.selectedArchitectures.push( arch );
                 }
-            } else if (k.indexOf('_HOST_SELECTION') > -1) {
-                var arch = k.replace('_HOST_SELECTION', '');
-                var orderedHosts = currentConfig[k];
+                // how many jobs should we spawn for this architecture?
+                var jobConfig = null;
+		        try {
+		            jobConfig = parseInt(archConfig.jobs);
+		        } catch (err) {
+		        }
+                if (jobConfig < 1 || !isFinite(jobConfig)) {
+		            jobConfig = '\`nproc\`';
+                }
+                self.archJobConfig[ arch ] = jobConfig;
+                // how should we prioritize hosts?
+                var orderedHosts = archConfig.hostPriority;
                 if (Array.isArray(orderedHosts)) {
                     self.archPriorities[ arch ] = orderedHosts;
                 }
-            } else if (k.indexOf('_JOB_SELECTION') > -1) {
-                var arch = k.replace('_JOB_SELECTION', '');
-                var jobConfig = null;
-		try {
-		    jobConfig = parseInt(currentConfig[k]);
-		} catch (err) {
-		}
-                if (jobConfig < 1 || !isFinite(jobConfig)) {
-		    jobConfig = '\`nproc\`';
-                }
-                self.archJobConfig[ arch ] = jobConfig;
             }
         });
         // make sure we don't try to compile if we don't have architectures

@@ -124,7 +124,15 @@ define([
         var self = this,
             archConfig = [];
 
-        var templ = {
+
+        var sectionTmpl = {
+            "name": "",
+            "displayName": "",
+            "valueType": "header",
+            "configStructure": []
+        };
+
+        var enableTempl = {
 	    "name": "",
 	    "displayName": "",
 	    "description": "Enable/Disable compilation for this architecture",
@@ -153,23 +161,29 @@ define([
         };
 
         Object.keys(architectures).map(function(arch) {
-            var archTempl = Object.assign({}, templ);
-            archTempl.name = arch + '_ARCH_SELECTION';
+            var section = Object.assign({}, sectionTmpl);
+            section.name = arch + "_COMPILATION_CONFIG";
+            section.displayName = "Compilation Options for " + arch;
+            
+            var archTempl = Object.assign({}, enableTempl);
+            archTempl.name = "enabled";
             archTempl.displayName = 'Compile on ' + arch;
-            archConfig.push( archTempl );
+            section.configStructure.push( archTempl );
 
-	    var jobTempl = Object.assign({}, hostJobTempl);
-	    jobTempl.name = arch + '_JOB_SELECTION';
-	    jobTempl.displayName = arch + " Job Configuration";
-	    jobTempl.description = "Select the number of compilation jobs for "+arch+" - range: [1,nproc] - defaults to nproc if blank.";
-	    archConfig.push( jobTempl );
+	        var jobTempl = Object.assign({}, hostJobTempl);
+	        jobTempl.name = "jobs";
+	        jobTempl.displayName = arch + " Job Configuration";
+	        jobTempl.description = "Select the number of compilation jobs for "+arch+" - range: [1,nproc] - defaults to nproc if blank.";
+	        section.configStructure.push( jobTempl );
 
-	    var hostTempl = Object.assign({}, hostSelectorTempl);
-	    hostTempl.name = arch + '_HOST_SELECTION';
-	    hostTempl.displayName = arch + " Compilation Priority";
-	    hostTempl.description = "Sort the "+arch+" hosts for compilation priority, top to bottom.";
-	    hostTempl.valueItems = architectures[arch].map(host => `${host.path}::${host.name}`);
-	    archConfig.push( hostTempl );
+	        var hostTempl = Object.assign({}, hostSelectorTempl);
+	        hostTempl.name = "hostPriority";
+	        hostTempl.displayName = arch + " Compilation Priority";
+	        hostTempl.description = "Sort the "+arch+" hosts for compilation priority, top to bottom.";
+	        hostTempl.valueItems = architectures[arch].map(host => `${host.path}::${host.name}`);
+	        section.configStructure.push( hostTempl );
+
+            archConfig.push(section);
         });
 
         return archConfig;
