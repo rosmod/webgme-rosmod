@@ -111,6 +111,7 @@ define([
         // which architectures did the user ask us to compile on?
         self.selectedArchitectures = [];
         self.archPriorities = {};
+        self.archJobConfig = {};
         Object.keys(currentConfig).map(function(k) {
             if (k.indexOf('_ARCH_SELECTION') > -1) {
                 var arch = k.replace('_ARCH_SELECTION', '');
@@ -124,6 +125,17 @@ define([
                 if (Array.isArray(orderedHosts)) {
                     self.archPriorities[ arch ] = orderedHosts;
                 }
+            } else if (k.indexOf('_JOB_SELECTION') > -1) {
+                var arch = k.replace('_JOB_SELECTION', '');
+                var jobConfig = null;
+		try {
+		    jobConfig = parseInt(currentConfig[k]);
+		} catch (err) {
+		}
+                if (jobConfig < 1 || !isFinite(jobConfig)) {
+		    jobConfig = '\`nproc\`';
+                }
+                self.archJobConfig[ arch ] = jobConfig;
             }
         });
         // make sure we don't try to compile if we don't have architectures
@@ -354,7 +366,7 @@ define([
             'catkin config -i install',
             'catkin config --install',
             'catkin clean -b --yes',
-            'catkin build --no-status',
+            'catkin build -j`nproc` --no-status',
             'mkdir bin',
             'cp devel/lib/*.so bin/.'
         ];
@@ -1019,8 +1031,9 @@ define([
 
         // install folder for storing package.xmls (generated above) and the msg/srv deserialization
         var installPath = path.join(self.gen_dir, 'install');
-
-        var buildCommand = 'catkin build --no-status '+host.compilePackages.map(function(p) { return p.name; }).join(' ');
+	
+        var buildCommand = 'catkin build -j'+ self.archJobConfig[utils.getDeviceType(host.host)] +' --no-status '+
+	    host.compilePackages.map(function(p) { return p.name; }).join(' ');
 
         var compile_commands = [
             'cd ' + utils.sanitizePath(compile_dir),

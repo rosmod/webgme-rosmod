@@ -143,11 +143,26 @@ define([
             "readOnly": false
         };
 
+        var hostJobTempl = {
+	    "name": "",
+	    "displayName": "",
+	    "description": "",
+	    "value": "",
+	    "valueType": "string",
+            "readOnly": false
+        };
+
         Object.keys(architectures).map(function(arch) {
             var archTempl = Object.assign({}, templ);
             archTempl.name = arch + '_ARCH_SELECTION';
             archTempl.displayName = 'Compile on ' + arch;
             archConfig.push( archTempl );
+
+	    var jobTempl = Object.assign({}, hostJobTempl);
+	    jobTempl.name = arch + '_JOB_SELECTION';
+	    jobTempl.displayName = arch + " Job Configuration";
+	    jobTempl.description = "Select the number of compilation jobs for "+arch+" - range: [1,nproc] - defaults to nproc if blank.";
+	    archConfig.push( jobTempl );
 
 	    var hostTempl = Object.assign({}, hostSelectorTempl);
 	    hostTempl.name = arch + '_HOST_SELECTION';
