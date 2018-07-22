@@ -121,72 +121,48 @@ define([
     };
 
     ConfigWidget.prototype.makeArchConfig = function(architectures) {
-        var self = this,
-            archConfig = [];
+        var self = this;
 
+        return Object.keys(architectures).map(function(arch) {
+            var enableConfig = {
+	            "name": "enabled",
+	            "displayName": "Compile on " + arch,
+	            "description": "Enable/Disable compilation for this architecture",
+	            "value": true,
+	            "valueType": "boolean",
+                "readOnly": false
+            };
 
-        var sectionTmpl = {
-            "name": "",
-            "displayName": "",
-            "valueType": "header",
-            "configStructure": []
-        };
+            var jobConfig = {
+	            "name": "jobs",
+	            "displayName": arch + " Job Configuration",
+	            "description": "Select the number of compilation jobs for "+arch+" - range: [1,nproc] - defaults to nproc if blank.",
+	            "value": "",
+	            "valueType": "string",
+                "readOnly": false
+            };
 
-        var enableTempl = {
-	    "name": "",
-	    "displayName": "",
-	    "description": "Enable/Disable compilation for this architecture",
-	    "value": true,
-	    "valueType": "boolean",
-            "readOnly": false
-        };
+            var hostConfig = {
+	            "name": "hostPriority",
+	            "displayName": arch + " Compilation Priority",
+	            "description": "Sort the "+arch+" hosts for compilation priority, top to bottom.",
+	            "value": "",
+	            "valueType": "sortable",
+	            "valueItems": architectures[arch].map(host => `${host.path}::${host.name}`),
+                "readOnly": false
+            };
 
-        var hostSelectorTempl = {
-	    "name": "",
-	    "displayName": "",
-	    "description": "",
-	    "value": "",
-	    "valueType": "sortable",
-	    "valueItems": [],
-            "readOnly": false
-        };
-
-        var hostJobTempl = {
-	    "name": "",
-	    "displayName": "",
-	    "description": "",
-	    "value": "",
-	    "valueType": "string",
-            "readOnly": false
-        };
-
-        Object.keys(architectures).map(function(arch) {
-            var section = Object.assign({}, sectionTmpl);
-            section.name = arch + "_COMPILATION_CONFIG";
-            section.displayName = "Compilation Options for " + arch;
-            
-            var archTempl = Object.assign({}, enableTempl);
-            archTempl.name = "enabled";
-            archTempl.displayName = 'Compile on ' + arch;
-            section.configStructure.push( archTempl );
-
-	        var jobTempl = Object.assign({}, hostJobTempl);
-	        jobTempl.name = "jobs";
-	        jobTempl.displayName = arch + " Job Configuration";
-	        jobTempl.description = "Select the number of compilation jobs for "+arch+" - range: [1,nproc] - defaults to nproc if blank.";
-	        section.configStructure.push( jobTempl );
-
-	        var hostTempl = Object.assign({}, hostSelectorTempl);
-	        hostTempl.name = "hostPriority";
-	        hostTempl.displayName = arch + " Compilation Priority";
-	        hostTempl.description = "Sort the "+arch+" hosts for compilation priority, top to bottom.";
-	        hostTempl.valueItems = architectures[arch].map(host => `${host.path}::${host.name}`);
-	        section.configStructure.push( hostTempl );
-
-            archConfig.push(section);
+            return {
+                "name": arch + "_COMPILATION_CONFIG",
+                "displayName": "Compilation Options for " + arch,
+                "valueType": "header",
+                "configStructure": [
+                    enableConfig,
+                    jobConfig,
+                    hostConfig
+                ]
+            };
         });
-
-        return archConfig;
     };
 
     return ConfigWidget;
