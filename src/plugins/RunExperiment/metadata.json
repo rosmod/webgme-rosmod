@@ -4,80 +4,71 @@
     "version": "1.0.0",
     "description": "Maps the containers to available hosts and runs the experiment.",
     "icon": {
-	"class": "glyphicon glyphicon-ok-circle",
-	"src": ""
+	    "class": "glyphicon glyphicon-ok-circle",
+	    "src": ""
     },
     "disableServerSideExecution": false,
     "disableBrowserSideExecution": false,
     "configWidget": "plugin/RunExperiment/RunExperiment/configWidget",
     "configStructure": [
-	{
-	    "name": "rosMasterURI",
-	    "displayName": "ROS Master URI.",
-	    "description": "Connect to provided ROS MASTER URI if ROS Core Host is set to 'None'. Has the form of 'http://<IP Address>:<Port Number>'",
-	    "value": "",
-	    "valueType": "string",
-	    "readOnly": false
-	},
-	{
-	    "name": "rosNamespace",
-	    "displayName": "ROS Namespace.",
-	    "description": "Sets the ROS_NAMESPACE for the experiment.",
-	    "value": "",
-	    "valueType": "string",
-	    "readOnly": false
-	},	
-	{
-	    "name": "waitTime",
-	    "displayName": "Wait Time (s)",
-	    "description": "How long to wait (in seconds) between spawning of processes.",
-	    "value": 0,
+        {
+            "name": "rosbridge",
+            "displayName": "ROS Bridge Config",
+            "valueType": "header",
+            "configStructure": [
+                {
+	                "name": "spawn",
+	                "displayName": "Spawn ROSBridge server.",
+	                "description": "If true, it will spawn a ROS Bridge server on the ROSMOD server that connects to the system",
+	                "value": false,
+	                "valueType": "boolean",
+	                "readOnly": false
+	            },
+	            {
+	                "name": "port",
+	                "displayName": " ROSBridge server port.",
+	                "description": "What port number should we give ROSBridge server? Leave blank for a randomly assigned port",
+	                "value": 0,
+                    "minValue": 0,
+                    "maxValue": 65535,
+	                "valueType": "integer",
+	                "readOnly": false
+	            },
+	            {
+	                "name": "IP",
+	                "displayName": " ROSBridge server IP.",
+	                "description": "What is the ROS_IP of the rosbridge server - this is the IP that the nodes in the system will use to connect to the rosbridge server.",
+	                "value": "127.0.0.1",
+	                "valueType": "string",
+	                "readOnly": false
+	            }
+            ]
+        },
+	    {
+	        "name": "waitTime",
+	        "displayName": "Wait Time (s)",
+	        "description": "How long to wait (in seconds) between spawning of processes.",
+	        "value": 0,
             "minValue": 0,
             "maxValue": 200,
-	    "valueType": "integer",
-	    "readOnly": false
-	},
-	{
-	    "name": "forceIsolation",
-	    "displayName": "Force Isolation.",
-	    "description": "If true, enforces that the spawned processes must run on hosts which are not currently running other ROSMOD processes.",
-	    "value": true,
-	    "valueType": "boolean",
-	    "readOnly": false
-	},
-	{
-	    "name": "spawnROSBridge",
-	    "displayName": "Spawn ROSBridge server.",
-	    "description": "If true, it will spawn a ROS Bridge server on the ROSMOD server that connects to the system",
-	    "value": false,
-	    "valueType": "boolean",
-	    "readOnly": false
-	},
-	{
-	    "name": "rosBridgePort",
-	    "displayName": " ROSBridge server port.",
-	    "description": "What port number should we give ROSBridge server? Leave blank for a randomly assigned port",
-	    "value": 0,
-            "minValue": 0,
-            "maxValue": 65535,
-	    "valueType": "integer",
-	    "readOnly": false
-	},
-	{
-	    "name": "rosBridgeServerIp",
-	    "displayName": " ROSBridge server IP.",
-	    "description": "What is the ROS_IP of the rosbridge server - this is the IP that the nodes in the system will use to connect to the rosbridge server.",
-	    "value": "127.0.0.1",
-	    "valueType": "string",
-	    "readOnly": false
-	},
-	{
-	    "name": "returnZip",
-	    "displayName": "Zip and return generated artifacts.",
-	    "description": "If true, it enables the client to download a zip of the artifacts.",
-	    "value": false,
-	    "valueType": "boolean",
-	    "readOnly": false
-	}
+	        "valueType": "integer",
+	        "readOnly": false
+	    },
+	    {
+	        "name": "forceIsolation",
+	        "displayName": "Force Isolation.",
+	        "description": "If true, enforces that the spawned processes must run on hosts which are not currently running other ROSMOD processes.",
+	        "value": true,
+	        "valueType": "boolean",
+	        "readOnly": false
+	    },
+	    {
+	        "name": "returnZip",
+	        "displayName": "Zip and return generated artifacts.",
+	        "description": "If true, it enables the client to download a zip of the artifacts.",
+	        "value": false,
+	        "valueType": "boolean",
+	        "readOnly": false
+	    }
     ]
 }

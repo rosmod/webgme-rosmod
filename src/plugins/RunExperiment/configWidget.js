@@ -69,11 +69,7 @@ define([
                     // for each container create sortable selection of nodes for ordering their starting
                     var containerNodeMap = _containerNodeMap;
                     var containerConfig = self.makeContainerConfig( containerNodeMap );
-                    pluginMetadata.configStructure = containerConfig.concat(pluginMetadata.configStructure);
-
-		    // how do we want to do debugging?
-		    var debugConfig = self.makeDebugConfig( containerNodeMap );
-                    pluginMetadata.configStructure = debugConfig.concat(pluginMetadata.configStructure);
+                    pluginMetadata.configStructure = [containerConfig].concat(pluginMetadata.configStructure);
 
                     // figure out their users
                     var hostUserMap = self.makeHostUserMap( hosts, users );
@@ -84,7 +80,11 @@ define([
 
                     // where do we want to spawn roscore?
                     var rosCoreConfig = self.makeRosCoreConfig( hosts );
-                    pluginMetadata.configStructure = rosCoreConfig.concat(pluginMetadata.configStructure);
+                    pluginMetadata.configStructure = [rosCoreConfig].concat(pluginMetadata.configStructure);
+
+		            // how do we want to do debugging?
+		            var debugConfig = self.makeDebugConfig( containerNodeMap );
+                    pluginMetadata.configStructure = pluginMetadata.configStructure.concat(debugConfig);
 
                     var pluginDialog = new PluginConfigDialog({client: self._client});
                     pluginDialog.show(globalConfigStructure, pluginMetadata, prevPluginConfig, callback);
@@ -197,29 +197,25 @@ define([
     };
 
     ConfigWidget.prototype.makeContainerConfig = function( containerNodeMap ) {
-        var self = this,
-            config = [];
+        var self = this;
 
-        var tmpl = {
-	    "name": "",
-	    "displayName": "",
-	    "description": "Sort the nodes in the order you wish to start them, top to bottom.",
-	    "value": "",
-	    "valueType": "sortable",
-	    "valueItems": [
-	    ]
-        };
-
-        Object.keys(containerNodeMap).map(function(containerPath) {
-            var containerTmpl = Object.assign({}, tmpl);
-            containerTmpl.name = 'Container:'+containerPath;
-            containerTmpl.displayName = containerNodeMap[ containerPath ].name;
-            containerTmpl.valueItems = containerNodeMap[ containerPath ].nodes;
-
-            config.push(containerTmpl);
+        return Object.keys(containerNodeMap).reduce(function(o, containerPath) {
+            var tmpl = {
+	            "name": containerPath,
+	            "displayName": containerNodeMap[ containerPath ].name,
+	            "description": "Sort the nodes in the order you wish to start them, top to bottom.",
+	            "value": "",
+	            "valueType": "sortable",
+	            "valueItems": containerNodeMap[ containerPath ].nodes
+            };
+            o.configStructure.push(tmpl);
+            return o;
+        }, {
+            "name": "containerConfig",
+            "displayName": "Container Configuration",
+            "valueType": "header",
+            "configStructure": []
         });
-
-        return config;
     };
     
     ConfigWidget.prototype.makeHostConfig = function( hostUserMap ) {
@@ -255,8 +251,7 @@ define([
     };
 
     ConfigWidget.prototype.makeRosCoreConfig = function( hosts ) {
-        var self = this,
-            config = [];
+        var self = this;
         
         var hostNames = [ 'Any' ];
         hostNames = hostNames.concat(
@@ -266,19 +261,38 @@ define([
         );
 
         hostNames.push('None');
-        
-        var tmpl = {
-	    "name": "rosCoreHost",
-	    "displayName": "ROS Core Host",
-	    "description": "Select Host / Any / None to select where and whether to spawn ROS Core / ROS Master.",
-	    "value": hostNames[0],
-	    "valueType": "string",
-	    "valueItems": hostNames
-	};
 
-        config.push(tmpl);
-
-        return config;
+        return {
+            "name": "rosCoreConfig",
+            "displayName": "ROS Core Config",
+            "valueType": "header",
+            "configStructure": [
+                {
+	                "name": "rosCoreHost",
+	                "displayName": "ROS Core Host",
+	                "description": "Select Host / Any / None to select where and whether to spawn ROS Core / ROS Master.",
+	                "value": hostNames[0],
+	                "valueType": "string",
+	                "valueItems": hostNames
+	            },
+	            {
+	                "name": "rosMasterURI",
+	                "displayName": "ROS Master URI.",
+	                "description": "Connect to provided ROS MASTER URI if ROS Core Host is set to 'None'. Has the form of 'http://<IP Address>:<Port Number>'",
+	                "value": "",
+	                "valueType": "string",
+	                "readOnly": false
+	            },
+	            {
+	                "name": "rosNamespace",
+	                "displayName": "ROS Namespace.",
+	                "description": "Sets the ROS_NAMESPACE for the experiment.",
+	                "value": "",
+	                "valueType": "string",
+	                "readOnly": false
+	            },	
+            ]
+        };
     };
 
     return ConfigWidget;

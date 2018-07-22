@@ -131,7 +131,7 @@ define([
                 "displayName": "User for " + hostName,
                 "description": "Select User for Host deployment or Disabled to exclude host.",
                 "value": users[0] || disabledMessage,
-                valueItems: users.concat(disabledMessage),
+                "valueItems": users.concat(disabledMessage),
                 "valueType": "string"
             };
 
