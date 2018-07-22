@@ -127,29 +127,29 @@ define([
 
             // make the user config
             var user = {
-                name: "user",
-                displayName: "User for " + hostName,
+                "name": "user",
+                "displayName": "User for " + hostName,
                 "description": "Select User for Host deployment or Disabled to exclude host.",
-                value: users[0] || disabledMessage,
+                "value": users[0] || disabledMessage,
                 valueItems: users.concat(disabledMessage),
                 "valueType": "string"
             };
 
             // make the install directory config
             var hostInstallTmpl = {
-                name: "installPath",
-                displayName: "Install Path for " + hostName,
+                "name": "installPath",
+                "displayName": "Install Path for " + hostName,
                 "description": "Select install location for runtime.",
-                value: installPath,
+                "value": installPath,
                 "valueType": "string"
             };
 
             // make the extend directory config
             var hostExtendTmpl = {
-                name: "workspace",
-                displayName: "ROS Workspace to extend for " + hostName,
+                "name": "workspace",
+                "displayName": "ROS Workspace to extend for " + hostName,
                 "description": "Select workspace to extend.",
-                value: "/opt/ros/kinetic/",
+                "value": "/opt/ros/kinetic/",
                 "valueType": "string"
             }
 
