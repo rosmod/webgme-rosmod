@@ -103,29 +103,22 @@ define([
             workspace: ''
         };
         Object.keys(currentConfig).map(function(k) {
-            if (k.indexOf('Host_User_Selection:') > -1) {
-                var hostPath = k.split(':')[1];
-                var selectedUser = currentConfig[k];
-                if (!self.selectedHostConfig[ hostPath ]) {
-                    self.selectedHostConfig[ hostPath ] = Object.assign({}, hostConfigTmpl);
-                }
+            if (k.indexOf("Host_Config:") > -1) {
+                var hostPath = k.split(":")[1];
+                var hostConfig = currentConfig[k];
+                // set up config
+                self.selectedHostConfig[ hostPath ] = Object.assign({}, hostConfigTmpl);
+                // get user
+                var selectedUser = hostConfig["user"];
                 if (selectedUser != disabledHostMessage) {
                     self.selectedHostConfig[ hostPath ].user = selectedUser;
                     self.selectedHostConfig[ hostPath ].enabled = true;
                 }
-            } else if (k.indexOf('Host_Install_Selection:') > -1) {
-                var hostPath = k.split(':')[1];
-                var installPath = currentConfig[k];
-                if (!self.selectedHostConfig[ hostPath ]) {
-                    self.selectedHostConfig[ hostPath ] = Object.assign({}, hostConfigTmpl);
-                }
+                // get install space
+                var installPath = hostConfig["installPath"];
                 self.selectedHostConfig[ hostPath ].install = installPath;
-            } else if (k.indexOf('Host_Extend_Selection:') > -1) {
-                var hostPath = k.split(':')[1];
-                var extendDir = currentConfig[k];
-                if (!self.selectedHostConfig[ hostPath ]) {
-                    self.selectedHostConfig[ hostPath ] = Object.assign({}, hostConfigTmpl);
-                }
+                // get extended workspace 
+                var extendDir = hostConfig["workspace"];
                 self.selectedHostConfig[ hostPath ].workspace = extendDir;
             }
         });
