@@ -66,8 +66,12 @@ define([
                     return self.makeContainerNodeMap( containers );
                 })
                 .then(function(_containerNodeMap) {
-                    // for each container create sortable selection of nodes for ordering their starting
                     var containerNodeMap = _containerNodeMap;
+		            // how do we want to do debugging?
+		            var debugConfig = self.makeDebugConfig( containerNodeMap );
+                    pluginMetadata.configStructure = debugConfig.concat(pluginMetadata.configStructure);
+
+                    // for each container create sortable selection of nodes for ordering their starting
                     var containerConfig = self.makeContainerConfig( containerNodeMap );
                     pluginMetadata.configStructure = [containerConfig].concat(pluginMetadata.configStructure);
 
@@ -76,15 +80,15 @@ define([
                     // for each host create selection in meta with options
                     // containing users (defauling to first user) and "Disabled"
                     var hostConfig = self.makeHostConfig( hostUserMap );
-                    pluginMetadata.configStructure = hostConfig.concat(pluginMetadata.configStructure);
+                    pluginMetadata.configStructure = [hostConfig].concat(pluginMetadata.configStructure);
+
+                    // do we want to spawn rosbridge?
+                    var rosBridgeConfig = self.makeRosBridgeConfig( );
+                    pluginMetadata.configStructure = [rosBridgeConfig].concat(pluginMetadata.configStructure);
 
                     // where do we want to spawn roscore?
                     var rosCoreConfig = self.makeRosCoreConfig( hosts );
                     pluginMetadata.configStructure = [rosCoreConfig].concat(pluginMetadata.configStructure);
-
-		            // how do we want to do debugging?
-		            var debugConfig = self.makeDebugConfig( containerNodeMap );
-                    pluginMetadata.configStructure = pluginMetadata.configStructure.concat(debugConfig);
 
                     var pluginDialog = new PluginConfigDialog({client: self._client});
                     pluginDialog.show(globalConfigStructure, pluginMetadata, prevPluginConfig, callback);
@@ -173,25 +177,25 @@ define([
             config = [];
 
         var tmpl = {
-	    "name": "debugging",
-	    "displayName": "Debugging Configuration",
-	    "description": "Select if and how you would like to debug.",
-	    "value": "None",
-	    "valueType": "string",
-	    "valueItems": [
-		"None",
-		"Valgrind on all ROSMOD Nodes",
-	    ]
+	        "name": "debugging",
+	        "displayName": "Debugging Configuration",
+	        "description": "Select if and how you would like to debug.",
+	        "value": "None",
+	        "valueType": "string",
+	        "valueItems": [
+		        "None",
+		        "Valgrind on all ROSMOD Nodes",
+	        ]
         };
 
         Object.keys(containerNodeMap).map(function(containerPath) {
-	    var nodeDebugging = containerNodeMap[ containerPath ].nodes.map(function(node) {
-		return `gdb+${node}`;
-	    });
-	    tmpl.valueItems = tmpl.valueItems.concat(nodeDebugging);
+	        var nodeDebugging = containerNodeMap[ containerPath ].nodes.map(function(node) {
+		        return `gdb+${node}`;
+	        });
+	        tmpl.valueItems = tmpl.valueItems.concat(nodeDebugging);
         });
 
-	config.push(tmpl);
+	    config.push(tmpl);
 
         return config;
     };
@@ -220,34 +224,65 @@ define([
     
     ConfigWidget.prototype.makeHostConfig = function( hostUserMap ) {
         var self = this,
-            config = [];
+            disabledMessage = 'Excluded from Experiment';
 
-        var tmpl = {
-	    "name": "",
-	    "displayName": "",
-	    "description": "Select User for Host deployment or Disabled to exclude host.",
-	    "value": "",
-	    "valueType": "string",
-	    "valueItems": [
-	    ]
-	};
-
-        Object.keys(hostUserMap).map(function(hostPath) {
+        return Object.keys(hostUserMap).reduce(function(o, hostPath) {
             var map = hostUserMap[hostPath];
             var users = map.users;
             var hostName = map.name;
-            var disabledMessage = 'Excluded from Experiment';
 
-            var hostTmpl = Object.assign({}, tmpl);
-            hostTmpl.name = 'Host_Selection:' + hostPath;
-            hostTmpl.displayName = hostName;
-            hostTmpl.value = users[0] || disabledMessage;
-            hostTmpl.valueItems = users.concat(disabledMessage);
-
-            config.push(hostTmpl);
+            var tmpl = {
+	            "name": hostPath,
+	            "displayName": hostName,
+	            "description": "Select User for Host deployment or Disabled to exclude host.",
+	            "value": users[0] || disabledMessage,
+	            "valueType": "string",
+	            "valueItems": users.concat(disabledMessage)
+	        };
+            o.configStructure.push(tmpl);
+            return o;
+        }, {
+            "name": "hostConfig",
+            "displayName": "Host Configuration",
+            "valueType": "header",
+            "configStructure": []
         });
+    };
 
-        return config;
+    ConfigWidget.prototype.makeRosBridgeConfig = function () {
+        return {
+            "name": "rosbridge",
+            "displayName": "ROS Bridge Config",
+            "valueType": "header",
+            "configStructure": [
+                {
+	                "name": "spawn",
+	                "displayName": "Spawn ROSBridge server.",
+	                "description": "If true, it will spawn a ROS Bridge server on the ROSMOD server that connects to the system",
+	                "value": false,
+	                "valueType": "boolean",
+	                "readOnly": false
+	            },
+	            {
+	                "name": "port",
+	                "displayName": " ROSBridge server port.",
+	                "description": "What port number should we give ROSBridge server? Leave blank for a randomly assigned port",
+	                "value": 0,
+                    "minValue": 0,
+                    "maxValue": 65535,
+	                "valueType": "integer",
+	                "readOnly": false
+	            },
+	            {
+	                "name": "IP",
+	                "displayName": " ROSBridge server IP.",
+	                "description": "What is the ROS_IP of the rosbridge server - this is the IP that the nodes in the system will use to connect to the rosbridge server.",
+	                "value": "127.0.0.1",
+	                "valueType": "string",
+	                "readOnly": false
+	            }
+            ]
+        };
     };
 
     ConfigWidget.prototype.makeRosCoreConfig = function( hosts ) {

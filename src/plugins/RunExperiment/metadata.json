@@ -11,39 +11,6 @@
     "disableBrowserSideExecution": false,
     "configWidget": "plugin/RunExperiment/RunExperiment/configWidget",
     "configStructure": [
-        {
-            "name": "rosbridge",
-            "displayName": "ROS Bridge Config",
-            "valueType": "header",
-            "configStructure": [
-                {
-	                "name": "spawn",
-	                "displayName": "Spawn ROSBridge server.",
-	                "description": "If true, it will spawn a ROS Bridge server on the ROSMOD server that connects to the system",
-	                "value": false,
-	                "valueType": "boolean",
-	                "readOnly": false
-	            },
-	            {
-	                "name": "port",
-	                "displayName": " ROSBridge server port.",
-	                "description": "What port number should we give ROSBridge server? Leave blank for a randomly assigned port",
-	                "value": 0,
-                    "minValue": 0,
-                    "maxValue": 65535,
-	                "valueType": "integer",
-	                "readOnly": false
-	            },
-	            {
-	                "name": "IP",
-	                "displayName": " ROSBridge server IP.",
-	                "description": "What is the ROS_IP of the rosbridge server - this is the IP that the nodes in the system will use to connect to the rosbridge server.",
-	                "value": "127.0.0.1",
-	                "valueType": "string",
-	                "readOnly": false
-	            }
-            ]
-        },
 	    {
 	        "name": "waitTime",
 	        "displayName": "Wait Time (s)",
