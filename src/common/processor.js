@@ -422,7 +422,9 @@ define(['underscore'], function(_) {
         },
         checkContainer: function(container) {
             // checks container to ensure that there is at least one node
-            if (container.Node_list === undefined && container['External Node_list'] === undefined) {
+            if (container.Node_list === undefined &&
+                container['External Node_list'] === undefined &&
+                container['Script Node_list'] === undefined) {
                 throw new String("Error: "+container.name+' has no nodes, make sure to add at least one in the model!');
             }
         },
