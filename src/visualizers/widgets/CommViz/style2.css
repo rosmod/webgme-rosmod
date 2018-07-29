@@ -36,10 +36,7 @@ node[NodeType = "Container"] {
     shape: roundrectangle;
     text-wrap: wrap;
     text-max-width: 90px;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-right: 10px;
+    padding: 10px;
     text-valign: top;
     text-halign: center;
     font-weight: bold;
@@ -50,10 +47,7 @@ node[NodeType = "Node"] {
     shape: roundrectangle;
     text-wrap: wrap;
     text-max-width: 90px;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-right: 10px;
+    padding: 10px;
     text-valign: top;
     text-halign: center;
     background-color: #B4DCED;
@@ -68,10 +62,7 @@ node[NodeType = "External Node"] {
     shape: roundrectangle;
     text-wrap: wrap;
     text-max-width: 90px;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-right: 10px;
+    padding: 10px;
     text-valign: top;
     text-halign: center;
     background-color: #3197EB;
@@ -86,10 +77,7 @@ node[NodeType = "Script Node"] {
     shape: roundrectangle;
     text-wrap: wrap;
     text-max-width: 90px;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-right: 10px;
+    padding: 10px;
     text-valign: top;
     text-halign: center;
     background-color: #5b686d;

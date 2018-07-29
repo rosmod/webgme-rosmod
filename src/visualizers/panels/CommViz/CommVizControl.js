@@ -184,17 +184,17 @@
 		this._selfPatterns[objDescriptor.connection] = {children: 0};
 		this._client.updateTerritory(this._territoryId, this._selfPatterns)
 	    }
-	    if (objDescriptor.type == "Container" ||
-		objDescriptor.type == "Deployment" ||
-		objDescriptor.type == "Message" ||
-		objDescriptor.type == "Advertised Message" ||
-		objDescriptor.type == "External Message" ||
-		objDescriptor.type == "Service" ||
-		objDescriptor.type == "Advertised Service" ||
-		objDescriptor.type == "External Service" ||
-		objDescriptor.type == "Action" ||
-		objDescriptor.type == "Advertised Action" ||
-		objDescriptor.type == "External Action") {
+	    if (objDescriptor.type === "Container" ||
+		objDescriptor.type === "Deployment" ||
+		objDescriptor.type === "Message" ||
+		objDescriptor.type === "Advertised Message" ||
+		objDescriptor.type === "External Message" ||
+		objDescriptor.type === "Service" ||
+		objDescriptor.type === "Advertised Service" ||
+		objDescriptor.type === "External Service" ||
+		objDescriptor.type === "Action" ||
+		objDescriptor.type === "Advertised Action" ||
+		objDescriptor.type === "External Action") {
 		objDescriptor.parentId = null;
 	    }
         }
