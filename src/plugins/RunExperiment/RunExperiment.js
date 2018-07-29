@@ -697,8 +697,9 @@ define([
                     //host.artifacts.push(nodeConfigName);
                     self.artifacts[nodeConfigName] = JSON.stringify( config, null, 2 );
 
-                    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
-                        ' 2> ' + self.configPrefix + node.name + '.stderr.log';
+                    var redirect_command = ' > ' + self.configPrefix + utils.sanitizePath(node.name) +
+                        '.stdout.log' +
+                        ' 2> ' + self.configPrefix + utils.sanitizePath(node.name) + '.stderr.log';
                     rosmod_actor_script.push('nohup rosrun rosmod_actor rosmod_actor --config ' +
                                              nodeConfigName + redirect_command +' &');
 
@@ -885,8 +886,9 @@ define([
 
                 function makeNodeStart(node) {
                     var nodeConfigName = self.getConfigName( node );
-                    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
-                        ' 2> ' + self.configPrefix + node.name + '.stderr.log';
+                    var redirect_command = ' > ' + self.configPrefix + utils.sanitizePath(node.name) +
+                        '.stdout.log' +
+                        ' 2> ' + self.configPrefix + utils.sanitizePath(node.name) + '.stderr.log';
                     var args = (node['Arguments'] && JSON.parse(JSON.minify(node['Arguments']))) || '';
                     if (args) {
                         args = ' ' + Object.keys(args).map((key) => {
@@ -914,8 +916,9 @@ define([
                 }
 
                 function makeExternalNodeStart(node) {
-                    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
-                        ' 2> ' + self.configPrefix + node.name + '.stderr.log';
+                    var redirect_command = ' > ' + self.configPrefix + utils.sanitizePath(node.name) +
+                        '.stdout.log' +
+                        ' 2> ' + self.configPrefix + utils.sanitizePath(node.name) + '.stderr.log';
                     var args = (node['Arguments'] && JSON.parse(JSON.minify(node['Arguments']))) || '';
                     if (args) {
                         args = ' ' + Object.keys(args).map((key) => {
@@ -929,16 +932,17 @@ define([
                     }
                 }
 
-                function makeExternalNodeStart(node) {
-                    var redirect_command = ' > ' + self.configPrefix + node.name + '.stdout.log' +
-                        ' 2> ' + self.configPrefix + node.name + '.stderr.log';
+                function makeScriptNodeStart(node) {
+                    var redirect_command = ' > ' + self.configPrefix + utils.sanitizePath(node.name) +
+                        '.stdout.log' +
+                        ' 2> ' + self.configPrefix + utils.sanitizePath(node.name) + '.stderr.log';
                     var args = (node['Arguments'] && JSON.parse(JSON.minify(node['Arguments']))) || '';
                     if (args) {
                         args = ' ' + Object.keys(args).map((key) => {
                             return key + ':=' + args[key];
                         }).join(' ');
                     }
-                    var script_name = node.path.replace('/','_');
+                    var script_name = node.path.replace(/\//gm,'_');
                     host_commands.push("_node_script_=$(cat <<'ROSMOD_SCRIPT_EOF'\n"+node['Script']+"\nROSMOD_SCRIPT_EOF\n);");
                     host_commands.push("echo $_node_script_ >> " + `./${script_name}.sh`);
                     host_commands.push("chmod +x " + `./${script_name}.sh`);
