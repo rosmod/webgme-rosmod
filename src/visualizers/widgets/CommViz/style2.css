@@ -62,6 +62,8 @@ node[NodeType = "Node"] {
 }
 
 node[NodeType = "External Node"] {
+    width: 25;
+    height: 25;
     content: data(label);
     shape: roundrectangle;
     text-wrap: wrap;
@@ -74,6 +76,24 @@ node[NodeType = "External Node"] {
     text-halign: center;
     background-color: #3197EB;
     color: #3399CC;
+    font-weight: bold;
+}
+
+node[NodeType = "Script Node"] {
+    width: 25;
+    height: 25;
+    content: data(label);
+    shape: roundrectangle;
+    text-wrap: wrap;
+    text-max-width: 90px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    text-valign: top;
+    text-halign: center;
+    background-color: #5b686d;
+    color: #3b3c3c;
     font-weight: bold;
 }
 
