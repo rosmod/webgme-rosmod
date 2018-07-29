@@ -184,7 +184,7 @@
 		this._selfPatterns[objDescriptor.connection] = {children: 0};
 		this._client.updateTerritory(this._territoryId, this._selfPatterns)
 	    }
-	    if (objDescriptor.type === "Container" ||
+		if (objDescriptor.type === "Container" ||
 		objDescriptor.type === "Deployment" ||
 		objDescriptor.type === "Message" ||
 		objDescriptor.type === "Advertised Message" ||
@@ -196,7 +196,7 @@
 		objDescriptor.type === "Advertised Action" ||
 		objDescriptor.type === "External Action") {
 		objDescriptor.parentId = null;
-	    }
+		}
         }
 
         return objDescriptor;
