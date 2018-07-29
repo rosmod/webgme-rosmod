@@ -141,7 +141,7 @@ define([
             core = self.core,
             containerNodeMap = {};
 
-        var validTypes = ['Node', 'External Node'];
+        var validTypes = ["Node", "External Node", "Script Node"];
 
         var tasks = containers.map(function (container) {
             var containerPath = core.getPath(container);

@@ -35,6 +35,7 @@
         "loadDepth": -1,
         "syntaxToModeMap": {
             "C++": { "name": "text/x-c++src", "useCPP": true },
+            "bash": { "name": "text/x-sh" },
             "JSON": { "name": "application/json" },
             "Javascript": {"name":"text/javascript"},
             "gfm": { "name": "gfm" },
@@ -139,6 +140,10 @@
             "External Node": {
                 "Arguments": "JSON"
             },
+            "Script Node": {
+                "Arguments": "JSON",
+                "Script": "bash"
+            },
             "State Machine": {
                 "Includes": "C++",
                 "Initialization": "C++",
@@ -178,6 +183,7 @@
             "Action Server": "Execute Callback",
             "Node": "Arguments",
             "External Node": "Arguments",
+            "Script Node": "Script",
             "State Machine": "Initialization",
             "State": "Entry",
             "Internal Transition": "Action",

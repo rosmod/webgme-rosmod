@@ -88,58 +88,59 @@
     };
 
     var validObjects = [
-	'Deployment',
-	'Container',
-	'Node',
-	'External Node',
-	'Component',
+	"Deployment",
+	"Container",
+	"Node",
+	"External Node",
+	"Script Node",
+	"Component",
 	// message related
-	'Publisher',
-	'Subscriber',
-	'Message',
-	'Advertised Message',
-	'External Message',
+	"Publisher",
+	"Subscriber",
+	"Message",
+	"Advertised Message",
+	"External Message",
 	// service related
-	'Client',
-	'Server',
-	'Service',
-	'Advertised Service',
-	'External Service',
+	"Client",
+	"Server",
+	"Service",
+	"Advertised Service",
+	"External Service",
 	// action related
-	'Action Client',
-	'Action Server',
-	'Action',
-	'External Action',
-	'Advertised Action',
+	"Action Client",
+	"Action Server",
+	"Action",
+	"External Action",
+	"Advertised Action",
     ];
 
     var connectionTypes = [
-	'Publisher',
-	'Subscriber',
-	'Client',
-	'Server',
-	'Action Client',
-	'Action Server'
+	"Publisher",
+	"Subscriber",
+	"Client",
+	"Server",
+	"Action Client",
+	"Action Server"
     ];
 
     var srcConnTypes = [
-	'Publisher',
-	'Client',
-	'Action Client'
+	"Publisher",
+	"Client",
+	"Action Client"
     ];
     var dstConnTypes = [
-	'Subscriber',
-	'Server',
-	'Action Server'
+	"Subscriber",
+	"Server",
+	"Action Server"
     ];
 
     var connectionToPtrMap = {
-	'Publisher': 'Message',
-	'Subscriber': 'Message',
-	'Client': 'Service',
-	'Server': 'Service',
-	'Action Client': 'Action',
-	'Action Server': 'Action'
+	"Publisher": "Message",
+	"Subscriber": "Message",
+	"Client": "Service",
+	"Server": "Service",
+	"Action Client": "Action",
+	"Action Server": "Action"
     };
 
     CommVizControl.prototype._nodeToEdge = function (desc) {
@@ -183,19 +184,19 @@
 		this._selfPatterns[objDescriptor.connection] = {children: 0};
 		this._client.updateTerritory(this._territoryId, this._selfPatterns)
 	    }
-	    if (objDescriptor.type == 'Container' ||
-		objDescriptor.type == 'Deployment' ||
-		objDescriptor.type == 'Message' ||
-		objDescriptor.type == 'Advertised Message' ||
-		objDescriptor.type == 'External Message' ||
-		objDescriptor.type == 'Service' ||
-		objDescriptor.type == 'Advertised Service' ||
-		objDescriptor.type == 'External Service' ||
-		objDescriptor.type == 'Action' ||
-		objDescriptor.type == 'Advertised Action' ||
-		objDescriptor.type == 'External Action') {
+		if (objDescriptor.type === "Container" ||
+		objDescriptor.type === "Deployment" ||
+		objDescriptor.type === "Message" ||
+		objDescriptor.type === "Advertised Message" ||
+		objDescriptor.type === "External Message" ||
+		objDescriptor.type === "Service" ||
+		objDescriptor.type === "Advertised Service" ||
+		objDescriptor.type === "External Service" ||
+		objDescriptor.type === "Action" ||
+		objDescriptor.type === "Advertised Action" ||
+		objDescriptor.type === "External Action") {
 		objDescriptor.parentId = null;
-	    }
+		}
         }
 
         return objDescriptor;
