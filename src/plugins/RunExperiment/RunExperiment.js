@@ -96,8 +96,8 @@ define([
         // What did the user select for our configuration?
         var currentConfig = self.getCurrentConfig();
         self.returnZip = currentConfig.returnZip;
-        self.rosMasterURI = currentConfig.rosMasterURI;
-        self.rosNamespace = currentConfig.rosNamespace;
+        self.rosMasterURI = currentConfig.rosCoreConfig.rosMasterURI;
+        self.rosNamespace = currentConfig.rosCoreConfig.rosNamespace;
         if (self.rosNamespace) {
             self.logFilePrefix = self.rosNamespace + '.';
             self.configPrefix = self.rosNamespace + '.';
@@ -107,9 +107,9 @@ define([
             self.configPrefix = '';
         }
         self.forceIsolation = currentConfig.forceIsolation;
-        self.spawnROSBridge = currentConfig.spawnROSBridge;
-        self.rosBridgePort = currentConfig.rosBridgePort;
-        self.rosBridgeServerIp = currentConfig.rosBridgeServerIp;
+        self.spawnROSBridge = currentConfig.rosbridge.spawn;
+        self.rosBridgePort = currentConfig.rosbridge.port;
+        self.rosBridgeServerIp = currentConfig.rosbridge.IP;
         if (self.rosBridgePort <= 1024) {
             self.rosBridgePort = Math.floor((Math.random() * (65535-1024) + 1024));
         }
@@ -132,23 +132,22 @@ define([
         self.selectedHostUserMap = {};
         var disabledHostMessage = 'Excluded from Experiment';
         self.orderedContainerNodeMap = {};
-        Object.keys(currentConfig).map(function(k) {
-            if (k.indexOf('Host_Selection:') > -1) {
-                var hostPath = k.split(':')[1];
-                var selectedUser = currentConfig[k];
-                if (selectedUser != disabledHostMessage)
-                    self.selectedHostUserMap[ hostPath ] = selectedUser;
-            } else if (k.indexOf('Container:') > -1) {
-                var containerPath = k.split(':')[1];
-                var orderedNodes = currentConfig[k];
-                if (Array.isArray(orderedNodes)) {
-                    self.orderedContainerNodeMap[ containerPath ] = orderedNodes;
-                }
+        Object.keys(currentConfig['hostConfig']).map(function(k) {
+            var hostPath = k;
+            var selectedUser = currentConfig[k];
+            if (selectedUser != disabledHostMessage)
+                self.selectedHostUserMap[ hostPath ] = selectedUser;
+        });
+        Object.keys(currentConfig['containerConfig']).map(function(k) {
+            var containerPath = k;
+            var orderedNodes = currentConfig[k];
+            if (Array.isArray(orderedNodes)) {
+                self.orderedContainerNodeMap[ containerPath ] = orderedNodes;
             }
         });
 
         // figure out where to run roscore
-        self.rosCoreHost = currentConfig.rosCoreHost;
+        self.rosCoreHost = currentConfig.rosCoreConfig.rosCoreHost;
 
         // will be filled out by the plugin
         self.hasStartedDeploying = false;
@@ -182,6 +181,7 @@ define([
 
         if (rosCoreErr) {
             callback(rosCoreErr, self.result);
+            return;
         }
 
         // set up libraries

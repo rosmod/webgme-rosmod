@@ -5,21 +5,21 @@
  */
 
 define([
-    'q',
-    'js/Dialogs/PluginConfig/PluginConfigDialog'
+    "q",
+    "js/Dialogs/PluginConfig/PluginConfigDialog"
 ], function (
     Q,
     PluginConfigDialog) {
-    'use strict';
+    "use strict";
 
     function ConfigWidget(params) {
         this._client = params.client;
-        this._logger = params.logger.fork('ConfigWidget');
+        this._logger = params.logger.fork("ConfigWidget");
     }
 
     /**
      * Called by the InterpreterManager if pointed to by metadata.configWidget.
-     * You can reuse the default config by including it from 'js/Dialogs/PluginConfig/PluginConfigDialog'.
+     * You can reuse the default config by including it from "js/Dialogs/PluginConfig/PluginConfigDialog".
      *
      * @param {object[]} globalConfigStructure - Array of global options descriptions (e.g. runOnServer, namespace)
      * @param {object} pluginMetadata - The metadata.json of the the plugin.
@@ -49,10 +49,10 @@ define([
             // get hosts in the system from pointer
             var hosts, users;
             // this plugin is called from within a system model so hosts are children
-            self.getChildrenByType( systemNode, 'Host' )
+            self.getChildrenByType( systemNode, "Host" )
                 .then(function(_hosts) {
                     hosts = _hosts;
-                    return self.getChildrenByType( systemNode, 'User' );
+                    return self.getChildrenByType( systemNode, "User" );
                 })
                 .then(function(_users) {
                     users = _users;
@@ -80,7 +80,7 @@ define([
             .then(function(nodes) {
                 var filtered = nodes.filter(function(c) {
                     var base = self.core.getMetaType(c);
-                    return childType == self.core.getAttribute(base, 'name');
+                    return childType == self.core.getAttribute(base, "name");
                 });
 
                 return Q.all(filtered);
@@ -94,15 +94,15 @@ define([
         
         hosts.map(function(h) {
             var hostPath = self.core.getPath(h);
-            var hostName = self.core.getAttribute(h,'name');
-            var installPath = self.core.getAttribute(h,'Build Workspace');
-            var validUserPaths = self.core.getMemberPaths(h, 'Users');
+            var hostName = self.core.getAttribute(h,"name");
+            var installPath = self.core.getAttribute(h,"Build Workspace");
+            var validUserPaths = self.core.getMemberPaths(h, "Users");
 
             var validUsers = users.filter(function(u) {
                 var path = self.core.getPath(u);
                 return validUserPaths.indexOf(path) > -1;
             }).map(function(u) {
-                return self.core.getAttribute(u, 'name');
+                return self.core.getAttribute(u, "name");
             });
 
             hostUserMap[ hostPath ] = {
@@ -116,69 +116,54 @@ define([
     };
     
     ConfigWidget.prototype.makeHostConfig = function( hostUserMap ) {
-        var self = this,
-            config = [];
+        var self = this;
 
-        var userTmpl = {
-            "name": "",
-            "displayName": "",
-            "description": "Select User for Host deployment or Disabled to exclude host.",
-            "value": "",
-            "valueType": "string",
-            "valueItems": [
-            ]
-        };
-
-        var installTmpl = {
-            "name": "",
-            "displayName": "",
-            "description": "Select install location for runtime.",
-            "value": "",
-            "valueType": "string"
-        };
-
-        var extendTmpl = {
-            "name": "",
-            "displayName": "",
-            "description": "Select workspace to extend.",
-            "value": "",
-            "valueType": "string"
-        };
-
-        Object.keys(hostUserMap).map(function(hostPath) {
+        return Object.keys(hostUserMap).map(function(hostPath) {
             var map = hostUserMap[hostPath];
             var users = map.users;
             var hostName = map.name;
             var installPath = map.installPath;
-            var disabledMessage = 'Do not install on this host';
+            var disabledMessage = "Do not install on this host";
 
             // make the user config
-            var hostTmpl = Object.assign({}, userTmpl);
-            hostTmpl.name = 'Host_User_Selection:' + hostPath;
-            hostTmpl.displayName = 'User for ' + hostName;
-            hostTmpl.value = users[0] || disabledMessage;
-            hostTmpl.valueItems = users.concat(disabledMessage);
-
-            config.push(hostTmpl);
+            var user = {
+                "name": "user",
+                "displayName": "User for " + hostName,
+                "description": "Select User for Host deployment or Disabled to exclude host.",
+                "value": users[0] || disabledMessage,
+                "valueItems": users.concat(disabledMessage),
+                "valueType": "string"
+            };
 
             // make the install directory config
-            var hostInstallTmpl = Object.assign({}, installTmpl);
-            hostInstallTmpl.name = 'Host_Install_Selection:' + hostPath;
-            hostInstallTmpl.displayName = 'Install Path for ' + hostName;
-            hostInstallTmpl.value = installPath;
-
-            config.push(hostInstallTmpl);
+            var hostInstallTmpl = {
+                "name": "installPath",
+                "displayName": "Install Path for " + hostName,
+                "description": "Select install location for runtime.",
+                "value": installPath,
+                "valueType": "string"
+            };
 
             // make the extend directory config
-            var hostExtendTmpl = Object.assign({}, extendTmpl);
-            hostExtendTmpl.name = 'Host_Extend_Selection:' + hostPath;
-            hostExtendTmpl.displayName = 'Workspace to extend for ' + hostName;
-            hostExtendTmpl.value = '/opt/ros/kinetic/';
+            var hostExtendTmpl = {
+                "name": "workspace",
+                "displayName": "ROS Workspace to extend for " + hostName,
+                "description": "Select workspace to extend.",
+                "value": "/opt/ros/kinetic/",
+                "valueType": "string"
+            }
 
-            config.push(hostExtendTmpl);
+            return {
+                "name": "Host_Config:"+hostPath,
+                "displayName": hostName + " Configuration",
+                "valueType": "header",
+                "configStructure": [
+                    user,
+                    hostInstallTmpl,
+                    hostExtendTmpl,
+                ]
+            }
         });
-
-        return config;
     };
 
     return ConfigWidget;
