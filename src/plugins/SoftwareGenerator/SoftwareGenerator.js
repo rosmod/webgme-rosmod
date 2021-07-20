@@ -254,20 +254,21 @@ define([
                     var pkgName = pkg.name;
                     var compName = comp.name;
                     var includes = [
-                        `#include "${pkgName}/${compName}.hpp"`,
                         `class ${compName};`,
                         ''
                     ].join('\n');
                     obj.Includes = includes + obj.Includes;
                     // make sure we have functions and pointers to the component itself
                     var declarations = [
-                        `static ${compName}* this_component;`,
+                        `${compName}* this_component;`,
                         `void setComponentPtr( ${compName}* c ) { this_component = c; }`,
                         ''
                     ].join('\n');
                     obj.Declarations = declarations + obj.Declarations;
                     var definitions = [
-                        `${compName}* StateMachine::${obj.sanitizedName}::this_component;`,
+                      '// include Component class here to complete the class.',
+                      `#include "${pkgName}/${compName}.hpp"`,
+                      ''
                     ].join('\n');
                     obj.Definitions = definitions + obj.Definitions;
                 }

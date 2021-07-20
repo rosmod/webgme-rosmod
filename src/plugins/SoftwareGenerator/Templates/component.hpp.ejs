@@ -1,4 +1,4 @@
-/** @file    <%- compInfo.name %>.hpp 
+/** @file    <%- compInfo.name %>.hpp
  *  @author  <%- compInfo.Authors %>
  *  @date    <%= (new Date()).toISOString() %>
  *  @brief   This file declares the <%- compInfo.name %> class; <%- compInfo['Brief Description'] %>
@@ -15,9 +15,8 @@
 if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
-namespace StateMachine {
-  class <%- hfsm.sanitizedName %>;
-};
+// HFSM Includes
+#include "<%- compInfo.Package %>/<%- compInfo.name %>_HFSM/<%- hfsm.sanitizedName %>_GeneratedStates.hpp"
 <%
   });
 }
@@ -55,12 +54,12 @@ if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
   // give HFSM access to this class.
-  friend class StateMachine::<%- hfsm.sanitizedName %>;
+  friend class StateMachine::<%- hfsm.sanitizedName %>::Root;
 <%
   });
 }
 -%>
-  
+
   /**
    * @brief <%- compInfo.name %> Constructor.
    * @param _config Component configuration parsed from deployment JSON
@@ -69,14 +68,14 @@ if (compInfo['State Machine_list']) {
 
  /**
    * @brief <%- compInfo.name %> Destructor
-   */ 
+   */
   ~<%- compInfo.name %>() override;
 
  /**
    * @brief Component startup function
    *
    * This function configures all the component ports and timers
-   */ 
+   */
   void startUp() override;
 
   /**
@@ -105,7 +104,7 @@ if (compInfo['State Machine_list']) {
 <%
   });
 }
--%>  
+-%>
 
 <%
 if (compInfo.Timer_list) {
@@ -114,8 +113,8 @@ if (compInfo.Timer_list) {
   /**
    * @brief <%- tmr.name %>_operation; <%- tmr['Brief Description'] %>
    *
-   * This operation is executed every time the  
-   * <%- tmr.name %> operation request is serviced 
+   * This operation is executed every time the
+   * <%- tmr.name %> operation request is serviced
    * @param[in] event a timer event
    *
    * <%- tmr['Detailed Description'] %>
@@ -133,8 +132,8 @@ if (compInfo.Subscriber_list) {
   /**
    * @brief <%- sub.name %>_operation; <%- sub['Brief Description'] %>
    *
-   * This operation is executed every time the  
-   * <%- sub.name %> operation request is serviced 
+   * This operation is executed every time the
+   * <%- sub.name %> operation request is serviced
    * @param[in] ros::MessageEvent - event - Event information containing the message and headers received.
    *
    * <%- sub['Detailed Description'] %>
@@ -152,8 +151,8 @@ if (compInfo.Server_list) {
   /**
    * @brief <%- srv.name %>_operation; <%- srv['Brief Description'] %>
    *
-   * This operation is executed every time the  
-   * <%- srv.name %> operation request is serviced 
+   * This operation is executed every time the
+   * <%- srv.name %> operation request is serviced
    * @param[in] req request received from the client
    * @param[out] res response sent back to the client
    *
@@ -172,8 +171,8 @@ if (compInfo['Action Server_list']) {
   /**
    * @brief <%- srv.name %>_execute_cb; <%- srv['Brief Description'] %>
    *
-   * This operation is executed every time the  
-   * <%- srv.name %> operation request is serviced 
+   * This operation is executed every time the
+   * <%- srv.name %> operation request is serviced
    * @param[in] goal goal received from the action client
    *
    * <%- srv['Detailed Description'] %>
@@ -182,14 +181,14 @@ if (compInfo['Action Server_list']) {
   /**
    * @brief <%- srv.name %>_goal_cb;
    *
-   * This operation is executed every time the  
+   * This operation is executed every time the
    * <%- srv.name %> receives a new goal
    */
   void <%- srv.name %>_goal_cb();
   /**
    * @brief <%- srv.name %>_preempt_cb;
    *
-   * This operation is executed every time the  
+   * This operation is executed every time the
    * <%- srv.name %> is preempted
    */
   void <%- srv.name %>_preempt_cb();
@@ -205,7 +204,7 @@ if (compInfo['Action Client_list']) {
   /**
    * @brief <%- clt.name %>_feedback_cb; <%- clt['Brief Description'] %>
    *
-   * This operation is executed every time the  
+   * This operation is executed every time the
    * <%- clt.name %> receives feedback from the action server
    * @param[in] feedback feedback received from the action server
    *
@@ -238,10 +237,11 @@ if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
   ros::Timer <%- hfsm.sanitizedName %>_HFSM_timer; /*!< <%- hfsm.name %> HFSM Timer */
+  StateMachine::<%- hfsm.sanitizedName %>::Root <%- hfsm.sanitizedName %>_root; /*!< <%- hfsm.name %> Root object */
 <%
   });
 }
--%>  
+-%>
 
 <%
 if (compInfo.Timer_list) {
@@ -307,7 +307,7 @@ if (compInfo.Subscriber_list) {
  }
 -%>
 
-  /** 
+  /**
    * User-defined private variables
    */
   //::::<%- compInfo.path %>::::Members::::
