@@ -261,13 +261,12 @@ define([
                     obj.Includes = includes + obj.Includes;
                     // make sure we have functions and pointers to the component itself
                     var declarations = [
-                        `static ${compName}* this_component;`,
+                        `${compName}* this_component;`,
                         `void setComponentPtr( ${compName}* c ) { this_component = c; }`,
                         ''
                     ].join('\n');
                     obj.Declarations = declarations + obj.Declarations;
                     var definitions = [
-                        `${compName}* StateMachine::${obj.sanitizedName}::this_component;`,
                     ].join('\n');
                     obj.Definitions = definitions + obj.Definitions;
                 }
