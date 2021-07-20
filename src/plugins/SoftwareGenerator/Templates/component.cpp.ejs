@@ -6,18 +6,6 @@
 
 #include "<%- compInfo.Package %>/<%- compInfo.name %>.hpp"
 
-<%
-if (compInfo['State Machine_list']) {
-  compInfo['State Machine_list'].map(function(hfsm) {
--%>
-// HFSM Includes
-#include "<%- compInfo.Package %>/<%- compInfo.name %>_HFSM/<%- hfsm.sanitizedName %>_GeneratedStates.hpp"
-<%
-  });
-}
--%>
-
-
 // User Definitions
 //::::<%- compInfo.path %>::::Definitions::::
 <%- compInfo.Definitions %>
@@ -95,7 +83,7 @@ void <%- compInfo.name %>::<%- hfsm.sanitizedName %>_HFSM_timer_operation(const 
 {
   ros::Time __dequeue__ = ros::Time::now();
   try {
-    StateMachine::Event* e = nullptr;
+    StateMachine::<%- hfsm.sanitizedName %>::Event* e = nullptr;
     // process all pending events
     while ( (e = <%- hfsm.sanitizedName %>_root.eventFactory.getNextEvent()) != nullptr ) {
       <%- hfsm.sanitizedName %>_root.handleEvent( e );

@@ -15,11 +15,8 @@
 if (compInfo['State Machine_list']) {
   compInfo['State Machine_list'].map(function(hfsm) {
 -%>
-namespace StateMachine {
-  namespace <%- hfsm.sanitizedName %> {
-    class Root;
-  };
-};
+// HFSM Includes
+#include "<%- compInfo.Package %>/<%- compInfo.name %>_HFSM/<%- hfsm.sanitizedName %>_GeneratedStates.hpp"
 <%
   });
 }

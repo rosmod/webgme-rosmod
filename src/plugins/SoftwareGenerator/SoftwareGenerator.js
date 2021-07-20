@@ -254,7 +254,6 @@ define([
                     var pkgName = pkg.name;
                     var compName = comp.name;
                     var includes = [
-                        `#include "${pkgName}/${compName}.hpp"`,
                         `class ${compName};`,
                         ''
                     ].join('\n');
@@ -267,6 +266,9 @@ define([
                     ].join('\n');
                     obj.Declarations = declarations + obj.Declarations;
                     var definitions = [
+                      '// include Component class here to complete the class.',
+                      `#include "${pkgName}/${compName}.hpp"`,
+                      ''
                     ].join('\n');
                     obj.Definitions = definitions + obj.Definitions;
                 }
