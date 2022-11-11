@@ -6,8 +6,6 @@
 [![npm](https://img.shields.io/npm/dm/webgme-rosmod.svg)](https://www.npmjs.com/package/webgme-rosmod)
 [![npm](https://img.shields.io/npm/dt/webgme-rosmod.svg)](https://www.npmjs.com/package/webgme-rosmod)
 
-[![rosmod.collaborative-design.org](https://img.shields.io/website-up-down-green-red/https/rosmod.collaborative-design.org/profile/login.svg?label=rosmod.collaborative-design.org)](https://rosmod.collaborative-design.org)
-
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/finger563)
 
 This repository contains the implementation of
@@ -17,9 +15,6 @@ built on [WebGME](http://github.com/webgme/webgme).
 ROSMOD is a web-based, collaborative, modeling and execution
 environment for distributed embedded applications built using
 [ROS](http://www.ros.org).
-
-An example server running ROSMOD can be found on
-[rosmod.collaborative-design.org](http://rosmod.collaborative-design.org).
 
 **Please see the [WIKI](https://github.com/rosmod/webgme-rosmod/wiki) for in-depth information about ROSMOD, how to use it, and links to various Youtube videos that walk through development and usage of ROSMOD.**
 
