@@ -18,7 +18,7 @@
     "handlebars": "^4.7.7",
     "mkdirp": "^0.5.5",
     "path": "0.11.x",
-    "plotly.js": "^1.58.5",
+    "plotly.js": "^2.25.2",
     "remote-utils": "^1.0.14",
     "select2": "^4.0.13",
     "showdown": "^1.9.1",
