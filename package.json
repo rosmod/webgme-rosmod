@@ -23,7 +23,7 @@
     "select2": "^4.0.13",
     "showdown": "^1.9.1",
     "strip-ansi": "^4.0.0",
-    "tar": "^4.4.15",
+    "tar": "^6.2.1",
     "unzip": "0.1.x",
     "webgme": "^2.42.1",
     "webgme-codeeditor": "^3.6.19",
